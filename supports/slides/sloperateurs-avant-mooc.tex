@@ -1,0 +1,180 @@
+
+\subsection{Les opérateurs de base}
+
+\begin{frame}[fragile]{Les opérateurs de base}
+
+Nous allons voir tous les opérateurs permettant d'exécuter les
+requêtes mono-table.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select a1, a2, ..., an 
+from T 
+where condition
+\end{minted}
+
+\vfill
+
+Pour accéder à une table, deux solutions (pas plus!)
+
+\begin{itemize}
+ \item \alert{Accès séquentiel}. Tous les tuples de la table 
+      sont examinés, dans l'ordre du stockage.
+ \item \alert{Accès par adresse}. Si on connaît l'adresse du
+      tuple, on peut aller lire
+      directement le bloc et obtenir ainsi un accès optimal.
+\end{itemize}
+
+\vfill
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Parcours de table et d'index}
+
+\alert{Parcours séquentiel}: déjà vu avec l'opérateur \texttt{FullScan}.
+\smallskip
+
+\alert{Efficacité}: pas si mal, si en séquence, sur une table compacte.
+
+\vfill
+
+\alert{Parcours d'index} (index = arbre B). Deux phases pour l'opérateur \texttt{IndexScan}:
+
+\begin{itemize} 
+  \item \alert{Parcours de la racine vers la feuille} (pendant le \texttt{open()})
+  \item \alert{Parcours en séquence des feuilles} (une étape par \texttt{next()})
+  
+\end{itemize}
+
+\smallskip
+
+\alert{Efficacité}: très efficace, quelques lectures logiques (index en mémoire)
+
+\vfill
+
+Lequel préférer (quand on a le choix)? En général, l'index, mais pas toujours.
+
+\end{frame}
+
+%%%%
+\begin{frame}[fragile]{Accès par adresse}
+
+Opérateur \texttt{DirectAccess}: s'appuie sur une source (un parcours d'index).
+
+\vfill
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{bash}
+   function nextDirectAccess
+    {
+      # Prenons l'adresse de l'enregistrement a lire
+      $a = $source.next();
+      
+      # Plus d'adresse? On renvoie null
+      if ($a = null) then
+        return null;
+      else
+        # On effectue par une lecture (logique) du bloc
+        $b = $GA.lecture ($a.adresseBloc);      
+        # On prend l'enregistrement dans le bloc
+        $e = $b.get ($a.adresseLocale)           
+        return $e;
+      fi 
+     }
+\end{minted}
+
+\end{frame}
+
+
+%%%%
+\begin{frame}[fragile]{Opérateur de sélection}
+
+Très simple: filtre les tuples fournis par la source.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{bash}
+    function nextFilter
+    {
+       # On prend un tuple de la source
+      $tuple = $source.next();
+      # On continue tant que la condition n'est pas satisfaite, 
+      # ou la source parcourue
+      while ($tuple != null  and $tuple.test($C) = false)
+      do
+        $tuple = $source.next();        
+      done
+      
+      return $tuple;
+    }
+\end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]{Plan d'exécution pour requête mono table}
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select titre from Film where genre='SF' and annee = 2014
+\end{minted}
+
+\medskip
+
+Les solutions:
+
+\figSlideWithSize{planEx-monotable}{10cm}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Index ou pas index?}
+
+Un cas extrême!
+
+\medskip
+
+\figSlideWithSize{interBtree}{10cm}
+
+\medskip
+
+En pratique: le SGBD décide en fonction des statistiques.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Pour compléter}
+
+Un plan à exécuter avec index.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select * from   Film
+    where  idFilm = 20 
+    and    titre = 'Vertigo'
+\end{minted}
+
+\vfill
+
+Un plan à exécuter sans index.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select * from   Film
+    where  idFilm = 20 
+    or    titre = 'Vertigo'
+\end{minted}
+
+\end{frame}

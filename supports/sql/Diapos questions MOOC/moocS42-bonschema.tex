@@ -1,0 +1,180 @@
+
+\begin{frame}{Notion de dépendance fonctionnelle}
+
+\begin{defblock}{Dépendance fonctionnelle (DF)}
+Il y a \alert{DF} $A \to B$ 
+quand la connaissance de la valeur de $A$ implique la connaissance de la valeur de $B$.
+\end{defblock}
+\vfill 
+Exemple\,: voici un schéma pour nos logements, \texttt{(code, nom, adresse, activité, description)},
+avec les DF suivantes\,:
+
+\vfill
+\begin{redbullet}
+  \item $code \to nom, adresse$
+  \item $adresse \to code, nom$
+ \item $code, activit\acute{e}  \to  description$
+\end{redbullet}
+
+\vfill
+
+Les DF nous permettent de \alert{raisonner} sur le contenu d'une base et d'analyser sa qualité
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Les DF caractérisent les anomalies}
+ 
+\begin{footnotesize}
+\begin{tabular}{c|l|p{3.5cm}|c|p{4cm}}
+\textbf{code} & \textbf{nom} & \textbf{adresse} & \textbf{activité}& \textbf{description} \\ \hline
+   pi & U Pinzutu &  12 quai Napoléon & Plongée & Dans le golfe\\
+   ta & Tabriz & Avenue du grand large & Plongée & Dans la rade\\
+   pi & U Spuntinu &  12 avenue Paoli  & Voile & En club associatif\\
+   ma & Macchia &  12 quai Napoléon & Gastronomie & Spécialités locales\\
+\hline
+\end{tabular}
+\end{footnotesize}
+
+\vfill
+\begin{redbullet}
+\item $code \to nom, adresse$ n'est pas respectée par les nuplets 1 et 3
+    \item $adresse \to code, nom$ n'est pas respectée 
+    par les nuplets 1 et 4
+\item $code, activit\acute{e}  \to  description$ est toujours respectée
+\end{redbullet}
+
+\vfill
+
+\alert{Remarque}\,: deux nuplets ayant les mêmes code logement 
+et activité doivent être \alert{identiques} pour respecter les DF.
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Notion de clé}
+
+
+\begin{defblock}{Clé}
+Une clé d'une relation $R$ est un sous-ensemble \alert{minimal} $C$
+des attributs tel que tout attribut de $R$ dépend fonctionnellement de $C$. 
+\end{defblock}
+\vfill
+
+\begin{redbullet}
+ \item $(code, activit\acute{e})$  est une clé\,: par transitivité, tous
+ les autres attributs en dépendent
+ \item $code$  n'est pas une clé, $activit\acute{e}$ et $description$ n'en dépendent pas
+ \item $(code, activit\acute{e}, adresse)$  n'est pas une clé car non minimal
+ 
+\end{redbullet}
+
+\vfill
+
+Deux nuplets avec la même valeur de clé doivent être identiques.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Normalisation}
+  
+\begin{defblock}{Forme normale (Troisième, ou 3FN)}
+  Un schéma de relation $R$ est en troisième forme normale quand
+    tout attribut non-clé dépend directement d'une clé.
+\end{defblock}
+ 
+\vfill
+
+\alert{Retenir} (petite approximation)\,: dans
+   toute dépendance fonctionnelle $S \to A$ sur
+   les attributs de $R$, $S$ est une clé. 
+
+\vfill
+
+Le schéma précédent n'est pas normalisé à cause des  DF
+$code \to nom, adresse$ et $adresse \to code, nom$
+
+\vfill
+
+\alert{Intuition}\, une relation qui n'est pas en 3FN parle de deux
+types d'objet différents, d'où redondances et incohérences.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{La bonne solution}
+ 
+Voici le schéma \alert{normalisé} 
+\vfill
+
+\begin{redbullet}
+  \item Logement (code, nom, adresse)
+ \item Activité (code, activité, description)
+\end{redbullet}
+
+\vfill
+\texttt{Logement} a deux clés, \texttt{code} et \texttt{adresse}
+
+\vfill
+\texttt{Activité} a une  clé, la paire  (\texttt{code, activité})
+
+\vfill
+
+
+\begin{redbullet}
+  \item Ces relations sont  en troisième forme normale (3FN)
+ \item On n'a pas perdu d'information car on peut reconstituer la relation initiale par jointure
+\end{redbullet}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Illustration}
+ 
+\begin{tabular}{c|c|c}
+\textbf{code} & \textbf{nom} & \textbf{adresse}\\ \hline
+   pi & U Pinzutu &12 quai Napoléon\\
+   ta & Tabriz  &Avenue du grand large\\
+   ma & Macchia  &12 avenue Paoli\\
+\hline
+\end{tabular}
+
+\vfill
+
+\begin{tabular}{c|l|p{4cm}}
+\textbf{code} & \textbf{activité} & \textbf{titre}\\ \hline
+   pi& Plongée &  Dans le golfe\\
+   pi & Voile&  En club associatif\\
+   ta & Plongée&  Dans la rade\\
+   ma & Gastronomie&  Spécialités locales\\
+\hline
+\end{tabular}
+
+\vfill
+\begin{defblock}{Contrainte d'unicité des clés}
+L'unicité des valeurs de clé garantit le respect des DF.
+\end{defblock}
+\end{frame}
+
+%%%%%%ù
+
+\begin{frame}{À retenir}
+
+La normalisation relationnelle décompose l'ensemble des attributs
+en relations saines
+
+\vfill
+\begin{redbullet}
+  \item Toute relation a une clé,
+ \item Tous les attributs dépendent \alert{directement} de la clé (forme normale)
+ \item Une valeur de clé doit apparaître une seule fois
+ \item La décomposition en plusieurs relations est compensée par la possibilité
+      d'effectuer des jointures
+ \end{redbullet}
+
+\vfill
+
+\alert{Comment normalise-t-on\,?} À suivre.
+\end{frame}
+

@@ -1,0 +1,89 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dessiner des Arbresme
+%\psset{armB=5mm,angleA=90,angleB=-90,levelsep=2cm,treesep=5mm}
+\psset{levelsep=2cm}
+\newrgbcolor{cblue}{0.4 0.4 1.6}
+
+\def\MyShadowBox#1#2{%
+  \textcolor{black}{\psshadowbox[framearc=.3]{%
+    \shortstack[c]{\texttt{\shortstack[c]{#1}}\\{#2}}}}}
+
+\def\MyFrameBox#1#2{%
+  \psovalbox[framearc=.3,fillstyle=solid,fillcolor=white]{%
+    \shortstack[c]{\textcolor{black}{\texttt{\shortstack[c]{#1}}}\\ 
+               \textcolor{black}{#2}}}}
+
+\def\MySolidShadowBox#1#2{%
+  \psshadowbox[framearc=.3,fillstyle=solid,fillcolor=cblue]{%
+    \shortstack[c]{\texttt{\shortstack[c]{#1}}\\\shortstack[c]\small{#2}}}}
+
+\def\AccessPath#1#2#3{%
+  \pstree{\Tr[name=#1]{\MySolidShadowBox{\textbf{{\sc #1}}}{\textit{#2}}}}{#3}
+%  \Tr{\MyFrameBox{\textit{#1}}{#2}}
+}
+
+\def\Iterator#1#2#3{%
+  \pstree{\Tr[name=#1]{\MyShadowBox{\textbf{{\sc #1}}}{\textit{#2}}}}{#3}
+}
+
+\def\IteratorSansNom#1#2#3{%
+  \pstree{\Tr{\MyShadowBox{\textbf{{\sc #1}}}{\textit{#2}}}}{#3}
+}
+
+\def\NoeudArbre#1#2#3{%
+  \pstree{\Tr[name=#1]{\MyShadowBox{#2}{}}}{#3}
+}
+
+\def\Database#1#2{%
+  \Tr[name=#1]{\MyFrameBox{\textit{#1}}{#2}}}
+
+
+\def\RecordType#1#2{
+  \psset{linestyle=dashed}
+  \pstree{\Tr{\MySolidShadowBox{#1}{}}}{#2}
+  \psset{linestyle=solid}
+}
+
+\newcommand{\arbre}[3]{%
+\begin{center}
+ \begin{figure*}[hbtp]
+    {\small \centerline{\input{../pst/#1.tex}}}
+  \caption{\label{fig-#3}  #2}
+\end{figure*}
+\end{center}}
+
+
+\newcommand{\arbreSlide}[1]{%
+    {\tiny \centerline{\input{../pst/#1.tex}}}
+}
+
+
+%%%%%%%%%%%%%% Macros communes au poly et aux slides
+
+
+\newcommand{\explain}[2]{%
+\vspace*{0.3cm}
+\begin{tabular}{l|l}
+\textbf{Requête} & \textbf{Plan d'exécution}\\
+\hline
+\begin{minipage}[t]{6.5cm}
+\begin{small}
+\verbatiminput{../exemples/#1}
+\end{small}
+\end{minipage}
+&
+\begin{minipage}[t]{7cm}
+\begin{small}
+\verbatiminput{../exemples/#2}
+\end{small}
+\end{minipage}
+\\  \hline
+\end{tabular}
+\vspace*{0.3cm}
+}
+
+\newcommand{\cle}[1]{\textbf{#1}}
+\newcommand{\fk}[1]{\textit{#1}}
+\def\attr#1{{\tt #1}}
+\def\iter#1{\texttt{#1}}
+\newcommand{\entreeArbreB}[1]{\psovalbox{\textcolor{red}{#1}}}

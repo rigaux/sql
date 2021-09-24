@@ -1,0 +1,1099 @@
+.. _chap-sql:
+
+###
+SQL
+###
+
+
+Ce chapitre présente le langage SQL d'interrogation  et de manipulation de données
+(insertion, mise à jour, destruction). 
+SQL est un langage *déclaratif* qui permet d'interroger
+une base de données sans se soucier de la représentation
+interne (physique) des données, de leur localisation,
+des chemins d'accès ou des algorithmes nécessaires. À ce titre
+il  constitue un des atouts les
+plus spectaculaires (et le plus connu) des SGBDR. On peut
+l'utiliser de manière interactive, mais également en
+association avec des interfaces graphiques, des outils
+de *reporting* ou, très généralement, des langages
+de programmation. 
+
+Ce dernier aspect est très important en pratique
+car SQL ne permet pas de faire de la programmation au sens
+courant du terme et doit donc être associé avec un langage
+comme le C, Java ou PHP pour réaliser des traitements complexes
+accédant à une base de données. .
+
+********************
+Requêtes simples SQL
+********************
+
+Dans tout ce chapitre on va prendre l'exemple de la (petite) base
+de données *Station* présentée dans le chapitre :ref:`chap-alg`. 
+
+Sélections simples
+==================
+
+Commençons par les requêtes les
+plus simples :  on souhaite extraire de la base
+le nom de toutes les stations se trouvant aux Antilles.
+
+.. code-block:: sql
+
+    select nom
+    from   Station
+    where  region = 'Antilles'
+
+Ce premier exemple montre la structure de base d'une requête
+SQL, avec les trois clauses ``select``, ``from`` et 
+``where``.
+
+  - ``from`` indique la (ou les) tables dans lesquelles
+    on trouve les attributs utiles à la requête.
+    Un attribut peut être \guill{utile} de deux manières
+    (non exclusives) : (1) on souhaite afficher son
+    contenu, (2) on souhaite qu'il ait une valeur
+    particulière (une constante ou la valeur d'un autre
+    attribut).
+  - ``select`` indique la liste des attributs 
+    constituant le résultat.
+  - ``where`` indique les conditions que doivent
+    satisfaire les n-uplets de la base pour 
+    faire partie du résultat.
+
+Dans l'exemple précédent, l'interprétation est simple :
+on parcourt les n-uplets de la relation ``Station``. Pour chaque
+n-uplet, si l'attribut ``region`` a pour valeur 'Antilles',
+on place l'attribut ``nom`` dans le 
+résultat. (Attention, ce n'est pas forcément ainsi
+que la requête est \emph{exécutée} par le système.)
+On obtient donc le résultat :
+
+.. csv-table:: 
+    :header:  "nom"
+    :widths:  10
+    
+      Venusa
+      Santalba 
+      
+Le résultat d'un ordre SQL est toujours une relation
+(une table) dont les attributs sont ceux spécifiés
+dans la clause ``select``. On peut donc considérer
+en première approche ce résultat comme un "découpage", horizontal
+et vertical, de la table indiquée dans le ``from``, similaire
+à une utilisation combinée de la sélection et de la projection
+en algèbre relationnelle. En fait on dispose d'un peu plus de liberté que cela. 
+On peut :
+
+  -  Renommer les attributs
+  -  Appliquer des fonctions aux valeurs de chaque n-uplet.
+  -  Introduire des constantes.
+
+Les fonctions applicables aux valeurs des attributs sont par 
+exemple les opérations arithmétiques (+, \*, ...)
+pour les attributs numériques ou des manipulations de 
+chaîne de caractères (concaténation,
+sous-chaînes, mise en majuscule, ...). Il n'existe pas de norme 
+mais la requête suivante devrait fonctionner sur tous les systèmes : on convertit 
+le prix des activités en dollars (en supposant qu'ils sont stockés en Euros).
+   
+.. code-block:: sql
+
+    select libelle, prix * 1.10
+    from   Activite
+    where  nom = 'Santalba'
+
+Ce qui donne le résultat :
+
+.. csv-table:: 
+    :header:  "libelle", "prix * 1.10"
+    :widths:  10, 10
+    
+     Kayac, 50.50
+      
+
+Renommage
+=========
+
+Les noms des attributs sont par défaut ceux indiqués
+dans la clause ``select``, même quand il y a des expressions
+complexes. Pour renommer les attributs, on utilise le mot-clé
+``as``.
+
+.. code-block:: sql
+
+     select libelle, prix * 1.10
+     from Activite
+     where  nom = 'Santalba'
+
+On obtient alors :
+
+
+.. csv-table:: 
+    :header:  "libelle", "prixEnEuros"
+    :widths:  10, 10
+    
+     Kayac, 50.50
+
+
+.. note::  Sur certains systèmes, le mot-clé ``as`` est optionnel.
+
+
+Doublons
+========
+
+L'introduction de fonctions permet d'aller au-delà de ce
+qui est possible en algèbre relationnelle. Il existe
+une autre différence, plus subtile : SQL permet
+l'existence de doublons dans les tables (il ne s'agit
+donc pas d'ensemble au sens strict du terme). La
+spécification de clés permet d'éviter les doublons
+dans les relations stockées, mais il peuvent apparaître
+dans le résultat d'une requête. Exemple :
+
+.. code-block:: sql
+
+    select libelle
+    from   Activite
+
+donnera autant de lignes dans le résultat que dans la table ``Activite``.
+
+.. csv-table:: 
+    :header:  "libelle"
+    :widths:  10
+    
+     Voile  
+     Plongée 
+     Plongée 
+     Ski  
+     Piscine  
+     Kayac   
+      
+Pour éviter d'obtenir deux n-uplets identiques, on peut
+utiliser le mot-clé ``distinct``.
+
+.. code-block:: sql
+
+    select distinct libelle
+    from   Activite
+
+Attention : l'élimination des doublons peut être
+une opération coûteuse.
+
+Tri du résultat
+===============
+
+Il est possible de trier le résultat d'un requête
+avec la clause ``order by`` suivie de la liste
+des attributs servant de critère au tri. Exemple :
+
+.. code-block:: sql
+
+    select   *
+    from     Station
+    order by tarif, nom
+
+trie, en ordre ascendant, les stations par leur tarif, puis,
+pour un même tarif, présente les stations selon l'ordre
+lexicographique. Pour trier en ordre descendant, on ajoute
+le mot-clé ``desc`` après la liste des attributs.
+
+Voici maintenant la plus simple des requêtes SQL :
+elle consiste à afficher l'intégralité d'une table.
+Pour avoir toutes les lignes on omet la clause ``where``,
+et pour avoir toutes les colonnes, on peut au choix lister
+tous les attributs ou utiliser le caractère '*' qui a la
+même signification.
+
+.. code-block:: sql
+
+   select *
+   from   Station
+
+La clause ``where``
+===================
+
+Dans la clause ``where``, on spécifie une condition
+portant sur les attributs des relations
+du ``from``. On utilise pour cela de manière standard
+le ``and``, le ``or``, le ``not`` et les
+parenthèses pour changer l'ordre de priorité
+des opérateurs booléens. Par exemple :
+
+.. code-block:: sql
+
+    select nom, libelle
+    from   Activite
+    where  nom  = 'Santalba'
+    and    (prix > 50 and prix < 120) 
+
+
+Les opérateurs de comparaison sont ceux du Pascal :
+<, <=, >, >, =, et <> pour 
+exprimer la différence (!=
+est également possible). Pour obtenir une recherche
+par intervalle, on peut également utiliser le mot-clé
+``between``. La requête précédente est
+équivalente à :
+
+.. code-block:: sql
+
+    select nom, libelle
+    from   Activite
+    where  nom = 'Santalba'
+    and    prix between 50 and 120
+
+**Chaînes de caractères**
+
+Les comparaisons de chaînes de caractères soulèvent
+quelques problèmes délicats. 
+
+  - Il faut être attentif aux différences entre chaînes de longueur
+    fixe et chaînes de longueur variable. Les premières
+    sont complétées par des blancs (' ') et pas les secondes.
+  - Si SQL ne distingue pas majuscules et minuscules
+    pour les mot-clés, il n'en va pas de même pour
+    les valeurs. Donc 'SANTALBA' est différent de 'Santalba'.
+
+SQL fournit des options pour les recherches par motif  (*pattern matching*) à l'aide
+de la clause ``like``. Le caractère '_' désigne n'importe
+quel caractère, et le '%' n'importe quelle chaîne de
+caractères.  Par exemple, voici la requête cherchant
+toutes les stations dont le nom termine par un 'a'.
+
+.. code-block:: sql
+
+    select nom
+    from   Station
+    where  nom like '%a'
+
+Quelles sont les stations dont le nom commence par un 'V' et comprend exactement 6 caractères ?
+
+.. code-block:: sql
+
+    select nom
+    from   Station
+    where  nom like 'V_____'
+
+**Dates**
+
+Une autre différence avec l'algèbre est la possibilité
+de manipuler des dates. En fait tous les systèmes proposaient
+bien avant la normalisation leur propre format de date, et la
+norme préconisée par SQL n'est de ce fait pas suivie par tous.
+
+Une date est spécifiée en SQL par le mot-clé ``date``
+suivi d'une chaîne de caractères au format 'aaaa-mm-jj',
+par exemple ``date '2016-01-01'``. Les zéros sont nécessaires
+afin que le mois et le quantième comprennent systématiquement
+deux chiffres.
+
+Les systèmes proposent de plus des fonctions permettant
+de calculer des écarts de dates, d'ajouter des mois ou des
+années à des dates, etc. 
+
+Valeurs nulles
+==============
+
+Autre spécificité de SQL par rapport à l'algèbre :
+on admet que la valeur de certains attributs soit
+inconnue, et on parle alors de *valeur nulle*,
+désignée par le mot-clé ``null``. Il
+est très important de comprendre que la "valeur nulle"
+n'est en fait pas une valeur mais une absence de valeur,
+et que l'on ne peut donc lui appliquer aucune des 
+opérations ou comparaisons usuelles. 
+
+ - Toute opération appliquée à ``null``  donne pour résultat ``null``.
+ - Toute comparaison avec ``null`` donne un résultat qui n'est ni vrai, ni faux mais
+   une troisième valeur booléenne, ``unknown``. 
+
+Les valeurs booléennes ``true``, ``false`` et
+``unknown`` sont définies de la manière
+suivante : ``true`` vaut 1, ``false`` 0
+et ``unknown`` 1/2. Les connecteurs logiques
+donnent alors les résultats suivants :
+
+  - *x* ``and``  *y = min(x, y)*
+  - *x* ``or`` *y = max(x, y)*
+  - ``not`` *x = 1 - x* 
+
+Les conditions exprimées dans une clause ``where``
+sont évaluées pour chaque n-uplet, et ne sont conservés
+dans le résultat que les n-uplets pour lesquels 
+cette évaluation donne ``true``. La présence 
+d'une valeur nulle dans une comparaison
+a donc souvent (mais pas toujours !)
+le même effet que si cette comparaison échoue et renvoie ``false``.
+
+Voici une instance de la table *Séjour* avec des 
+informations manquantes.
+
+{\tt
+\begin{center}
+\begin{tabular}{c|c|c|c}
+\multicolumn{4}{c}{Séjour}\\\hline
+idClient & station & début &  nbPlaces\\ \hline
+10 & Passac & 1998-07-01  & 2 \\
+20 & Santalba & 1998-08-03   &  \\
+30 & Passac &  &   3 \\ \hline
+\end{tabular}
+\end{center}
+}
+
+La présence de ``null`` peut avoir des effets surprenants.
+Par exemple la requête suivante
+
+.. code-block:: sql
+
+    select station
+    from   Sejour
+    where  nbPlaces <= 10 OR nbPlaces >= 10
+
+
+devrait en principe ramener toutes les stations de la table. En
+fait 'Santalba' ne figurera pas dans le résultat car 
+``nbPlaces`` est à ``null``.
+
+Autre piège : ``null`` est un mot-clé, pas une constante.
+Donc une comparaison comme  ``nbPlaces = null``
+est incorrecte. Le prédicat pour tester l'absence
+de valeur dans une colonne est *x* ``is null`` (et
+son inverse ``is not null``). La requête suivante
+sélectionne tous les séjours pour lesquels
+on connaît le nombre de places.
+
+.. code-block:: sql
+
+    select *
+    from   Sejour
+    where  nbPlaces is not null
+
+La présence de ``null`` est une source de problèmes :
+dans la mesure du possible il faut l'éviter en 
+spécifiant la contrainte ``not null`` ou en donnant
+une valeur par défaut.
+
+*****************************
+Requêtes sur plusieurs tables
+*****************************
+
+Les requêtes SQL décrites dans cette section
+permettent de manipuler simultanément plusieurs
+tables et d'exprimer les opérations binaires
+de l'algèbre relationnelle : jointure,
+produit cartésien, union, intersection, différence.
+
+Jointures
+=========
+
+La jointure est une des opérations les plus utiles
+(et donc une des plus courantes) puisqu'elle
+permet d'exprimer des requêtes portant sur
+des données réparties dans plusieurs tables. La syntaxe
+pour exprimer des jointures avec SQL est une extension 
+directe de celle étudiée précédemment
+dans le cas des sélections simples : on donne simplement
+la liste des tables concernées dans la
+clause ``from``, et on exprime les
+critères de rapprochement entre ces tables
+dans la clause ``where``.
+
+Prenons l'exemple
+de la requête suivante :
+\emph{donner le nom des clients avec le nom des stations 
+où ils ont séjourné}. Le nom du client
+est dans la table ``Client``, l'information
+sur le lien client/station dans la table ``Sejour``.
+Deux n-uplets de ces tables peuvent être joints
+s'ils concernent le même client, ce qui peut
+s'exprimer à l'aide de l'identifiant du client. On obtient
+la requête :
+
+.. code-block:: sql
+
+    select nom, station
+    from   Client, Sejour
+    where  id = idClient
+
+
+On peut remarquer qu'il n'y a pas dans ce cas d'ambiguité
+sur les noms des attributs : ``nom`` et ``id``
+viennent de la table ``Client``, tandis
+que ``station`` et ``idClient`` viennent de la table
+``Sejour``. Il peut arriver (il arrive de fait fréquemment)
+qu'un même nom d'attribut soit partagé par plusieurs
+tables impliquées dans une jointure. Dans ce cas on
+résout l'ambiguité en préfixant l'attribut par le
+nom de la table.
+
+Exemple : afficher le nom d'une station, son tarif
+hebdomadaire, ses activités et leurs prix.
+
+.. code-block:: sql
+
+    select nom, tarif, libelle, prix
+    from   Station, Activite
+    where  Station.id = Activite.idStation
+
+
+Comme il peut être fastidieux de répéter intégralement
+le nom d'une table, on peut lui associer un synonyme et utiliser
+ce synonyme en tant que préfixe. La requête
+précédente devient par exemple :\footnote{Au lieu
+de ``Station S``, la norme SQL2 préconise ``Station as S``,
+mais le ``as`` est parfois inconnu ou optionnel.}
+
+.. code-block:: sql
+
+    select S.nom, tarif, libelle, prix
+    from   Station as S, Activite as A
+    where  S.nom = A.nom
+
+Bien entendu, on peut effectuer des jointures sur un nombre 
+quelconque de tables, et les combiner avec des sélections.
+Voici par exemple la requête qui affiche le nom
+des clients habitant Paris, 
+les stations où ils ont séjourné avec
+la date, enfin le tarif hebdomadaire pour chaque station.
+
+
+.. code-block:: sql
+
+    select nom, station, debut, tarif
+    from   Client, Sejour, Station
+    where  ville = 'Paris'
+    and    id = idClient
+    and    station = nom
+
+Il n'y a pas d'ambiguité sur les noms d'attributs
+donc il est inutile en l'occurrence d'employer des synonymes.
+Il existe en revanche une situation où l'utilisation
+des synonymes est indispensable : celle ou l'on
+souhaite effectuer une jointure d'une relation
+avec elle-même. 
+
+Considérons la requête suivante : *Donner
+les couples de stations situées dans la même 
+région*. Ici toutes les informations nécessaires
+sont dans la seule table ``Station``,  mais on construit
+*un n-uplet* dans le résultat avec *deux n-uplets* partageant
+la même valeur pour l'attribut ``région``.
+
+Tout se passe comme s'il on devait faire la jointure
+entre deux versions distinctes de la table ``Station``.
+Techniquement, on résout le problème en SQL
+en utilisant deux synonymes distincts.
+
+
+.. code-block:: sql
+
+    select s1.nom, s2.nom
+    from   Station s1, Station s2
+    where  s1.region = s2.region
+
+On peut imaginer que ``s1`` et ``s2`` sont deux *curseurs*
+qui parcourent indépendamment la table ``Station`` et
+permettent de constituer des couples de n-uplets auxquels
+on applique la condition de jointure.
+
+Interprétation d'une jointure
+=============================
+
+L'interprétation d'une jointure est une généralisation
+de l'interprétation d'un ordre SQL portant sur une seule
+table. Intuitivement, on parcourt tous les n-uplets
+définis par la clause ``from``, et on leur
+applique la condition exprimée dans le ``where``. Finalement
+on ne garde que les attributs spécifiés dans la
+clause ``select``.
+
+Quels sont les n-uplets définis par le ``from`` ? Dans
+le cas d'une seule table, il n'y a pas de difficulté. Quand
+il y a plusieurs tables, on peut donner (au moins) deux
+définitions équivalentes :
+
+  -  **Boucles imbriquées**. On considère chaque
+     synonyme de table (ou par défaut chaque nom de table)
+     comme une *variable n-uplet*. Maintenant on construit
+     des boucles imbriquées, chaque boucle correspondant
+     à l'une des tables du ``from`` et permettant à la 
+     variable correspondante d'itérer sur le contenu de la table.
+        
+     À l'intérieur de l'ensemble des boucles, on applique 
+     la clause ``where``.
+
+  -  **Produit cartésien**. On construit le produit
+     cartésien des tables du ``from``, en préfixant
+     chaque attribut par le nom ou le synonyme de sa
+     table pour éviter les ambiguités. 
+
+     On est alors ramené à la situation où il y
+     a une seule table (le résultat du produit cartésien)
+     et on interprête l'ordre SQL comme dans le cas
+     des requêtes simples.
+
+La première interprétation est proche de ce que l'on
+obtiendrait si on devait programmer une requête avec un
+langage comme le C ou Pascal, la deuxième s'inspire
+de l'algèbre relationnelle.
+
+Union, intersection et différence
+=================================
+
+L'expression de ces trois opérations ensemblistes
+en SQL est très proche de l'algèbre relationnelle.
+On construit deux requêtes dont les résultats
+ont même arité (même nombre de colonnes et
+mêmes types d'attributs), et on les relie 
+par un des mot-clé ``union``, ``intersect``
+ou ``except``.
+
+Trois exemples suffiront pour illustrer ces opérations.
+
+  - Donnez tous les noms de région dans la base. 
+  
+    .. code-block:: sql
+    
+         select region from Station
+          union
+         select region from Client
+
+  -  Donnez les régions où l'on trouve à la fois
+     des clients et des stations.
+
+    .. code-block:: sql
+
+        select region from Station
+         intersect
+        select region from Client
+
+   -  Quelles sont les régions où l'on trouve
+      des stations mais pas des clients ?
+
+      .. code-block:: sql
+      
+          select region from Station
+            except 
+          select region from Client
+
+La norme SQL spécifie que les doublons doivent
+être éliminés du résultat lors des trois
+opérations ensemblistes. Le coût de l'élimination
+de doublons n'étant pas négligeable, il se peut
+cependant que certains systèmes fassent un choix
+différent.
+
+L'union ne peut être exprimée autrement qu'avec ``union``.
+En revanche ``intersect`` peut être exprimée avec une jointure,
+et la différence s'obtient, souvent de manière plus
+aisée, à l'aide des requêtes imbriquées.
+
+*******************
+Requêtes imbriquées
+*******************
+
+Jusqu'à présent les conditions exprimées dans le ``where``
+consistaient en comparaisons de valeurs scalaires. Il est
+possible également avec SQL d'exprimer des conditions sur
+des *relations*. Pour l'essentiel,
+ces conditions consistent en
+l'existence d'au moins un n-uplet dans la relation testée,
+ou en l'appartenance d'un n-uplet particulier à la relation.
+
+La relation testée est construite par une
+requête ``select ... from ... where`` que l'on 
+appelle sous-requête ou \emph{requête imbriquée}
+puisqu'elle apparaît dans la clause ``where``
+
+Conditions portant sur des relations
+====================================
+
+Une première utilisation des sous-requêtes est
+d'offrir une alternative syntaxique à l'expression
+de jointures. Les jointures concernées sont
+celles pour lesquelles le résultat est constitué
+avec des attributs provenant d'une seule des deux
+tables, l'autre ne servant que pour exprimer des
+conditions.
+
+Prenons l'exemple suivant : on veut les noms des stations
+où ont séjourné des clients parisiens. On peut
+obtenir le résultat avec une jointure classique.
+
+.. code-block:: sql
+
+    select station
+    from   Sejour, Client
+    where  id = idClient
+    and    ville = 'Paris'  
+
+Ici, le résultat, ``station``, provient de la table 
+*Séjour*. D'où l'idée de séparer la requête
+en deux parties : (1) on constitue avec une sous-requête
+les ``id`` des clients parisiens, puis (2) on utilise
+ce résultat  dans la requête principale.
+
+.. code-block:: sql
+
+    select  station
+    from    Sejour
+    where   idClient in (select id from Client
+                     where  ville = 'Paris')
+
+Le mot-clé ``in`` exprime clairement
+la condition d'appartenance de ``idClient``
+à la relation formée par la requête imbriquée.
+Le ``in`` est équivalent à ``= any``.
+
+.. code-block:: sql
+
+    select  nom, prenom
+    from    Client
+    where   region = any (select region from Station
+                     where  nom = 'Santalba')
+
+Voici les conditions que l'on peut exprimer sur une 
+relation *R* construite avec une requête imbriquée.
+
+  - ``exists R``. Renvoie ``true`` si *R* n'est pas vide, ``false`` sinon;
+  -  *t* ``in R`` où est un n-uplet dont le type
+     est celui de *R*. ``true`` si *t* appartient
+     à *R*, ``false`` sinon.
+  -  *v cmp* ``any R``, où *cmp* est un
+     comparateur SQL (*<*, *>*, *=*, etc.). Renvoie
+     ``true`` si la comparaison avec *au moins un*
+     des n-uplets de la relation unaire *R* renvoie ``true``.
+  -  *v* *cmp* ``all R``, où *cmp* est un
+     comparateur SQL (*<*, *>*, *=*, etc.). Renvoie
+     ``true`` si la comparaison avec *tous*
+     les n-uplets de la relation unaire *R* renvoie ``true``.
+
+De plus, toutes ces expressions peuvent être préfixées
+par ``not`` pour obtenir la négation. Voici quelques exemples.
+
+  - * Où (station, lieu) ne peut-on pas faire du ski ?*
+
+      .. code-block:: sql
+    
+          select nom, lieu
+          from   Station
+          where  nom not in (select nom from Activite
+                           where  libelle = 'Ski')
+
+  - * Quelle station pratique le tarif le plus élevé ?*
+
+      .. code-block:: sql
+
+          select nom
+          from   Station
+          where  tarif >= all (select tarif from Station)
+
+ -  * Dans quelle station pratique-t-on une activité
+      au même prix qu'à Santalba ?*
+
+      .. code-block:: sql
+ 
+          select nom, libelle
+          from   Activite
+          where  prix in (select prix from Activite
+                where  nom = 'Santalba')
+
+Ces requêtes peuvent s'exprimer sans imbrication
+(exercice), parfois de manière moins élégante
+ou moins concise. La différence, en particulier,
+s'exprime facilement avec ``not in`` ou
+``not exists``. 
+
+Sous-requêtes correlées
+=======================
+
+Les exemples de requêtes imbriquées donnés
+précédemment pouvait être évalués 
+indépendamment de la requête principale, ce
+qui permet au système (s'il le juge nécessaire)
+d'exécuter la requête en deux phases. Il peut
+arriver que la sous-requête soit basée sur 
+une ou plusieurs valeurs issues des relations de
+la requête principale. On parle alors de 
+*requêtes correlées*.
+
+Exemple : *quels sont les clients (nom, prénom)
+qui ont séjourné à Santalba*.
+
+.. code-block:: sql
+
+    select nom, prenom
+    from   Client
+    where  exists (select 'x' from Sejour
+                   where  station = 'Santalba'
+                   and    idClient = id)
+
+Le ``id`` dans la requête imbriquée n'appartient
+pas à la table ``Sejour`` mais à la table ``Client``
+référencée dans le ``from`` de la requête principale.
+
+.. note::  on peut employer un ``not in``
+   à la place du ``not exists`` (exercice), de même
+   que l'on peut toujours employer ``exists``
+   à la place de ``in``. Voici une des requêtes
+   précédentes où l'on a appliqué cette 
+   transformation, en utilisant de plus des synonymes.
+
+*Dans quelle station pratique-t-on une activité
+au même prix qu'à Santalba ?*
+
+.. code-block:: sql
+
+    select nom
+    from   Activite as a1
+    where  exists (select 'x'from Activite as a2
+                   where  nom = 'Santalba'
+                   and    a1.libelle = a2.libelle
+                   and    a1.prix = a2.prix)
+
+Cette requête est elle-même équivalente à une
+jointure sans requête imbriquée. 
+
+Jointures externes
+==================
+
+Voici une jointure entre *Station* et *Activité*.
+
+.. code-block:: sql
+
+     select nom, libelle
+     from   Station, Activite
+     where  id=idStation
+
+Cette requête renvoie le résultat suivant.
+
+.. csv-table:: 
+    :header: "nom","libellé"
+    :widths:  10, 10
+    
+      Venusa, voile
+      Venusa, Plongée
+      Farniente, Plongée
+      Passac, Ski
+      Passac, Piscine
+
+La station Santalba n'apparaît pas car elle ne
+propose pas d'activité.
+Pour éviter cet effet parfois
+indésirable, on peut effectuer une *jointure
+externe*. Ce type de jointure prend une table
+comme table directrice, conventionnellement considérée comme la
+table de gauche, et utilise la table de droite comme table
+optionnelle. Si, pour une ligne de la table de gauche, on trouve une
+ligne satisfaisant le critère de jointure dans la table de droite,
+alors la jointure s'effectue normalement. Sinon les attributs
+provenant de la table de droite sont affichés à ``null``.
+
+La clause de jointure externe est ``left outer join`` 
+et le critère de jointure doit être précédé du mot-clé ``on``.
+Voici la jointure externe entre *Station* et
+*Activité*.  Le mot-clé ``outer`` est en fait optionnel.
+
+.. code-block:: sql
+
+     select nom, Libelle
+     from Station left outer join Activite on id=idStation
+
+On obtient le résultat suivant. Notez que le libellé est à ``null`` pour
+Santalba.
+
+.. csv-table:: 
+    :header: "nom","libellé"
+    :widths:  10, 10
+    
+      Venusa, voile
+      Venusa, Plongée
+      Farniente, Plongée
+      Passac, Ski
+      Passac, Piscine
+      Santalba, null
+
+On peut combiner la jointure externe avec 
+des jointures normales, des sélections, des tris, etc.
+
+.. code-block:: sql
+
+     select f.titre, prenom, nom, nomRole
+     from Film as f left outer join Role as r on f.titre=r.titre, Artiste
+     where  annee < 1995
+     and    id = idActeur
+     order by annee;
+
+***********
+Agrégration
+***********
+
+Toutes les requêtes vues jusqu'à présent pouvaient être interprétées comme une suite
+d'opérations effectuées *n-uplet à n-uplet*. De même le résultat était toujours constitué
+de valeurs issues de n-uplets individuels. Les fonctionnalités *d'agrégation* de SQL
+permettent  d'exprimer des conditions *sur
+des groupes de n-uplets*, et de constituer le
+résultat par *agrégation de valeurs* au sein de chaque groupe.
+
+La syntaxe SQL fournit donc :
+
+  -  Le moyen de partitioner une relation en *groupes* selon certains critères.
+  -  Le moyen d'exprimer des conditions sur ces groupes.
+  -  Des fonctions d'agrégation.
+
+Il existe un groupe par défaut : c'est la relation toute entière. Sans même définir de groupe,
+on peut utiliser les fonctions d'agrégation.
+
+Fonctions d'agrégation
+======================
+
+Ces fonctions s'appliquent à une colonne, en général
+de type numérique. Ce sont :
+
+  -  ``count`` qui compte le nombre de valeurs
+     *non nulles*.
+  -  ``max`` et ``min``.
+  -  ``avg`` qui calcule la moyenne des valeurs de la colonne.
+  -  ``sum`` qui effectue le cumul.
+
+Exemple d'utilisation de ces fonctions :
+
+.. code-block:: sql
+
+    select count(nom), avg(tarif), min(tarif), max(tarif)
+    from   Station
+
+.. important::  on ne peut pas utiliser simultanément
+   dans la clause ``select`` des fonctions d'agrégation
+   et des noms d'attributs (sauf dans le cas d'un ``group by``,
+   voir plus loin). La requête suivante est incorrecte (pourquoi ?).
+
+.. code-block:: sql
+
+    select nom, avg(tarif)
+    from   Station
+
+À condition de respecter cette règle,
+on peut utiliser les ordres SQL les plus complexes. Exemple :
+*Combien de places a réservé Mr Kerouac
+pour l'ensemble des séjours ?*
+ 
+.. code-block:: sql
+
+    select sum (nbPlaces)
+    from   Client, Sejour
+    where  nom = 'Kerouac'
+    and    id = idClient
+
+La clause ``group by``
+======================
+
+Dans les requêtes précédentes, on appliquait
+la fonction d'agrégation à l'ensemble du résultat
+d'une requête (donc éventuellement à l'ensemble
+de la table elle-même). Une fonctionnalité
+complémentaire consiste à *partitioner*
+ce résultat en groupes, et à appliquer la
+ou les fonction(s) à chaque groupe.
+
+On construit les groupes en associant les n-uplets partageant la même valeur pour 
+une ou plusieurs colonnes.
+
+Exemple : afficher les régions avec le
+nombre de stations.
+
+.. code-block:: sql
+
+    select   region, count(nom)
+    from     Station
+    group by region
+
+Donc ici on constitue un groupe pour chaque région. Puis
+on affiche ce groupe sous la forme d'un n-uplet, dans lequel
+les attributs peuvent être de deux types :
+
+  - les attributs *dont la valeur est constante
+    pour l'ensemble du groupe*, soit précisément
+    les attributs du ``group by``. Exemple ici 
+    l'attribut ``region`` ;
+  - le résultat d'une fonction d'agrégation
+    appliquée au groupe : ici ``count(nom)``.
+
+Bien entendu il est possible d'exprimer des ordres SQL
+complexes et d'appliquer un ``group by`` au résultat.
+De plus, il n'est pas nécessaire de faire figurer
+tous les attributs du ``group by`` dans
+la clause ``select``.
+
+Exemple : on souhaite consulter le nombre de places
+reservées, *par client*.
+
+.. code-block:: sql
+
+    select   nom, sum (nbPlaces)
+    from     Client, Sejour
+    where    id = idClient
+    group by id, nom
+
+
+L'interprétation est simple : (1) on exécute d'abord
+la requête ``select ... from ... where``, puis (2)
+on prend le résultat et on le partitione, enfin (3) on
+calcule le résultat des fonctions.
+
+À l'issue de l'étape (2), on peut imaginer une relation
+qui n'est pas en première forme normale : on y
+trouverait des n-uplets avec les attributs du ``group by``
+sous forme de valeur atomique, puis des attributs 
+de type *ensemble* (donc interdits dans le modèle
+relationnel).
+
+La clause ``having``
+====================
+
+Finalement, on peut faire porter des conditions sur
+les groupes avec la clause ``having``. La clause
+``where`` ne peut exprimer des conditions 
+que sur les n-uplets pris un à un.
+
+Exemple : on souhaite consulter le nombre de places
+reservées, par client, *pour les clients
+ayant réservé plus de 10 places*.
+
+.. code-block:: sql
+
+    select   nom, sum (nbPlaces)
+    from     Client, Sejour
+    where    id = idClient
+    group by nom
+    having sum (nbPlaces) >= 10
+
+On voit que la condition porte ici sur une propriété
+de l'ensemble des n-uplets du groupe, et pas de chaque 
+n-uplet pris individuellement. La clause ``having`` 
+est donc toujours exprimée sur le résultat de
+fonctions d'agrégation.
+
+************
+Mises à jour
+************
+
+Les commandes de mise à jour (insertion,
+destruction, modification) sont considérablement plus 
+simples que les requêtes. 
+
+Insertion
+=========
+
+L'insertion s'effectue avec la commande ``insert``
+dont la syntaxe est la suivante :
+
+.. code-block:: sql
+
+      insert into R(a1, a2, ... an) values (v1, v2, ... vn)
+
+``R`` est le nom d'une relation, et les ``a1, ... an``
+sont les noms des attributs dans lequels on souhaite placer
+une valeur. \emph{Les autres attributs seront donc à ``null``
+(ou à la valeur par défaut)}.
+Tous les attributs spécifiés ``not null`` (et
+sans valeur par défaut) doivent donc figurer dans une clause ``insert``.
+
+Les ``v1, ... vn`` sont les valeurs des attributs. Exemple
+de l'insertion d'un n-uplet dans la table ``Client``.
+
+.. code-block:: sql
+
+     insert into Client (id, nom, prenom)
+     values (40, 'Moriarty', 'Dean')
+
+Donc, à l'issue de cette insertion, les attributs
+``ville`` et ``region`` seront à ``null``.
+
+Il est également possible d'insérer dans une table
+le résultat d'une requête. Dans ce cas la
+partie ``values`` est remplacée par
+la requête elle-même.
+
+Exemple : on a créé une table *Sites (lieu, region)*
+et on souhaite y copier les paires *(lieu, region)*
+déjà existant dans la table ``Station``.
+
+.. code-block:: sql
+
+    insert into Sites (lieu, region)
+    select lieu, region from Station
+
+Bien entendu le nombre d'attributs et le type
+de ces derniers doivent être cohérents.
+
+Destruction
+===========
+
+La destruction s'effectue avec la clause ``delete``
+dont la syntaxe est :
+
+.. code-block:: sql
+
+    delete from R
+    where condition
+
+``R`` est bien entendu la table, et ``condition``
+est toute condition valide pour une clause ``where``.
+En d'autres termes, si on effectue, avant la destruction,
+la requête
+
+.. code-block:: sql
+  
+    select * from R
+    where condition
+
+on obtient l'ensemble des lignes qui seront détruites
+par ``delete``. Procéder de cette manière est un des moyens de
+s'assurer que l'on va bien détruire ce que l'on souhaite....
+
+Exemple : destruction de tous les clients dont
+le nom commence par 'M'.
+
+.. code-block:: sql
+
+    delete from Client
+    where nom like 'M%'
+ 
+Il va sans dire que la destruction doit être effectuée avec précaution. 
+
+.. important:: Une destruction (une mise à jour en général) n'est définitive
+   qu'une fois que la *transaction* en cours est validée par ``commit``. C'est
+   un aspect très important des systèmes relationnels: voir les chapitres
+   sur les transactions dans le cours sur les aspects système.
+
+Modification
+============
+
+La modification s'effectue avec la clause ``update``. La
+syntaxe est proche de celle du ``delete`` :
+
+.. code-block:: sql
+
+     update R set A1=v1, A2=v2, ... An=vn
+     where condition
+
+
+``R`` est la relation, les ``Ai`` sont les attributs,
+les ``vi`` les nouvelles valeurs et ``condition``
+est toute condition valide pour la clause ``where``.
+
+Exemple : augmenter le prix des activités de la
+station Passac de 10\%.
+
+.. code-block:: sql
+
+    update Activite
+    set  prix = prix * 1.1
+    where nom = 'Passac'
+
+Comme indiqué précédemment, toutes les mises à jour
+ne deviennent définitives qu'à l'issue
+d'une validation par ``commit``. Entretemps
+elles peuvent être annulées par ``rollback``. 

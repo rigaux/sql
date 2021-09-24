@@ -1,0 +1,138 @@
+\documentclass[12pt,aspectratio=169]{beamer}
+%\documentclass[14pt,aspectratio=169,handout,a4paper]{beamer}
+
+%\usepackage{beamerthemeMadrid}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{textcomp}
+\usepackage{eurosym}
+\usepackage{hyperref}
+
+\usepackage{tabularx}
+\usepackage{graphicx}
+%\usepackage{mathptmx}
+%\usepackage{helvet}
+%\usepackage{times}
+
+\subtitle{Programmation objet: premiers pas en Java}
+\author[F. Barthélemy]{François Barthélemy}
+\institute[Le Cnam]{Le Cnam, Département Informatique}
+\date{}
+%\texttt{francois.barthelemy@cnam.fr}}
+%\email{francois.barthelemy@cnam.fr}
+%\date{Directoire Tice -- 26 juin 2012}
+
+\usetheme{Boadilla}
+\usecolortheme{beaver}
+%\usetheme{fbmooc}
+%\useoutertheme{fbmooc}
+
+%\setbeamersize{sidebar width right=4cm}
+%\setbeamercolor{sidebar}{bg=white}
+%\setbeamercolor{headline}{fg=red, bg=white, structure=white}
+%\setbeamercolor*{title in head}{parent=palette quaternary}
+%\usecolortheme{beaver}
+%\setbeamercolor{sidebar}{bg=white}
+%\usefonttheme{default}
+
+%% \makeatletter
+%% \setbeamertemplate{sidebar canvas right}{}
+%% %% \setbeamertemplate{sidebar right}{%
+%% %%   %\vspace*{\fill}
+%% %%   \includegraphics[width=3.8cm]{lecnamlogo}
+%% %%   \vspace*{\fill}
+%% %% }
+%% \makeatother
+
+%% %\logo{\includegraphics[height=0.5cm]{lecnamlogo}}
+
+%% \definecolor{codecolor}{rgb}{0.84, 0.04, 0.33}
+%% \definecolor{darkgreen}{rgb}{0.01, 0.75, 0.24}
+
+%% \newcommand{\bleu}[1]{\textcolor{blue}{#1}}
+%% \newcommand{\envert}[1]{\textcolor{darkgreen}{#1}}
+%%\setbeamerfont{footline}{size=\fontsize{9}{11}\selectfont}
+%% \beamertemplatenavigationsymbolsempty
+%% \usefonttheme{default}
+
+%% \usepackage{fbmooctitle}
+%% \definecolor{beamerstructure}{RGB}{0,0,0}
+%% \definecolor{sidebackground}{RGB}{0.39,0.35,0.26}
+%% \definecolor{prune}{rgb}{0.68,0.07,0.5}
+\definecolor{gris}{rgb}{0.59,0.59,0.58}
+\definecolor{grisclair}{rgb}{0.8,0.8,0.8}
+\definecolor{rouge}{rgb}{0.6,0,0}
+%% \definecolor{monfond}{rgb}{1,1,1}
+%% \setbeamercolor{structure}{fg=prune}
+%% \setbeamercolor{background canvas}{bg=monfond}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\setbeamertemplate{headline}
+{
+%  \leavevmode%
+%  \hbox{%
+%  \begin{beamercolorbox}[wd=.45\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+%    \usebeamerfont{title in head/foot}\inserttitle\expandafter\beamer@ifempty\expandafter{\beamer@shortinstitute}{}%{~~(\insertshortinstitute)}
+%  \end{beamercolorbox}%
+%  \begin{beamercolorbox}[wd=.65\paperwidth,ht=2.25ex,dp=1ex,left]{date in head/foot}%
+%     \hspace*{2em}\usebeamerfont{date in head/foot}\insertsubtitle{}\hspace*{2em}
+%     %\insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+%  \end{beamercolorbox}}%
+%  \vskip0pt%
+}
+\makeatother
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%\setbeamersize{text margin right=30ex} 
+\setbeamersize{text margin right=25ex} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\setbeamercolor{date in head/foot}{fg=rouge,bg=grisclair}
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.10\paperwidth,ht=6.25ex,dp=3ex,center]{author in head/foot}%
+   \textbf{ \small{\bf \insertframenumber{} }}\hspace*{1ex}
+    %\usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+  \end{beamercolorbox}}%
+   \begin{beamercolorbox}[wd=.90\paperwidth,ht=6.25ex,dp=3ex]{date in head/foot}%
+    \hspace*{5ex}\usebeamerfont{author in head/foot}\textbf{\small{\bf\insertshortauthor\hspace*{2ex}-\hspace*{2ex}\insertshorttitle}}%\expandafter\beamer@ifempty\expandafter{\beamer@shortinstitute}{}{~~(\insertshortinstitute)}%
+  \end{beamercolorbox}%
+%   \begin{beamercolorbox}[wd=.40\paperwidth,ht=2.25ex,dp=1ex,left]{date in head/foot}%
+%     %\insertframenumber{} / \inserttotalframenumber\hspace*{6ex}
+%     \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+%  \end{beamercolorbox}
+  }%
+  \vskip0pt%
+
+\makeatother
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setbeamerfont{frametitle}{series=\bfseries}
+%\definecolor{codecolor}{rgb}{0.3, 0.15, 1}
+\definecolor{codecolor}{rgb}{0, 0, 1}
+\newcommand{\code}[1]{\textcolor{codecolor}{\texttt{\textbf{#1}}}}
+\newcommand{\prend}{$\leftarrow$}
+\newcommand{\paseg}{$\neq$}
+%0.68,0.07,0.5
+\beamertemplatenavigationsymbolsempty
+   
+\usefonttheme{structurebold}
+\setbeamerfont{title}{series=\bfseries,parent=structure}
+%\setbeamertemplate{itemize subitem}{\normalsize\raise1.25pt\hbox{\donotcoloroutermaths$\blacktriangleright$}} 
+%\usesubitemizeitemtemplate{%
+%    \normalsize\raise1.5pt\hbox{\color{beamerstructure}$\blacktriangleright$}%
+%}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+
+\newcommand{\thecode}[1]{\textcolor{blue}{#1}}
+\newcommand{\somecode}[1]{
+\begin{semiverbatim}
+\thecode{#1}
+\end{semiverbatim}}

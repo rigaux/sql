@@ -1,0 +1,107 @@
+
+
+\begin{frame}{Niveaux d'isolation SQL}
+
+La norme SQL définit 4 niveaux.
+Un ``vrai''  SGBD en propose au moins deux
+
+\vfill
+
+\begin{redbullet}
+  \item \alert{Isolation totale} (\texttt{serializable}). 
+  
+     Garantit l'ACIDité, mais augmente les verrouillages, parfois l'interblocage
+   
+  \item \alert{Isolation partielle} (\texttt{read committed} 
+     ou \texttt{repeatable read}) 
+     
+     Permet des anomalies (rares), évite les interblocages.
+\end{redbullet}
+ 
+ \vfill
+ 
+ Le choix est une question de compromis, sachant que l'isolation,
+ par défaut, est partielle
+
+\end{frame}
+
+\begin{frame}{L'isolation partielle}
+
+ Le mode \texttt{read committed}
+
+\vfill
+   \alert{Retenir}: une requête accède à l'état de la base \alert{au moment où la
+requête est exécutée}.
+  
+\vfill
+
+Le mode \texttt{repeatable read}
+
+\vfill
+
+\alert{Retenir}: une requête accède à l'état de la base \alert{au moment où la
+transaction a débuté}.
+
+\vfill
+
+\alert{Anomalie possible}
+
+\begin{redbullet}
+  \item Deux transactions lisent puis modifient le même nuplet 
+   \item La seconde modification annule la première (qui est donc perdue)
+\end{redbullet}
+\end{frame}
+
+
+\begin{frame}[fragile]{Isolation totale}
+
+C'est le mode \texttt{serializable}. Il
+garantit  la cohérence de la base.
+
+\vfill
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\small,
+               framesep=2mm]{sql}
+set transaction isolation level serializable;
+\end{minted}
+
+\vfill
+
+\alert{Interblocage possible}
+
+\vfill
+
+
+\begin{redbullet}
+  \item Deux transactions lisent le même nuplet 
+  
+   \item Puis toutes deux veulent modifier ce nuplet, et s'interbloquent
+
+\end{redbullet}
+\end{frame}
+
+\begin{frame}{Ce qu'on doit savoir }
+
+Avec un niveau d'isolation partielle, l'exécution est plus fluide,  
+les anomalies sont possibles.
+
+\vfill
+
+En isolation totale, la cohérence est assurée, mais l'exécution risque de rencontrer des blocages,
+\vfill
+
+\alert{Le niveau d'isolation par défaut n'est jamais le plus strict}. Car
+
+\begin{redbullet}
+  \item inutile dans la grande majorité des cas;
+  \item provoque rejets et blocages difficiles à expliquer à l'utilisateur.  
+\end{redbullet}
+
+\vfill
+
+\alert{Méfiance}\,: en isolation partielle, un programme testé 1\,000 fois
+peut malgré tout engendrer des anomalies transactionnelles
+
+\end{frame}

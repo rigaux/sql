@@ -1,0 +1,29 @@
+Plan d'avancement du cours NFP107
+=================================
+
+11 octobre
+----------
+
+  Modèle relationnel -> 
+  
+15 novembre
+-----------
+
+   SQL, forme déclarative et algébrique
+   TP SQL
+   
+6 décembre
+----------
+ 
+   Conception et schémas
+   
+20 décembre
+-----------
+
+   Procédures et transactions
+   
+Mi janvier
+----------
+
+   Etude de cas et révisions
+   

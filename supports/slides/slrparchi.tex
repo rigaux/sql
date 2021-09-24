@@ -1,0 +1,204 @@
+\documentclass[aspectratio=169, handout]{beamer} %aspectratio: définit le format 16/9 ; handout = supprime la barre de navigation
+
+
+\usepackage{mooc-macros}
+
+\title {Semaine 5\,: Reprise sur panne}
+\subtitle{}
+\author {Philippe}
+\date{}
+
+\begin{document}
+
+
+\begin{frame}{Le buffer et le disque}
+
+\figSlideWithSize{buffer-disque}{8cm}
+
+\end{frame}
+
+\begin{comment}
+\begin{frame}{Opération de lecture}
+
+Toute opération de lecture contient l'adresse du bloc à lire. 
+
+\vfill
+
+ Si le bloc est dans  le buffer, le système accède à la donnée dans le bloc,  et la retourne.
+
+\vfill
+
+Sinon il faut d'abord lire un bloc du disque, et le placer dans le buffer.
+
+\vfill
+
+Le SGBD garde en mémoire
+les blocs après lecture.
+
+
+    
+    %insertion de la zone rouge auteur et du logo   
+        \begin{textblock*}{154px}(0.8cm,8.3cm)
+            \includegraphics[width=154px,height=19.5px]{cnam-auteur}
+        \end{textblock*} 
+        
+    %insertion du nom de l'auteur
+        \begin{textblock*}{80px}(1.1cm,8.5cm)
+            {\color{MoocLab-white}   \fontsize{9}{11}\selectfont Philippe Rigaux}
+        \end{textblock*}
+    
+\end{frame}
+\end{comment}
+
+
+\begin{frame}{Stratégie de remplacement}
+
+
+Que faire quand la mémoire est pleine?
+
+\vfill
+
+L'algorithme le plus courant est dit Least Recently Used (LRU).
+
+\begin{redbullet}
+  \item  La "victime" est le bloc dont la dernière date de lecture logique est la plus ancienne. 
+  \item Ce bloc est alors soustrait de la mémoire centrale.
+  \item  Le nouveau bloc vient le remplacer.
+\end{redbullet}
+
+\vfill
+
+\end{frame}
+
+
+\begin{frame}{Opération de mise à jour}
+
+\vfill
+
+
+\begin{tabular}{m{.6\textwidth} m{.3\textwidth}}
+
+\figSlideWithSize{write-naif}{8cm}
+&
+On trouve le bloc (comme pour une lecture), on modifie la donnée.
+\end{tabular}
+
+
+\medskip
+
+Faut-il écrire le bloc ou non? 
+
+\end{frame}
+
+\begin{frame}{Mise à jour immédiate}
+
+
+\vfill
+
+\begin{tabular}{m{.6\textwidth} m{.3\textwidth}}
+
+\figSlideWithSize{write-immediat}{8cm}
+&
+Dès qu'un bloc est modifié, on écrit sur le disque pour synchroniser.
+\end{tabular}
+
+\medskip
+
+\begin{tabular}{p{9cm}p{5cm}}
+\begin{redbullet}
+  \item Peu performant: \alert{écritures aléatoires}
+  \item \alert{On écrase l'image avant} 
+\end{redbullet}
+&
+~
+\end{tabular}
+
+
+\end{frame}
+
+
+
+\begin{frame}{Mise à jour différée}
+
+
+\begin{tabular}{m{.6\textwidth} m{.3\textwidth}}
+
+\figSlideWithSize{write-differe}{8cm}
+&
+On \alert{interdit} l'écriture d'un bloc modifié avant le \texttt{commit}
+\end{tabular}
+
+\medskip
+
+\begin{tabular}{p{9cm}p{5cm}}
+\begin{redbullet}
+  \item Risque de surcharger le buffer
+  \item Préserve l'image avant
+\end{redbullet}
+&
+~
+\end{tabular}
+
+\end{frame}
+
+\begin{frame}{Mise à jour opportuniste}
+
+\vfill
+
+\begin{tabular}{m{.6\textwidth} m{.3\textwidth}}
+
+\figSlideWithSize{write-opportuniste}{7.5cm}
+&
+C'est la méthode la plus souple: on attend la meilleure
+opportunité pour synchroniser le buffer et le disque.
+\end{tabular}
+
+\medskip
+
+\begin{tabular}{p{9cm}p{5cm}}
+Le moins pénalisant; permet des écritures
+successives dans le buffer.
+&
+~
+\end{tabular}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Résumé: lecture/écriture, buffer et disque}
+
+
+Retenir:
+\vfill
+\begin{redlist}
+  \item Une partie de la base est copiée dans le buffer.
+      
+   \item Tout mise à jour s'effectue \alert{d'abord dans le buffer}.
+      
+    \item La synchronisation avec le disque peut s'effectuer
+       de manière \alert{immédiate}, \alert{différée}, ou \alert{opportuniste}.
+
+\end{redlist}
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+La méthode de synchronisation a un impact fort sur la reprise sur panne.
+&
+~
+\end{tabular}
+
+
+
+
+\only<2|handout:2>{
+\vfill
+\centerline{\alert{Merci!}}
+}
+
+
+\end{frame}
+
+
+\end{document}

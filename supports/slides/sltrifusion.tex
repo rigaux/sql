@@ -1,0 +1,148 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Tri externe}
+
+Le \alert{tri externe} est utilisé,
+
+\begin{redbullet}
+  \item pour les algorithmes de jointure (\textit{sort/merge})
+
+   \item l'élimination des doublons (clause \texttt{distinct})
+
+    \item pour les opérations de regroupement (\texttt{group by})
+
+   \item ... et bien sûr pour les \texttt{order by}
+\end{redbullet}
+
+C'est une opération qui peut être très coûteuse
+sur de grands jeux de données.
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Première phase\,: le tri}
+
+On remplit la mémoire, on trie, on vide
+dans des \alert{fragments}, et
+on recommence.
+
+\medskip
+
+\figSlide{phasetri}
+
+\medskip
+
+Coût\,: une lecture + une écriture du fichier.
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Fusion de listes triées}
+
+\figSlideWithSize{fusion}{9cm}
+
+\end{frame}
+
+\begin{frame}{Deuxième phase\,: la fusion}
+
+On groupe les fragments par $M$ (taille de la zone
+de tri), et on fusionne.
+
+\medskip
+
+
+\figSlideWithSize{trifusion}{9cm}
+
+\medskip
+
+Coût\,: autant de lectures/écritures du fichier que de niveaux
+de fusion.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Illustration avec $M = 3$}
+
+\figSlideWithSize{tri-fusion}{9cm}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Essentiel\,: la taille de la zone de tri}
+
+Un fichier de 75~000 pages de 4 Ko, soit 307 Mo.
+\begin{redbullet}
+  \item \textbf{$M > 307 Mo$}\,: une lecture, soit 307 
+
+  \item \textbf{$M = 2 Mo$}, soit 500 pages.
+    \begin{itemize}
+      \item le tri donne $\lceil \frac{307}{2} \rceil = 154$
+        fragments.
+
+      \item On fait la fusion avec $154$ pages
+     \end{itemize}
+       Coût total de $614 + 307 = 921$ Mo. 
+\end{redbullet}
+
+NB\,: il faut allouer beaucoup de mémoire pour
+passer de 1 à 0 niveau de tri.
+
+\end{frame}
+
+
+\begin{frame}{Avec très peu de mémoire}
+
+\textbf{$M = 1 Mo$}, soit 250 pages.
+
+\vfill
+
+    \begin{redbullet}
+       \item on obtient 307 fragments.
+
+       \item On fusionne les 249 premiers fragments,
+               puis les 58 restant. On obtient $F_1$ et $F_2$.
+        \item On fusionne $F_1$ et $F_2$.
+   \end{redbullet}
+
+\vfill
+
+ Coût total\,: $1\,228 + 307 = 1\,535$ Mo.
+\vfill
+Résultat\,: grosse dégradation entre 2 Mo et 1 Mo (calcul
+approximatif).
+
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{L'opérateur de tri}
+
+L'opérateur de tri est \alert{bloquant}
+
+\begin{redbullet}
+  \item Les deux phases du tri-fusion sont effectuées pendant le \textit{open()}
+  \item Le \textit{next()} ne fait que lire, un à un, les tuples dans le
+     résultat du tri.
+\end{redbullet}
+
+\vfill
+
+Conséquence: \alert{latence importante des requêtes impliquant un tri}
+
+\vfill
+
+Grosse différence entre:
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select * from Film
+\end{minted}
+et
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select * from Film order by titre
+\end{minted}
+\end{frame}
+

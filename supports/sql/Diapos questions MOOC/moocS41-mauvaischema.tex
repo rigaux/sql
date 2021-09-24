@@ -1,0 +1,102 @@
+
+\begin{frame}{Pourquoi pas une unique table\,?}
+
+\begin{small}
+\begin{tabular}{c|c|c|c|c}
+\textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu} & \textbf{codeActivité}\\ \hline 
+Causses & 45 & Auberge & Cévennes & Randonnée\\ \hline 
+Génépi & 134 & Hôtel & Alpes & Piscine\\ \hline 
+Génépi & 134 & Hôtel & Alpes & Ski\\ \hline 
+U Pinzutu & 10 & Gîte & Corse & Plongée\\ \hline 
+U Pinzutu & 10 & Gîte & Corse & Voile\\ \hline 
+Tabriz & 34 & Hôtel & Bretagne & Voile\\ \hline 
+\end{tabular}
+\end{small}
+
+\vfill
+
+Risques d'anomalies et d'incohérences en \alert{insertion}, \alert{modification}
+et \alert{suppression}. 
+\end{frame}
+
+
+\begin{frame}{Anomalies d'insertions}
+
+\alert{Pas d'insertion de logement sans connaître au moins une activité}
+\vfill
+
+Ou il faut accepter beaucoup de valeurs nulles. Très difficilement gérable.
+
+\vfill
+
+\alert{À chaque nouvelle activité, je dois répéter les informations du logement}
+\vfill
+
+Source de redondances et d'incohérences.
+
+\end{frame}
+
+
+\begin{frame}{Anomalies de mises à jour}
+
+\alert{Si je modifie un logement (capacité) je dois le faire autant de fois qu'il y a d'activités}
+\vfill
+
+Si j'oublie, la base devient incohérente
+
+\vfill
+
+\alert{Si je supprime une activité, je risque de supprimer le logement}
+\vfill
+
+Il faut donc tester si l'activité supprimée est la dernière du logement
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Schémas normalisés}
+
+Les anomalies précédentes seraient  difficilement acceptables.
+
+\vfill
+
+En pratique, on applique 
+un processus de \alert{normalisation}
+
+\begin{redbullet}
+  \item L'ensemble des attributs est \alert{décomposé} en plusieurs tables
+  \item Cette répartition se fait \alert{sans perte d'information}. 
+     Les \alert{jointures} permettent de reconstituer les liens avant décomposition.
+     
+   \item L'information initiale peut alors être présentée sous  forme de \alert{vue},
+     sans les inconvénients de la matérialisation.
+\end{redbullet}
+ 
+ \vfill
+ La conception d'une base relationnelle consiste à obtenir un schéma normalisé
+ et sans perte d'information. 
+\end{frame}
+
+
+
+%%%%%%ù
+
+\begin{frame}{À retenir}
+
+On s'applique à obtenir des schémas normalisés, sans anomalie
+\vfill
+\begin{redbullet}
+  \item C'est un choix qui simplifie la tâche des applications
+  \item En contrepartie il implique de reconstituer, par jointure, l'information
+     quand elle est répartie dans plusieurs tables.
+   \item L'information de départ peut être représentée par une vue
+       (\alert{calculée}), sans les anomalies d'une table (\alert{matérialisée})
+ \end{redbullet}
+
+\vfill
+
+Se reporter au premier cours sur le modèle relationnel (notions
+de vues matérialisées ou non)
+\end{frame}
+

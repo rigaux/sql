@@ -1,0 +1,175 @@
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Le schéma de la base ``Messagerie''}
+
+On part du schéma entité-association.
+
+\vfill
+
+\figSlideWithSize{ea-messagerie.pdf}{9cm}
+\vfill
+
+
+Contient tout ce qu'il faut savoir pour créer le schéma relationnel.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Application de l'algorithme de normalisation}
+
+
+Les dépendances données par les entités\,:
+\vfill
+
+\begin{redbullet}
+  \item $idContact \to nom, pr\acute{e}nom, email$
+    \item $idMessage \to contenu, dateEnvoi$
+\end{redbullet}
+
+Les dépendances données par les associations\,:
+\vfill
+
+\begin{redbullet}
+        \item $idMessage \to idPr\acute{e}d\acute{e}cesseur$ (message précédent)
+        \item $idMessage \to idEmetteur$ (contact)
+\end{redbullet}
+
+\vfill
+
+Ne pas oublier la clé \texttt{(idContact, idMessage)}
+de l'association \textit{à destination  de}.
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Le schéma de notre base}
+
+Trois tables\,:
+\vfill
+
+\begin{redbullet}
+  \item Contact (\textbf{idContact},  nom,prénon, email)
+    \item Message (\textbf{idMessage},  contenu, dateEnvoi, \textit{idEmetteur},
+        \textit{idPrédécesseur})
+    \item Envoi (\textbf{\textit{idDestinataire}, \textit{idMessage}})
+\end{redbullet}
+\vfill
+
+Clés primaires en \textbf{gras}, clés étrangères en \textit{italiques}.
+
+\vspace*{0.5cm}
+
+De plus, \texttt{email} est une \alert{clé secondaire} de \texttt{Contact}
+
+
+\end{frame}
+
+
+%%%%%%%
+\begin{frame}[fragile]{Créons les tables}
+
+Commençons par la table \texttt{Contact}
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Contact (idContact integer not null,
+                      nom varchar(30) not null,
+                      prénom varchar(30)  not null,
+                      email varchar(30) not null,
+                      primary key (idContact),
+                      unique (email)
+                   );  
+\end{minted}
+
+\vfill
+
+\alert{Noter}\,: la clause \sqlkw{unique}
+sur l'attribut \texttt{email}. 
+
+\end{frame}
+
+
+%%%%%%%
+\begin{frame}[fragile]{La table des messages}
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Message (
+  idMessage  integer not null,
+  contenu text not null,
+  dateEnvoi   datetime,
+  idEmetteur int not null,
+  idPrédecesseur int,
+  primary key (idMessage),
+  foreign key (idEmetteur) 
+        references Contact(idContact),
+  foreign key (idPrédecesseur) 
+         references Message(idMessage)
+)
+\end{minted}
+
+\vfill
+
+\alert{Noter}\,: clauses d'intégrité référentielle,
+contrainte de participation pour l'émetteur
+
+\end{frame}
+
+
+%%%%%%%
+\begin{frame}[fragile]{La table des envois}
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Envoi ( 
+    idDestinataire  integer not null,
+    idMessage  integer not null,
+    primary key (idDestinataire, idMessage),
+    foreign key (idDestinataire) 
+              references Contact(idContact),
+    foreign key (idMessage) 
+              references Message(idMessage)
+)
+\end{minted}
+
+\vfill
+
+
+\alert{Noter}\,: clés typiques de la
+représentation d'une association plusieurs-plusieurs.
+
+
+
+\end{frame}
+\begin{frame}{À retenir}
+
+\'Etant donné le schéma EA, supposé correct.
+
+\vfill
+
+\begin{redbullet}
+  \item La création des tables est \alert{directe} par application
+       de l'algorithme de normalisation
+   \item Certains systèmes d'aide à la  conception génèrent automatiquement ce schéma
+   \item Indiquer la contrainte de clé primaire est indispensable
+   \item Indiquer les contraintes de clé étrangère garantit
+            l'intégrité des références
+\end{redbullet}
+
+\vfill
+
+\end{frame}
+

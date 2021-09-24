@@ -1,0 +1,432 @@
+
+\frontslide{L'arbre B}
+
+%------------------------------------
+%------------------------------------------------------------
+\begin{frame}{Arbre-B}
+
+Aboutissement des structures d'index basées sur \textbf{l'ordre}
+des données
+
+\vfill
+
+\begin{redbullet}
+  \item c'est un arbre équilibré
+   \item chaque n{\oe}ud est un index local
+  \item il se réorganise dynamiquement
+\end{redbullet}
+
+\vfill
+
+Utilisé universellement\,!
+
+\vfill
+\begin{blocgauche}
+Comparable aux séquentiel indexé, mais évite d'avoir
+à maintenir des fichiers triés.
+\end{blocgauche}
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Exemple d'un arbre B}
+
+\figSlideWithSize{arbreBAnnees}{12cm}
+
+\end{frame}
+%------------------------------------------------------------
+
+
+\begin{frame}{N{\oe}ud feuille d'un arbre B}
+
+Un n{\oe}ud feuille est un \alert{index dense local}, contenant des entrées d'index.
+
+\medskip
+
+\figSlideWithSize{arbreBFeuille}{9cm}
+
+\vfill
+
+\begin{blocgauche}
+Chaque entrée référence un (ou plusieurs) enregistrements du fichier de données:
+celui (ceux) ayant la même valeur de clé que l'entrée.
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{N{\oe}ud interne d'un arbre B}
+
+
+Un n{\oe}ud interne est un \alert{index non dense local}, les enregistrements
+servant de clé, intercalés avec des pointeurs.
+
+\medskip
+
+\figSlideWithSize{arbreBInterne}{10cm}
+
+\vfill
+\begin{blocgauche}
+Le sous-arbre référencé par $A_2$ contient tous
+les enregistrements dont la clé est comprise
+entre $C_1$ et $C_2$.
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Avec notre fichier de 1M de films}
+
+Admettons qu'une 
+entrée d'index occupe 12 octets, soit 8 octets pour l'adresse, et 4 pour la clé (l'année du film).
+    
+    \vfill
+    
+    Chaque bloc contient 4 096 octets. On place donc $\lfloor \frac{4096}{12} \rfloor = 341$ entrées
+    (au maximum) dans un bloc.
+   
+   
+\begin{blocgauche}
+\begin{redbullet}
+    
+    \item  Il faut $\lfloor \frac{1000000}{341} \rfloor=2\,932$ blocs 
+    pour le  niveau des feuilles. 
+   
+   \item  Le deuxième niveau est \alert{non dense}. Il comprend autant d'entrées que de blocs
+    à indexer, soit 2932.  Il faut
+    donc $\lfloor \frac{2\,932}{341} \rfloor = 8$ blocs (au mieux).
+    
+    \item Finalement, un troisième niveau, constitué d'un bloc
+     avec 8 entrées suffit pour compléter l'index.
+\end{redbullet}
+\end{blocgauche}
+
+\end{frame}
+
+%------------------------------------------------------------
+\begin{frame}{Capacité d'un arbre B}
+
+
+\begin{redbullet}
+   \item  avec un niveau d'index (la racine seulement)
+             on peut donc référencer 341 films\,;
+
+   \item  avec deux niveaux on indexe 341
+          blocs de 341 films chacun, soit $341^2 = 1\,162\,816 $ films\,;
+
+   \item  avec trois niveaux on indexe $341^3 = 39\,651\,821$ films\,;
+
+  \item enfin avec quatre niveaux on indexe plus de 1 milliard de films.
+\end{redbullet}
+\vfill
+
+\begin{blocgauche}
+\begin{redbullet}
+  \item La hauteur de l'arbre est \alert{logarithmique} par rapport au nombre d'enregistrements.
+  \item Inversement, avec un arbre de hauteur $h$, on indexe un collection de taille
+      \alert{exponentielle} en $h$.
+\end{redbullet}
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Insertion dans un arbre B}
+
+On construit l'index sur le titre des films. Situation initiale.
+
+\vfill
+
+\figSlideWithSize{arbreB-1}{8cm}
+
+\end{frame}
+
+\begin{frame}{La procédure d'éclatement}
+
+\figSlideWithSize{arbreB-2}{12cm}
+
+\vfill
+\begin{blocgauche}
+Quand un n{\oe}ud est plein, il faut effectuer un \alert{éclatement}.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Les insertions continuent}
+
+\figSlideWithSize{arbreB-3}{12cm}
+
+\vfill
+\begin{blocgauche}
+Underground, puis Easy Rider.
+\end{blocgauche}
+\end{frame}
+
+
+
+\begin{frame}{Ajout d'un niveau}
+
+\figSlideWithSize{arbreB-4}{12cm}
+
+\vfill
+\begin{blocgauche}
+L'éclatement de la racine entraîne l'ajout d'un niveau
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Les insertions continuent}
+
+\figSlideWithSize{arbreB-5}{12cm}
+
+\vfill
+\begin{blocgauche}
+Shining et Annie Hall
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Les insertions continuent}
+
+\figSlideWithSize{arbreB-6}{12cm}
+
+\vfill
+\begin{blocgauche}
+Après insertion de Jurassic Park, 
+Manhattan et Metropolis
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%
+\begin{comment}
+\begin{frame}
+\frametitle{Insertion dans un arbre-B d'ordre $k$}
+
+On recherche la feuille de l'arbre o\`u l'enregistrement doit prendre place et
+on l'y insère. Si le bloc $p$ déborde (il contient $2k+1$ éléments)\,:
+\begin{redbullet}
+
+  \item On alloue un nouveau bloc $p'$.
+
+  \item On place les $k$ premiers enregistrements (ordonnés selon la clé)
+        dans $p$ et les $k$ derniers dans $p'$.
+
+  \item On insère le $k+1^{e}$ enregistrement dans le père de $p$. Son
+        pointeur gauche référence $p$, et son pointeur droit
+        référence $p'$.
+
+  \item Si le père déborde \`a son tour, on continue
+        comme en 1.
+
+\end{redbullet}
+
+\end{frame}
+\end{commennt}
+
+
+%------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Recherche dans un arbre-B}
+
+Rechercher les enregistrements de clé $C$.
+\vfill
+
+À partir de la racine,  appliquer récursivement 
+l'algorithme suivant\,:
+
+\vfill
+
+Soit $C_{1}, \ldots C_{n}$ les valeurs de clés du bloc courant.
+
+\begin{redbullet}
+
+  \item Chercher $C$ dans le bloc courant. Si $C$ y est, accéder aux
+valeurs des autres champs, Fin.
+
+  \item Sinon, Si $C<C_{1}$ (ou $C>C_{n}$), on continue la recherche avec 
+        le n{\oe}ud référencé par $P_{1}$ (ou $P_{n+1}$).
+
+  \item Sinon, il existe $i\in \lbrack1,k\lbrack$ tel que
+        $C_{i}< C < C_{i+1}$, on continue avec le bloc
+        référencé par le pointeur $P_{i+1}$.
+
+\end{redbullet}
+
+
+\end{frame}
+
+%
+
+\begin{comment}
+\begin{frame}
+\frametitle{Quelques mesures pour l'arbre-B}
+
+Hauteur $h$ d'un arbre-B d'ordre $k$ contenant $n$ articles\,:
+
+$$\log_{2k+1}(n+1) \le h \le \log_{k+1}(\frac{n+1}{2})$$
+
+\begin{redbullet}
+  \item $\log_{2k+1}(n+1)$ : meilleur des cas (arbre balancé)
+  \item $\log_{k+1}(\frac{n+1}{2})$ : pire des cas (insertion dans la même
+  branche)
+\end{redbullet}
+
+Exemple pour $k=100$\,:
+
+\begin{redbullet}
+  \item si $h=2$, $n\le8 \times 10^{6}$
+  \item si $h=3$, $n\le1,6 \times 10^{9}$
+\end{redbullet}
+
+Les opérations d'accès co\^utent au maximum $h$ E/S (en moyenne
+$\geq h-1$).
+
+\end{frame}
+\end{comment}
+
+
+%------------------------------------------------------------
+\begin{frame}[fragile]{Recherche par clé}
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+SELECT *
+FROM  Film
+WHERE titre = 'Manhattan'
+\end{minted}
+
+\begin{redbullet}
+   \item on lit la racine de l'arbre\,: {\it Manhattan} étant situé dans
+   l'ordre lexicographique entre {\it Easy Rider} et {\it Psychose},
+   on doit suivre le chaînage situé entre ces deux titres\,;
+
+  \item on lit le bloc intermédiaire, on descend à gauche;
+  
+  \item dans la feuille, on trouve l'entrée correspondant à Manhattan;
+
+  \item il reste à lire l'enregistrement. 
+\end{redbullet}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}[fragile]{Recherche par intervalle}
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select *
+from  Film
+where annee between 1960 AND 1975
+\end{minted}
+
+\begin{redbullet}
+   \item On fait une recherche par clé pour l'année 60
+
+  \item on parcourt les feuilles de l'arbre en suivant le chaînage,
+            jusqu'à l'année 1975
+
+  \item à chaque fois on lit l'enregistrement
+\end{redbullet}
+
+Attention, les accès aux fichiers peuvent coûter très cher.
+
+\end{frame}
+
+\begin{frame}{L'arbre sur les années}
+
+\figSlideWithSize{arbreBAnnees}{12cm}
+\end{frame}
+
+%------------------------------------------------------------
+\begin{frame}[fragile]{Recherche par préfixe}
+
+Exemple\,:
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+SELECT *
+FROM  Film
+WHERE titre LIKE 'M\%'
+\end{minted}
+
+\vfill
+
+Revient à une recherche par intervalle.\\
+
+\vfill
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+SELECT *
+FROM  Film
+WHERE titre BETWEEN  'MAAAAAA...' AND 'MZZZZZZ...'
+\end{minted}
+
+
+\vfill
+
+Contre-exemple\,:
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+SELECT *
+FROM  Film
+WHERE titre LIKE '\%e'
+\end{minted}
+\vfill
+
+ Ici index inutilisable
+
+
+\end{frame}
+
+
+
+%------------------------------------------------------------
+\begin{frame}[fragile]{Création d'un arbre B}
+
+Sur la clé primaire.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+   create table Film (titre varchar(30) not null,
+                      ...,
+                      primary key (titre)
+                      );
+\end{minted}
+\vfill
+
+Sur n'importe quel attribut.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+   create index filmAnnee on Film (annee)
+\end{minted}
+
+\vfill
+
+Le SGBD synchronise le contenu de la table et celui de l'index
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Résumé: efficacité de l'arbre B}
+
+
+Il est (presque) parfait\,!
+
+\begin{redbullet}
+  \item On a très rarement besoin de plus de trois niveaux
+  \item Le coût d'une recherche par clé est le nombre de niveaux, plus 1.
+
+  \item Supporte les recherches par clé, par intervalle,
+             par préfixe
+  \item Dynamique
+\end{redbullet}
+On peut juste lui reprocher d'occuper de la place.
+
+\end{frame}

@@ -1,0 +1,475 @@
+
+\begin{frame}{Plan d'exécution et opérateurs}
+
+Rappel: un \alert{plan d'exécution} est un arbre constitué \alert{d'opérateurs}
+échangeant des \alert{flux de données}.
+
+
+\vfill
+
+\only<2|handout:2>{
+Caractéristiques des opérateurs
+
+\begin{tabular}{p{9cm}p{5cm}}
+
+
+\begin{redbullet}
+
+
+  \item ont une forme générique (\alert{itérateurs});
+
+  \item fournissent une tâche spécialisée (cf. l'algèbre relationnelle)
+
+ \item peuvent être ou non \alert{bloquants}.
+ 
+\end{redbullet}
+
+\vfill
+Un petit nombre suffit pour  couvrir SQL!
+
+\vfill
+
+\begin{block}{Dans ce cours}
+On va apprendre à implanter un moteur d'exécution pour (presque toutes) les
+ requêtes SQL !
+\end{block}
+&
+~
+\end{tabular}
+}
+
+\end{frame}
+
+\begin{comment}
+\begin{frame}{Quelques opérateurs de base}
+
+Les trois opérateurs d'accès aux données.
+
+\vfill
+
+
+\only<1-1|handout:1>{
+\figSlideWithSize{iter-exemples-1}{2cm}
+}
+
+
+\only<2-2|handout:2>{
+\figSlideWithSize{iter-exemples-2}{6cm}
+}
+\only<3-4|handout:3-4>{
+\figSlideWithSize{iter-exemples}{9cm}
+}
+\vfill
+
+\only<4-4|handout:4>{
+Ce sont les feuilles du plan d'exécution.
+}
+\end{frame}
+
+\end{comment}
+
+\begin{frame}{Mode naïf: matérialisation}
+
+Dans ce mode, un opérateur calcule son résultat, puis
+le transmet.
+
+\vfill
+
+\figSlideWithSize{iter-materialisation}{11cm}
+
+\vfill
+\begin{tabular}{p{9cm}p{5cm}}
+Deux inconvénients:
+
+\begin{redbullet}
+  \item Consomme de la mémoire.
+  \item Introduit un temps de \alert{latence}.
+\end{redbullet}
+
+&
+~
+\end{tabular}
+\end{frame}
+
+\begin{frame}[fragile]{La bonne solution: pipelinage}
+
+Le résultat est produit \alert{à la demande}.
+
+\vfill
+
+\figSlideWithSize{iter-pipeline}{12cm}
+
+\vfill
+\begin{tabular}{p{9cm}p{5cm}}
+\begin{redbullet}
+  \item \alert{Plus de stockage intermédiaire}.
+  \item \alert{Latence minimale}.
+\end{redbullet}
+&
+~
+\end{tabular}
+\end{frame}
+
+
+\begin{frame}[fragile]{Illustration: l'opérateur \texttt{FullScan}}
+
+
+\only<1|handout:1>{%
+Au moment du \texttt{open()}, le curseur est positionné \alert{avant} le premier nuplet.
+\vfill
+\figSlideWithSize{FullScan-open}{12cm}
+
+\vfill
+\begin{tabular}{p{9cm}p{5cm}}
+\texttt{open()} désigne la phase d'initialisation de l'opérateur.
+&
+~
+\end{tabular}
+}
+
+\only<2|handout:2>{
+Le premier \texttt{next()} entraîne l'accès au premier bloc, placé en mémoire.
+\vfill
+\figSlideWithSize{FullScan-next1}{12cm}
+\vfill
+\begin{tabular}{p{9cm}p{5cm}}
+Le curseur se place sur le premier nuplet, qui est retourné comme résultat.
+\alert{Le temps de réponse est minimal}. 
+&
+~
+\end{tabular}
+
+}
+\only<3|handout:3>{
+Le deuxième \texttt{next()} avance d'un cran dans le parcours du bloc.
+\vfill
+\figSlideWithSize{FullScan-next2}{12cm}
+
+\vspace*{2cm}
+}
+\only<4|handout:4>{
+Après plusieurs \texttt{next()}, le curseur est positionné sur le dernier nuplet du bloc.
+
+\vfill
+\figSlideWithSize{FullScan-next3}{12cm}
+
+
+\vspace*{2cm}
+}
+
+\only<5|handout:5>{
+L'appel suivant à \texttt{next()} charge le second bloc en mémoire.
+\vfill
+\figSlideWithSize{FullScan-next4}{12cm}
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+
+\alert{Bilan}\,: besoin en mémoire réduit (1 bloc); temps de réponse très court.
+&
+~
+\end{tabular}
+
+}
+
+\end{frame}
+
+\begin{comment}
+
+\begin{frame}[fragile]{Exécuter une requête = avancer un curseur}
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select * from T
+\end{minted}
+
+\vfill
+
+est implantée par:
+
+\vfill
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{bash}
+   # Parcours  de la table T
+    $curseur = new FullScan(T);
+    
+    $nuplet = $curseur.next(); # Premier nuplet
+    while [$nuplet != null ]
+    do # Traitement du nuplet      
+      ...
+      $nuplet = $curseur.next(); # nuplet suivant
+    done         
+    $curseur.close(); # Fermeture du curseur
+\end{minted}
+
+\vfill
+\begin{tabular}{p{9cm}p{5cm}}
+Ce mécanisme \alert{d'itération} est général pour l'exécution
+de requêtes.
+&
+~
+\end{tabular}
+
+\end{frame}
+\end{comment}
+
+\begin{frame}[fragile]{Opérateur bloquant}
+
+Tous les opérateurs peuvent-ils fonctionner en mode pipelinage?
+\medskip
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select min(date) from T
+\end{minted}
+
+\medskip
+
+On ne peut pas produire un nuplet avant d'avoir
+examiné \alert{toute} la table.
+
+\medskip
+
+Il faut alors introduire un opérateur \alert{bloquant},
+avec une latence forte. 
+
+\vfill
+\begin{tabular}{p{9cm}p{5cm}}
+Avec un opérateur bloquant, on \alert{additionne}
+le temps d'exécution et le temps de traitement.
+&
+~
+\end{tabular}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Résumé: opérateurs d'exécution}
+
+Principes essentiels\,:
+
+\begin{redlist}
+  \item \alert{Itération}\,: dans tous
+     les cas, un opérateur produit les nuplets
+      à la demande.
+      
+   \item \alert{Pipelinage}\,: si possible, le résultat
+      est calculé au fur et à mesure.
+      
+         \item \alert{Matérialisation}\,: parfois
+         le résultat intermédiaire doit être calculé et stocké.
+         
+
+\end{redlist}
+
+\vfill
+
+Bien distinguer
+
+\begin{tabular}{p{9cm}p{5cm}}
+\begin{redbullet}
+  \item \alert{Temps de réponse}: temps pour obtenir le premier nuplet.
+  \item \alert{Temps d'exécution}: temps pour obtenir tous les nuplets.  
+\end{redbullet}
+&
+~
+\end{tabular}
+
+
+%MUn opérateur bloquant a de forts besoins  en mémoire, et un temps de réponse
+%qui peuvent être importants.
+
+\only<2|handout:2>{
+\vfill
+\centerline{\alert{Merci!}}
+}
+
+
+\end{frame}
+
+	
+\begin{comment}
+
+\begin{frame}[fragile]{Temps de réponse et temps d'exécution}
+
+À comparer:
+
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select * from T
+\end{minted}
+
+et 
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select distinct * from T
+\end{minted}
+      
+\vfill
+
+Bien distinguer
+
+\begin{redbullet}
+  \item \alert{Temps de réponse}: temps pour obtenir le premier nuplet.
+  \item \alert{Temps d'exécution}: temps pour obtenir tous les nuplets.  
+\end{redbullet}
+
+\vfill
+
+Avec un opérateur bloquant on \alert{additionne} l'exécution de la requête et celle de l'application.
+
+\end{frame}
+
+
+\begin{frame}{Notion d'itérateur}
+
+Chaque opérateur est implanté sous forme d'un \alert{itérateur}.
+
+\vfill
+
+Trois fonctions:
+
+\begin{itemize}
+  \item \texttt{open}\,: initialise les tâches de l'opérateur\,; 
+            positionne le curseur au début du résultat à fournir\,;
+   
+  \item \texttt{next}\,: ramène l'enregistrement courant\;
+          se place sur l'enregistrement suivant\,;
+
+  \item \texttt{close}\,: libère les ressources\,;
+\end{itemize}
+
+\vfill
+
+Connexion: 
+\begin{itemize}
+  \item Un itérateur \alert{consomme} des tuples d'un ou deux autres itérateurs.
+  \item Un itérateur \alert{produit} des tuples pour un autre
+     itérateur (ou pour l'application).
+\end{itemize}  
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Premier exemple: l'opérateur \texttt{FullScan}}
+
+Fonction \textit{open()}: on se positionne au début du fichier.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{bash}
+   function openScan 
+    {
+      # Entree: $T est la table 
+      
+      # Initialisations
+      p = $T.first;    # Premier bloc de T
+      e = $p.init;     # On se place avant le premier enregistrement
+    }
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{L'opérateur \texttt{FullScan} (suite)}
+
+Fonction \textit{next()}: on récupère le tuple suivant.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{bash}
+    function nextScan 
+    {
+       # Enregistrement suivant
+       $e = $p.next;       
+       # A-t-on atteint le dernier enregistrement du bloc ?
+       if ($e = null) do
+          # On passe au bloc suivant
+          $p = $T.next;
+          # Dernier bloc atteint?
+          if ($p = null) then
+              return null;
+          else
+               $e = $p.first;
+          fi
+        done
+ 
+        return $e;
+    }
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Ma première exécution de requête}
+
+La requête
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select * from T
+\end{minted}
+
+est implantée par:
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{bash}
+   # Parcours  de la table T
+    $curseur = new FullScan(T);
+    $tuple = $curseur.next();
+    
+    while [$tuple != null ]
+    do
+      # Traitement du tuple
+      ...
+      # Passage au tuple suivant
+      $tuple = $curseur.next();
+    done 
+    
+    # Fermeture du curseur
+    $curseur.close();
+\end{minted}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Résumé}
+
+Principes essentiels\,:
+
+\begin{enumerate}
+  \item \alert{Production à la demande}\,: le serveur
+     n'envoie un enregistrement à l'application que quand
+    celle-ci le demande\,;
+
+   \item \alert{Pipelinage}\,: on essaie d'éviter le stockage 
+          en mémoire de résultats intermédiaires\,: le résultat
+      est calculé au fur et à mesure.
+\end{enumerate}
+
+Conséquences\,: \alert{temps de réponse minimisé} (pour obtenir
+    le premier enregistrement) mais 
+ \alert{attention aux plans bloquants} (ex. plans avec un tri).
+
+\end{frame}
+\end{comment}
+	

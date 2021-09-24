@@ -1,0 +1,160 @@
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La négation}
+
+On veut les logements qui ne proposent pas de Ski. 
+
+\vfill
+La requête
+suivante n'est pas la bonne solution.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select distinct nom
+from  Logement, Activité
+where code = codeLogement
+and codeActivité != 'Ski'
+\end{minted}
+
+\vfill
+
+Elle donne les logements où il existe une  activité autre que 'Ski'
+
+\vfill
+
+ On veut ici exprimer une condition (négative) 
+sur un \alert{ensemble}. ``Il ne doit pas exister
+d'activité Ski parmi celles du logement.''
+
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La bonne formulation}
+
+``Il ne doit pas exister
+d'activité Ski parmi celles du logement.''
+\vfill
+
+C'est donc une condition existentielle (négative). 
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select nom
+from Logement 
+where not exists (select ''
+                 from Activité 
+                 where code = codeLogement
+                 and codeActivité = 'Ski')
+\end{minted}
+
+\vfill
+
+Rappel\,: le \sqlkw{select} du bloc imbriqué ne sert à rien
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Le \sqlkw{not in} marche aussi}
+
+On peut toujours formuler le \sqlkw{(not) exists}
+de manière très proche avec \sqlkw{(not) in}
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select nom
+from Logement
+where code not in (select codeLogement
+                   from Activité
+                   where codeActivité = 'Ski')
+\end{minted}
+
+\vfill
+
+Autre syntaxe possible\,: avec la différence ensembliste (``tous les logements moins
+ceux où on fait du ski''). Peu pratique.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La quantification universelle}
+
+Je sais exprimer une condition existentielle. Quid de la
+quantification \alert{universelle}\,?
+
+\vfill
+
+``Je veux les voyageurs qui sont allés dans \alert{tous} les logements'' 
+
+\vfill
+
+\alert{SQL peut le faire}. Si je suis allé dans tous les logements,
+\alert{il n'existe pas} de logement où \alert{je ne suis pas} allé.
+
+\vfill
+
+La quantification universelle s'exprime avec une double
+quantification existentielle et la négation (Ouf...).
+\end{frame}
+
+\begin{frame}[fragile]{La solution (à étudier)}
+
+Double imbrication, double quantification, double négation
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select distinct v.prénom, v.nom
+from Voyageur as v
+where  not exists 
+     (select '' from Logement as l
+      where not exists 
+           (select ''  from Séjour as s
+            where l.code = s.codeLogement
+            and   v.idVoyageur = s.idVoyageur))
+\end{minted}
+
+\vfill
+
+Peu courant, mais montre la puissance du langage. 
+
+\vfill
+
+SQL couvre tout ce qui s'exprime dans la logique classique,
+dite ''du premier ordre``. Cf. le complément sur le calcul.
+
+\end{frame}
+
+%%%%
+\begin{frame}{Bilan}
+
+Nous savons maintenant (presque) tout faire\,!
+\vfill
+
+\begin{redbullet}
+ \item Exprimer toutes les requêtes dites ''positives'', sélection, projection
+     et jointure.
+  \item Exprimer la négation avec un \sqlkw{not exists}
+  \item Et même exprimer la quantification universelle.
+\end{redbullet}
+
+\vfill
+
+SQL, langage de logicien, pas d'informaticien
+
+\vfill
+
+Il reste à étudier quelques extensions pratiques.
+\end{frame}
+

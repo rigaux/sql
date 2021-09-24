@@ -1,0 +1,11 @@
+{% if messages %}
+    <ul>
+    {% for message in messages %}
+        <li>
+             {{ message.contenu }}
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Aucun message.</p>
+{% endif %}

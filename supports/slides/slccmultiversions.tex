@@ -1,0 +1,192 @@
+
+
+\subsection{Contrôle de concurrence multi-versions}
+
+
+\begin{frame}{Algorithme de contrôle de concurrence multi-versions}
+
+Connu sous le nom de contrôle de concurrence \textit{isolation snapshot}. Très utilisé.
+
+\vfill
+
+Tire parti du versionnement, qui limite les opportunités de conflits
+
+\vfill
+
+Très léger\,: aucun verrouillage en lecture, un contrôle sur les écritures.
+
+\vfill
+
+\alert{Mais}\,: ne garantit pas la sérialisabilité stricte
+
+\end{frame}
+
+\begin{frame}{Souvenons-nous des versions}
+
+Un système qui fournit un niveau \texttt{repeatable read} doit s'appuyer sur un
+système de versions estampillées (voir la session).
+
+\vfill
+
+Dans ce cas les lectures se font sur l'état de la base \alert{avant} le début de la transaction.
+
+\vfill 
+
+Deux possibilités de conflit entre une \alert{lecture} de $T_1$ et $T_2$.
+\begin{redbullet}
+  \item $r_1[d]$ est en conflit avec une écriture $w_2[d]$ 
+   qui a eu lieu \alert{avant} $t_0$\,;
+
+  \item $r_1[d]$ est en conflit avec une écriture $w_2[d]$ 
+   qui a eu lieu \alert{après} $t_0$.
+
+\end{redbullet}
+
+\medskip
+
+Approfondissons.  
+\end{frame}
+
+\begin{frame}{Premier cas de conflit}
+
+Cas 1: $r_1[d]$ en conflit avec $w_2[d]$  \alert{avant} $t_0$. Alors $T_2$ a validé. Pas de risque.
+
+\vfill
+
+\figSlideWithSize{cc-multiversions}{13cm}
+
+\vfill
+
+En fait, indique que $T_2$ et $T_1$ sont en série.
+
+\end{frame}
+
+
+\begin{frame}{Second cas  de conflit}
+
+
+Cas 2: $r_1[d]$  en conflit avec $w_2[d]$ 
+   \alert{après} $t_0$.
+   
+\vfill
+
+\figSlideWithSize{cc-multiversions2}{13cm}
+
+\vfill
+\begin{blocgauche}
+ Si $T_1$ cherche
+à écrire $d$ après l'écriture $w_2[d]$, un conflit
+cyclique apparaît. \alert{L'algorithme doit surveiller ce cas.}
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Le contrôle de concurrence multi-versions}
+
+\begin{defblock}{Le principe}
+On vérifie, au moment d'exécuter $w_1[e]$,  qu'aucune
+transaction $T_2$ n'a modifié $e$ entre le début de $T_1$ et l'instant
+présent.
+\end{defblock}
+\vfill
+
+En cas d'écriture $w_1[e]$, 
+\begin{redbullet}
+   \item si $\tau_e \leq \tau_1$ et $e$ non verrouillé\,: 
+          $T_1$ verrouille (exclusif) $e$, et effectue  $w_1[e]$\,;
+  \item
+    si $\tau_e \leq \tau_1$ et $e$ verrouillé\,:           $T_1$ est mise en attente\,;
+  \item    si $\tau_e > \tau_1$, $T_1$ est rejetée.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Estampillage}. Au moment de $C_1$ 
+   tous les tuples modifiés par $T_1$ obtiennent 
+   une nouvelle version avec pour estampille l'instant du
+   \texttt{commit}.
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Exemple}
+
+Maj perdues:
+$r_1(s)  r_1(c_1) r_2(s)  r_2(c_2)  w_2(s)  w_2(c_2) C_2 w_1(s) w_1(c_1) C_1$.
+
+On prend
+$\tau_1 = 100$,  $\tau_2 = 120$. 
+
+\vfill
+\begin{blocgauche}
+\begin{redbullet}
+  \item $T_1$ lit $s$, $T_1$ lit $c_1$,  $T_2$ lit $s$, $T_2$ lit $c_2$, sans verrouiller\,;
+      \alert{aucun verrou}.
+    
+   \item $T_2$ veut modifier $s$\,: l'estampille de $s$
+             est inférieure à  $\tau_2 = 120$: $s$ n'a pas été modifié; on 
+             pose un verrou exclusif sur $s$ et on effectue
+                 $w_2[s]$\,: 
+
+   \item $T_2$ modifie $c_2$, avec pose d'un verrou exclusif\,;
+
+   \item $T_2$ valide, relâche les verrous\,;
+      versions de 
+                $s$ et $c_2$ avec l'estampille $150$\,;
+
+   \item $T_1$ veut à son tour modifier $s$\,: version de $s$ avec $\tau_s > \tau_1 = 100$. 
+               $T_1$ est rejetée.
+\end{redbullet}
+
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Un cas de non-sérialisabilité}
+
+L'algorithme \textit{snapshot isolation} dans certaines exécutions non sérialisables.
+
+\vfill
+
+Exemple\,: une simple copie d'une ligne à une autre\,: 
+\begin{minted}{sql}
+  function copie (id1, id2)
+  begin
+    val := select valeur from T where id = id1
+    update T set valeur = :val where id = id2
+    commit
+  end
+\end{minted}
+\vfill 
+
+Exécution concurrente de $copie(A,B)$ et $copie(b,A)$:
+$$r_1[x]r_2[y]w_1[y]w_2[x]$$
+
+\vfill
+
+Non sérialisable, mais autorisée par le contrôle multi-versions.
+
+\end{frame}
+
+
+%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Algorithme très simple à mettre en œuvre, utilisé par exemple dans des contexte distribués (applications web)
+
+\vfill
+
+Très fluide, très peu de verrouillage, contrôle bien le cas des mises à jour perdues
+
+\vfill
+
+\begin{blocgauche}
+Ne garantit pas la sérialisabilité stricte (des améliorations ont été proposées)
+\end{blocgauche}
+
+
+\end{frame}
+

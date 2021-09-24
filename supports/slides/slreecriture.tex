@@ -1,0 +1,257 @@
+
+
+\begin{frame}[fragile]{De SQL vers une forme opératoire: l'algèbre}
+
+Titre des films parus en 1958, où l'un des acteurs joue
+le rôle de John Ferguson.
+
+\vfill
+
+En SQL:
+
+ \begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+    select titre
+    from   Film f, Role r
+    where  nom_role ='Ferguson'
+    and    f.id = r.id_ilm
+    and    f.annee = 1958
+\end{minted}
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+Deux sélections (l'année, le rôle), une jointure, une projection.
+&
+~
+\end{tabular}
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Le Plan d'Exécution Logique (PEL)}
+
+
+\only<1-1|handout:1-1>{
+En algèbre, sous une forme normalisée projection-sélection-jointure:
+\[
+  \pi_{titre}(\sigma_{annee=1958 \land nom\_role='\mathrm{Ferguson}'}(Film \Join_{id=id\_film} Role))
+\]
+}
+
+\only<2-3|handout:2-3>{
+La même expression, sous forme d'un arbre.
+
+\vfill
+\begin{small}
+\psset{levelsep=1.2cm,treesep=0.5cm}
+\IteratorSansNom{$\pi_{titre}$}{}{
+  \IteratorSansNom{$\sigma_{annee=1958 \land nom\_role='Ferguson'}$}{}{
+     \IteratorSansNom{$\Join$}{}{ 
+       \Database{Film}{}
+       \Database{Role}{}
+    }
+  }
+}
+\end{small}
+}
+\only<3-3|handout:3-3>{
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+Est-ce le seul? Non: des \alert{réécritures} vont nous permettre d'en trouver
+d'autres.
+&
+~
+\end{tabular}
+}
+\end{frame}
+
+
+
+\begin{frame}{Réécritures}
+
+Il y a plusieurs expressions
+\alert{équivalentes} pour une même requête. 
+
+\smallskip
+
+On peut explorer ces expressions grâce à des règles de réécriture.
+Exemple
+
+
+\begin{redlist}
+\item \alert{Commutativité des jointures}\,:        $ R \Join S  \equiv S \Join R$
+
+\item \alert{Regroupement des sélections}\,: 
+        $\sigma_{A='a' \wedge B='b'}(R) \equiv
+        \sigma_{A='a'}(\sigma_{B='b'}(R))$
+        
+\item \alert{Commutativité de $\sigma$ et de $\pi$}\,: 
+        $\pi_{A_1, A_2, \ldots A_p}(\sigma_{A_i='a'} (R)) \equiv
+        \sigma_{A_i='a'}(\pi_{A_1, A_2, \ldots A_p}(R))$
+
+        \item \alert{Commutativité de $\sigma$ et de $\Join$}\,: 
+$\sigma_{A='a'} (R[\ldots A\ldots] \Join S) \equiv
+     \sigma_{A='a'}(R) \Join S$
+\item etc.
+\end{redlist}
+
+\vfill
+
+
+
+\begin{tabular}{p{9cm}p{5cm}}
+L'application dirigée d'une règle d'équivalence (réécriture)
+transforme une expression $e$ 
+en une expression $e'$ \alert{équivalente}.
+&
+~
+\end{tabular}
+
+\end{frame}
+
+
+\begin{frame}{Ce que fait l'optimiseur}
+
+Trouve les expressions équivalentes, 
+évalue leur coût et choisit la meilleure.
+
+\vfill
+\alert{Important}:
+on ne peut pas \alert{énumérer} tous les plans possibles (trop long):
+on applique des \alert{heuristiques}. 
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+Heuristique classique: \alert{réduire la taille
+des données}
+\begin{redbullet}
+\item en filtrant les nuplets par
+ des sélections
+ \item en les simplifiant par des projections
+\end{redbullet}
+\alert{dès que possible.}
+&
+~
+\end{tabular}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Illustration}
+
+\only<1-1|handout:1-1>{
+Reprenons: le film
+paru en 1958 avec un rôle 'Ferguson'.
+
+\vfill
+\begin{small}
+\psset{levelsep=1cm,treesep=0.5cm}
+\IteratorSansNom{$\pi_{titre}$}{}{
+  \IteratorSansNom{$\sigma_{annee=1958 \land nom\_role='Ferguson'}$}{}{
+     \IteratorSansNom{$\Join$}{}{ 
+       \Database{Film}{}
+       \Database{Role}{}
+    }
+  }
+}
+\end{small}
+}
+
+
+\only<2-2|handout:2-2>{
+\bigskip
+Première étape: je sépare les sélections.
+
+\vfill
+
+\begin{small}
+\psset{levelsep=1cm,treesep=0.5cm}
+\IteratorSansNom{$\pi_{titre}$}{}{
+  \IteratorSansNom{$\sigma_{annee=1958}$}{}{
+    \IteratorSansNom{$\sigma_{nom\_role='Ferguson'}$}{}{
+     \IteratorSansNom{$\Join$}{}{ 
+       \Database{Film}{}
+       \Database{Role}{}
+    }
+   }
+  }
+}
+\end{small}
+}
+\only<3-|handout:3->{
+Puis on pousse chaque sélection vers sa table.
+\vfill
+\begin{small}
+\psset{levelsep=1cm,treesep=0.5cm}
+\IteratorSansNom{$\pi_{titre}$}{}{
+     \IteratorSansNom{$\Join$}{}{ 
+       \IteratorSansNom{$\sigma_{annee=1958}$}{}{
+       \Database{Film}{}
+       }
+  \IteratorSansNom{$\sigma_{nom\_role='Ferguson'}$}{}{
+       \Database{Role}{}
+    }
+   }
+}
+\end{small}
+}
+\only<4-|handout:4->{
+\vfill
+\begin{tabular}{p{9cm}p{5cm}}
+À ce stade: reste à choisir les chemins d'accès et les algorithmes de jointure.
+
+&
+~
+\end{tabular}
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Résumé: la réécriture algébrique}
+
+Principes essentiels\,:
+
+\begin{redlist}
+  \item L'algèbre permet d'obtenir une version opératoire de la requête.
+      
+   \item Les équivalences algébriques permettent d'explorer
+    un ensemble de plans.
+      
+    \item L'optimiseur évalue le coût de chaque plan.
+
+\end{redlist}
+
+\vfill
+
+Bien retenir
+
+\begin{tabular}{p{9cm}p{5cm}}
+\begin{redbullet}
+  \item \alert{Heuristique}: on ne peut pas \alert{tout explorer}
+  \item \alert{Nécessaire mais pas suffisant}: il reste à choisir 
+   le bon algorithme pour chaque opération.
+\end{redbullet}
+&
+~
+\end{tabular}
+
+
+%MUn opérateur bloquant a de forts besoins  en mémoire, et un temps de réponse
+%qui peuvent être importants.
+
+\only<2|handout:2>{
+\vfill
+\centerline{\alert{Merci!}}
+}
+
+
+\end{frame}

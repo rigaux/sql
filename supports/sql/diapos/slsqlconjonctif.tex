@@ -1,0 +1,404 @@
+
+\begin{frame}[fragile]{SQL, première partie}
+
+Cette session présente les requêtes SQL \alert{conjonctives}, celles
+qui s'expriment  sans négation ni disjonction.
+
+\vfill
+
+Dans cette session:
+
+\vfill
+
+\begin{redbullet}
+  \item Forme d'un  requête SQL: variables-nuplet, conditions, construction du nuplet-résultat
+  \item Requête mono-variables
+  \item Requêtes multi-variables
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+
+%%%%%%ù
+
+\begin{frame}[fragile]{Variables nuplet}
+
+SQL manipule des nuplets libres de la forme $t(a_1, a_2, \cdots, a_n)$
+Nous les appellerons
+des \alert{variables nuplet}.
+
+\vfill
+
+La quantification porte sur la variable nuplet $t$: $\exists t$ et $\forall t$.
+
+\vfill
+
+On désigne les attributs en les rattachant à $t$: $t.a_1$, $t.a_2$, etc.
+
+\vfill
+
+On  peut exprimer des comparaisons: $t.a_i = 'a'$ ou $t.a_i = t.a_j$
+
+\end{frame}
+
+%%%%%%%
+\begin{frame}[fragile]{Requête mono-variable}
+
+Les requêtes les plus simples utilisent une seule variable nuplet. 
+Leur forme logique est:
+
+
+ $$\{ t.a_1, t.a_2, \cdots, t.a_n | T(t) \land F_{cond}(t) \}$$
+ 
+\vfill
+La forme SQL:
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+     select [distinct] t.a1, t.a2, ..., t.an
+     from T as t
+     where <condition>
+\end{minted}
+
+\vfill
+
+\begin{blocgauche}
+C'est un ``bloc'' avec trois clauses:
+\begin{redbullet}
+   \item le \texttt{from} définit la variable libre et sa \alert{portée}
+   \item  le \texttt{where} définit la condition sur la variable libre
+   \item le \texttt{select} (avec \texttt{distinct} optionnel) construit le nuplet-résultat
+\end{redbullet}
+
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Parlons du \texttt{distinct}}
+
+Une relation n'a pas de  doublons. Or certaines requêtes peuvent en produire:
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select l.type from Logement as l
+\end{minted}
+
+\vfill
+
+\begin{tabular}{c}
+\textbf{type}\\ \hline 
+Auberge\\ \hline 
+Hôtel\\ \hline 
+Gîte\\ \hline 
+Hôtel\\ \hline 
+\end{tabular}
+
+\vfill
+Le \texttt{distinct} garantit que les doublons sont éliminés.
+\vfill
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select distinct  l.type from Logement as l
+\end{minted}
+
+\vfill
+
+\begin{blocgauche}
+Certaines requêtes ne peuvent pas produire de doublon! À approfondir.
+\end{blocgauche}
+\end{frame}
+
+
+
+%%%%%%%%
+\begin{frame}[fragile]{Premier exemple}
+
+Code, nom et type des logements en Corse.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+      select t.code, t.nom, t.type
+      from Logement as t
+      where t.lieu = 'Corse'
+\end{minted}
+
+\vfill
+
+Correspond à la formule
+$$\{ t.code, t.nom, t.type | Logement(t) \land t.lieu=\text{'Corse'} \}$$
+
+\vfill
+
+Forme simplifiée. 
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+      select code, nom, type
+      from Logement
+      where lieu = 'Corse'
+\end{minted}
+
+\end{frame}
+
+
+%%%%%%%%
+\begin{frame}[fragile]{Interprétation}
+
+La variable peut être affectée à tous les nuplets  de la table définie
+par la portée.
+
+\vfill
+
+\alert{On garde toutes les affectations qui satisfont la condition $F_{cond}$}.
+
+\vfill
+
+La seule affectation correcte est surlignée ci-dessous.
+
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu}\\ \hline 
+\rowcolor{asparagus}
+pi & U Pinzutu & 10 & Gîte & Corse\\ \hline 
+ta & Tabriz & 34 & Hôtel & Bretagne\\ \hline 
+ca & Causses & 45 & Auberge & Cévennes\\ \hline 
+ge & Génépi & 134 & Hôtel & Alpes\\ \hline 
+\end{tabular}
+\end{center}
+
+
+\begin{blocgauche}
+\alert{Trivial?} Oui, et tant mieux, car cette interprétation
+fonctionne pour \alert{toutes} les requêtes.
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%
+\begin{frame}[fragile]{Requête multi-variables}
+
+Regardons pour deux variables: la généralisation est facile.
+
+\vfill
+
+Forme de la requête:
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select [distinct] t1.a1, ..., t1.an, t2.a1, ..., t2.am
+from T1 as t1, T2 as t2
+where <condition>
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+\begin{defblock}{Interprétation}
+Parmi toutes les affectations possibles des variables, 
+on ne conserve que celles qui satisfont la condition exprimée par  $F_{cond}$.
+\end{defblock}
+\end{blocgauche}
+
+\end{frame}
+
+
+%%%%%%%
+\begin{frame}[fragile]{Un exemple détaillé: logements où on peut pratiquer le ski}
+
+
+Nous avons besoin de deux variables:
+\begin{redbullet}
+   \item la première s’affecte aux nuplets de \texttt{Activité}; 
+   \item la seconde s’affecte aux nuplets de \texttt{Logement}
+   \item l'attribut \texttt{codeActivité} de la première est \texttt{Ski}.
+   \item \alert{les deux variables partagent le même code logement}
+\end{redbullet}
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select l.code, l.nom
+from Logement as l, Activité as a
+where l.code = a.codeLogement
+and   a.codeActivité = 'Ski'
+\end{minted}
+
+\end{frame}
+
+%%%%%%%%
+\begin{frame}[fragile]{Interprétation: affectation des deux variables}
+
+\begin{tabular}{c|c|c|c|c}
+\multicolumn{5}{c}{\textbf{Logement (variable $l$)}}\\ \hline
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu}\\ \hline 
+pi & U Pinzutu & 10 & Gîte & Corse\\ \hline 
+ta & Tabriz & 34 & Hôtel & Bretagne\\ \hline 
+ca & Causses & 45 & Auberge & Cévennes\\ \hline 
+\rowcolor{asparagus}
+ge & Génépi & 134 & Hôtel & Alpes\\ \hline 
+\end{tabular}
+
+\vspace*{0.3cm}
+
+
+
+\begin{tabular}{c|c}
+\multicolumn{2}{c}{\textbf{Activité  (variable $a$)}}\\ \hline
+\textbf{codeLogement} & \textbf{codeActivité}\\ \hline 
+ca & Randonnée\\ \hline 
+ge & Piscine\\ \hline 
+\rowcolor{bananamania}
+ge & Ski\\ \hline 
+pi & Plongée\\ \hline 
+pi & Voile\\ \hline 
+\end{tabular}
+
+\end{frame}
+
+
+%%%%%%%
+\begin{frame}[fragile]{Deuxième exemple: les paires de logements qui sont du même type}
+
+
+Nous avons besoin de deux variables, 
+\begin{redbullet}
+   \item \alert{chacune ayant pour portée la table \texttt{Logement}}
+   \item \alert{les deux variables partagent le même attribut \texttt{type}}
+\end{redbullet}
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select distinct l1.nom as nom1, l2.nom as nom2
+from Logement as l1, Logement as l2
+where l1.type = l2.type
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+Soit la formule
+
+$$\{ l_1.nom, l_2.nom | Logement(l_1) \land Logement(l_2) \land l_1.type = l_2.type \}$$
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%
+\begin{frame}[fragile]{Interprétation: affectation des deux variables}
+
+\begin{tabular}{c|c|c|c|c}
+\multicolumn{5}{c}{\textbf{Logement (variable $l_1$)}}\\ \hline
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu}\\ \hline 
+pi & U Pinzutu & 10 & Gîte & Corse\\ \hline 
+\rowcolor{asparagus}
+ta & Tabriz & 34 & Hôtel & Bretagne\\ \hline 
+ca & Causses & 45 & Auberge & Cévennes\\ \hline 
+ge & Génépi & 134 & Hôtel & Alpes\\ \hline 
+\end{tabular}
+
+\vfill
+
+\begin{tabular}{c|c|c|c|c}
+\multicolumn{5}{c}{\textbf{Logement (variable $l_2$)}}\\ \hline
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu}\\ \hline 
+pi & U Pinzutu & 10 & Gîte & Corse\\ \hline 
+ta & Tabriz & 34 & Hôtel & Bretagne\\ \hline 
+ca & Causses & 45 & Auberge & Cévennes\\ \hline 
+\rowcolor{bananamania}
+ge & Génépi & 134 & Hôtel & Alpes\\ \hline 
+\end{tabular}
+
+\end{frame}
+
+%%%%%%%%
+\begin{frame}[fragile]{Autre affectation possible}
+
+\begin{tabular}{c|c|c|c|c}
+\multicolumn{5}{c}{\textbf{Logement (variable $l_1$)}}\\ \hline
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu}\\ \hline 
+pi & U Pinzutu & 10 & Gîte & Corse\\ \hline 
+ta & Tabriz & 34 & Hôtel & Bretagne\\ \hline 
+ca & Causses & 45 & Auberge & Cévennes\\ \hline 
+\rowcolor{asparagus}
+ge & Génépi & 134 & Hôtel & Alpes\\ \hline 
+\end{tabular}
+
+\vfill
+
+\begin{tabular}{c|c|c|c|c}
+\multicolumn{5}{c}{\textbf{Logement (variable $l_2$)}}\\ \hline
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu}\\ \hline 
+pi & U Pinzutu & 10 & Gîte & Corse\\ \hline 
+\rowcolor{bananamania}
+ta & Tabriz & 34 & Hôtel & Bretagne\\ \hline 
+ca & Causses & 45 & Auberge & Cévennes\\ \hline 
+ge & Génépi & 134 & Hôtel & Alpes\\ \hline 
+\end{tabular}
+
+\end{frame}
+
+%%%%%%%%
+\begin{frame}[fragile]{Encore une autre (et trois autres encore possibles)}
+
+\begin{tabular}{c|c|c|c|c}
+\multicolumn{5}{c}{\textbf{Logement (variable $l_1$)}}\\ \hline
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu}\\ \hline 
+pi & U Pinzutu & 10 & Gîte & Corse\\ \hline 
+ta & Tabriz & 34 & Hôtel & Bretagne\\ \hline 
+\rowcolor{asparagus}
+ca & Causses & 45 & Auberge & Cévennes\\ \hline 
+ge & Génépi & 134 & Hôtel & Alpes\\ \hline 
+\end{tabular}
+
+\vfill
+
+\begin{tabular}{c|c|c|c|c}
+\multicolumn{5}{c}{\textbf{Logement (variable $l_2$)}}\\ \hline
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu}\\ \hline 
+pi & U Pinzutu & 10 & Gîte & Corse\\ \hline 
+ta & Tabriz & 34 & Hôtel & Bretagne\\ \hline 
+\rowcolor{bananamania}
+ca & Causses & 45 & Auberge & Cévennes\\ \hline 
+ge & Génépi & 134 & Hôtel & Alpes\\ \hline 
+\end{tabular}
+
+\end{frame}
+%%%%%%%%%
+\begin{frame}{À retenir}
+
+Quelle que soit sa complexité, l'interprétation d'une requête SQL peut \alert{toujours}
+se faire de la manière suivante.
+
+\vfill
+
+\begin{redbullet}
+  \item  Chaque variable du \texttt{from} peut être affectée à tous les nuplets
+       de sa portée.
+  \item Le \texttt{where} définit une condition sur ces variables: seules
+     les affectations satisfaisant cette condition sont conservées
+    \item Le nuplet résultat est construit à partir de ces affectations
+\end{redbullet}
+
+\end{frame}
+

@@ -1,0 +1,290 @@
+
+\frontslide{Supports de stockage}
+
+
+\begin{frame}[fragile]{Techniques de stockage}
+
+Contenu de ce cours\,:
+
+\begin{redbullet}
+   \item Où sont les données? Mémoires RAM, mémoire persistante.
+
+
+  \item Les performances 
+
+  \item Disques, SSD
+\end{redbullet}
+
+\vfill
+
+\begin{beamerboxesrounded}{Vocabulaire}
+Une "donnée" désigne une unité physique d'information: pour nous, une ligne d'une table,
+codée sous forme d'un enregistrement (\textit{record}).
+\end{beamerboxesrounded}
+
+\vfill
+
+
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sys.bdpedia.fr/stock.html\#s1-supports-de-stockage}}
+\end{blocgauche}
+
+\end{frame}
+
+
+%------------------------------------------------------------
+%\subsection{Supports de stockage: les mémoires}
+%------------------------------------------------------------
+
+\begin{frame}{Problématique du stockage}
+
+Un SGBD gère deux types de mémoire.
+
+\begin{redbullet}
+  \item La mémoire centrale, \alert{volatile}, rapide mais risque de perte.
+  \item La mémoire secondaire, \alert{persistante}, stable mais lente.
+\end{redbullet}
+
+Les données sont \alert{toujours} en mémoire secondaire dans
+des fichiers, et \alert{partiellement} copiées en mémoire centrale.
+
+\vfill
+
+\begin{blocgauche}
+Une donnée, pour être traitée, doit impérativement être en mémoire centrale.
+
+\medskip
+
+Comment gérer au mieux ces deux ressources?
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Les mémoires d'un ordinateur}
+
+Les mémoires dans un ordinateur forment une hiérarchie.
+
+\vfill
+
+\alert{Constat}: plus une mémoire est rapide, plus elle est chère , et moins elle est volumineuse.
+
+
+
+\vfill
+
+\figSlideWithSize{hiermem}{6cm}
+
+\end{frame}
+
+
+\begin{frame}{Performances des mémoires}
+
+Critères essentiels:
+
+\begin{redbullet}
+  \item \alert{Temps d'accès}: connaissant  l'adresse d'une donnée, quel est le temps
+    nécessaire pour aller la chercher  à l'emplacement mémoire indiqué par cette adresse? 
+    
+    Critère essentiel pour les opérations dites \alert{d'accès direct}.
+    
+  \item \alert{Débit}: volume de données lues par unité de temps
+    dans le meilleur des cas.
+    
+     Critère essentiel pour les opérations dites de \alert{lecture séquentielle}.
+    
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{Constat}: tout accès aux données s'effectue avec l'une de ces deux opérations.
+\end{blocgauche}
+\end{frame} 
+    
+\begin{frame}
+{Quelques ordres de grandeur}
+
+Rappel: 1 Go = 1\,000 Mo  et 1 To = 1\,000 Go.
+
+\vfill
+
+\begin{center}
+\begin{small}
+\begin{tabular}{l|l|l|l}
+{\bf Mémoire} & {\bf Taille} & {\bf Temps d'accès} & {\bf Débit}\\
+\hline
+{\it cache} & Qq Mo &  $\approx 10^{-8}$ (10 nanosec.) & 10+ Go/s\\
+Principale (RAM)  &  Qq Go &  $\approx 10^{-8} - 10^{-7}$ (10-100 nanosec.) & Qq Go/s \\
+Disque  & Qq To &  $\approx 10^{-2}$ (10 millisec.) & 100 Mo/s\\
+SSD & Qq To &  $\approx 10^{-4}$ (0,1 millisec.) & 1+ Go/s\\
+\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+\vfill
+\begin{blocgauche}
+Un accès \alert{direct} disque est (environ) un million de fois
+plus coûteux qu'en mémoire principale\,!
+
+\smallskip
+
+Le débit d'un disque est 20, 30, 40 fois plus lent que le débit RAM.
+
+\smallskip
+
+Un SSD est 10 à  100 fois plus performant qu'un disque magnétique.
+\end{blocgauche}
+
+\end{frame}
+
+
+
+\begin{frame}{Importance pour les bases de données}
+
+ Un SGBD doit ranger sur disque les données\,;
+\begin{redbullet}
+   \item parce qu'elle sont trop volumineuses (de moins en moins vrai)\,;
+   \item parce qu'elles sont \emph{persistantes} (et doivent survivre
+      à un arrêt du système).
+\end{redbullet}
+
+\vfill
+Le SGBD doit \alert{toujours} amener 
+      les données en mémoire pour les traiter.
+
+\vfill
+
+Si possible, les \alert{données utiles} devraient résider
+         le plus possible en mémoire.
+
+\vfill
+
+\begin{blocgauche}
+\alert{Principe général}:
+la capacité à placer les données \alert{utiles} au plus près du processeur (donc en RAM si possible)
+est un facteur essentiel de performance.
+\end{blocgauche}
+
+\end{frame}
+
+%\subsection{Les disques magnétiques}
+
+
+\begin{frame}
+{Organisation d'un disque}
+
+\alert{Disque}\,: surface magnétique, stockant des 0 ou des 1,
+          divisé en secteurs.
+
+\vfill
+
+%Par extension\,: ensemble de surfaces (simple ou double-face)
+%                     ayant mêmes caractéristiques.
+
+\alert{Dispositif}\,: les surfaces sont entraînées dans un mouvement de rotation\,;
+              les têtes de lecture se déplacent dans un plan fixe.
+
+\begin{blocgauche}
+\begin{redbullet}
+  \item Le \alert{bloc} est un ensemble de secteurs, sa
+              taille est en général un multiple de 512\,;
+
+  \item La \alert{piste} est l'ensemble des blocs d'une surface
+       lus au cours d'une rotation\,;
+
+  \item le  \alert{cylindre} est un ensemble de pistes situées
+                    sous les têtes de lecture.
+\end{redbullet}
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}
+{Structure d'un disque}
+
+\figSlide{disques}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Disque = accès \alert{semi-direct} = latence}
+
+Adresse = numéro du disque\,;
+ de la piste où se trouve le bloc\,;
+ du numéro du bloc sur la piste.
+
+\vfill
+
+\begin{redbullet}
+  \item \alert{Délai de positionnement} pour placer
+              la tête sur la bonne piste\,:
+
+  \item \alert{Délai de latence} pour attendre que le bloc
+           passe sous la tête de lecture\,;
+
+  \item \alert{Temps de transfert} pour attendre que le (ou les)
+                bloc(s) soient lus et transférés.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{La latence d'un disque}:
+on ne peut pas lire une donnée avant qu'elle passe
+sous une tête de lecture: la \alert{latence} (qq ms) 
+est un facteur pénalisant.
+\end{blocgauche}
+
+
+\end{frame}
+
+\begin{frame}{Granularité d'entrée/sortie: le bloc}
+
+\alert{Granularité}: on lit toujours au moins un bloc,
+    même si on ne veut qu'un octet\,; le \alert{bloc} est \alert{l'unité d'entrée/sortie}\,! 
+
+\medskip
+
+  $\Rightarrow$ le remplissage des blocs, si possible  avec des données
+     ``proches'' de la données requise initialement, est essentiel.
+     
+\vfill
+
+\alert{Localité}\,: la latence en pratique dépend de la proximité
+   des adresses successives demandées par l'application. 
+
+\begin{blocgauche}
+\alert{Principe}: si deux données sont \alert{proches} du point de vue applicatif,
+  alors elles doivent être proches sur le disque (idéalement, dans
+   le même bloc).
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Résumé}
+
+La gestion des disques n'est pas directement sous le contrôle de l'administrateur. 
+
+\vfill 
+\alert{Retenir}:
+
+\begin{redbullet}
+  \item Accès (aléatoire) au disque\,: très lent par rapport à un accès en RAM (qq. ms).
+  \item Débit du disque\,: faible (100 MO/s au mieux)
+  \item SSD: 100 fois plus rapide qu'un disque (latence), 10 fois plus en débit
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+
+\alert{Règle générale}: définir des données compactes (types) et stockées contiguement.
+
+\medskip
+
+Organisation des données, les algorithmes d'accès, la concurrence: tout est conçu pour minimiser
+les accès aux disques, et surtout les accès \alert{aléatoires}.
+\end{blocgauche}
+
+\end{frame}

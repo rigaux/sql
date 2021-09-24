@@ -1,0 +1,200 @@
+
+\frontslide{Le hachage statique}
+
+%------------------------------------------------------------
+\section{Le hachage}
+%------------------------------------------------------------
+\begin{frame}{Le hachage}
+
+Très utilisé comme structure en mémoire RAM. 
+
+\vfill
+
+Pour les bases de données, un concurrent de l'arbre-B
+\begin{redbullet}
+  \item \alert{Meilleur} (un peu, et en théorie) pour les recherches par clé
+  \item \alert{N'occupe aucune place}
+\end{redbullet}
+
+\vfill
+
+Mais
+
+\vfill
+
+\begin{redbullet}
+  \item Se réorganise difficilement
+  \item Ne supporte pas les recherches par intervalle
+\end{redbullet}
+  
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Principe du hachage}
+
+Le stockage est organisé en $N$ \alert{fragments} (\textit{buckets})
+constitués de séquences de blocs.
+
+\vfill
+
+La répartition des enregistrements se fait par un \alert{calcul}. Une \textit{fonction de hachage} $h$ prend une
+         valeur de clé en entrée et retourne une adresse de fragment en sortie
+
+
+
+\vfill
+\begin{redbullet}
+  \item \alert{Stockage}\,: on calcule l'adresse du fragment d'après la clé, on y stocke l'enregistrement
+          
+            \item \alert{Recherche (par clé)}\,:  on calcule l'adresse du fragment d'après la clé,
+                on y cherche l'enregistrement
+     
+\end{redbullet}
+
+\vfill
+
+Simple et efficace\,!
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Exemple}
+
+On veut créer une structure de hachage pour nos 16 films
+
+\vfill
+
+Simplifions\,: chaque fragment fait un bloc et contient 4 enregistrements au plus
+
+
+\vfill
+
+\begin{redbullet}
+  \item on alloue 5 fragments (pour garder une marge de man{\oe}uvre)
+  \item un \alert{répertoire} à 5 entrées (0 à 4) pointe vers les fragments
+   \item On définit la fonction $h(titre) = rang(titre[0])\, mod\, 5$
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+Donc on prend la première lettre du titre (par exemple 'I' pour 'Impitoyable'), on
+prend sot rang dans l'alphabet (ici 9) et on garde le reste de la division par 5, le nombre de fragments.
+\smallskip
+
+$$h('Impitoyable')= 4$$
+\end{blocgauche}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Le résultat}
+
+  \figSlideWithSize{hachage}{12cm}
+
+\vfill
+\begin{blocgauche}
+La seule structure additionnelle est le répertoire, qui \alert{doit} tenir en RAM
+\end{blocgauche}
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}[fragile]{Recherches}
+
+\begin{redbullet}
+  \item Par clé\,, Oui
+  
+ 
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+SELECT * FROM  Film WHERE titre = 'Impitoyable'
+\end{minted}
+ 
+   \item Par préfixe\,? Non
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+SELECT * FROM  Film WHERE titre LIKE 'Mat%'
+\end{minted}
+ 
+   \item Par intervalle\,: non\,!
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+SELECT *
+FROM  Film
+WHERE titre BETWEEN 'Annie Hall' AND 'Easy Rider'
+\end{minted}
+ 
+\end{redbullet}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Les difficultés}
+
+
+Très important\,: $h$ doit répartir uniformément les enregistrements
+            dans les $n$ fragments
+            
+\vfill
+
+Notre fonction est un contre-exemple\,: si une majorité de films commence par une
+même lettre ('L' par exemple) la répartition va être déséquilibrée.
+
+\vfill
+
+\alert{Plus grave}\,: La structure simple décrite précédemment n'est pas
+\alert{dynamique}.
+
+\begin{redbullet}
+  \item On ne peut pas changer un enregistrement de place
+
+   \item Donc  il faut créer un chaînage de blocs quand
+             un fragment déborde
+
+  \item Et donc les performances se dégradent...
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Notez que l'on ne peut pas changer le nombre de fragments
+car cela implique le changement de la fonction de répartition. 
+\end{blocgauche}
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Exemple\,: insertion de Citizen Kane}
+
+  \figSlideWithSize{hachage2}{12cm}
+
+\vfill
+
+\begin{blocgauche}
+Il faut maintenant deux lectures pour accéder à Citizen Cane.
+\end{blocgauche}
+\end{frame}
+
+
+%------------------------------------------------------------
+\begin{frame}{Résumé: avantages et inconvénients du hachage}
+
+
+En terme d'efficacité, il paraît optimal
+
+\begin{redbullet}
+  \item La structure (le répertoire) prend très peu de place
+  \item Le coût d'une recherche par clé est constant
+  \item De plus il est particulièrement simple à implanter.
+\end{redbullet}
+
+\vfill
+
+Mais
+
+\vfill
+\begin{redbullet}
+  \item Dans sa version de base, il se dégrade quand la situation évolue
+  \item Pas de recherche pas intervalle ou préfixe
+  \item Structure plaçante\,: il ne peut y avoir qu'une seule structure de hachage par table.
+\end{redbullet}
+
+\end{frame}

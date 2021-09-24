@@ -1,0 +1,185 @@
+
+\subsection{Verrouillage à deux phases}
+
+
+\begin{frame}{Verrouillage à deux phases}
+
+Le principal (et le plus ancien) algorithme pour assurer la
+sérialisabilité.
+
+\vfill
+
+Est réputé engendrer beaucoup de blocages et de rejets.
+
+\vfill
+
+Repose sur le verrouillage (surprise!) des nuplets.
+
+\end{frame}
+
+
+\subsection{Verrouillage}
+
+\begin{frame}{Les verrous}
+
+Pose de \alert{verrous} sur les nuplets.
+
+
+\begin{redbullet}
+
+   \item Le verrou \alert{partagé} (\textit{shared lock})
+          autorise la pose d'autres verrous partagés sur le même tuple. 
+
+   \item Le verrou \alert{exclusif} (\textit{exclusive lock})
+           interdit la pose de tout autre verrou, 
+           exclusif ou partagé, et donc de toute lecture ou écriture par une autre transaction.
+\end{redbullet}
+
+\vfill
+
+Verrous = \alert{blocages}. Il faut
+en poser
+
+\begin{blocgauche}
+\begin{redbullet}
+   \item  \alert{le moins possible}, surtout pour les verrous exclusifs.
+  \item \alert{pour la durée la plus courte possible}
+\end{redbullet}
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Transactions et verrous}
+
+Le contrôleur pose des verrous pour une transaction $T$.
+
+\begin{redbullet}
+  \item On ne peut poser un \alert{verrou partagé} sur un tuple $a$ 
+       que s'il n'y a que des verrous partagés sur ce tuple.
+  \item On ne peut poser un \alert{verrou exclusif} que si
+  
+     \begin{itemize}
+        \item il n'y a aucun autre verrou, \alert{ou},
+         \item il y a un verrou partagé déjà posé par $T$ elle-même (\textit{upgrade})
+         \end{itemize}
+ \end{redbullet}
+ 
+ \vfill
+\begin{blocgauche}
+\begin{redbullet}
+  \item Une transaction qui n'obtient pas un verrou,  \alert{est mise en attente}. 
+\item Les verrous ne sont libérés qu'au moment du \texttt{commit} ou
+\texttt{rollback}.
+\end{redbullet}
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{L'algorithme}
+
+On pose des verrous pour empêcher l'apparition de cycles.
+
+
+\begin{redbullet}
+	\item \alert{Lecture} sur $x$,
+            on regarde s'il y a un verrou \alert{exclusif} sur $x$\,;
+	\begin{itemize}
+		\item si oui la transaction $T_i$ 
+	                est mise en attente.
+		\item si non, la transaction pose un verrou en lecture
+		       et l'opération est exécutée.
+	\end{itemize}
+	\item \alert{Ecriture} sur $x$,
+              on regarde s'il y a un verrou \alert{quelconque}  sur $x$\,;
+	\begin{itemize}
+		\item si oui la transaction $T_i$ 
+	                est mise en attente.
+		\item si non, la transaction pose un verrou en écriture
+		       et l'opération est exécutée.
+	\end{itemize}
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Important}\,: ne fonctionne que si les verrous ne sont pas
+relâchés avant le \texttt{commit} ou le \texttt{rollback}.
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Exemple}
+
+Prenons l'exécution concurrente\,:  $r_1[x] w_2[x] w_2[y] C_2 w_1[y] C_1$
+
+\vfill
+
+\begin{redbullet}
+  \item $T_1$ pose un verrou partagé sur $x$, lit $x$
+          mais ne relâche pas le verrou\,;
+  \item $T_2$ tente de poser un verrou exclusif sur $x$\,:
+              impossible puisque $T_1$ détient un verrou partagé,
+                 {\em donc $T_2$ est mise en attente}\,;
+  \item $T_1$ pose un verrou exclusif sur $y$, modifie $y$,
+            valide\,;  ses verrous  
+            sont relâchés\,;
+  \item $T_2$ est libérée\,: elle pose un verrou exclusif sur $x$, et 
+              le modifie\,;
+  \item $T_2$ pose un verrou exclusif sur $y$, et modifie $y$\,;
+  \item $T_2$ valide, ce qui relâche les verrous sur $x$ et $y$.
+\end{redbullet}
+
+Exécution après réordonnancement: $r_1[x] w_1[y] w_2[x] w_2[y]$
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Un gros problème\,: les \texttt{deadlock}}
+
+
+Reprenons notre exemple des mises à jour perdues.
+
+\begin{center}
+$r_1(s)  r_1(c_1) r_2(s)  r_2(c_2) 
+ w_2(s)  w_2(c_2) C_2 w_1(s) w_1(c_1) C_1$
+\end{center}
+
+\begin{redbullet}
+  \item $T_1$ lit $s$ et $c_1$, qui sont verrouillés en lecture.
+  \item $T_2$ lit $s$ et $c_2$, qui sont verrouillés en lecture\,;
+     \alert{$s$ partage deux verrous en lecture}
+
+  \item $T_2$ veut écrire $s$\,: conflit, donc blocage de $T_2$.
+
+  \item $T_1$ veut écrire $s$\,: conflit, donc blocage de $T_1$.
+\end{redbullet}
+
+C'est \alert{l'étreinte fatale} (\textit{deadlock})\,!!
+
+\vfill
+
+\begin{blocgauche}
+ Le système va rejeter une
+des transactions.
+Très regrettable, mais encore mieux que d'introduire des anomalies (?)
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Le 2PL est le seul algorithme actuellement utilisé pour garantir la sérialisabilité.
+
+\vfill
+
+Il repose intensivement sur la pose de verrous qui ne sont relâchés qu'à la fin de la transaction.
+
+\vfill
+\begin{blocgauche}
+Il entraîne des interblocages, et donc le rejet de certaines transactions\,: difficilement explicable pour
+un utilisateur, pose le problème de resoumettre la transaction.
+\end{blocgauche}
+
+\end{frame}

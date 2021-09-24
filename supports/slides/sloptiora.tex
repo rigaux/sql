@@ -1,0 +1,280 @@
+
+\begin{frame}{L'optimiseur}
+
+L'optimiseur ORACLE suit une approche classique\,:
+\begin{redbullet}
+   \item Génération de plusieurs plans d'exécution.
+   \item Estimation du coût de chaque plan généré.
+   \item Choix du meilleur et exécution.
+\end{redbullet}
+
+Tout ceci est automatique, \alert{mais il est possible d'influer,
+voire de forcer le plan d'exécution}.
+\end{frame}
+
+\begin{frame}{Les chemins d'accès}
+
+Ceux que nous avons déjà vus.
+
+
+\begin{redbullet}
+  \item \alert{Parcours séquentiel} ($FULL\ TABLE\ SCAN$).
+  \item \alert{Par adresse} ($ACCESS\ BY\ ROWID$).
+ \item \alert{Parcours d'index} ($INDEX\ SCAN$).
+\end{redbullet}
+
+\end{frame}
+
+\begin{frame}{Opérations physiques}
+
+
+Voici les principales\,:
+\begin{redbullet}
+\item $INTERSECTION$ : intersection de deux ensembles de n-uplet.
+\item $CONCATENATION$ : union de deux ensembles.
+\item $FILTER$ : élimination de n-uplets (sélection).
+\item $PROJECTION$ : opération de l'algèbre relationnelle.
+\end{redbullet}
+
+D'autres opérations sont liées aux algorithmes de jointures.
+
+\end{frame}
+
+\begin{frame}{Algorithmes de jointure sous ORACLE}
+
+
+ORACLE utilise trois algorithmes de jointures\,:
+\begin{redbullet}
+  \item \alert{Boucles imbriquées} quand il y a au moins un index.\\
+	Opération \texttt{NESTED\ LOOP}.
+   \item  \alert{Tri/fusion} quand il n'y a pas d'index.\\
+	Opération \texttt{SORT} et \texttt{MERGE}.
+
+   \item  \alert{Jointure par hachage} quand il n'y a pas d'index.\\
+	Opération  \texttt{HASH JOIN}
+
+\end{redbullet}
+
+\end{frame}
+
+
+\begin{frame}{L'outil EXPLAIN}
+
+L'outil EXPLAIN donne le plan d'exécution d'une requ\^ete. La
+description comprend\,:
+\begin{redbullet}
+  \item Le chemin d'accès utilisé.
+  \item Les opérations physiques (tri, fusion, intersection, ...).
+  \item L'ordre des opérations. 
+\end{redbullet}
+
+Il est représentable par un arbre.
+
+\end{frame}
+
+
+\subsection{Optimisation dans ORACLE\,: exemples}
+
+\begin{frame}{Rappel du schéma}
+\begin{redbullet}
+  \item Film (\textbf{idFilm}, titre, année, genre, résumé,
+                                \textit{idMES}, \textit{codePays})
+ \item Artiste (\textbf{idArtiste}, nom, prénom, annéeNaissance)
+  \item Role (\textbf{\textit{idActeur}, \textit{idFilm}}, nomRôle)
+   \item Internaute (\textbf{email}, nom, prénom, région)
+  \item Notation (\textbf{\textit{email}, \textit{idFilm}}, note)
+   \item Pays (\textbf{code}, nom, langue)
+\end{redbullet}
+
+\end{frame}
+
+\begin{frame}[fragile]{Sélection sans index}
+
+La requête\,:
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+     explain plan 
+     set statement_id='SelSansInd' for
+     select *
+     from Film
+     where titre = 'Vertigo' 
+\end{minted}
+
+\vfill
+
+Le résultat de EXPLAIN\,:
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    0 SELECT STATEMENT
+      1 TABLE ACCESS FULL FILM   
+\end{minted}
+
+\end{frame}
+
+\begin{frame}{Plan d'exécution}
+
+On ne fait pas plus simple\,!
+
+\figSlideWithSize{planOra-selsansind}{3cm}
+
+\end{frame}
+
+\begin{frame}[fragile]{Sélection avec index}
+
+La requête\,:
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+     explain plan 
+     set statement_id='SelInd' for
+     select *
+     from Film
+     where id=21;
+\end{minted}
+
+\vfill
+
+Le résultat de EXPLAIN\,:
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    0 SELECT STATEMENT
+     1 TABLE ACCESS BY ROWID FILM
+      2 INDEX UNIQUE SCAN IDX-FILM-ID 
+\end{minted}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Plan d'exécution}
+
+Accès à l'index, puis à la table.
+
+\figSlideWithSize{planOra-selind}{6cm}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Jointure avec index}
+
+La requête\,:
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    explain plan 
+    set statement_id='JoinIndex' for
+    select titre, nom, prenom
+    from   Film f, Artiste a
+    where f.id_realisateur = a.id;
+\end{minted}
+
+\vfill
+
+Le résultat de EXPLAIN\,:
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    0 SELECT STATEMENT
+      1 NESTED LOOPS
+        2 TABLE ACCESS FULL FILM
+        3 TABLE ACCESS BY ROWID ARTISTE
+          4 INDEX UNIQUE SCAN IDXARTISTE
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}{Plan d'exécution (déjà vu)}
+
+\figSlideWithSize{planEx-indexedjoin}{6cm}
+\end{frame}
+
+\begin{frame}[fragile]{Jointure avec index et sélection}
+
+La requête (avec index sur le nom des artistes)\,:
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    explain plan
+    set statement_id='JoinSelIndex' for
+    select nom_role
+    from   Role r, Artiste a
+    where  r.id_acteur = a.id
+    and    nom = 'Pacino'; 
+\end{minted}
+
+\vfill
+
+Le résultat de EXPLAIN\,:
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    0 SELECT STATEMENT
+      1 NESTED LOOPS
+        2 TABLE ACCESS BY ROWID ARTISTE
+          3 INDEX RANGE SCAN IDX-NOM
+        4 TABLE ACCESS BY ROWID ROLE
+          5 INDEX RANGE SCAN IDX-ROLE
+\end{minted}
+
+\end{frame}
+
+\begin{frame}{Plan d'exécution}
+
+\figSlideWithSize{planOra-joinselindex}{10cm}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Jointure sans index}
+
+Requête: 
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    explain plan set 
+    statement_id='JoinSansIndex' for
+    select nom, prenom
+    from Film f, Artiste a
+    where f.annee  = a.annee_naissance
+    and   titre = 'Vertigo';
+\end{minted}
+
+\vfill
+
+Le résultat de EXPLAIN\,:
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+   0 SELECT STATEMENT
+     1 MERGE JOIN
+       2 SORT JOIN
+         3 TABLE ACCESS FULL ARTISTE
+       4 SORT JOIN
+         5 TABLE ACCESS FULL FILM
+\end{minted}
+
+\end{frame}
+
+\begin{frame}{Plan d'exécution}
+
+\figSlideWithSize{planOra-joinsansindex}{8cm}
+
+\end{frame}

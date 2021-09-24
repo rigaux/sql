@@ -1,0 +1,11 @@
+{% if les_contacts %}
+    <ul>
+    {% for contact in les_contacts %}
+        <li>
+              {{ contact.prenom }}   {{ contact.nom }}
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Aucun contact.</p>
+{% endif %}

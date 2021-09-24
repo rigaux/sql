@@ -1,0 +1,218 @@
+\documentclass[pdf,blends,slideColor,colorBG]{prosper}
+
+\usepackage{moreverb}
+\usepackage{macros}
+
+\begin{document}
+
+\title{Le modèle Entité/Association}
+\author{Philippe Rigaux}
+\email{rigaux@lri.fr}
+\institution{LRI}
+
+%------------------------------------------------------------
+\part{Conception d'une \\base de données\\relationnelle}
+%------------------------------------------------------------
+
+
+\begin{tsp}{Quelques principes}{
+
+On cherche à définir une \guill{bonne} organisation
+des données. Quelques critères\,:
+\begin{itemize}
+   \item Pas de redondance (une information figure une et une seule fois)
+
+  \item Pas de perte  (on est toujours capable
+          de retrouver une information)
+
+   \item On représente ce qui nous intéresse, ni plus, ni moins.
+\end{itemize}
+
+Pas si facile en pratique.
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Illustration}{
+
+\begin{center}
+\begin{small}
+\begin{tabular}{l|c|l|l|c}
+ titre &  année &  nomMES &  prénomMES &  annéeNaiss \\
+\hline
+Alien & 1979 & Scott & Ridley & 1943\\
+Vertigo  & 1958 & Hitchcock & Alfred & 1899\\
+Psychose & 1960 & Hitchcock & Alfred & 1899\\
+Kagemusha & 1980 & Kurosawa & Akira & 1910\\
+Volte-face & 1997 & Woo & John & 1946\\
+Pulp Fiction & 1995 & Tarantino & Quentin & 1963 \\
+Titanic & 1997 & Cameron & James & 1954\\
+Sacrifice & 1986 & Tarkovski & Andrei &1932\\
+\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Pourquoi ça ne va pas}{
+
+Une seule table, ça semble pratique mais ça soulève beaucoup
+de problèmes.
+
+\begin{itemize}
+   \item Redondance (plusieurs fois le même film\,?!)
+
+   \item Perte d'information\,: je supprime Volte-face,
+     et John Woo disparaît par la même occasion.
+
+   \item Toutes sortes d'anomalies et d'incohérences peuvent apparaître.
+\end{itemize}
+
+Question\,: qu'est-ce qu'un film, qu'un metteur en scène, comment
+sont-ils liés, etc.
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Représentation indépendante}{
+
+\noindent
+\begin{small}
+\begin{center}
+\begin{minipage}[b]{4cm}
+\begin{center}
+\begin{small}
+\begin{tabular}{l|c}
+{\bf titre} & année  \\
+\hline
+Alien & 1979 \\
+Vertigo  & 1958 \\
+Psychose & 1960 \\
+Kagemusha & 1980 \\
+Volte-face & 1997 \\
+Pulp Fiction & 1995  \\
+Titanic & 1997 \\
+Sacrifice & 1986 \\
+\hline
+\end{tabular}
+\end{small}
+
+La table des films
+\end{center}
+\end{minipage} \
+\begin{minipage}[b]{5cm}
+\begin{center}
+\begin{tabular}{l|l|l|c}
+{\bf id} &  nomMES & prénomMES &  annéeNaiss \\
+\hline
+1 & Scott & Ridley & 1943\\
+2 & Hitchcock & Alfred & 1899\\
+3 & Kurosawa & Akira & 1910\\
+4 & Woo & John & 1946\\
+5 & Tarantino & Quentin & 1963 \\
+6 & Cameron & James & 1954\\
+7 & Tarkovski & Andrei &1932\\
+\hline
+\end{tabular}
+
+La table des réalisateurs
+\end{center}
+\end{minipage}
+\end{center}
+\end{small}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Représentation indépendante \textbf{et} liée}{
+\begin{small}
+\begin{center}
+\begin{minipage}[b]{3cm}
+\begin{tabular}{l|c|c}
+\cle{titre} & année  & \fk{idMES} \\
+\hline
+Alien & 1979 & 1 \\
+Vertigo  & 1958 & 2\\
+Psychose & 1960 & 2 \\
+Kagemusha & 1980 & 3\\
+Volte-face & 1997 & 4 \\
+Pulp Fiction & 1995 &  5 \\
+Titanic & 1997 & 6 \\
+Sacrifice & 1986 & 7\\
+\hline
+\end{tabular}
+
+\centerline{La table des films}
+\end{minipage} \hspace*{1cm} \
+\begin{minipage}[b]{5cm}
+\begin{center}
+\begin{tabular}{l|l|l|c}
+{\bf id} &  nomMES & prénomMES &  annéeNaiss \\
+\hline
+1 & Scott & Ridley & 1943\\
+2 & Hitchcock & Alfred & 1899\\
+3 & Kurosawa & Akira & 1910\\
+4 & Woo & John & 1946\\
+5 & Tarantino & Quentin & 1963 \\
+6 & Cameron & James & 1954\\
+7 & Tarkovski & Andrei &1932\\
+\hline
+\end{tabular}
+
+La table des réalisateurs
+\end{center}
+\end{minipage}
+\end{center}
+\end{small}
+
+}\end{tsp}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Vue d'ensemble}{
+
+\figSimple{films}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Concepts\,: entités et type d'entités}{
+
+Une entité\,:
+
+\begin{itemize}
+   \item Une identité
+
+   \item des attributs
+
+   \item appartient à un {\em groupe} 
+\end{itemize}
+
+Entité = instance d'un type d'entité
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Types d'entités}{
+
+\figSimple{entite}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Graphe d'une association}{
+
+\figSimple{graphe-ea}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Association}{
+
+\figSimple{assoc}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Autre graphe}{
+
+\figSimple{graphe-ea2}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Autre association}{
+
+\figSimple{assoc2}
+
+}\end{tsp}
+
+\end{document}

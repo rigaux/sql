@@ -1,0 +1,182 @@
+
+\begin{frame}{Point de départ: relation globale et dépendances}
+
+On part d'un schéma contenant tous les attributs connus.
+
+\vfill
+\centerline{\texttt{(code, nom, adresse, activité, description)}}
+\vfill
+
+On identifie les dépendances fonctionnelles
+
+\begin{redbullet}
+  \item $code \to nom, adresse$
+  \item $adresse \to code, nom$
+ \item $code, activit\acute{e}  \to  description$
+\end{redbullet}
+
+\vfill
+
+On va baser la décomposition sur les dépendances fonctionnelles.
+
+\end{frame}
+
+
+\begin{frame}{Décomposition guidée par les dépendances}
+
+Trois DFs, trois ensembles d'attributs
+\,: (\textbf{code}, nom, adresse), (code, nom, \textbf{adresse}), (\textbf{code, activité}, description)
+
+\vfill
+
+\begin{redbullet}
+  \item  Les deux premiers définissent une relation 
+  
+\smallskip  
+      \centerline{Logement (\textbf{code}, nom, adresse)}
+\smallskip
+   Deux clés dites \alert{candidates},   on en choisit une comme \alert{clé primaire}
+ \item Le second définit une relation 
+ 
+\medskip
+
+ \centerline{Activité (\textbf{code, activité}, description)}
+ 
+\end{redbullet}
+
+\vfill
+Relations en 3FN, décomposition \alert{sans perte d'information}
+
+
+
+\end{frame}
+
+%%%%%%%%%%%%
+\begin{frame}{Regardons les séjours}
+
+Le schéma global de départ est le suivant:
+
+
+\vfill
+\begin{small}
+\texttt{(code, nom, adresse, idVoyageur, nomV, prénomV)}
+\end{small}
+\vfill
+
+On a les dépendances suivantes :
+\begin{redbullet}
+  \item $code \to nomL$
+  \item $idVoyageur \to pr\acute{e}nomV, nomV$
+\end{redbullet}
+
+\vfill
+
+La clé est le couple $(code, idVoyageur)$. 
+
+\vfill
+\begin{remblock}{En troisième forme normale?}
+Non, car pour les \alert{deux}  DF,  la partie gauche n'est pas la clé
+\end{remblock}
+\end{frame}
+
+%%%%%%%%%%%%
+\begin{frame}{La décomposition}
+
+Comme avant, à partir des DF.
+
+\vfill
+
+
+\begin{redbullet}
+  \item On retrouve Logement (\textbf{code}, nom, adresse) 
+  \item Voyageur (\textbf{idVoyageur}, nom, prénom)
+\end{redbullet}
+
+\vfill
+
+\alert{Pas suffisant}, on a perdu le lien entre les logements et les voyageurs.
+
+\vfill
+On ajoute une relation avec la clé.
+
+\begin{redbullet}
+  \item Séjour (\textbf{idVoyageur, code})
+\end{redbullet}
+
+\vfill
+\alert{On est en 3FN, sans perte d'information (jointures pour reconstituer)}
+
+\end{frame}
+
+%%%%%%%%%%%%
+\begin{frame}{Algorithme de normalisation}
+
+On part d’un schéma de relation $R$ \alert{global}
+et d’un ensemble de dépendances fonctionnelles \alert{minimales} et \alert{directes} (exercice)
+
+\vfill
+
+On détermine alors les clés de R
+
+\vfill 
+\begin{redbullet}
+  \item Pour chaque DF $X \to A_1 \cdots, A_n$,
+      on crée une relation $(X,A_1 \cdots, A_n)$ de clé $X$
+     \item On unifie les relations de même clé et les relations de même schéma
+  \item Pour chaque clé $C$
+non représentée dans une des relations précédentes, on crée une relation $(C)$
+\end{redbullet}
+
+\vfill
+
+\alert{On obtient un schéma normalisé}
+\end{frame}
+
+
+%%%%%%%%%%%%
+\begin{frame}{Et en pratique ?}
+
+Dans la vraie vie, les DF n'existent pas naturellement. On a plutôt\,:
+
+\vfill
+\begin{small}
+\texttt{(nomLogement, adresse, nomVoyageur, typeLogement, ville)}
+\end{small}
+\vfill 
+
+Pas de DF.... Une phase d'analyse détermine 
+des \alert{entités}, leurs identifiants et 
+leurs liens.
+
+\vfill
+
+Ici, entités Logement et Voyageur, avec\,:
+
+\begin{redbullet}
+  \item $code \to nomLogement, adresse, typeLogement$
+    \item $idVoyageur \to nomVoyageur, ville, pays$
+  
+\end{redbullet}
+
+Maintenant on normalise et on obtient un schéma en 3FN.
+\end{frame}
+
+%%%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Il est toujours possible de se ramener à un schéma normalisé.
+
+\vfill
+\begin{redbullet}
+   \item En déterminant les DF et les clés
+   \item En appliquant l'algorithme de normalisation
+\end{redbullet}
+
+\vfill
+
+\alert{En pratique}: les DF ne sont pas données naturellement. Il faut les déterminer
+par un processus d'analyse des besoins et de  conception.
+
+
+\end{frame}
+

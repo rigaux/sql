@@ -1,0 +1,262 @@
+
+\subsection{Modèle d'exécution: les itérateurs}
+
+\begin{frame}{Le moteur d'exécution}
+
+Une requête est prise en charge par un \alert{moteur d'exécution} 
+qui produit dynamiquement un programme  ou \alert{plan d'exécution}
+
+\vfill
+
+Ce programme a une forme spéciale: c'est un arbre constitué \alert{d'opérateurs}
+échangeant des \alert{flux de données}.
+
+\vfill
+
+Les opérateurs
+
+\begin{itemize}
+  \item ont une forme générique (\alert{itérateurs});
+  \item fournissent une tâche spécialisée (cf. l'algèbre relationnelle)
+  \item un petit nombre suffit!
+\end{itemize}
+
+\vfill
+
+\begin{block}{Dans ce cours}
+On va apprendre à implanter un moteur d'exécution pour (presque toutes) les
+ requêtes SQL !
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}{Matérialisation et pipelinage}
+
+Prenons deux opérations, un parcours d'index qui fournit des adresses, et
+un accès direct qui fournit des tuples.
+
+\vfill
+
+Première solution: on exécute en séquence, avec \alert{matérialisation}.
+
+\smallskip
+
+\figSlideWithSize{iter-materialisation}{9cm}
+
+\smallskip
+
+\alert{Pas bon}: consomme de la mémoire; introduit une latence inutile.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{La bonne solution}
+
+On \alert{connecte} les opérateurs entre eux.
+
+\vfill
+
+\figSlideWithSize{iter-pipeline}{10cm}
+
+\vfill
+
+\begin{itemize}
+  \item \alert{Pas de stockage intermédiaire; pas de latence } (sauf si...).
+  \item Production \alert{à la demande} de l'application ("aspirateur").
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Opérateur bloquant}
+
+Il est parfois nécessaire d'effectuer un calcul \alert{complet}
+avant de fournir le premier tuple..
+
+\vfill
+
+\begin{itemize}
+    \item le tri ("order by");
+     \item l'élimination des doublons (``distinct``);
+       \item le partitionnement (``group by``);
+\end{itemize}
+
+\vfill
+
+On introduit alors un opérateur \alert{bloquant}: très mauvais pour la latence.
+\end{frame}
+
+
+\begin{frame}[fragile]{Temps de réponse et temps d'exécution}
+
+À comparer:
+
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select * from T
+\end{minted}
+
+et 
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select distinct * from T
+\end{minted}
+      
+\vfill
+
+Bien distinguer
+
+\begin{itemize}
+  \item \alert{Temps de réponse}: temps pour obtenir le premier tuple.
+  \item \alert{Temps d'exécution}: temps pour obtenir tous les tuples.  
+\end{itemize}
+
+\vfill
+
+Avec un opérateur bloquant on \alert{additionne} l'exécution de la requête et celle de l'application.
+
+\end{frame}
+
+
+\begin{frame}{Notion d'itérateur}
+
+Chaque opérateur est implanté sous forme d'un \alert{itérateur}.
+
+\vfill
+
+Trois fonctions:
+
+\begin{itemize}
+  \item \texttt{open}\,: initialise les tâches de l'opérateur\,; 
+            positionne le curseur au début du résultat à fournir\,;
+   
+  \item \texttt{next}\,: ramène l'enregistrement courant\;
+          se place sur l'enregistrement suivant\,;
+
+  \item \texttt{close}\,: libère les ressources\,;
+\end{itemize}
+
+\vfill
+
+Connexion: 
+\begin{itemize}
+  \item Un itérateur \alert{consomme} des tuples d'un ou deux autres itérateurs.
+  \item Un itérateur \alert{produit} des tuples pour un autre
+     itérateur (ou pour l'application).
+\end{itemize}  
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Premier exemple: l'opérateur \texttt{FullScan}}
+
+Fonction \textit{open()}: on se positionne au début du fichier.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{bash}
+   function openScan 
+    {
+      # Entree: $T est la table 
+      
+      # Initialisations
+      p = $T.first;    # Premier bloc de T
+      e = $p.init;     # On se place avant le premier enregistrement
+    }
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{L'opérateur \texttt{FullScan} (suite)}
+
+Fonction \textit{next()}: on récupère le tuple suivant.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{bash}
+    function nextScan 
+    {
+       # Enregistrement suivant
+       $e = $p.next;       
+       # A-t-on atteint le dernier enregistrement du bloc ?
+       if ($e = null) do
+          # On passe au bloc suivant
+          $p = $T.next;
+          # Dernier bloc atteint?
+          if ($p = null) then
+              return null;
+          else
+               $e = $p.first;
+          fi
+        done
+ 
+        return $e;
+    }
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Ma première exécution de requête}
+
+La requête
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select * from T
+\end{minted}
+
+est implantée par:
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{bash}
+   # Parcours  de la table T
+    $curseur = new FullScan(T);
+    $tuple = $curseur.next();
+    
+    while [$tuple != null ]
+    do
+      # Traitement du tuple
+      ...
+      # Passage au tuple suivant
+      $tuple = $curseur.next();
+    done 
+    
+    # Fermeture du curseur
+    $curseur.close();
+\end{minted}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Résumé}
+
+Principes essentiels\,:
+
+\begin{enumerate}
+  \item \alert{Production à la demande}\,: le serveur
+     n'envoie un enregistrement à l'application que quand
+    celle-ci le demande\,;
+
+   \item \alert{Pipelinage}\,: on essaie d'éviter le stockage 
+          en mémoire de résultats intermédiaires\,: le résultat
+      est calculé au fur et à mesure.
+\end{enumerate}
+
+Conséquences\,: \alert{temps de réponse minimisé} (pour obtenir
+    le premier enregistrement) mais 
+ \alert{attention aux plans bloquants} (ex. plans avec un tri).
+
+\end{frame}

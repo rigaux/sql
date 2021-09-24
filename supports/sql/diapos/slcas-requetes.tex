@@ -1,0 +1,224 @@
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Requêtes sur la base ``Messagerie''}
+
+Essayons de créer et d'interroger cette instance.
+
+\vfill
+
+\figSlideWithSize{instance-messagerie.pdf}{9cm}
+
+\vfill
+
+
+Connaissez-vous bien le schéma\,?
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Insérons le premier message}
+
+Les contacts:
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+insert into Contact (idContact, prénom, nom,  email)
+  values (1, 'Serge', 'A.', 'serge.a@inria.fr');
+insert into Contact (idContact, prénom, nom,  email)
+  values (4, 'Philippe', 'R.', 'philippe.r@cnam.fr');
+\end{minted}
+
+\vfill
+
+Le message:
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+insert into Message (idMessage, contenu, idEmetteur)
+values (1, 'Hello Serge', 4);
+\end{minted}
+
+\vfill
+
+L'envoi
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+insert into Envoi (idMessage, idDestinataire) values (1, 1);
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+Saurez-vous insérer les autres messages?
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Insérons le second message}
+
+Le message:
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+insert into Message (idMessage, contenu, idEmetteur, idPrédecesseur)
+values (2, 'Coucou Philippe', 1, 1);
+\end{minted}
+
+\vfill
+
+L'envoi
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+insert into Envoi (idMessage, idDestinataire) 
+values (2, 4);
+\end{minted}
+
+\vfill
+Pas facile de s'y retrouver avec les identifiants... 
+
+\vfill
+
+\alert{Une bonne
+interface graphique aiderait beaucoup}.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Interrogeons}
+
+Les messages et leur émetteur.
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select idMessage, contenu, prénom, nom
+from Message as m,  Contact as c
+where m.idEmetteur = c.idContact
+\end{minted}
+
+\vfill
+
+On obtient:
+
+\vfill
+
+\begin{small}
+\begin{tabular}{c|c|c|c}
+\textbf{idMessage} & \textbf{contenu} & \textbf{prénom} & \textbf{nom}\\ \hline 
+1 & Hello Serge & Philippe & R.\\ \hline 
+2 & Coucou Philippe & Serge & A.\\ \hline 
+\end{tabular}
+\end{small}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Interrogeons encore}
+
+Les messages et leur prédecesseur.
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select m1.contenu as 'Contenu', m2.contenu as 'Prédecesseur'
+from Message as m1,  Message as m2
+where m1.idPrédecesseur = m2.idMessage
+\end{minted}
+
+\vfill
+\begin{small}
+\begin{tabular}{c|c}
+\textbf{Contenu} & \textbf{Prédecesseur}\\ \hline 
+Coucou Philippe & Hello Serge\\ \hline 
+Philippe a dit ... & Hello Serge\\ \hline 
+Serge a dit ... & Coucou Philippe\\ \hline 
+\end{tabular}
+\end{small}
+\vfill
+
+Sauriez-vous obtenir \alert{tous} les prédecesseurs
+d'un message?
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Interrogeons encore et encore}
+
+Les messages envoyés à plus d'un contact
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select m.idMessage, contenu, count(*) as 'nbEnvois'
+from Message as m, Envoi as e
+where m.idMessage = e.idMessage
+group by idMessage, contenu
+having nbEnvois > 1
+\end{minted}
+
+\vfill
+
+\begin{tabular}{c|c|c}
+\textbf{idMessage} & \textbf{contenu} & \textbf{nbEnvois}\\ \hline 
+4 & Serge a dit ... & 2\\ \hline 
+\end{tabular}
+
+\vfill
+
+Requête effectuée souvent? On pourrait créer une vue.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Nettoyons un peu la base}
+
+Supprimons les vieux messages
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+begin transaction;
+
+delete from Message; where year(dateEnvoi) < 2015
+
+Réponse: All messages deleted. Table message is now empty...
+\end{minted}
+
+
+\vfill
+Oups... un point-virgule mal placé. \alert{Que faut-il faire\,?}
+
+\vfill
+
+Partir très loin\,? Arracher tous les fils\? ou ... ?
+
+\end{frame}
+%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Les requêtes SQL ``en direct'' sont assez peu pratiquées.
+
+\vfill
+
+\begin{redbullet}
+  \item La manipulation des identifiants est peu commode
+  \item Risque important de faire une bêtise
+  \item \alert{Utile pour tester des requêtes, ou vérifier la base}
+\end{redbullet}
+
+\vfill
+
+En général, les requêtes sont intégrées à des applications. C'est
+pour très bientôt.
+\end{frame}
+

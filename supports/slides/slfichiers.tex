@@ -1,0 +1,280 @@
+
+\frontslide{Organisation des fichiers}
+
+
+\begin{frame}[fragile]{Enregistrements, blocs et fichiers}
+
+
+Contenu de ce cours\,: la représentation \alert{physique} d'une base de données (par le SGBD).
+
+\vfill
+
+\begin{redbullet}
+   \item les enregistrements et leur adressage
+   \item le stockage des enregistrements dans des blocs
+   \item la séquence des blocs formant un fichier.
+\end{redbullet}
+
+
+\smallskip
+
+Une application n'accède \alert{jamais} directement à la représentation physique.
+
+\vfill
+
+
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sys.bdpedia.fr/stfichiers.html}}
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Enregistrements}
+
+Un enregistrement = une suite de {\em champs}
+stockant les valeurs des attributs.
+
+\vfill
+
+\begin{small}
+\begin{tabular}{l|c}
+{\bf Type}  & {\bf Taille en octets}  \\
+\hline
+%\multicolumn{2}{|c|}{Numériques}\\
+\sqlcom{INTEGER} & 4 \\
+\sqlcom{FLOAT} & 4 \\
+\sqlcom{DOUBLE PRECISION} & 8 \\
+\sqlcom{DECIMAL} (\param{M}, \param{D}) &  \param{M}, (\param{D}+2
+                                 si \param{M} $<$ \param{D}) \\
+\hline
+\sqlcom{CHAR}(\param{M}) & \param{M} \\
+\sqlcom{VARCHAR}(\param{M}) & \param{L+1} avec \param{L} $\leq$ \param{M} \\
+\hline
+\end{tabular}
+\end{small}
+
+
+\vfill
+\begin{blocgauche}
+Certains champs ont une taille \alert{variable};
+d'autres peuvent être à \texttt{NULL}: pas de valeur.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Tailles variables et valeurs {\tt NULL}}
+
+Si tous les champs avaient de taille fixe et ont
+une valeur\,: pas de problème.
+
+\vfill
+
+En pratique\,: certains champs ont une taille variable
+ou sont à {\tt NULL}.
+
+\vfill
+
+\begin{redbullet}
+  \item pour les champs de taille variable\,: on précède
+           la valeur par la taille exacte\,;
+
+  \item  pour les valeurs {\tt NULL}\,:
+    on peut indiquer une taille 0 (Oracle)\,;
+      on peut créer un \guill{masque} de bits.
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+La norme n'impose pas de choix, mais dans tous
+les cas il faut gérer une \alert{information
+complémentaire} sur les enregistrements, et
+la placer dans un \alert{entête}.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{En-tête d'enregistrement}
+
+Les informations complémentaires sont stockées
+dans l'en-tête d'un enregistrement. 
+
+\vfill
+Exemple\,:  
+\begin{redbullet}
+  \item table \tble{Film} (id INT, titre VARCHAR(50), année INT)
+   \item Enregistrement (123, 'Vertigo', NULL)
+\end{redbullet}
+
+\vfill
+
+\figSlideWithSize{exenr}{8cm}
+
+\vfill
+
+\begin{blocgauche}
+Le contenu de l'enregistrement se décrypte 
+au moment de la lecture.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Blocs}
+
+\begin{redbullet}
+  \item on veut qu'un enregistrement soit stocké de manière \alert{stable}
+     pour avoir une adresse \alert{fixe}\,; \alert{MAIS}:
+   \item on doit envisager le cas où la taille d'un enregistrement
+                   varie\,;
+   \item on doit envisager  une méthode pour gérer un déplacement si nécessaire.
+\end{redbullet}
+
+\vfill
+Une solution (Oracle): chaque bloc gère les adresses internes de ses enregistrements.
+
+\vfill
+
+
+\figSlideWithSize{blocenr3}{8cm}
+
+\end{frame}
+
+
+\begin{frame}{Adressage des enregistrements}
+
+Avec le schéma précédent, \alert{l'adresse} d'un enregistrement est constituée
+
+\begin{redbullet}
+  \item D'une adresse \alert{physique}, celle du bloc. Ex: F1.12
+  \item D'une adresse \alert{logique}, interne au bloc. Ex: 16
+\end{redbullet}
+L'adresse est \alert{fixe} et utilisée pour les \alert{accès direct} (indexation).
+
+\vfill
+
+Avec cette solution:
+\vfill
+
+\begin{blocgauche}
+\begin{redbullet}
+  \item un enregistrement peut changer de taille, avec réorganisation
+                interne\,;
+
+  \item Plus de place dans le bloc? On peut déplacer l'enregistrement.
+\end{redbullet}
+\end{blocgauche}
+
+
+\end{frame}
+
+\begin{frame}{Réorganisation du stockage}
+
+\alert{Un enregistrement s'agrandit, mais qu'il reste
+                de la place dans le bloc}:
+
+\begin{redbullet}
+  \item On modifie l'organisation interne\,; la table \alert{locale} d'adressage est modifiée 
+\end{redbullet}
+
+\vfill
+\alert{Un enregistrement s'agrandit, plus de place dans le bloc}:
+\begin{redbullet}
+   \item on   déplace l'enregistrement  et on crée un \alert{chaînage
+                  dans l'en-tête du bloc}.
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+La création de chaînage pénalise les performances
+$\Rightarrow$ si possible laisser de l'espace libre 
+dans un bloc.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Exemple d'évolution avec chaînage}
+
+
+\figSlideWithSize{blocenr4}{11cm}
+
+
+\vfill
+\begin{blocgauche}
+On agrandit deux fois successivement l'enregistrement
+F1.12.46.
+\end{blocgauche}
+
+\end{frame}
+
+
+
+\begin{frame}{Fichier = séquence de blocs}
+
+Un fichier est simplement une séquence de blocs contenant
+les données d'un même objet (table, index).
+
+\vfill
+
+La qualité d'un fichier est conditionnée par\,:
+
+\begin{redbullet}
+   \item la bonne utilisation de l'espace (idéalement
+                  tous les blocs sont pleins)\,;
+
+  \item le stockage le plus contigu possible (même piste,
+            même cylindre, etc).
+   \item peu ou pas de chaînage
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Si les blocs sont très dispersés sur le disque, on
+aboutit à une \alert{fragmentation} très pénalisante.
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Opérations sur un fichier}
+
+Voir le support. Essentiellement:
+
+
+\vfill
+
+\begin{redbullet}
+   \item En l'absence d'index, le seul moyen de
+rechercher un enregistrement est de parcourir
+\alert{séquentiellement} le fichier.
+
+  \item Si le fichier est trié il est possible d'effectuer des recherches
+   par \alert{dichotomie}.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+En général, les fichiers gérés par les SGBD sont de simple
+fichiers séquentiels, sans ordre.
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Résumé}
+
+La gestion des fichiers est entièrement à la charge du SGBD.
+
+\vfill 
+\alert{Retenir}:
+
+\begin{redbullet}
+  \item Les enregistrements sont stockés dans des blocs.
+  \item Le contenu des blocs d'adapte au changement de taille d'un enregistrement après insertion.
+  \item \alert{Il faut un dispositif stable d'adressage de chaque enregistrement}
+  \item Les fichiers sont des séquences de blocs, les moins fragmentés possibles.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+L'adressage stable est essentiel pour permettre l'indexation
+et l'accès direct aux enregistrements.
+\end{blocgauche}
+
+\end{frame}

@@ -1,0 +1,212 @@
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Jointures}
+
+Jointure =  \alert{produit cartésien} composé
+avec une \alert{sélection}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select expressions
+from  table1 cross join table2
+[where condition_jointure]
+\end{minted}
+
+\vfill
+
+\alert{Interprétation}\,: \textit{comme avant}, l'espace de recherche (\sqlkw{from})
+est maintenant la table résultat de $table_1 \times table_2$
+
+\vfill
+\begin{remblock}{autres syntaxes}
+SQL propose plusieurs syntaxes équivalentes pour
+la jointure. Nous donnons les autres options plus tard.
+\end{remblock}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Cas extrême\,: le produit cartésien}
+
+Sans clause \sqlkw{where}, on effectue un \alert{produit cartésien}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select * from Logement cross join Activité
+\end{minted}
+
+\vfill
+\begin{footnotesize}
+\begin{tabular}{c|c|c|c|c|c}
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{codeLog.} & \textbf{codeActivité}\\ \hline 
+ca & Causses & 45 & Auberge & ca & Randonnée\\ \hline 
+ge & Génépi & 134 & Hôtel & ca & Randonnée\\ \hline 
+pi & U Pinzutu & 10 & Gîte & ca & Randonnée\\ \hline 
+ta & Tabriz & 34 & Hôtel & ca & Randonnée\\ \hline 
+ca & Causses & 45 & Auberge & ge & Piscine\\ \hline 
+ge & Génépi & 134 & Hôtel & ge & Piscine\\ \hline 
+pi & U Pinzutu & 10 & Gîte & ge & Piscine\\ \hline 
+... & ... & ... & ... & ... & ...\\ \hline 
+\end{tabular}
+\end{footnotesize}
+
+\vfill
+
+Quels nuplets nous intéressent particulièrement\,?
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{En ajoutant la sélection}
+
+Le plus souvent, la jointure est ``naturelle''\,: la clé primaire
+d'une table doit être égale à la clé étrangère d'une autre.
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select * from Logement cross join Activité
+where code = codeLogement
+\end{minted}
+
+\vfill
+\begin{footnotesize}
+\begin{tabular}{c|c|c|c|c|c}
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{codeLog.} & \textbf{codeActivité}\\ \hline 
+ca & Causses & 45 & Auberge & ca & Randonnée\\ \hline 
+ge & Génépi & 134 & Hôtel & ge & Piscine\\ \hline 
+ge & Génépi & 134 & Hôtel & ge & Ski\\ \hline 
+pi & U Pinzutu & 10 & Gîte & pi & Plongée\\ \hline 
+pi & U Pinzutu & 10 & Gîte & pi & Voile\\ \hline 
+\end{tabular}
+\end{footnotesize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Plus de deux tables\,?}
+
+Aucun problème\,: on les énumère dans le \sqlkw{from}.
+
+\vfill
+Exemple\,: les voyageurs et les logements qu'ils ont visités.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select V.nom as nomVoyageur, L.nom as nomLogement
+from Logement as L, Séjour as S, Voyageur as V
+where code = S.codeLogement
+and   S.idVoyageur = V.idVoyageur
+\end{minted}
+
+\vfill
+
+\alert{Remarque 1}\,: dans la clause \sqlkw{from}, on utilise le plus souvent 
+la virgule à la place de \sqlkw{cross join}. 
+
+\vfill
+
+\alert{Remarque 2}\,: le renommage \sqlkw{as} sert, notamment,
+à  gérer les ambiguités soulevées par les noms d'attributs.
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{D'autres syntaxes\,?}
+
+SQL connaît la jointure naturelle.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select *
+from Séjour natural join Voyageur 
+\end{minted}
+
+\vfill
+\begin{footnotesize}
+\begin{tabular}{c|c|c|c|c|c|c|c}
+\textbf{idV.} & \textbf{idS.} & \textbf{codeL.} & \textbf{début} & \textbf{fin} & \textbf{nom} & \textbf{prénom} & \textbf{ville} \\ \hline 
+10 & 1 & pi & 20 & 20 & Fogg & Phileas & Ajaccio \\ \hline 
+10 & 6 & pi & 10 & 12 & Fogg & Phileas & Ajaccio \\ \hline 
+20 & 2 & ta & 21 & 22 & Bouvier & Nicolas & Aurillac \\ \hline 
+20 & 4 & pi & 19 & 23 & Bouvier & Nicolas & Aurillac \\ \hline 
+... & ... & ... & ... & ... & ... & ... & ... \\ \hline 
+\end{tabular}
+\end{footnotesize}
+
+\vfill
+
+NB\,: l'attribut \texttt{idVoyageur} apparaît une seule fois
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{D'autres syntaxes\,?}
+
+SQL connaît aussi la jointure ``non naturelle'' (les attributs
+de jointure n'ont pas le même nom).
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select *
+from Logement join Activité on (code=codeLogement) 
+\end{minted}
+
+\vfill
+
+\alert{Intérêt}\,? Aucun. Connaître une syntaxe suffit.  Celle
+que nous avons présenté au début est la plus lisible et la plus neutre.
+
+\vfill
+
+\begin{remblock}{La syntaxe ne compte pas\,!}
+Il existe 100 façons d'écrire une même requête\,: aucune n'est meilleure
+qu'une autre\,: le système décide seul
+de l'évaluation\,!
+\end{remblock}
+\end{frame}
+
+
+\begin{frame}{À retenir}
+
+La jointure est obtenue en effectuant un produit cartésien dans le \sqlkw{from}.
+
+\vfill
+
+\begin{redbullet}
+ \item Tout se passe comme si on interrogeait une seule table, celle
+     définie par $table_1 \times table_2$
+  \item Le critère de jointure est exprimé dans le \sqlkw{where},
+       avec les critères (éventuels) de sélection
+  \item Les synonymes (attributs ou tables) entrainent des ambiguités, 
+      et nécessitent des renommages
+\end{redbullet}
+
+\vfill
+
+Beaucoup de syntaxes alternatives (dues aux deux paradigmes fondant SQL). En connaître 
+une suffit.
+
+\end{frame}
+

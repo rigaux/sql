@@ -1,0 +1,273 @@
+
+\begin{frame}{Opérateur =  itérateur}
+
+Tout opérateur est implanté sous forme d'un \alert{itérateur}.
+Trois fonctions:
+
+\begin{redbullet}
+  \item \texttt{open}\,: initialise les ressources et 
+            positionne le curseur\,;
+   
+  \item \texttt{next}\,: ramène l'enregistrement courant\;
+          se place sur l'enregistrement suivant\,;
+
+  \item \texttt{close}\,: libère les ressources\,;
+\end{redbullet}
+
+\vfill
+
+\'Echanges: 
+
+\begin{blocgauche}
+\begin{redbullet}
+  \item Un itérateur \alert{consomme} des nuplets d'autres itérateurs \alert{source}.
+  \item Un itérateur \alert{produit} des nuplets pour un autre
+     itérateur (ou pour l'application).
+\end{redbullet}  
+\end{blocgauche}
+    
+    
+\end{frame}
+
+
+\begin{frame}[fragile]{Exemple: parcours d'index (\texttt{IndexScan})}
+
+Rappel: index = arbre B. 
+
+\vfill
+
+\begin{redbullet} 
+  \item  Pendant le \texttt{open()}: parcours de la racine vers la feuille.
+  \item À chaque appel à \texttt{next()}: parcours en séquence des feuilles.  
+\end{redbullet}
+
+
+\figSlideWithSize{iter-indexScan}{10cm}
+
+\smallskip
+\begin{blocgauche}
+\alert{Efficacité}: très efficace, quelques lectures logiques (index en mémoire)
+\end{blocgauche}
+\end{frame}
+
+%%%%
+\begin{frame}[fragile]{Accès par adresse: \texttt{DirectAccess}}
+
+\begin{redbullet}
+  \item Pendant le \texttt{open()}: rien à faire. 
+  \item À chaque appel à \texttt{next()}: on reçoit une adresse, on produit un nuplet. 
+\end{redbullet}  
+
+\vfill
+
+\figSlideWithSize{planEx-DirectAccess}{10cm}
+
+\vfill
+
+Très efficace: un accès bloc, souvent en mémoire.
+\end{frame}
+
+\begin{frame}{Plan d'exécution}
+
+Un plan d'exécution connecte les opérateurs. Ici, recherche avec index.
+
+\vfill
+
+\figSlideWithSize{planEx-pipeline}{12cm}
+
+\vfill
+
+Le pipelinage reste complet.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Un exemple de base}
+
+Nous allons étudier les plans permettant d'exécuter les
+requêtes \alert{mono-table}.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select a1, a2, ..., an 
+from T 
+where condition
+\end{minted}
+
+\vfill
+
+De quels opérateurs a-t-on besoin\,?
+
+\begin{redbullet}
+ \item ~ [\texttt{FullScan}]: parcours séquentiel de la table (déjà vu).
+ \item ~ [\texttt{IndexScan}]: parcours d'un index (si disponible).
+ \item ~ [\texttt{DirectAccess}]: accès \alert{par adresse} à un nuplet.
+ \item ~ [\texttt{Filter}]: test de la condition.
+\end{redbullet}
+
+\vfill
+
+Nous obtenons \alert{deux} plans d'exécution possibles.
+\end{frame}
+
+\begin{frame}[fragile]{Premier plan d'exécution: sans index}
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select titre from Film where genre='SF' and annee = 2014
+\end{minted}
+
+\vfill
+
+
+\figSlideWithSize{planEx-mono-scan}{11cm}
+
+\vfill
+\begin{blocgauche}
+N'utilise pas d'index
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}[fragile]{Second plan d'exécution: avec index}
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select titre from Film where genre='SF' and annee = 2014
+\end{minted}
+
+\vfill
+
+\figSlideWithSize{planEx-mono-index}{12cm}
+
+\vfill
+\begin{blocgauche}
+Utilise un index sur l'année.
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}[fragile]{Index ou pas index?}
+
+Recherche des nuplets entre 9 et 13, avec 3 blocs en mémoire.
+
+\medskip
+
+
+\only<1-1|handout:1-1>{
+\figSlideWithSize{interBtree}{10cm}
+}
+\only<2-2|handout:2-2>{
+\figSlideWithSize{interBtree-1}{10cm}
+}
+\only<3-3|handout:3-3>{
+\figSlideWithSize{interBtree-2}{10cm}
+}
+\only<4-4|handout:4-4>{
+\figSlideWithSize{interBtree-3}{10cm}
+}
+\only<5-5|handout:5-5>{
+\figSlideWithSize{interBtree-4}{10cm}
+}
+\only<6-6|handout:6-6>{
+\figSlideWithSize{interBtree-5}{10cm}
+}
+\only<7-7|handout:7-7>{
+\vfill
+Avec l'index, il faut lire 5 blocs! Parcours séquentiel bien préférable.
+\vfill
+\begin{blocgauche}
+Un cas extrême!  \alert{En pratique}: le SGBD décide en fonction des statistiques
+et des ressources disponibles.
+\end{blocgauche}
+}
+
+\end{frame}
+
+
+
+%%%%
+\begin{frame}[fragile]{Opérateur de sélection}
+
+Très simple: filtre les nuplets fournis par la source.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{bash}
+    function nextFilter
+    {
+       # On prend un nuplet de la source
+      $nuplet = $source.next();
+      # On continue tant que la condition n'est pas satisfaite, 
+      # ou la source parcourue
+      while ($nuplet != null  and $nuplet.test($C) = false)
+      do
+        $nuplet = $source.next();        
+      done
+      
+      return $nuplet;
+    }
+\end{minted}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Pour compléter}
+
+Un plan à exécuter avec index.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select * from   Film
+    where  idFilm = 20 
+    and    titre = 'Vertigo'
+\end{minted}
+
+\vfill
+
+Un plan à exécuter sans index.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select * from   Film
+    where  idFilm = 20 
+    or    titre = 'Vertigo'
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}{Résumé: plans pour requêtes mono-table}
+
+Permier aperçu de l'optimisation
+
+\vfill
+
+\begin{redbullet}
+  \item Le système a le choix entre plusieurs plans possibles.
+  \item Distinguer le plus efficace n'est pas toujours trivial.
+  \item Le choix peut changer selon le contexte.
+\end{redbullet}
+
+
+\vfill
+
+\only<2|handout:2>{
+\vfill
+\centerline{\alert{Merci!}}
+}
+
+
+\end{frame}

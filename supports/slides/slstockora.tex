@@ -1,0 +1,222 @@
+
+\begin{frame}
+{Oracle}
+
+Principales structures physiques dans ORACLE\,:
+\begin{redbullet}
+  \item  {\bf bloc}: unité physique d'E/S.\\
+     La taille d'un bloc ORACLE est un
+        multiple de la taille des blocs du système sous-jacent.
+
+  \item {\bf Extension}:  ensemble de blocs contigus contenant
+        un m\^eme type d'information.
+
+  \item  {\bf Segment}: ensemble d'extensions stockant un 
+        objet logique (une table, un index ...). 
+\end{redbullet}
+
+Le paramétrage du stockage des données (tables et index)
+est spécifié dans un {\it tablespace}
+
+\end{frame}
+
+
+\begin{frame}{Tables, segments, extensions et blocs}
+
+\figSlideWithSize{oraphys}{8cm}
+
+\end{frame}
+
+\begin{frame}{Les blocs Oracle}
+
+La structure d'un bloc repose sur
+un adressage physique/logique, chaque enregistrement
+ayant une adresse interne.
+
+\vfill
+ 
+\figSlideWithSize{bloc-oracle}{8cm}
+
+\vfill
+
+Un chaînage est créé quand il faut déplacer un enregistrement.
+
+\end{frame}
+
+\begin{frame}{Gestion de l'espace}
+
+\begin{redbullet}
+ \item \sqltxt{PCTFREE} donne l'espace libre à préserver 
+  au moment de la création d'une table ou d'un index.
+
+  \item  \sqltxt{PCTUSED} indique le seuil en dessous duquel  le bloc
+              est disponible pour des insertions.
+\end{redbullet}
+
+Oracle maintient un répertoire (?) des blocs
+disponibles pour insertions.
+
+\vfill
+ Exemple\,:
+
+\begin{redbullet}
+   \item  \sqltxt{PCTFREE} = 30\% et  \sqltxt{PCTUSED}=70\%
+   \item  \sqltxt{PCTFREE} = 10\% et  \sqltxt{PCTUSED}=80\%
+\end{redbullet}
+
+Le second choix est plus efficace, mais plus risqué et plus coûteux.
+
+\end{frame}
+
+
+\begin{frame}{Extensions et segments}
+
+\alert{L'extension} est une suite de blocs contigus.
+
+\vfill
+
+Le \alert{segment} est un ensemble d'extensions
+ contenant un objet logique. 
+
+Il existe quatre types de segments\,:
+\begin{redbullet}
+  \item Le segment de données.
+  \item Le segment d'index.
+  \item Le $rollback\ segment$ utilisé pour les transactions.
+  \item Le segment temporaire (utilisé pour les tris).
+\end{redbullet}
+
+\vfill
+
+Moins il y a d'extensions dans un segment, plus il
+est efficace.
+
+\end{frame}
+
+
+\begin{frame}{Stockage et adressage des enregistrements}
+
+En règle générale un 
+enregistrement est stocké dans un seul bloc.
+\vfill
+
+
+L'adresse physique d'un enregistrement est le $ROWID$. Il contient:
+\vfill
+
+\begin{redbullet}
+   \item Le numéro du bloc dans le {\bf fichier}.
+   \item Le numéro du n-uplet dans lebloc.
+   \item le numéro du segment.
+   \item Le numéro du fichier.
+\end{redbullet}
+Exemple\,: 00000DD5.000.2.001 est l'adresse du premier n-uplet
+du bloc DD5 dans le second segment du premier fichier.
+
+\end{frame}
+
+
+\begin{frame}{Les {\it tablespaces}}
+
+Une base est divisée par l'administrateur
+   en $tablespace$. Chaque $tablespace$ consiste en un (au moins)
+        ou plusieurs fichiers.
+
+\vfill
+
+La notion de $tablespace$ permet\,:
+
+\vfill
+
+\begin{redbullet}
+  \item De contr\^oler l'emplacement physique des données.
+        (par ex.\,: le dictionnaire sur un disque,
+        les données utilisateur sur un autre).
+
+  \item de régler l'allocation de l'espace (extensions).
+
+  \item de faciliter la gestion (sauvegarde, protection, etc).
+\end{redbullet}
+
+\end{frame}
+
+\begin{frame}{Exemple de  {\it tablespaces}}
+
+\figSlideWithSize{oratbspace}{8cm}
+
+\end{frame}
+
+\begin{frame}[fragile]{Création de  {\it tablespaces}}
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+CREATE TABLESPACE TB1
+    DATAFILE 'fichierTB1.dat' SIZE 50M
+      DEFAULT STORAGE (
+        INITIAL 100K, NEXT 40K, MAXEXTENTS 20,
+         PCTINCREASE 20);
+\end{minted}
+
+\vfill
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+CREATE TABLESPACE TB2 
+    DATAFILE 'fichierTB2.dat' SIZE 2M
+    AUTOEXTEND ON NEXT 5M MAXSIZE 500M
+    DEFAULT STORAGE (INITIAL 128K
+                       NEXT 128K MAXEXTENTS UNLIMITED);
+\end{minted}
+
+
+\end{frame}
+
+\begin{frame}{Maintenance d'un \tbspace}
+
+Quelques actions 
+disponibles sur un \tbspace\,:
+
+\begin{redbullet}
+  \item On peut mettre un \tbspace\ hors-service.
+
+\texttt{ALTER TABLESPACE TB1 OFFLINE;}
+
+  \item On peut mettre un \tbspace\ en lecture seule.
+
+\texttt{ALTER TABLESPACE TB1 READ ONLY;}
+
+  \item   On peut ajouter un nouveau fichier.
+
+\texttt{ALTER TABLESPACE ADD DATAFILE \\
+'fichierTB1-2.dat' SIZE 300 M;}
+
+\end{redbullet}
+
+\end{frame}
+
+\begin{frame}[fragile]{Affectation de tables à un \tbspace}
+
+On peut placer une table dans un \tbspace. Elle
+prend alors les paramètres de stockage de ce dernier.
+
+\vfill
+
+On peut aussi remplacer certaines valeurs.
+
+\vfill
+
+\begin{minted}{sql}
+create table Film (...)
+pctfree 10
+pctused 40
+tablespace TB1
+storage ( initial 50K
+          next 50K
+         maxextents 10
+pctincrease 25 );
+\end{minted}
+
+\end{frame}

@@ -1,0 +1,201 @@
+
+\begin{frame}[fragile]{Vues}
+
+Toute requête produit une relation. Nommer cette requête
+c'est nommer la relation résultat et pouvoir l'interroger.
+\alert{Une vue est une requête nommée}.
+
+\vfill
+
+C'est aussi une table \alert{calculée} au moment où on l'interroge.
+
+\vfill
+
+Dans cette session:
+
+\begin{redbullet}
+  \item La commande \sqlkw{create view}
+  \item Interrogation d'une vue
+  \item Mise à jour d'une vue
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La commande \sqlkw{create view}}
+
+Une vue est 
+le résultat d'une requête 
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create view Koudalou as 
+        select nom, adresse, count(*) as nb_apparts 
+        from Immeuble as i, Appart as a 
+        where i.nom='Koudalou'
+        and i.id=a.idImmeuble
+        group by i.id, nom, adresse
+\end{minted}
+
+\vfill
+
+\begin{blocgauche}
+Le résultat de la requête
+est réévalué à chaque fois que l'on accède à la vue. 
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Interrogation d'une vue}
+
+On interroge une vue comme n'importe quelle table.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select * from Koudalou
+\end{minted}
+
+
+\vfill
+
+\begin{tabular}{c|c|c}
+\textbf{nom} & \textbf{adresse} & \textbf{nb\_apparts}\\ \hline 
+Koudalou & 3 rue des Martyrs & 5\\ \hline 
+\end{tabular}
+
+\vfill
+
+\begin{blocgauche}
+Une vue peut répondre à des objectifs de \alert{simplification}
+et/ou de \alert{confidentialité}.
+\end{blocgauche}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Vue dénormalisée}
+
+Une vue peut présenter une base dénormalisée.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create view AppartKoudalou as 
+       select no, surface, niveau, i.nom as immeuble, adresse,
+              concat(p.prénom,  ' ', p.nom) as occupant 
+       from Immeuble as i, Appart as a, Personne as p
+       where i.id=a.idImmeuble
+       and   a.id=p.idAppart
+       and   i.nom='Koudalou'
+\end{minted}
+
+\vfill
+\begin{small}
+\begin{tabular}{c|c|c|c|c|c}
+\textbf{no} & \textbf{surf.} & \textbf{niv.} & \textbf{immeuble} & \textbf{adresse} & \textbf{occupant}\\ \hline 
+1 & 150 & 14 & Koudalou & 3 rue des Martyrs & Léonie Atchoum\\ \hline 
+51 & 200 & 2 & Koudalou & 3 rue des Martyrs & Barnabé Simplet\\ \hline 
+52 & 50 & 5 & Koudalou & 3 rue des Martyrs & Alice Grincheux\\ \hline 
+43 & 75 & 3 & Koudalou & 3 rue des Martyrs & Brandon Timide\\ \hline 
+\end{tabular}
+\end{small}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Insertion dans une vue}
+
+Beaucoup de restrictions.
+
+
+\vfill
+\begin{redbullet}
+  \item la vue doit être basée sur une seule table;
+   \item toute colonne non référencée
+    dans la vue doit pouvoir être mise à 
+    \sqlkw{null} ou disposer d'une valeur par défaut;
+  \item on ne peut pas mettre à jour un attribut
+    qui résulte d'un calcul ou d'une opération.
+\end{redbullet}
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create view PropriétaireAlice
+   as select * from Propriétaire
+  where idPersonne=2
+
+insert into PropriétaireAlice values (2, 100, 20)
+insert into PropriétaireAlice values (3, 100, 20)
+\end{minted}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La clause \sqlkw{check option}}
+
+Sur la vue précédente, la requête:
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select * from PropriétaireAlice
+\end{minted}
+
+ne montre pas le propriétaire 3 que l'on vient d'insérer !
+
+\vfill
+
+La clause \sqlkw{check option} permet de n'insérer que des nuplets
+que l'on peut ensuite sélectionner.
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create view PropriétaireAlice
+as select * from Propriétaire
+where idPersonne=2
+with check option
+\end{minted}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+\begin{frame}{À retenir}
+Les \alert{vues} sont des requêtes nommées que l'on peut traiter
+comme des tables.
+
+\vfill
+
+Elles permettent de restructurer ``virtuellement''  une base.
+
+\begin{redbullet}
+   \item  Pour faciliter l'accès (jointures pré-définies)
+   \item Pour restreindre la visibilité des données (on ne donne accès qu'à la vue)
+   \item Les insertions dans les vues offrent peu d'intérêt.
+\end{redbullet}
+
+
+\end{frame}
+

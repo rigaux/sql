@@ -1,0 +1,160 @@
+
+\begin{frame}[fragile]{Les déclencheurs, ou  \textit{triggers}}
+
+Un \alert{déclencheur}  (\textit{trigger}) est  une procédure stockée qui se déclenche
+ automatiquement sur certains événements.
+ 
+ \vfill
+ Utilité: 
+\begin{redbullet}
+ \item Gestion des redondances
+   \item Enregistrement automatique de certains événements
+  \item Gestion de contraintes complexes  (exemple: le prix d’un produit ne peut qu’augmenter)
+   \item Gestion de contraintes liées à l’environnement d’exécution (restrictions sur les horaires, les utilisateurs, etc.)
+\end{redbullet}
+ 
+\vfill
+\begin{blocgauche}
+\alert{Inconvénient (fort)}: les \textit{triggers} s'exécutent de manière cachée, et peuvent mener
+à des cycles sans fin.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}[fragile]{Etudions un exemple}
+
+Un logement est constitué de chambres; sa
+capacité est la somme du nombre de lits.
+
+\vfill
+
+On crée un \textit{trigger} qui maintient cette valeur agrégative.
+ 
+\begin{small}
+\begin{minted}{sql}
+create trigger CumulCapacité
+after update on Chambre
+for each row
+when (new.nbLits != old.nbLits)
+begin
+  update Logement 
+  set capacité = capacité - :old.nbLits  + :new.nbLits   
+  where  code = :new.codeLogement;
+end;
+\end{minted}
+\end{small}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Notez}\,: les variables \sqlkw{old} et \sqlkw{new}, représentant le nuplet
+avant/après la mise à jour
+\end{blocgauche}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Les composants d'un \textit{trigger}}
+
+Modèle basé sur la séquence Evénement-Condition-Action 
+(ECA) :
+
+\begin{redbullet}
+  \item Un \textit{trigger} est déclenché par  une \alert{insertion, destruction ou modification} 
+   \item La \alert{condition} est testée, et si elle n'est pas satisfaite, l'exécution du \textit{trigger} s'arrête
+  \item L’\alert{action} est effectuée  à l’aide du langage procédural  (PL/SQL)
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{De plus}\,: 
+un \textit{trigger} peut manipuler 
+simultanément les valeurs ancienne et nouvelle du nuplet modifié.
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}[fragile]{Les \textit{triggers} ont des inconvénients}
+
+On peut créer des \textit{triggers} sources d'inefficacité.  Exemple
+
+\small
+
+\begin{small}
+\begin{minted}{sql}
+create trigger CumulCapaciteGlobal
+after update or insert or delete on Chambre
+begin
+  update Logement C 
+  set capacité = (select sum (nbLits) 
+                       from   Chambre 
+                       where  code = :new.codeLogement);
+end;
+\end{minted}
+\end{small}
+\vfill
+
+L'exécution est invisible, donc problème difficile à détecter
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Les \textit{triggers} sont dangereux\,!}
+
+L'exécution combinée des \textit{triggers} peut avoir  des effets imprévisibles.
+
+\vfill
+
+La création du \textit{trigger} suivant  \alert{bloque} le programme qui 
+l'exécute. 
+\vfill
+
+\begin{small}
+\begin{minted}{sql}
+create trigger MAJChambre
+after update or delete or insert on Logement
+begin
+  update chambre
+  set nbLits = (select :new.capacité / count (*)
+                from  Chambre
+                where codeLogement = :new.code);
+end;
+\end{minted}
+\end{small}
+
+\vfill
+\begin{blocgauche}
+Je modifie un logement $\Rightarrow$ je modifie les chambres  $\Rightarrow$
+je modifie le logement, etc. 
+\end{blocgauche}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Les \textit{triggers}\,: mécanisme puissant. Pratique, par exemple,
+\vfill
+
+
+\begin{redbullet}
+   \item  pour contrôler ce qui se passe dans une base de données 
+  \item pour mémoriser les actions sensibles (destruction)
+\end{redbullet}
+\vfill
+
+Mais dangereux, à utiliser avec précaution
+
+\begin{redbullet}
+   \item L'exécution d'un \textit{trigger} est invisible\,: l'équivalent d'un
+      effet de bord en programmation
+   \item Un \textit{trigger}  peut être source (invisible) de lenteur
+      \item La composition de plusieurs \textit{triggers} est incontrôlable
+\end{redbullet}
+
+
+\end{frame}
+
+

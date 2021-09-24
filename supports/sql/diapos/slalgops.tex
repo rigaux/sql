@@ -1,0 +1,441 @@
+
+\begin{frame}[fragile]{Algèbre relationnelle\,: les opérateurs}
+
+SQL propose un autre type d'interrogation, \alert{fonctionnelle},
+basée sur \alert{l'algèbre relationnelle}. 
+
+\vfill
+
+L'algèbre est un ensemble de 6 opérateurs, qui présentent deux propriétés essentielles
+
+\begin{redbullet}
+  \item \alert{Clôture}: un opérateur s'applique à des relations et produit une relation
+  \item \alert{Composition}: un opérateur peut prendre en entrée le résultat d'un autre pour
+      définir des \alert{requêtes} algébriques complexes.
+\end{redbullet}
+
+\vfill
+
+Cette session présente les 6 opérateurs nécessaires et suffisants.
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{La projection }
+
+$\pi_{A_1, A_2, \ldots,A_k}(R)$ construit une relation contenant 
+tous les nuplets de $R$,  dans lesquels seuls les attributs $A_1, A_2, \ldots A_k$ 
+sont conservés. 
+
+\vfill
+
+Exemple\,: nom et lieu des logements: $\pi_{nom, lieu}(Logement) $
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select nom, lieu
+from Logement
+\end{minted}
+\vfill
+\begin{tabular}{c|c}
+\textbf{nom} & \textbf{lieu}\\ \hline 
+Causses & Cévennes\\ \hline 
+Génépi & Alpes\\ \hline 
+U Pinzutu & Corse\\ \hline 
+Tabriz & Bretagne\\ \hline 
+\end{tabular}
+
+\vfill
+
+\begin{blocgauche}
+\sqlkw{select *} permet de conserver tous les attributs.
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La sélection, $\sigma$}
+
+La sélection $\sigma_F(R)$ s'applique à une relation, $R$, et
+en extrait les nuplets qui satisfont $F$
+$$\sigma_{lieu='Corse'}(Logement)$$
+\vfill
+En SQL: 
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select * 
+from Logement
+where lieu = 'Corse'
+\end{minted}
+
+\vfill
+
+\begin{blocgauche}
+Les comparaisons s'écrivent
+$A \Theta B$, où $\Theta$ appartient
+à $\{=, <, >, \leq, \geq\}$.
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Le produit cartésien, $\times$}
+
+$R \times S$ produit 
+une relation où chaque nuplet de $R$ est associé
+à chaque nuplet de $S$.
+
+\vfill
+
+\begin{minipage}[t]{6cm}
+\begin{center}
+\begin{tabular}{c|c}
+A & B \\ \hline
+a & b  \\
+x & y  \\\hline 
+\end{tabular}
+\end{center}
+\end{minipage} \
+\begin{minipage}[t]{6cm}
+\begin{center}
+\begin{tabular}{c|c}
+C & D \\ \hline
+c & d  \\ 
+u & v  \\
+x & y  \\\hline 
+\end{tabular}
+\end{center}
+\end{minipage} 
+
+\vfill
+
+
+Et voici le résultat de $R \times S$\,:
+
+\begin{center}
+\begin{tabular}{c|c|c|c}
+A & B & C & D \\ \hline
+a & b & c & d  \\ 
+a & b & u & v \\
+a & b & x & y \\
+x & y & c & d  \\ 
+x & y & u & v \\
+x & y & x & y \\\hline
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{En SQL, \sqlkw{cross join}}
+
+En SQL, le produit cartésien s'exprime avec \texttt{cross join}. 
+On place l'expression algébrique \alert{dans} la clause \sqlkw{from}.
+
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select * 
+from R cross join S
+\end{minted}
+
+\vfill
+
+\alert{Raisonnement}: \texttt{R \sqlkw{cross join} S} définit une  nouvelle relation, les 
+autres opérateurs (sélection, projection) s'appliquent à cette relation.
+
+\vfill
+
+\begin{blocgauche}
+Le \sqlkw{from} définit donc une relation \alert{calculée}
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Problème des noms d'attribut ambigus}
+
+Il peut arriver que les deux relations
+aient des attributs qui ont le même nom. 
+
+\vfill
+
+On doit alors  donner un nom distinct à chaque attribut.
+
+\vfill
+
+\begin{minipage}[t]{6cm}
+\begin{center}
+Relation $R$:
+\begin{tabular}{c|c}
+A & B \\ \hline
+a & b  \\
+x & y  \\\hline 
+\end{tabular}
+\end{center}
+\end{minipage} \
+\begin{minipage}[t]{6cm}
+\begin{center}
+Relation $T$:
+\begin{tabular}{c|c}
+A & B \\ \hline
+m & n  \\
+o & p  \\\hline 
+\end{tabular}
+\end{center}
+\end{minipage} 
+
+
+\vfill
+\begin{blocgauche}
+$R \times T$
+a pour schéma $(A, B, A, B)$ et présente
+donc des ambiguités,
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Renommage $\rho$}
+
+L'expression $\rho_{A \to C,B \to D}(T)$ renomme 
+$A$ en $C$ et $B$ en $D$ dans la relation
+$T$.
+
+\vfill
+
+$\rho_{A\to C,B \to D}(T)$:
+\begin{tabular}{c|c}
+C & D \\ \hline
+m & n  \\
+o & p  \\\hline 
+\end{tabular}
+
+\vfill
+
+Le résultat de $R \times \rho_{A\to C,B \to D}(T)$ 
+
+\vfill
+
+\begin{tabular}{c|c|c|c}
+A & B & C & D \\ \hline
+a & b & m & n  \\ 
+a & b & o & p \\
+x & y & m & n  \\ 
+x & y & o & p \\\hline
+\end{tabular}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Renommage en SQL: \sqlkw{as}}
+
+
+La requête
+\
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select Voyageur.idVoyageur, Séjour.idVoyageur
+from Voyageur cross join Séjour
+\end{minted}
+
+engendre une erreur \textit{duplicate field name:}
+
+\vfill
+
+Bonne version:
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select Voyageur.idVoyageur as idV1, Séjour.idVoyageur as idV2
+from Voyageur cross join Séjour
+\end{minted}
+
+\begin{blocgauche}
+Le \sqlkw{as} permet aussi de renommer des relations. Cf. support de cours.
+\end{blocgauche}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{L'union, $\cup$}
+
+$R \cup S$ produit 
+une relation contenant l'union de $R$ $S$ (qui doivent avoir le même schéma).
+
+\vfill
+
+\begin{minipage}[t]{6cm}
+\begin{center}
+\begin{tabular}{c|c}
+A & B \\ \hline
+a & b  \\
+x & y  \\\hline 
+\end{tabular}
+\end{center}
+\end{minipage} \
+\begin{minipage}[t]{6cm}
+\begin{center}
+\begin{tabular}{c|c}
+A & B\\ \hline
+c & d  \\ 
+u & v  \\
+x & y  \\\hline 
+\end{tabular}
+\end{center}
+\end{minipage} 
+
+\vfill
+
+
+Et voici le résultat de $R \cup S$\,:
+
+\begin{center}
+\begin{tabular}{c|c}
+A & B\\ \hline
+a & b  \\
+c & d  \\ 
+u & v  \\
+x & y  \\\hline 
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Union en SQL: \sqlkw{union}}
+
+
+La requête donnant l'union des noms de lieu et des noms de logement
+\
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+     select lieu from Logement
+       union
+     select région as lieu from Voyageur
+\end{minted}
+
+\vfill
+
+Nb\,: le schéma du résultat est \texttt{(lieu)}
+
+\vfill
+
+\begin{blocgauche}
+Rarement utilisée, mais indispensable (pas d'autre expression possible)
+en cas de besoin
+\end{blocgauche}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La différence, $-$}
+
+$R \- S$ produit 
+une relation contenant les nuplets de $R$ qui ne sont pas
+dans $S$ (elles doivent avoir le même schéma).
+
+\vfill
+
+\begin{minipage}[t]{4cm}
+\begin{center}
+Relation $R$
+\begin{tabular}{c|c}
+A & B \\ \hline
+a & b  \\
+x & y  \\\hline 
+\end{tabular}
+
+\end{center}
+\end{minipage} \
+\begin{minipage}[t]{4cm}
+\begin{center}
+Relation $S$
+\begin{tabular}{c|c}
+A & B\\ \hline
+c & d  \\ 
+u & v  \\
+x & y  \\\hline 
+\end{tabular}
+\end{center}
+\end{minipage} 
+\
+\begin{minipage}[t]{4cm}
+\begin{center}
+Relation $R - S$
+\begin{tabular}{c|c}
+A & B\\ \hline
+a & b  \\\hline 
+\end{tabular}
+
+\end{center}
+\end{minipage} 
+\vfill
+
+\vfill 
+En SQL
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+     select lieu from Logement
+       except
+     select région as lieu from Voyageur
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+Très peu pratique à cause de la contrainte sur les schémas. La
+version déclarative, \sqlkw{not exists}, est bien plus facile.
+\end{blocgauche}
+
+\end{frame}
+
+%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+
+\vfill
+
+\begin{redbullet}
+   \item Syntaxe et signification des 6 opérateurs 
+  \item  Notion de \alert{clôture}: toute opération s'applique à des relations
+     et produit une relation
+  \item Notion de \alert{composition}: on crée des requêtes complexes en combinant
+  des opérateurs, pas en créant des opérateurs super-complexes.
+  \item En SQL: l'algèbre opère sur des relations complètes, alors que dans la perspective
+     déclarative, SQL exprime des conditions sur des nuplets.
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+Nouveauté principale pour SQL: la possibilité d'introduire des expressions dans le \sqlkw{from}
+\end{blocgauche}
+\end{frame}
+

@@ -1,0 +1,307 @@
+
+\begin{frame}[fragile]{Qualité d'un schéma}
+
+Cette session discute des bons et mauvais schémas relationnels. 
+
+\vfill
+
+Les notions
+introduites sont:
+
+\begin{redbullet}
+  \item Les anomalies et incohérences dues à un schéma défectueux
+  \item Les dépendances fonctionnelles
+  \item Les clés primaires et étrangères
+  \item La \alert{normalisation} 
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Pourquoi pas une unique table?}
+
+\begin{small}
+\begin{center}
+\begin{tabular}{l|c|l|l|c}
+ titre &  année &  nomMES &  prénomMES &  annéeNaiss \\
+\hline
+Alien & 1979 & Scott & Ridley & 1943\\
+Vertigo  & 1958 & Hitchcock & Alfred & 1899\\
+Psychose & 1960 & Hitchcock & Alfred & 1899\\
+Kagemusha & 1980 & Kurosawa & Akira & 1910\\
+Volte-face & 1997 & Woo & John & 1946\\
+Pulp Fiction & 1995 & Tarantino & Quentin & 1963 \\
+Titanic & 1997 & Cameron & James & 1954\\
+Sacrifice & 1986 & Tarkovski & Andrei &1932\\
+\hline
+\end{tabular}
+\end{center}
+\end{small}
+
+\vfill
+
+Risques d'anomalies et d'incohérences en \alert{insertion}, \alert{modification}
+et \alert{suppression}. 
+\end{frame}
+
+
+\begin{frame}{Notion de dépendance fonctionnelle}
+
+Il y a \alert{dépendance fonctionnelle} $A \to B$ entre deux attributs $A$ et $B$ d'une relation
+$R$ quand la connaissance de la valeur de $A$ implique la connaissance de la valeur de $B$.
+
+\vfill
+
+Exemple: le schéma \texttt{ (nom, prénom, noSS, dateNaissance, adresse, email)}
+
+\vfill
+Les dépendances:
+\begin{redbullet}
+  \item $email \to nom, pr\acute{e}nom, noSS, dateNaissance, adresse$
+ \item $noSS \to  email, nom, pr\acute{e}nom, dateNaissance, adresse$
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Les DF servent à analyser la qualité d'un schéma.
+\end{blocgauche}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Les manuscrits et les experts}
+
+Un éditeur fait évaluer tous les manuscrits qu'on lui soumet par un expert. 
+
+\vfill 
+Voici le schéma contenant tous les attributs.
+
+\vfill
+
+\texttt{Manuscrit (id\_manuscrit, auteur, titre, id\_expert, nom, commentaire)}
+
+\vfill
+
+Et les dépendances \alert{minimales} et \alert{directes}:
+
+\vfill
+\begin{redbullet}
+  \item $id\_manuscrit \to auteur, titre, id\_expert, commentaire$
+ \item $id\_expert \to  nom$
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Ce schéma a le même type de problème que celui des films. Nous allons l'analyser avec les DF.
+\end{blocgauche}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Un exemple de la relation \texttt{Manuscrit}}
+ 
+\begin{small}
+\begin{tabular}{c|l|p{4cm}|c|p{2cm}|p{3cm}}
+\textbf{id\_m} & \textbf{auteur} & \textbf{titre} & \textbf{id\_exp}& \textbf{nom}& \textbf{commentaire} \\ \hline
+   10& Serge&  L'arpète &2& Philippe & Une réussite\\
+   20& Cécile& L'art du chant grégorien& 2& Sophie & Bravo\\
+   10& Serge&  L'arpète &2& Philippe & Une réussite\\
+   10& Philippe&  SQL &1& Sophie & La référence\\
+\hline
+\end{tabular}
+\end{small}
+
+\vfill
+\begin{redbullet}
+\item $id\_expert \to nom$ n'est pas respectée par le premier et deuxième
+    nuplet.
+    \item $id\_manuscrit \to auteur, titre, id\_expert, commentaire$ n'est pas respectée 
+    par le premier et quatrième nuplet.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Les DF sont respectées par le premier et le troisième, mais
+du coup ce sont des \alert{doublons}. Il faut \alert{éviter}
+ces anomalies.
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Notion de clé}
+
+
+\begin{defblock}{Clé}
+Une clé d'une relation $R$ est un sous-ensemble \alert{minimal} $C$
+des attributs tel que tout attribut de $R$ dépend fonctionnellement de $C$. 
+\end{defblock}
+\vfill
+
+\begin{redbullet}
+  \item $id\_manuscrit$ est une clé pour la relation \texttt{Manuscrit}  
+ \item $(id\_manuscrit, auteur)$ n'est pas une clé car non minimal
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+On peut trouver plusieurs clés. On en choisit une comme \alert{clé primaire}.
+Les autres sont clés secondaires.
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Normalisation}
+  
+\begin{defblock}{Forme normale (troisième)}
+  Un schéma de relation $R$ est \alert{normalisé} quand, dans
+   toute dépendance fonctionnelle $S \to A$ sur
+   les attributs de $R$, $S$ est une clé. 
+\end{defblock}
+ 
+\vfill
+
+Le schéma précédent n'est pas normalisé car il existe une dépendance fonctionelle
+$id\_expert \to nom$, alors que l'attribut
+$id\_expert$ n'est pas une clé. 
+
+\vfill
+
+\begin{blocgauche}
+On peut \alert{toujours} se ramener à des relations normalisées.
+\end{blocgauche}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{La bonne solution}
+ 
+Voici le schéma de nos manuscrits, \alert{normalisé} 
+\vfill
+
+\begin{redbullet}
+  \item \texttt{Manuscrit (id\_manuscrit,  auteur, titre, id\_expert, commentaire)}
+ \item \texttt{Expert (id\_expert, nom)}
+\end{redbullet}
+
+\vfill
+
+Elles sont toutes deux en troisième forme normale (3FN)  \alert{et} on n'a pas perdu d'information
+
+\vfill
+
+
+\begin{blocgauche}
+\alert{Important}:  l'attribut \texttt{id\_expert} dans \texttt{Manuscrit} est une \alert{clé étrangère}.
+ \end{blocgauche}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Pour n'a-t-on pas perdu d'information?}
+ 
+Parce qu'on peut reconstituer \alert{exactement} la relation complète
+\vfill
+
+    
+\begin{redbullet}
+  \item Connaissant \texttt{id\_expert}, je connais 
+     toutes les autres informations sur l'expert.
+ \item Connaissant \texttt{id\_manuscrit}, je connais \texttt{id\_expert}
+     \item  Par \alert{transitivité}, connaissant \texttt{id\_manuscrit}, je  connais \texttt{id\_expert},
+     et connaissant \texttt{id\_expert}, je connais toutes les autres informations sur l'expert
+\end{redbullet}
+
+\vfill
+
+
+\begin{blocgauche}
+L'association de la clé primaire et de la clé étrangère est le mécanisme
+de liaison des nuplets en relationnel.
+\end{blocgauche}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Avec un exemple}
+ 
+\begin{tabular}{c|c|c}
+\textbf{id\_expert} & \textbf{nom} & \textbf{adresse}\\ \hline
+   1 &Sophie &rue Montorgueil, Paris\\
+   2& Philippe  &rue des Martyrs, Paris\\
+\hline
+\end{tabular}
+
+\vfill
+
+\begin{tabular}{c|l|p{4cm}|c|p{3cm}}
+\textbf{id\_manuscrit} & \textbf{nom} & \textbf{titre} & \textbf{id\_expert}  & \textbf{Commentaire}\\ \hline
+   10& Serge&  L'arpète &2& Une réussite\\
+   20& Cécile& Un art du chant grégorien sous Louis XIV& 1& Bravo\\
+\hline
+\end{tabular}
+
+\vfill
+
+\begin{blocgauche}
+La valeur d'une clé étrangère est \alert{toujours} celle
+d'une clé de la table référencée.
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Schéma normalisé et  contraintes}
+ 
+On normalise les schémas, et on demande au système de garantir deux contraintes.
+
+\begin{defblock}{Contrainte d'unicité}
+Une valeur de clé ne peut apparaître \alert{qu'une fois} dans une relation.
+\end{defblock}
+ 
+\vfill
+
+\begin{defblock}{Contrainte d'intégrité référentielle}
+La valeur d'une clé étrangère doit \alert{toujours}
+   être également une des valeurs de la clé référencée.\end{defblock}
+
+\vfill
+
+\begin{blocgauche}
+On obtient des schémas sans anomalie.
+\end{blocgauche}
+
+\end{frame}
+
+%%%%%%ù
+
+\begin{frame}{À retenir}
+
+Un schéma de BD correct:
+\vfill
+\begin{redbullet}
+  \item Toute relation a une clé
+ \item Tous les attributs dépendent \alert{directement} de la clé (forme normale)
+ \item On peut lier les nuplets les uns aux autres avec des clés étrangères.
+ \item Le système évite les anomalies en garantissant
+    la \alert{contrainte d'unicité} (clé) et la \alert{contrainte d'intégrité référentielle} (clé étrangère)
+\end{redbullet}
+
+\vfill
+
+\alert{Comment trouve-t-on le bon schéma\,?} Nous y reviendrons.
+\end{frame}
+

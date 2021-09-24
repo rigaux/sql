@@ -1,0 +1,394 @@
+
+
+\begin{frame}{Contenu du cours}
+
+\begin{itemize}
+
+  \item Principes de la programmation avec BD
+
+  \item Le langage PL/SQL
+\begin{itemize}
+       \item syntaxe
+      \item intégration avec SQL: types, clause INTO, valeurs à NULL, parcours d'un résultat de requête
+\end{itemize}
+   \item Les curseurs
+  \item Les triggers 
+  
+\end{itemize}
+
+\vfill
+
+Cours rédigé disponible à \url{http://sql.bdpedia.fr}{http://sql.bdpedia.fr}
+
+\end{frame}
+
+
+\begin{frame}{Rôle des procédures stockées}
+
+\begin{itemize}
+
+  \item SQL = langage   
+  \begin{itemize}
+  \item ensembliste 
+  \item déclaratif (quoi, pas comment) : 
+   \item pas de variables, d'itérations ou de tests, de fonctions, etc.
+  \end{itemize}
+
+  \item \textit{PL/SQL = Procedural SQL}
+  
+      Proposé par Oracle, existe avec des variantes dans d'autres systèmes.
+      
+  \item Qui : programmeur d'application, DBA
+  
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Architectures}
+
+
+\includegraphics[width=10cm]{../figures-sql/plsql}
+
+\end{frame}
+
+\begin{frame}{PL/SQL, quand l'utiliser, à quoi ça sert\,?}
+
+\begin{itemize}
+
+  \item Modes
+  \begin{itemize}
+  \item Interactif : on exécute du code pour, par exemple, contrôler ou corriger des données
+  \item Stocké: sous forme de procédures ou de triggers
+   \item Programme : appel depuis langages généralistes
+  \end{itemize}
+
+  \item But
+  \begin{itemize}
+  \item stocker du code "BD", dans la base
+  \item factoriser certains traitements très proches des données (sécurité)
+   \item performances
+  \end{itemize}
+\end{itemize}
+
+\vfill
+
+\alert{Facilite grandement l'installation de la partie applicative.}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Premier exemple, mode interactif}
+
+\begin{footnotesize}
+\begin{minted}{sql}
+    DECLARE
+      -- Quelques variables
+      v_nbFilms   INTEGER;
+      v_nbArtistes INTEGER;
+
+    BEGIN
+      -- Compte le nombre de films
+      SELECT COUNT(*) INTO v_nbFilms FROM Film;
+      -- Compte le nombre d'artistes
+      SELECT COUNT(*) INTO v_nbArtistes FROM Artiste;
+
+      -- Affichage des resultats
+      DBMS_OUTPUT.PUT_LINE ('Nombre de films: ' || v_nbFilms);
+      DBMS_OUTPUT.PUT_LINE ('Nombre d''artistes: ' || v_nbArtistes);
+
+      EXCEPTION
+        WHEN OTHERS THEN 
+          DBMS_OUTPUT.PUT_LINE ('Probleme rencontre');
+
+    END;
+\end{minted}
+\end{footnotesize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Deuxième exemple, procédure stockée}
+
+\begin{scriptsize}
+\begin{minted}{sql}
+    CREATE OR REPLACE PROCEDURE InsereGenre (p_genre VARCHAR) AS 
+      v_genre_majuscules VARCHAR(20);
+      v_count INTEGER;
+      genre_existe EXCEPTION;
+    BEGIN
+      -- On met le parametre en majuscules
+      v_genre_majuscules := UPPER(p_genre);
+
+      -- On verifie que le genre n'existe pas 
+      SELECT COUNT(*) INTO v_count 
+      FROM Genre WHERE code = v_genre_majuscules;
+      
+      -- Si on n'a rien trouve: on insere
+      IF (v_count = 0) THEN
+       INSERT INTO Genre (code) VALUES (v_genre_majuscules);
+      ELSE
+       RAISE genre_existe;
+     END IF;
+  
+      EXCEPTION
+        WHEN genre_existe THEN
+         DBMS_OUTPUT.PUT_LINE('Le genre existe deja en ' ||
+                             v_count || ' exemplaire(s).');
+
+    END;
+\end{minted}
+\end{scriptsize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Troisième exemple, fonction}
+
+\begin{scriptsize}
+\begin{minted}{sql}
+    CREATE OR REPLACE FUNCTION MesActeurs(v_idFilm INTEGER) 
+         RETURN VARCHAR IS
+      resultat VARCHAR(255);
+
+    BEGIN
+      -- Boucle prenant tous les acteurs du films 
+      FOR art IN 
+        (SELECT Artiste.* FROM Role, Artiste  
+        WHERE idFilm = v_idFilm  AND idActeur=idArtiste)
+      LOOP
+
+        IF (resultat IS NOT NULL) THEN
+          resultat := resultat || ', ' || art.prenom || ' ' || art.nom;
+        ELSE   
+          resultat := art.prenom || ' ' || art.nom;
+       END IF;
+
+      END LOOP;
+
+     return resultat;
+    END;
+\end{minted}
+\end{scriptsize}
+\end{frame}
+
+\begin{frame}[fragile]{Utilisation}
+
+\begin{itemize}
+
+  \item En interactif
+  \begin{minted}{sql}
+     SQL> start StatsFilms.sql
+  \end{minted}
+
+ \item Avec l'ordre \texttt{execute}, placé dans un autre langage (C, Java, PHP)
+ 
+   \begin{minted}{sql}
+     execute insereGenre('Policier')
+  \end{minted}
+ 
+ \item Dans une requête SQL
+   \begin{minted}{sql}
+      SELECT titre, MesActeurs(idFilm)  
+      FROM Film WHERE idFilm=5;
+
+TITRE        MESACTEURS(IDFILM)
+------------ -----------------------------
+Volte/Face   John Travolta, Nicolas Cage
+  \end{minted}
+ 
+\end{itemize}
+
+\end{frame}
+
+\subsection{Syntaxe de PL/SQL}
+
+
+
+\begin{frame}[fragile]{Syntaxe PL/SQL: Les variables}
+
+\alert{Point à retenir}\,: les types sont ceux de SQL, \alert{y compris les lignes (\texttt{RECORD})
+et les tables (\texttt{TABLE}).
+}
+\vfill
+
+Favorise une intégration très facile avec les requêtes.
+
+\vfill
+Exemple de déclaration d'un type \texttt{RECORD}.
+
+\begin{scriptsize}
+\begin{minted}{sql}
+   TYPE adresse IS RECORD
+   (no         INTEGER,
+    rue        VARCHAR(40),
+    ville      VARCHAR(40),
+    codePostal VARCHAR(10)
+   );
+\end{minted}
+\end{scriptsize}
+
+On peut faire encore mieux en \alert{dérivant} un type à partir du schéma de la base.
+\end{frame}
+
+
+\begin{frame}[fragile]{Dérivation de types depuis le schéma}
+
+Deux exemples pour illustrer.
+\begin{itemize}
+
+  \item \texttt{Film.titre\%TYPE} est le titre de l'attribut
+     \texttt{titre} de la table \texttt{Film};
+
+  \item \texttt{Artiste\%ROWTYPE} est  un type \texttt{RECORD} 
+      correspondant aux attributs de la table \texttt{Artiste}.
+\end{itemize}
+
+\vfill
+
+Le même principe pour les \alert{requêtes SQL} définies dans le cadre des curseurs (à suivre).
+
+\vfill
+
+\alert{Beaucoup plus difficile avec un langage de programmation externe.}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{La section \texttt{DECLARE}}
+
+Toutes les déclarations sont rassemblées dans la section \texttt{DECLARE}.
+
+\begin{scriptsize}
+\begin{minted}{sql}
+DECLARE
+  -- Constantes
+  v_aujourdhui  CONSTANT DATE  := SYSDATE;
+  v_pi          CONSTANT NUMBER(7,5) := 3.14116;
+
+  -- Variables scalaires
+  v_compteur    INTEGER NOT NULL := 1;
+  v_nom         VARCHAR(30);
+
+  -- Variables pour un n-uplet de la table Film et pour le resume
+  v_film Film%ROWTYPE;
+  v_resume Film.resume%TYPE;
+\end{minted}
+\end{scriptsize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Affectation des variables}
+
+PL/SQL propose un mécanisme d'affectation standard.
+
+\vfill
+
+\begin{scriptsize}
+\begin{minted}{sql}
+<nomVariable> := <expression>;
+\end{minted}
+\end{scriptsize}
+
+\vfill
+
+Mais surtout il est possible de placer dans des variables locales le résultat de requêtes SQL.
+
+
+\begin{scriptsize}
+\begin{minted}{sql}
+SELECT <nomAttribut1>, [<nomAttribut2>, ...]
+INTO   <nomVariable1>, [<nomVariable2>, ... ]
+FROM   [...]
+\end{minted}
+\end{scriptsize}
+
+\vfill
+
+Il doit y avoir correspondance des types (facile car...)
+\end{frame}
+
+
+\begin{frame}[fragile]{Un exemple complet}
+
+\begin{scriptsize}
+\begin{minted}{sql}
+CREATE OR REPLACE FUNCTION TitreEtMES(v_idFilm INTEGER) 
+    RETURN VARCHAR IS
+
+  -- Variables
+  v_titre Film.titre%TYPE;
+  v_idMES Film.idMES%TYPE;
+  v_mes  Artiste%ROWTYPE;
+
+BEGIN
+  -- Recherche du film
+  SELECT  titre, idMES
+  INTO v_titre, v_idMES
+  FROM Film
+  WHERE idFilm=v_idFilm;
+
+  -- Recherche du metteur en scene
+  SELECT * INTO v_mes FROM Artiste WHERE idArtiste = v_idMES;
+
+  return v_titre  || ', realise par ' || v_mes.prenom
+                  || ' ' || v_mes.nom;
+END;
+\end{minted}
+\end{scriptsize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Les exceptions avec un exemple}
+
+\begin{scriptsize}
+\begin{minted}{sql}
+CREATE OR REPLACE PROCEDURE TitreEnMajuscules (p_idFilm INT) AS
+  v_titre Film.titre%TYPE;
+  deja_fait EXCEPTION;
+BEGIN
+  -- Recherche du film. Exception si on ne trouve rien
+  SELECT titre INTO v_titre
+  FROM Film WHERE idFilm = p_idFilm;
+
+  -- Si le titre est en majuscule, autre exception
+  IF (v_titre = UPPER(v_titre)) THEN
+      RAISE deja_fait;
+  END IF;
+
+  -- Mise en majuscules du titre
+   UPDATE Film SET titre=UPPER(v_titre) WHERE idFilm=p_idFilm;
+
+  EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+     DBMS_OUTPUT.PUT_LINE('Ce film n''existe pas');
+    WHEN deja_fait THEN
+     DBMS_OUTPUT.PUT_LINE('Le titre est en majuscules');
+    WHEN OTHERS THEN
+     DBMS_OUTPUT.PUT_LINE('Autre erreur...');
+END;
+\end{minted}
+\end{scriptsize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Exemple d'exécution}
+
+Illustration des levées d'exception.
+
+\vfill
+
+\begin{small}
+\begin{minted}{sql}
+SQL> execute TitreEnMajuscules(900);
+Le film n'existe pas
+
+SQL> execute TitreEnMajuscules(5);
+
+SQL> execute TitreEnMajuscules(5);
+Le titre est en majuscules
+\end{minted}
+\end{small}
+
+\end{frame}
+

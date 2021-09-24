@@ -1,0 +1,36 @@
+
+\begin{frame}[fragile]{Démonstration de l'application "transactions"}
+
+
+\figSlideWithSize{demo-transactions}{13cm}
+
+\vfill
+
+\begin{blocgauche}
+Application Web accessible à \url{http://deptfod.cnam.fr/bd/tp/concurrence/}
+\end{blocgauche}
+
+
+\end{frame}
+
+
+
+\begin{frame}{Résumé}
+
+La démonstration a montré les principales propriétés d'une transaction effectuée dans
+le cadre d'un SGBD.
+
+\vfill 
+
+\vfill
+\begin{blocgauche}
+\begin{redbullet}
+  \item Les mises à jour effectuées par une transaction sont visibles par cette même transaction
+  \item Les mises à jour effectuées par une transaction, et pas encore validées, ne sont pas visibles des autres transactions
+   \item Le \texttt{commit} rend les mises à jour irréversibles
+  \item  Le \texttt{rollback} annule  les mises à jour
+   \item Un paramétrage du niveau d'isolation permet d'indiquer à quel moment des mises à jour deviennent visibles (à approfondir)
+\end{redbullet}
+\end{blocgauche}
+
+\end{frame}

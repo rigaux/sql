@@ -1,0 +1,295 @@
+
+\begin{frame}[fragile]{La normalisation}
+
+La normalisation, c'est l'art de créer des schémas relationnels où toutes
+les relations sont en troisième forme normale, et sans perte d'information.
+
+\vfill
+
+Dans cette session:
+
+\begin{redbullet}
+  \item Exemple de décomposition d'un schéma
+  \item Algorithme de normalisation
+  \item Approche globale
+\end{redbullet}
+
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Point de départ: relation globale et dépendances}
+
+On part d'un schéma contenant tous les attributs connus.
+
+\vfill
+
+$$Appart(idAppart, surface, idImmeuble, nbEtages, dateConstruction)$$
+
+\vfill
+
+On identifie les dépendances fonctionnelles
+
+$$idAppart \to  surface, idImmeuble, nbEtages, dateConstruction$$
+
+et
+
+$$idImmeuble \to nbEtages, dateConstruction$$
+
+\vfill
+\begin{blocgauche}
+\begin{remblock}{En troisième forme normale?}
+Non, car la seconde DF montre
+une dépendance  dont la partie gauche n'est pas la clé, 
+\texttt{idAppart}. \end{remblock}
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%
+\begin{frame}{La décomposition}
+
+
+On identifie les dépendances fonctionnelles \alert{minimales} et \alert{directes}.
+
+$$idAppart \to  surface, idImmeuble$$
+
+et
+
+$$idImmeuble \to nbEtages, dateConstruction$$
+
+\vfill
+
+On crée une relation pour chacune:
+
+\begin{redbullet}
+  \item Appart(\textbf{idAppart}, surface, idImmeuble)
+  \item Immeuble (\textbf{idImmeuble}, nbEtages, dateConstruction)
+\end{redbullet}
+
+
+\begin{blocgauche}
+On obtient des relations en 3FN, \alert{sans perte d'information}.
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%
+\begin{frame}{Regardons les occupants}
+
+Le schéma global de départ est le suivant:
+
+
+$$Occupant(idPersonne, nom, pr\acute{e}nom, idAppart, surface)$$
+
+\vfill
+
+On a les dépendances suivantes :
+$$idAppart \to surface$$
+et
+$$idPersonne \to pr\acute{e}nom, nom$$
+
+\vfill
+
+La clé est la paire $(idPersonne, idAppart)$. 
+
+\vfill
+\begin{blocgauche}
+\begin{remblock}{En troisième forme normale?}
+Non, car pour les \alert{deux} DF,  la partie gauche n'est pas la clé
+\end{remblock}
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%
+\begin{frame}{La décomposition}
+
+Comme avant, à partir des DF minimales et directes.
+
+\vfill
+
+
+\begin{redbullet}
+  \item Personne(\textbf{idPersonne}, prénom, nom)
+  \item Appart (\textbf{idAppart}, surface)
+\end{redbullet}
+
+\vfill
+
+\alert{Pas suffisant}, car on a perdu le lien entre les appartements et les personnes.
+
+\vfill
+On ajoute une relation avec la clé.
+
+\begin{redbullet}
+  \item Occupant (\textbf{idPersonne, idAppart})
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{On est en 3FN, sans perte d'information (jointures pour reconstituer)}
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%
+\begin{frame}{Algorithme de normalisation}
+
+On part d’un schéma de relation $R$ \alert{global}
+et d’un ensemble de dépendances fonctionnelles minimales et directes.
+
+\vfill
+
+On détermine alors les clés de R
+
+\vfill 
+\begin{redbullet}
+  \item Pour chaque DF minimale et directe $X \to A_1 \cdots, A_n$,
+      on crée une relation $(X,A_1 \cdots, A_n)$ de clé $X$
+  \item Pour chaque clé $C$
+non représentée dans une des relations précédentes, on crée une relation $(C)$ de clé $C$.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{On obtient un schéma normalisé}
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%
+\begin{frame}{Et en pratique ?}
+
+Pas tout à fait suffisant: les identifiants n'existent pas naturellement dans la vraie vie...
+
+\vfill
+
+$$(titre, ann\acute{e}e, pr\acute{e}nomMES, nomMES, ann\acute{e}eNaiss)$$
+
+\vfill 
+
+Pas de DF... Il faut les \alert{ajouter} et décidant des \alert{entités} et 
+de leur identifiant.
+
+\vfill
+
+Ici, entités Film et Réalisateur, avec \texttt{idFilm} 
+et \texttt{idRéalisateur}. Soit: 
+
+
+$$(idFilm, titre, ann\acute{e}e, idR\acute{e}alisateur, pr\acute{e}nomMES, nomMES, ann\acute{e}eNaiss)$$
+
+avec 
+
+$$idR\acute{e}alisateur \to pr\acute{e}nomMES, nomMES, ann\acute{e}eNaiss$$
+et
+$$idFilm \to titre, ann\acute{e}e, idR\acute{e}alisateur$$
+
+\begin{blocgauche}
+Maintenant on normalise et on obtient un schéma en 3FN.
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Illustration: table de départ}
+
+À partir de cette table pleine d'anomalies.
+
+\begin{small}
+\begin{center}
+\begin{tabular}{l|l|l|c|l|l|c}
+ idFilm & titre &  année &  idRéalisateur & nomMES &  prénomMES &  annéeNaiss \\
+\hline
+1 & Alien & 1979 & 101 & Scott & Ridley & 1943\\
+2 & Vertigo  & 1958 & 102 & Hitchcock & Alfred & 1899\\
+3 & Psychose & 1960 &102 &  Hitchcock & Alfred & 1899\\
+4 & Kagemusha & 1980 & 103 & Kurosawa & Akira & 1910\\
+5 & Volte-face & 1997 & 104 & Woo & John & 1946\\
+6 & Pulp Fiction & 1995 & 105 & Tarantino & Quentin & 1963 \\
+7 & Titanic & 1997 & 106 & Cameron & James & 1954\\
+8 & Sacrifice & 1986 & 107 & Tarkovski & Andrei &1932\\
+\hline
+\end{tabular}
+\end{center}
+\end{small}
+
+\end{frame}
+
+\begin{frame}{On obtient après normalisation}
+
+
+\begin{center}
+\begin{minipage}[b]{6cm}
+\begin{center}
+\begin{tabular}{l|l|c|c}
+\textbf{idFilm} & titre & année  & \textit{idR} \\
+\hline
+1 &Alien & 1979 & 101 \\
+2 &Vertigo  & 1958 & 102\\
+3 &Psychose & 1960 & 102 \\
+4 &Kagemusha & 1980 & 103\\
+5 &Volte-face & 1997 & 104 \\
+6&Pulp Fiction & 1995 &  105 \\
+7&Titanic & 1997 & 106 \\
+8&Sacrifice & 1986 & 107\\
+\hline
+\end{tabular}
+
+La table des films
+\end{center}
+\end{minipage} \ \hspace*{0.3cm}
+\begin{minipage}[b]{5cm}
+\begin{center}
+\begin{tabular}{l|l|l|c}
+{\bf idR} &  nom & prénom &  annéeNaiss \\
+\hline
+101 & Scott & Ridley & 1943\\
+102 & Hitchcock & Alfred & 1899\\
+103 & Kurosawa & Akira & 1910\\
+104 & Woo & John & 1946\\
+105 & Tarantino & Quentin & 1963 \\
+106 & Cameron & James & 1954\\
+107 & Tarkovski & Andrei &1932\\
+\hline
+\end{tabular}
+
+La table des réalisateurs
+\end{center}
+\end{minipage}
+\end{center}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Schéma normalisé et sans perte d'information}
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Il est \alert{toujours} possible de se ramener à un schéma normalisé.
+
+\vfill
+\begin{redbullet}
+   \item En déterminant les DF et les clés
+   \item En appliquant l'algorithme de normalisation
+\end{redbullet}
+
+\vfill
+
+\alert{En pratique}: les DF ne sont pas données naturellement. Il faut les déterminer
+par un processus de conception basé sur les entités et leurs identifiants.
+
+\vfill
+\begin{blocgauche}
+\alert{Démarche globale}: conception entité / association,
+suivie de la normalisation.
+\end{blocgauche}
+\end{frame}
+

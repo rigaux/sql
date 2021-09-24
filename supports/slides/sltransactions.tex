@@ -1,0 +1,325 @@
+
+
+\subsection{Notion de transaction}
+
+\begin{frame}{De quoi s'agit-il?}
+
+Deux hypothèses à reconsidérer.
+
+\begin{redbullet}
+  \item Hyp. 1: \alert{Un programme SQL s'exécute indépendamment des autres}
+
+ \alert{Faux}, car de grandes bases de données peuvent gérer des centaines,
+          voire des milliers d'accès \alert{concurrents} qui peuvent interagir
+          les uns sur les autres.
+  
+  \item Hyp. 2: \alert{Un programme s'exécute sans erreur et intégralement.}
+
+\alert{Faux} pour des raisons innombrables: plantage de l'application, 
+                pb réseau, pb du serveur, panne électrique, etc. 
+                L'interruption peut laisser la base dans un état \alert{incohérent}.
+
+\end{redbullet}
+
+\begin{blocgauche}
+La 
+notion de \alert{transaction} est centrale pour répondre  à ce problème.
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Objectifs du cours}
+
+Un concepteur d'application doit:
+
+\vfill
+
+\begin{redbullet}
+  \item Maîtriser la notion, très importante, de \alert{transaction}.
+   
+% $\Rightarrow$  La spécification d'une transaction nous revient.
+
+   \item Réaliser l'impact des \alert{exécutions} transactionnelles
+       \alert{concurrentes}  sur les autres utilisateurs
+
+%   $\Rightarrow$  Un défaut d'isolation entre transaction peut engendrer des \alert{incohérences}.
+      
+  \item  Choisir un \alert{niveau d'isolation} approprié	
+
+%  $\Rightarrow$  Compromis entre \alert{fluidité/anomalies}      et \alert{isolation/cohérence}. 
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Les techniques? \alert{Contrôle de concurrence}, objet du prochain cours.
+\end{blocgauche}
+\end{frame}
+
+\subsection{Notions de base}
+
+
+\begin{frame}{Qu'est-ce qu'une transaction}
+
+\begin{defblock}{Définition}
+Une transaction est une séquence d'opérations de \alert{lecture} ou d'\alert{écriture}, 
+se terminant par \sqlkw{commit} ou \sqlkw{rollback}.
+\end{defblock}
+
+\vfill
+
+Le \texttt{commit} est une instruction qui \alert{valide} toutes les mises à jour.
+
+\vfill
+
+Le \texttt{rollback} est une instruction qui \alert{annule} toutes les mises à jour.
+
+\vfill
+
+\begin{blocgauche}
+\begin{defblock}{\alert{Essentiel}}
+Les opérations d'une transaction sont solidaires: elles sont toutes validées, ou pas du tout
+(\alert{atomicité}).
+\end{defblock}
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Pour bien comprendre}
+
+On parle de \alert{transaction} plutôt que de \alert{programme} : beaucoup plus précis.
+
+\vfill
+
+Une transaction est le produit d'un échange entre un \alert{processus client} et  un \alert{processus 
+serveur} (SGBD).  
+
+\vfill
+
+On peut effectuer une ou plusieurs transactions successives dans un même processus: 
+elles sont dites \alert{sérielles}.
+
+\vfill
+
+\begin{blocgauche}
+En revanche, deux processus \alert{distincts} engendrent des \alert{transactions concurrentes}.
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Notre exemple de base: les données}
+
+\begin{redbullet}
+
+  \item Des clients qui réservent des places pour des spectacles
+  
+   \medskip
+   
+   \texttt{Client (id\_client, nb\_places\_réservées, solde)}
+
+\bigskip
+
+  \item Des spectacles qui proposent des places à des clients.
+
+\medskip
+
+   \texttt{Spectacle (id\_spectacle, nb\_places\_offertes, nb\_places\_prises, tarif})
+\end{redbullet}
+
+\begin{blocgauche}
+Cette base est \alert{cohérente} si \alert{le nombre de places prises}
+est égal à \alert{la somme des places réservées}.
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}[fragile]{Notre exemple de base: le programme (lectures)}
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+   procedure Reservation (v_id_client INT, v_id_spectacle INT, nb_places INT)
+    -- Variables
+    v_client Client%ROWTYPE;
+    v_spectacle Spectacle%ROWTYPE;
+    v_places_libres INT;  
+    v_places_reservees INT;  
+    BEGIN
+    -- On recherche le spectacle
+    SELECT * INTO v_spectacle 
+    FROM Spectacle WHERE id_spectacle=v_id_spectacle;
+  
+    -- S'il reste assez de places: on effectue la reservation
+    IF (v_spectacle.nb_places_libres >= nb_places) 
+    THEN
+      -- On recherche le client
+      SELECT * INTO v_client FROM Client WHERE id_client=v_id_client;
+
+      -- Calcul du transfert
+      v_places_libres := v_spectacle.nb_places_libres - nb_places;
+      v_places_reservees := v_client.nb_places_reservees + nb_places;   
+ \end{minted}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Le programme, suite (partie écritures)}
+
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+ 
+      -- On diminue le nombre de places libres
+      UPDATE Spectacle SET nb_places_libres = v_places_libres 
+         WHERE id_spectacle=v_id_spectacle;
+
+      -- On augmente le nombre de places reervees par le client
+      UPDATE Client SET nb_places_reservees=v_places_reservees
+        WHERE id_client = v_id_client;
+
+      -- Validation
+      commit;
+    ELSE
+     rollback;
+    END IF;
+    END;
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+NB: le langage (ici PL/SQL) \alert{n'a aucun impact} sur la modélisation des transactions.
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Ce programme engendre des \alert{transactions}}
+
+\alert{Exécution} = séquence de  lectures et  mises à jour = \alert{transaction}.
+
+\vfill
+
+\figSlideWithSize{proc-reservation}{11cm}
+
+
+\vfill
+\begin{blocgauche}
+Le SGBD ne sait pas ce que fait l'application avec les données transmises. \alert{Il ne
+voit que la séquence des lectures et des écritures.}
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Représentation d'une transaction}
+
+On représente les transactions par ce qu'en connaît le système.
+
+\begin{redbullet}
+   \item les transactions, notées $T_1, T_2, \cdots, T_n$;
+   \item les ``données'' (tuples) échangées sont notées $x, y, z, \cdots$;
+   \item pour chaque transaction $T_i$, une lecture de $x$ est notée $r_i[x]$ 
+     et une écriture de $x$ est notée $w_i[x]$;
+   \item $C_i$ et $R_i$ représentent un \texttt{commit} (resp. \texttt{rollback}) 
+       effectué par la transaction $T_i$.
+\end{redbullet}
+  
+  \vfill
+\begin{blocgauche}
+  \alert{Une transaction $T_i$ est donc une séquence de lectures ou 
+  d'écritures se terminant par $C_i$ ou $R_i$}. Exemple:
+  
+  $$r_i[x] w_i[y] r_i[y] r_i[z] w_i[z] C_i$$
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Les transactions engendrées par \texttt{Réservation}}
+
+En s'exécutant, la procédure \texttt{Réservation} engendre des transactions. Exemples:
+
+\begin{redbullet}
+  \item $r[s_1]r[c_1]w[s_1]w[c_1]C$: on lit le spectacle $s1$, le client $c_1$, 
+      puis on les met à jour tous les deux;
+     
+   \item  $r[s_1]r[c_2]w[s_1]w[c_2]C$: un autre client ($c_2$) réserve pour le même spectacle
+      ($s_1$);
+      
+  \item $r[s_1]$ : on lit le spectacle $s_1$, et on s'arrête là (plus assez de places disponibles?)
+ 
+\end{redbullet}
+\vfill
+\begin{blocgauche}
+Un même processus peut effectuer des transactions \alert{en série}:
+
+      $$r_1[s_1]r_1[c_1]w_1[s_1]w_1[c_1] C_1 r_2[s_1]r_2[c_2]w_2[s_1]w_2[c_2] C_2 \cdots$$
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Exécutions concurrentes}
+
+
+Quand plusieurs programmes clients sont actifs simultanément, 
+les transactions engendrées s'effectuent \alert{en concurrence}.
+
+\vfill
+
+\figSlideWithSize{exec-concurrentes}{10cm}
+\vfill
+
+
+On obtient potentiellement un \alert{entrelacement des requêtes}.
+
+\begin{blocgauche}
+L'entrelacement de requêtes issues de transactions concurrentes 
+\alert{peut} engendrer
+des anomalies.
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Propriétés des transactions}
+
+Un système relationnel contrôle la concurrente et
+garantit un ensemble de propriétés rassemblées sous l'acronyme ACID.
+
+\begin{redbullet}
+
+  \item  \alert{A = Atomicité}. Une transaction est validée complètement ou pas du tout.
+  
+  \item  \alert{C = Cohérence}. Une transaction mène d'un état cohérent à un autre état cohérent.
+  
+  \item \alert{I = Isolation}. Une transaction s'exécute comme si elle était seule.
+  
+   \item \alert{D = Durabilité}. Quand le commit s'exécute, ses résultats sont définitifs.
+\end{redbullet}
+
+\begin{blocgauche}
+\begin{defblock}{Essentiel}
+L'isolation \alert{par défaut} est seulement partielle: \alert{meilleures
+performances} mais \alert{risque d'anomalie}.
+\end{defblock}
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{À retenir}
+
+Transaction = séquence de lecture et mises à jour soumises par une application client, se terminant
+par \texttt{commit} ou \texttt{rollback}
+
+\vfill
+
+Le SGBD \alert{garantit} que l'exécution des transactions respecte des propriétés dites ACID. 
+
+\vfill
+
+Cette garantie dépend du \alert{niveau d'isolation} qui est choisi par l'application (son développeur)
+
+\vfill
+\begin{blocgauche}
+\alert{Un niveau d'isolation insuffisant peut entraîner des anomalies très difficiles à comprendre.}
+\end{blocgauche}
+
+\end{frame}
+

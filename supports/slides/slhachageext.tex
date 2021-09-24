@@ -1,0 +1,171 @@
+\frontslide{Hachage extensible}
+
+
+%------------------------------------------------------------
+\begin{frame}{Hachage extensible}
+
+Le hachage extensible permet de réorganiser la table de hachage en fonction
+des insertions et suppressions. 
+
+\vfill
+
+Idée de base\,: la fonction de hachage $h$ est fixe, \alert{mais} 
+on utilise les $n$ premiers bits du résultat $h(c)$ 
+pour s'adapter à la taille de la collection.
+
+\vfill
+
+Par rapport à la version de base du hachage, on ajoute deux contraintes.
+
+\begin{redbullet}
+  \item le nombre d'entrées dans le répertoire est une puissance
+          de 2
+  \item la fonction $h$ donne toujours un entier sur 4 octets (32 bits)  
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+La taille du répertoire tend à croître rapidement et peut poser problème.
+\end{blocgauche}
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Exemple\,: le hachage des 16 films}
+
+On ne montre que le premier octet.
+
+\vfill
+
+\begin{tabular}{l|c}
+titre & $h$(titre)   \\
+\hline
+Vertigo     & 01110010  \\
+Brazil      & 10100101  \\
+Twin Peaks  & 11001011  \\
+Underground & 01001001  \\
+Easy Rider  & 00100110 \\
+Psychose    &  01110011 \\
+Greystoke   &  10111001 \\
+Shining     &  11010011 \\
+\hline
+\end{tabular}
+\vfill
+
+La fonction $h$ est immuable. 
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Construction de la table}
+
+On départ on utilise seulement le premier bit
+de la fonction
+\begin{redbullet}
+  \item Deux valeurs possibles\,: 0 et 1
+  \item Donc deux entrées, et deux fragments
+  \item L'affectation d'un enregistrement dépend
+        du premier bit de sa fonction de hachage  
+\end{redbullet}
+
+\vfill
+
+  \figSlideWithSize{hachext2}{8cm}
+
+Avec les 5 premiers films.
+\end{frame}
+
+\begin{frame}{Insertions}
+
+Supposons 3 films par fragment. L'insertion de Psychose
+(valeur 01110011) entraîne le débordement du premier fragment.
+
+\vfill
+
+\begin{redbullet}
+  \item On double la taille du répertoire: quatre entrées 00, 01, 10 et 11.
+  \item On alloue un nouveau fragment pour l'entrée 01
+  \item Les entrées 10 et 11 pointent sur le \alert{même} fragment.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Le répertoire grandit, mais dans l'espace de stockage on ajoute seulement
+un nouveau fragment.
+\end{blocgauche}
+
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Illustration}
+
+Les enregistrements anciennement stockés dans le fragment 0 sont répartis
+dans les fragments 00 et 01 en fonction de leur second bit.
+\vfill
+
+  \figSlideWithSize{hachext3}{9cm}
+
+\vfill
+
+Réorganisation \alert{locale}, donc coût acceptable.
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Insertions suivantes}
+
+Deux cas.
+
+\vfill
+
+\alert{Cas 1}\,: on insère dans un fragment plein, mais plusieurs
+           entrées pointent dessus
+  
+ $\Rightarrow$ on alloue un nouveau fragment, et on répartit les pointeurs
+
+\vfill
+
+\alert{Cas 2}\,:  on insère dans un fragment plein, associé à une seule entrée
+ 
+     
+ $\Rightarrow$ on double à nouveau le nombre d'entrées
+
+\vfill
+
+\begin{blocgauche}
+Simple, mais la croissance du  répertoire est un potentiel problème.
+\end{blocgauche}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Greystoke 10111001 et Shining 11010011}
+
+Le fragment 1 déborde. Il était référencé par deux entrées du répertoire.
+
+\vfill
+
+  \figSlideWithSize{hachext4}{10cm}
+
+\vfill
+
+\begin{blocgauche}
+On ajoute un fragment, on redistribue, le répertoire ne change pas. C'est le cas qui devient 
+le plus courant quand la collection grandit.
+\end{blocgauche}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{À retenir\,: hachage extensible}
+
+Le hachage extensible résout en partir le principal
+défaut du hachage, l'absence de dynamicité.
+
+\vfill
+
+Le répertoire tend à croître de manière \alert{exponentielle}, ce qui peut soulever un problème
+à terme.
+
+\vfill
+\begin{blocgauche}
+Il reste une structure \alert{plaçante} qui doit être complétée par l'arbre B pour
+des index secondaires.
+\end{blocgauche}
+
+\end{frame}

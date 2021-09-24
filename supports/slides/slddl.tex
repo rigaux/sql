@@ -1,0 +1,258 @@
+\documentclass[pdf,blends,slideColor,colorBG]{prosper}
+
+\usepackage{moreverb}
+\usepackage{macros}
+
+\begin{document}
+
+\title{Le modèle relationnel}
+\author{Philippe Rigaux}
+\email{rigaux@lri.fr}
+\institution{LRI}
+
+%------------------------------------------------------------
+\part{Le modèle relationnel}
+%------------------------------------------------------------
+
+
+\begin{tsp}{Les concepts}
+{
+Relation, instance et schéma, domaine et attributs, clé, tuple
+et base de données
+\begin{center}
+\begin{tabular}{l|c|l}
+ titre &  année & genre\\
+\hline
+Alien & 1979 & Science-Fiction \\
+Vertigo  & 1958 & Suspense \\
+Volte-face & 1997 & Thriller \\
+Pulp Fiction & 1995 & Policier \\
+\hline
+\end{tabular}
+\end{center}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Notre schéma}{
+
+\figWithSize{officiel}{9cm}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{La table \tble{Film}}{
+
+\begin{center}
+\begin{small}
+\begin{tabular}{l|l|c|l|c|l}
+\cle{idFilm} & titre & année  & genre & \fk{idMES} & \fk{codePays}\\
+\hline
+100 & Alien & 1979 & Science Fiction &  1 & US \\
+101 & Vertigo  & 1958 & Suspense & 2 & US \\
+102 & Psychose & 1960 &  Suspense & 2 & US\\
+103 & Kagemusha & 1980 & Drame & 3 & JP\\
+104 & Volte-face & 1997 & Action & 4 & US\\
+105 & Van Gogh & 1991 & Drame  & 8 & FR\\
+106 & Titanic & 1997 & Drame & 6 & US\\
+107 & Sacrifice & 1986 & Drame & 7 & FR\\
+\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{La table \tble{Artiste}}{
+
+\begin{center}
+\begin{small}
+\begin{tabular}{l|l|l|c}
+{\bf idArtiste} &  nom & prénom &  annéeNaiss \\
+\hline
+1 & Scott & Ridley & 1943\\
+2 & Hitchcock & Alfred & 1899\\
+3 & Kurosawa & Akira & 1910\\
+4 & Woo & John & 1946\\
+6 & Cameron & James & 1954\\
+7 & Tarkovski & Andrei & 1932\\
+8 & Pialat & Maurice & 1925 \\
+\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Représentation des rôles}{
+
+\begin{center}
+\begin{small}
+\begin{tabular}{l|l|c|l|c|c}
+\cle{idFilm} & titre & année  & genre & \fk{idMES} & \fk{codePays}\\
+\hline
+20 & Impitoyable & 1992 & Western & 100 & USA \\
+21 & Ennemi d'état & 1998 & Action & 102 & USA\\
+\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+\begin{center}
+\begin{small}
+\begin{tabular}{l|l|l|c}
+\cle{idArtiste} &  nom & prénom &  annéeNaiss \\
+\hline
+100 & Eastwood & Clint  & 1930 \\
+101 & Hackman & Gene  & 1930 \\
+102 & Scott & Tony  & 1930 \\
+103 & Smith  & Will  & 1968 \\
+\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{La table \tble{Rôle}}{
+
+NB\,: notez le respect de l'association plusieurs à plusieurs.
+
+\begin{center}
+\begin{small}
+\begin{tabular}{l|c|l}
+\cle{\fk{idFilm}} & \cle{\fk{idActeur}}  & rôle \\
+\hline
+20  & 100  & William Munny\\
+20 & 101  & Little Bill\\
+21 & 101  & Bril\\
+21 & 103  & Robert Dean\\
+\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Associations ternaires}{
+
+NB\,: la salle est une entité {\em faible}. Notez la clé de la relation.
+
+\begin{center}
+\begin{small}
+\begin{tabular}{l|l|c}
+\cle{\fk{idCinéma}} & \cle{no} &  capacité  \\ \hline
+Le Rex & 1 & 200  \\\hline 
+Kino & 1 & 130  \\\hline 
+Le Rex & 2 & 180  \\\hline 
+\end{tabular}
+\end{small}
+\end{center}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Associations ternaires (suite)}{
+
+\begin{center}
+\begin{small}
+\begin{tabular}{c|c|c}
+\cle{idHoraire} & heureDébut & heureFin \\\hline
+1 & 14 & 16  \\\hline 
+2 & 16 & 18  \\\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+\begin{center}
+\begin{small}
+\begin{tabular}{c|c|c|c|c}
+\cle{\fk{idFilm}} & \cle{\fk{nomCinéma}} & \cle{\fk{noSalle}} & 
+       \cle{\fk{idHoraire}} & tarif \\\hline
+103 & Le Rex & 2 & 1 &  23  \\\hline 
+103 & Le Rex & 2 & 2 & 56  \\\hline
+100 & Kino & 1 & 2 & 45  \\\hline
+102 & Le Rex &  2 & 1 & 50  \\\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Création de tables}
+{
+{\tt
+\begin{small}
+\begin{tabbing}
+\= CREATE TABLE \= Internaute (\=email VARCHAR (50) NOT NULL,\\
+\> \> \>                      nom   VARCHAR (20) NOT NULL,\\
+\> \> \>                      prenom VARCHAR (20),\\
+\> \> \>                      motDePasse VARCHAR (60) NOT NULL,\\
+\> \> \>                      anneeNaiss INTEGER)
+\end{tabbing}
+\end{small}
+}
+Attention aux valeurs \texttt{NULL} ou \texttt{NOT NULL}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Avec clé primaire}
+{
+
+{\tt
+\begin{small}
+\begin{tabbing}
+\= CREATE TABLE \= Internaute \=\\
+ \> \> (email VARCHAR (50) NOT NULL,\\
+ \> \>                      nom   VARCHAR (20) NOT NULL,\\
+ \> \>                      prenom VARCHAR (20),\\
+ \> \>                      motDePasse VARCHAR (60) NOT NULL,\\
+ \> \>                      anneeNaiss INTEGER,\\
+ \> \>                      PRIMARY KEY (email))
+\end{tabbing}
+\end{small}
+}
+
+NB\,: la clé peut être constituée de plusieurs attributs
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Avec clé primaire et clause \texttt{UNIQUE}}
+{
+
+\sqltxt{
+\begin{small}
+\begin{tabbing}
+\= CREATE TABLE \= Artiste(\=id INTEGER  NOT NULL,\\
+ \> \>                       nom VARCHAR (30) NOT NULL,\\
+ \> \>                       prenom VARCHAR (30) NOT NULL,\\
+ \> \>                        anneeNaiss INTEGER,\\
+ \> \>                      PRIMARY KEY (id),\\
+ \> \>                      UNIQUE (nom, prenom));
+\end{tabbing}
+\end{small}
+}
+
+Plus facile de remettre en cause une clé secondaire\,!
+}\end{tsp}
+
+\begin{tsp}{Avec clés étrangères}
+{
+\sqltxt{
+\begin{small}
+\begin{tabbing}
+\= CREATE TABLE Film \=  (idFilm INTEGER NOT NULL,\\
+                    \> titre    VARCHAR (50) NOT NULL,\\
+                   \>  annee     INTEGER NOT NULL,\\
+                    \> idMES    INTEGER,\\
+                    \> codePays   INTEGER,\\
+                    \> PRIMARY KEY (idFilm),\\
+              \> FOREIGN KEY (idMES) REFERENCES Artiste,\\
+	   \>   FOREIGN KEY (codePays) REFERENCES Pays);
+\end{tabbing}
+\end{small}
+}
+Important\,: les tables référencées doivent être créées {\em avant}
+
+}\end{tsp}
+
+\end{document}

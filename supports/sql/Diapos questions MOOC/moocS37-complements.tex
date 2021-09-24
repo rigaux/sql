@@ -1,0 +1,227 @@
+
+\begin{frame}[fragile]{Valeurs nulles}
+
+Une \alert{valeur nulle} est une
+\alert{valeur manquante}. Ne pas confondre avec une chaîne de caractères  ``null''  ou 
+vide (``'')
+
+\vfill
+
+Voici une table des logements avec quelques valeurs à \sqlkw{null}
+
+\vfill
+\begin{tabular}{c|c|c|c|c}
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu}\\ \hline 
+ca & Causses & 45 & Auberge & Cévennes\\ \hline 
+ge & Génépi & 134 & Hôtel & \\ \hline 
+pi & U Pinzutu &  & Gîte & Corse\\ \hline 
+ta & Tabriz & 34 & Hôtel & Bretagne\\ \hline 
+\end{tabular}
+
+\vfill
+
+La présence de valeurs nulles \alert{fausse} le résultat attendu des requêtes.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Comparaisons avec valeurs nulles}
+
+On ne sait ni comparer une valeur nulle, ni appliquer une fonction.
+
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select * from Logement where lieu = ''
+\end{minted}
+
+Génépi (pas de lieu) n'est pas trouvé.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select * from Logement where lieu != ''
+\end{minted}
+Génépi (pas de lieu) n'est pas trouvé non plus!
+\vfill
+
+\begin{blocgauche}
+Une comparaison avec \sqlkw{null} ne donne ni vrai, ni faux,
+mais une troisième valeur de vérité, \sqlkw{unknown}. 
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%
+\begin{frame}[fragile]{Calculs avec valeurs à null}
+
+Tout calcul appliqué à une valeur à \sqlkw{null} renvoie \sqlkw{null}
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select nom, capacité * 2 as 'doubleCapacité'
+from Logement
+\end{minted}
+
+\vfill
+\begin{tabular}{c|c}
+\textbf{nom} & \textbf{doubleCapacité}\\ \hline 
+Causses & 90\\ \hline 
+Génépi & 268\\ \hline 
+U Pinzutu & \\ \hline 
+Tabriz & 68\\ \hline 
+\end{tabular}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Le test \sqlkw{is null}}
+
+Seule approche correcte: il faut tester explicitement l'absence de valeur avec \texttt{is null}.
+
+\vfill
+En SQL: 
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select *
+from Logement
+where capacité is null
+\end{minted}
+
+\vfill
+
+\alert{Attention}\,: le test \texttt{capacité = null} \alert{ne marche pas}.
+
+\vfill
+
+\alert{Conclusion}\,: éviter autant que possible les valeurs nulles
+en les interdisant (dans le schéma).
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La jointure externe}
+
+On veut la liste des logements avec leurs activités.
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select nom, codeActivité
+from Logement, Activité
+where code = codeLogement
+\end{minted}
+
+\vfill
+\begin{footnotesize}
+\begin{tabular}{c|c}
+\textbf{nom} & \textbf{codeActivité}\\ \hline 
+Causses & Randonnée\\ \hline 
+Génépi & Piscine\\ \hline 
+Génépi & Ski\\ \hline 
+U Pinzutu & Plongée\\ \hline 
+U Pinzutu & Voile\\ \hline 
+\end{tabular}
+\end{footnotesize}
+\vfill
+
+\begin{blocgauche}
+\alert{Il manque l'hôtel Tabriz pour lequel on ne connaît pas d'activité}.
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{L'opérateur \texttt{left outer join}}
+
+\begin{redbullet}
+   \item Renvoie tous les nuplets de la table directrice (à gauche)
+   \item Associe à chaque nuplet un nuplet de la table de droite \alert{si un tel nuplet existe}
+   \item Sinon, les attributs de la table de droite sont à \sqlkw{null}
+\end{redbullet}
+
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select nom, codeActivité
+from Logement left outer join Activité 
+       on (code = codeLogement)
+\end{minted}
+
+\vfill
+On obtient, en plus de la jointure standard: 
+
+\vfill
+\begin{tabular}{c|c}
+\hline
+Tabriz & \sqlkw{null} \\ \hline 
+\end{tabular}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Le tri, \texttt{order by}}
+
+On peut demander explicitement le tri du résultat sur
+une ou plusieurs expressions avec la clause \texttt{order by}
+
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+   select *  
+   from Logement 
+   order by lieu, capacité
+\end{minted}
+
+\vfill
+
+En ajoutant des clauses sur l'ordre du tri (\texttt{ascending} ou \texttt{descending})
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+   select *  
+   from Logement 
+   order by lieu desc, capacité desc
+\end{minted}
+
+\end{frame}
+%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Les fondements du langage SQL (logique ou algèbre) sont une base sur laquelle
+beaucoup d'extensions pratiques sont possibles.
+
+\vfill
+
+\begin{redbullet}
+   \item Valeurs à \sqlkw{null}, jointures externes, tris
+  \item  Mais aussi des fonctions, spécifiques à chaque système
+  \item Ne change en rien \alert{l'interprétation} du langage, que vous devez maintenant maîtriser.
+\end{redbullet}
+
+\vfill
+SQL est un standard, mais chaque système propose des spécificités au-delà du standard.
+
+\end{frame}
+

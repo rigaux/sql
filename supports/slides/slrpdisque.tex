@@ -1,0 +1,187 @@
+\documentclass[aspectratio=169, handout]{beamer} %aspectratio: définit le format 16/9 ; handout = supprime la barre de navigation
+
+
+\usepackage{mooc-macros}
+
+\title {Semaine 5\,: Reprise sur panne}
+\subtitle{}
+\author {Philippe}
+\date{}
+
+\begin{document}
+
+
+
+\begin{frame}{Panne d'un disque}
+
+Panne la plus grave, car on risque de perdre \alert{l'état de la base}.
+
+\vfill
+
+Solution\,: \alert{la réplication}. Réfléchissons.
+
+\vfill
+
+\begin{redlist}
+  \item L'état de la base est dans le fichier journal.
+    \item L'état de la base est \alert{aussi} dans le fichier de la base et le buffer.
+\end{redlist}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Constat}\,: pour qu'il y ait réplication, il est \alert{impératif} de stocker la base et le \textit{log} 
+sur deux disques \alert{distincts}.
+\end{blocgauche}
+
+
+    
+    %insertion de la zone rouge auteur et du logo   
+        \begin{textblock*}{154px}(0.8cm,8.3cm)
+            \includegraphics[width=154px,height=19.5px]{cnam-auteur}
+        \end{textblock*} 
+        
+    %insertion du nom de l'auteur
+        \begin{textblock*}{80px}(1.1cm,8.5cm)
+            {\color{MoocLab-white}   \fontsize{9}{11}\selectfont Philippe Rigaux}
+        \end{textblock*}
+    
+\end{frame}
+
+
+\begin{frame}{Cas 1\,: panne du disque de la base}
+
+Solution de base: 
+
+       \begin{redbullet}
+       \item On réinstalle un disque pour la base.
+     \item  On ré-exécute toutes les transactions du \textit{log}.
+    \end{redbullet}
+
+
+\vfill
+
+\begin{blocgauche}
+Inconvénients\,:
+       \begin{redbullet}
+       \item Phase de latence longue au moment du redémarrage.
+     \item Implique de conserver tous les \textit{log} depuis l'origine.
+    \end{redbullet}
+
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Panne du disque de la base\,: avec sauvegarde}
+
+Une \alert{sauvegarde} $S_t$ est une copie de \alert{l'état de la base} à un instant $t$.
+
+\vfill
+
+\figSlideWithSize{dbdump}{10cm}
+
+\vfill
+
+\begin{blocgauche}
+Avec  $S_t$, il suffit
+de réappliquer le  \textit{log} depuis $t$.
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Illustration}
+
+Avec une sauvegarde datant du 15 mars, et un fichier \textit{log} par jour.
+
+\vfill
+
+\figSlideWithSize{reprise_froid}{7cm}
+
+\vfill
+\begin{blocgauche}
+On applique à la sauvegarde les transactions depuis le 15 mars.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Cas 2\,: panne du disque du \textit{log}}
+
+Rappel\,: l'état de la base est dans les fichiers \alert{et} le buffer.
+
+\vfill
+
+On gère la panne en effectuant un \textit{checkpoint}
+
+\begin{redbullet}
+  \item on écrit les blocs modifiés sur le disque de la base,
+        \item on fait les réparations nécessaires et on redémarre.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Assez fragile: \textit{quid} en cas de panne électrique
+\alert{et} panne du disque de \textit{log}\,?
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Cas 2, avec réplication du \textit{log}}
+
+On peut répliquer le \textit{log} pour plus de sûreté.
+
+\vfill
+
+\figSlideWithSize{log-replique}{7cm}
+
+\vfill
+
+\begin{blocgauche}
+Et pourquoi ne pas répliquer la base? On obtient un \alert{système
+distribué}: c'est pour la semaine prochaine.
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Résumé: les pannes de disque}
+
+Retenir:
+
+\vfill
+
+\begin{redbullet}
+
+  \item Le \textit{log} et la base doivent être sur des disques distincts.
+  
+  
+  \item Il faut mettre en place une politique de sauvegarde.
+ 
+ \item La reprise combine choix de la sauvegarde et application du \textit{log}.
+ \end{redbullet}
+
+\vfill
+
+En principe, on \alert{garantit} la durabilité.
+\vfill
+
+\alert{Sûreté totale}\,? 
+
+\begin{blocgauche}
+\begin{redbullet}
+
+  \item  Obtenue (asymptotiquement)
+par \alert{réplication}. 
+
+\item Une des motivations des systèmes distribués.
+\end{redbullet}
+\end{blocgauche}
+\vfill
+\only<2|handout:2>{
+\centerline{\alert{Merci!}}
+}
+
+\end{frame}
+
+\end{document}
+

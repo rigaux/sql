@@ -1,0 +1,222 @@
+
+\frontslide{Gestion des mémoires}
+
+\begin{frame}[fragile]{Gestion des mémoires}
+
+Contenu de ce cours\,:
+
+\begin{redbullet}
+   \item Mémoires gérées par un SGBD: mémoire cache, disque.
+
+  \item La gestion des lectures.
+
+  \item La gestion des écritures.
+  
+  \item Quelques applications du principe de localité.
+\end{redbullet}
+
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sys.bdpedia.fr/stock.html\#s2-gestion-des-memoires}}
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Le cache et le disque}
+
+Paramétrage des SGBD: partie de la mémoire centrale qui sert de {\it cache}.
+
+\vfill
+
+\figSlideWithSize{buffer-disque}{7cm}
+
+
+\end{frame}
+
+
+\begin{frame}{Opération de lecture}
+
+Toute opération de lecture contient l'adresse du bloc à lire. 
+
+\begin{redbullet}
+   \item \alert{Si la donnée fait partie d'un bloc dans le cache}, 
+      le SGBD prend le bloc, accède à la donnée dans le bloc,  et la retourne;
+   \item  \alert{Sinon} il faut d'abord lire un bloc du disque, et le placer dans le cache, 
+   pour se ramener au cas précédent.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Hypothèse de localité}: le SGBD garde en mémoire
+les blocs après utilisation, afin d'exploiter 
+à la fois 
+
+\begin{redbullet}
+  \item la \alert{localité spatiale}: les autres données du bloc.
+   \item la \alert{localité temporelle}: il est probable qu'on va relire la donnée dans peu de temps.
+\end{redbullet}
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Lectures logiques, lectures physiques\,: le \textit{Hit ratio}}
+
+Le paramètre
+qui mesure l'efficacité d'une mémoire cache
+est le \textit{hit ratio}\,:
+\begin{center}
+   $hit\ ratio\ =\ \frac{nb\ de\ lectures\ logiques - nb\ lectures\ physiques}
+         {nb\ de\ lectures\ logiques}$
+\end{center}
+\begin{redbullet}
+ \item Si toutes les lectures logiques (demande de bloc) aboutissent
+à une lecture physique (accès au disque), le \textit{hit
+ratio} est 0.
+
+\item Aucune lecture physique (tout est en mémoire):
+le \textit{hit ratio} est de 1.
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{En pratique}. Un bon \textit{Hit Ratio} est supérieur à 80\%, voire 90\%:
+presque toutes les lectures se font en mémoire!
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Comment avoir un bon \textit{Hit ratio}?}
+
+
+Evident: 
+
+\vfill
+
+\begin{redbullet}
+  \item il faut allouer le plus de mémoire possible au SGBD.
+  \item il faut limiter la taille de la base (attention aux longs textes, aux images, aux données binaires...)
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+
+\alert{Mais surtout: il faut que les données \textbf{utiles} soient
+en mémoire centrale}
+
+\medskip
+
+Intuition: certaines parties de la base sont \alert{beaucoup} plus lues
+que d'autres: il faut qu'elles tiennent en mémoire.
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Stratégie de remplacement}
+
+
+Que faire quand la mémoire est pleine?
+
+\vfill
+
+On applique le principe de localité: l'algorithme le plus courant est dit \textit{Least Recently Used} (LRU).
+
+\begin{redbullet}
+  \item  La "victime" est le bloc dont la dernière date de lecture logique est la plus ancienne. 
+  \item Ce bloc est alors soustrait de la mémoire centrale 
+  \item  Le nouveau bloc vient le remplacer.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Conséquence}: le contenu du cache est une image fidèle de l'activité \alert{récente} sur la base de données. 
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Opération de mise à jour}
+
+Approche naïve: on trouve le bloc (comme pour une lecture), on modifie la donnée.
+
+\vfill
+ 
+\figSlideWithSize{write-naif}{7.5cm}
+
+\vfill
+\begin{blocgauche}
+Faut-il écrire le bloc ou non? Deux mauvais choix (pourquoi?)
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{La bonne méthode; le fichier journal}
+
+On gère la base (accès alléatoire) \alert{et} un fichier séquentiel, le \alert{journal} (log).
+
+\medskip
+ 
+\figSlideWithSize{recovery}{7.5cm}
+
+\medskip
+\begin{blocgauche}
+Problème résolu: données sur disque (sûres) et écritures séquentielles.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Le principe de localité et ses conséquences}
+
+
+\alert{Principe de localité}\,: l'ensemble des  données utilisées
+par une application pendant une période donnée forme souvent
+un groupe bien identifié.
+
+
+\begin{redbullet}
+ \item \alert{Localité spatiale}\,: si une donnée $d$ est utilisée,
+    les données proches de $d$ ont de fortes chances de l'être
+    également.
+
+ \item \alert{Localité temporelle}\,: quand une application accède
+   à une donnée $d$, il y a de fortes chances qu'elle y accède à nouveau
+   peu de temps après.
+
+ \item \alert{Localité de référence}\,: si une donnée $d_1$ référence
+     une donnée $d_2$, l'accès à $d_1$ entraîne souvent
+    l'accès à $d_2$.
+\end{redbullet}
+
+\begin{blocgauche}
+Les systèmes exploitent ce principe 
+en déplaçant dans la hiérarchie des mémoires des groupes
+de données.
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Résumé}
+
+Un critère essentiel de la performance est la taille de la mémoire cache.
+
+\vfill 
+
+Pour vérifier que le système est bien paramétré: on calcule le \textit{Hit Ratio}. Il doit être supérieur à 80\%
+
+\vfill
+
+Sinon, les pistes:
+
+\vfill
+\begin{blocgauche}
+\begin{redbullet}
+  \item Vérifier qu'on ne lit que des données utiles.
+  \item Regarder si on peut limiter la taille des données (ex: partitionner la table
+       en mettant les colonnes volumineuses à part).
+   \item Ajouter de la mémoire...
+\end{redbullet}
+\end{blocgauche}
+
+\end{frame}

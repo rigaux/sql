@@ -1,0 +1,479 @@
+\documentstyle[12pt,cours]{article}
+%\largerfonts
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Le Mod\`ele R\'eseau}
+
+
+\begin{slide}
+\subsection{G\'en\'eralit\'es}
+
+Le mod\`ele r\'eseau est assez proche du mod\`ele Entit\'e/Relation,
+avec trois restrictions importantes~:
+
+\begin{itemize}
+
+\item On n'admet que des relations binaires.
+\item La seule cardinalit\'e est 1-n (ou 0-n).
+\item Les relations reflexives ne sont pas autoris\'ees.
+
+\end{itemize}
+
+Mod\`ele propos\'e (et normalis\'e) par le {\it Data Base Task Group}
+({\it DTBG}) dans les ann\'ees 70 dans le cadre de la {\it Conference 
+on Data Systems Languages} ({\it CODASYL}).
+
+\end{slide}
+
+\begin{slide}
+\subsection{L'exemple\,: officiel des spectacles}
+
+\centerline{\psfig{width=\textwidth,figure=t-reseau-1.eps}}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Le mod\`ele de donn\'ees}
+
+Deux concepts principaux~: l'{\bf enregistrement logique}, et 
+le {\bf lien}.
+
+\begin{itemize}
+  \item Un {\bf enregistrement logique} est un ensemble de champs. C'est
+	une notion \'equivalente \`a celles que l'on trouve dans
+	les langages de programmation (ADA, Pascal, C).\\
+	
+	Un {\bf enregistrement logique} est une occurence d'un {\bf type}
+	d'enregistrement.
+
+  \item Un {\bf lien} \'etablit une association x-n (x $\in$ \{0,1\})
+	 entre deux types d'enregistrements A et B. Une occurence
+	de B est donc li\'ee \`a un ensemble d'occurences de A.
+
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Description d'un enregistrement}
+
+Un type d'enregistrement est d\'ecrit \`a l'aide du mot cl\'e
+RECORD, suivi du nom de l'enregistrement et de la liste
+des champs.\\
+
+\begin{verbatim}
+  RECORD Film
+    Titre 		CHAR(50)
+    Date-production	CHAR(10)
+
+  RECORD Salle
+    Nom		CHAR(30)
+    Capacité	NUMBER
+\end{verbatim}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Description des liens}
+
+Un lien associe deux types d'enregistrement U et V. On peut repr\'esenter
+cette association avec un {\it Diagramme de Buchman} comme ci-dessous.\\
+
+\centerline{\psfig{height=8cm,figure=t-reseau-2.eps}}
+
+\begin{itemize}
+  \item U et V sont diff\'erents.
+  \item Une occurence de V est li\'ee \`a au plus une occurence de U.
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Un peu de terminologie}
+
+\begin{itemize}
+
+  \item Un {\bf set} est un triplet $(U, V, L)$ o\`u L est un lien 
+	entre U et V.
+  \item U est le {\bf type propri\'etaire} du set, 
+		V le {\bf type membre}.
+  \item Une {\bf occurence} du set est un couple $(u,S(u))$ o\`u $u$
+	est une occurence de U et $S(u)$ est l'ensemble des
+	occurences de V li\'ees \`a $u$. 
+  \item $u$ est le {\bf propri\'etaire} de l'occurence du set,
+	tout $v$ li\'e \`a $u$ est {\bf membre} de l'occurence.
+
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Sch\'ema {\it Officiel des spectacles}\,: les
+{\it records}}
+
+\begin{itemize}
+  \item RECORD Cin\'ema (Nom, Num\'ero, Rue, Ville)
+  \item RECORD Salle  (Nom, Capacit\'e)
+  \item RECORD Film   (Titre, Ann\'ee)
+  \item RECORD Artiste (Nom, Pr\'enom, Date-naissance)
+  \item RECORD Horaire (Heure-d\'ebut, Heure-fin)
+  \item RECORD R\^ole (Cachet)
+  \item RECORD S\'eance (Prix)
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Sch\'ema {\it Officiel des spectacles}\,: les {\it set}}
+
+\begin{verbatim}
+  SET Cinéma-Salle                      SET Metteur-en-scène
+     OWNER IS Cinéma                       OWNER  IS Artiste
+     MEMBER IS Salle                       MEMBER IS Film
+
+  SET Acteur-Rôle                       SET Film-Rôle
+     OWNER IS Acteur                       OWNER IS Film
+     MEMBER IS Rôle                        MEMBER IS Rôle
+\end{verbatim}
+
+$\Rightarrow$ trois autres {\it set} pour les liens entre SEANCE et
+SALLE, HORAIRE, FILM.
+\end{slide}
+
+\begin{slide}
+\subsection{Implantation du mod\`ele r\'eseau}
+
+Les enregistrements logiques sont implant\'es de mani\`ere
+classique\,:
+
+\begin{itemize}
+  \item On cr\'ee un fichier.
+  \item Chaque {\it record} est un enregistrement (physique)
+	du fichier.
+  \item Chaque attribut du {\it record} est un champ de
+	l'enregistrement physique.
+\end{itemize}
+
+$\Rightarrow$ un enregistrement peut alors \^etre identifi\'e par son
+emplacement.
+\end{slide}
+
+
+\begin{slide}
+\subsection{Organisation des fichiers}
+
+Il existe plusieurs mani\`eres d'organiser {\bf physiquement}
+des fichiers. Voici les principales\,:
+
+\begin{enumerate}
+  \item LOCATION MODE IS DIRECT.\\
+	 Dans ce cas la cl\'e d'acc\`es
+	\`a un enregistrement est simplement l'adresse
+	sur le support de stockage.
+  \item LOCATION MODE IS CALC $<$proc$>$ USING $<$attributs$>$.
+	D\'efinit une cl\'e d'acc\`es (une liste d'attributs).\\
+	Exemple pour {\it Cin\'ema}\,: LOCATION MODE IS CALC proc1 USING nom
+  \item LOCATION MODE IS VIA SET. On acc\`ede \`a un enregistrement
+	en parcourant un {\it set}.
+\end{enumerate}
+\end{slide}
+
+\begin{slide}
+\subsection{Implantation des liens par enregistrements variables}
+
+Premi\`ere solution\,: on place les enregistrements membres (E1) d'un
+{\it set} dans l'enregistrement propri\'etaire (E2). {\bf On doit donc
+g\'erer des enregistrements de taille variable E1(E2)*}.\\
+
+\centerline{\psfig{height=7cm,figure=t-reseau-4.eps}}
+	
+\end{slide}
+
+\begin{slide}
+\subsection{Implantation des liens par listes cha\^{\i}n\'ees}
+
+Inconv\'enient des enregistrements variables\,: un enregistrement ne
+peut pas \^etre membre de plusieurs {\it set}. On utilise donc
+plut\^ot la structure de {\bf liste cha\^{\i}n\'ee}.\\
+
+\centerline{\psfig{width=\textwidth,figure=t-reseau-5.eps}}
+
+\end{slide}
+
+\begin{slide}
+\subsection{Exemple pour un enregistrement figurant dans plusieurs
+{\it set}}
+
+\centerline{\psfig{width=\textwidth,figure=t-reseau-6.eps}}
+
+\end{slide}
+
+\begin{slide}
+\subsection{Remarques sur l'implantation par listes cha\^{\i}n\'ees}
+
+Ce type d'implantation explique certaines particularit\'es du mod\`ele
+r\'eseau\,:
+
+\begin{enumerate}
+  \item Chaque article contient exactement autant de pointeurs que
+	de {\it set} dans lesquels il est membre ou propri\'etaire.
+  \item Les pointeurs sont donc des champs en position fixe
+	dans chaque enregistrement, ce qui permet de suivre la
+        cha\^{\i}ne.
+  \item Le type du propri\'etaire est diff\'erent de celui des
+	membres, ce qui permet de le distinguer.
+\end{enumerate}
+  
+Si on avait des associations plusieurs-plusieurs, chaque
+enregistrement serait sur plusieurs cha\^{\i}nes pour le m\^eme
+{\it set}. D'o\`u probl\`eme.
+\end{slide}
+
+\begin{slide}
+\subsection{Op\'erations du mod\`ele r\'eseau}
+
+L'acc\`es aux donn\'ees se fait par programme (typiquement du COBOL),
+avec l'environnement de programmation suivant\,:
+
+\begin{enumerate}
+  \item Le {\bf courant du programme} ({\it current of
+	run-unit}). Pointeur sur le dernier article auquel on 
+	a acc\'ed\'e, quel que soit son type.
+  \item Le {\bf courant d'un article} ({\it current of record type}).
+	Un pointeur pour chaque type {\it record}, pointant sur 
+	le dernier article.
+  \item Le {\bf courant d'un set}. ({\it current of set type}). Un 
+	pointeur pour chaque {\it set}, pointant sur le dernier
+	article du set auquel on a acc\'ed\'e.
+\end{enumerate}
+
+De plus, chaque type {\it record} a une zone m\'emoire r\'eserv\'ee
+({\it Template}) dans laquelle se font les \'echanges entre la
+base et le programme.
+
+\end{slide}
+
+\begin{slide}
+\subsection{Navigation dans une base r\'eseau}
+
+La recherche d'information dans une base r\'eseau s'effectue
+en deux \'etapes\,:
+
+\begin{enumerate}
+  \item Commande {\bf FIND}\,: on ``navigue'' dans la base en suivant 
+	les liens pour localiser l'article qui nous int\'eresse.\\
+
+       La commande FIND ne fait que modifier les pointeurs
+       courants. Elle ne ``charge'' pas de donn\'ees.
+	
+  \item Commande {\bf GET}\,: on lit l'article dans sa zone
+	m\'emoire r\'eserv\'ee.\\
+
+        La commande GET prend toujours le pointeur courant du 
+	programme.
+
+\end{enumerate}
+
+Remarque\,: ces commandes sont ind\'ependantes de l'implantation
+physique choisie.
+
+\end{slide}
+
+   
+\begin{slide}
+\subsection{La commande FIND}
+
+En fait un ensemble de commandes pour effectuer diff\'erents
+types de recherches. Voici les principales\,:
+
+\begin{enumerate}
+  \item {\bf Par pointeur}. {\tt FIND <record> BY DATABASE KEY <x>}.
+  \item  {\bf Par cl\'e d'acc\`es}. {\tt FIND <record> BY CALC-KEY}.
+  \item {\bf Recherche selon un champ}. {\tt FIND <record> USING <champ>}
+	suivi de {\tt FIND DUPLICATA}.
+  \item {\bf Parcours s\'equentiel}. {\tt FIND FIRST <record>} suivi
+	de {\tt FIND NEXT <record>}
+  \item {\bf Parcours d'un set}. {\tt FIND NEXT <record> IN CURRENT
+	<set>}
+  \item {\bf Propri\'etaire d'un set}. {\tt FIND OWNER OF CURRENT
+                               <set>}.
+\end{enumerate}
+
+\end{slide}
+
+\begin{slide}
+\subsection{Principes d'une recherche d'information}
+
+Chaque commande FIND met \`a jour un ou plusieurs pointeurs
+courants. On proc\`ede donc de la mani\`ere suivante\,:
+
+\begin{enumerate}
+  \item On se positionne (acc\`es direct ou s\'equentiel)
+        sur un article.
+  \item Ce positionnement met \`a jour {\bf tous} les pointeurs
+        courants ({\it record} et {\it set}) li\'es \`a l'article.
+  \item A partir de l'article, on peut parcourir un des {\it set}.
+  \item Et ainsi de suite ...
+\end{enumerate}
+\end{slide}	
+
+\begin{slide}
+\subsection{Quelques exemple de requ\^etes}
+
+
+{\it Chercher le Rex}
+\begin{verbatim}
+ CINEMA.Nom = ``Le Rex''   \\ Initialise la clé d'accès
+ FIND Cinema BY CALC KEY   \\ Recherche par clé.     
+ GET Cinema                \\ On charge dans la zone reservée
+\end{verbatim} 
+
+{\it Chercher tous les films}
+\begin{verbatim}
+  FIND FIRST Film      \\ Premier enregistrement dans Film
+  Tant Que Succes      \\ Boucle sur tous les films
+    GET Film           \\ On charge le film courant
+    FIND NEXT Film     \\ Passage au film suivant
+  FAIT
+\end{verbatim}
+
+\end{slide}
+
+\begin{slide}
+\subsection{Requ\^etes r\'eseau\,: suite}
+
+{\it Qui a mis en sc\`ene Les Oiseaux\,?}
+\begin{verbatim}
+  Film.Titre = 'Les Oiseaux'    // Init. du critère de recherche
+  FIND Film USING titre         // Recherche du film 
+                                // Important: les pointeurs
+                                // des sets contenant Film sont
+                                // Initialisés
+  FIND OWNER OF                 // on cherche le
+      CURRENT Metteur-en-scène  // propiétaire du set 
+  GET Artiste                   // On charge Hitchcock !
+\end{verbatim}
+\end{slide}
+
+\begin{slide}
+\subsection{Exemple\,: Dans quels films joue Adjani\,?}
+
+\begin{verbatim}
+  ARTISTE.Nom = 'Adjani'     // Init. du critere de recherche
+1 FIND ANY ARTISTE           // Positionne les pointeurs courants 
+                             // de ARTISTE et ARTISTE-ROLE
+2 FIND FIRST Rôle            // Recherche le premier membre de 
+     IN CURRENT Artiste-Rôle // ARTISTE-RÔLE. Positionne 
+                             // courant de FILM-RÔLE
+
+  TANT QUE (succes)          // Boucle sur tous les rôles
+3    FIND OWNER OF           // Recherche du film. Positionne le
+        CURRENT Film-Rôle    // courant de FILM.
+     GET FILM                // Lecture du film   
+4    FIND NEXT Rôle IN       // On passe au rôle suivant
+         CURRENT Artiste-Rôle
+  FAIT
+\end{verbatim}
+\end{slide}
+
+\begin{slide}
+\subsection{Evolutions des pointeurs courants}
+
+
+\begin{center}
+\begin{tabular}{||c|c|c|c|c||}\hline
+\multicolumn{5}{||c||}{INSTRUCTIONS}\\\hline 
+ & 1 & 2 & 3 & 4  \\ \hline
+PROGRAMME & Adjani & Ad\`ele  & Ad\`ele H. & Marguerite\\ \hline
+ARTISTE & Adjani & Adjani  & Adjani & Adjani\\ \hline
+ARTISTE-ROLE & Adjani & Ad\`ele  & Ad\`ele & Marguerite \\ \hline
+ROLE & nil & Ad\`ele & Ad\`ele  & Marguerite \\ \hline
+FILM-ROLE & nil & Ad\`ele  & Ad\`ele H.  & Marguerite  \\ \hline
+FILM & nil & nil & Ad\`ele H. & Ad\`ele H.\\ \hline
+\end{tabular}
+
+\end{center}
+\end{slide}
+
+\begin{slide}
+\subsection{Op\'erations de mises-\`a-jour}
+
+Ces op\'erations sont soumises \`a des contraintes sur les
+{\it set}.
+
+Options {\it set-insertion} 
+
+\begin{enumerate}
+  \item AUTOMATIC\,: tout nouveau {\it record} membre est automatiquement
+        associ\'e \`a un propri\'etaire.
+  \item MANUAL\,: un nouveau {\it record} membre doit \^etre ins\'er\'e
+\end{enumerate}
+
+Options {\it set-retention}
+
+\begin{enumerate}
+  \item MANDATORY\,: un {\it record} est toujours membre de
+l'occurence
+  \item OPTIONAL\,: on peut supprimer un membre de l'occurence
+        du {\it set} (DISCONNECT), tout en le laissant dans la base.
+  \item FIXED\,: idem que MANDATORY, mais en plus le membre 
+        d'un {\it set} ne peut jamais changer d'occurence. 
+\end{enumerate} 
+ 
+\end{slide}
+
+\begin{slide}
+\subsection{Les commandes de mise-\`a-jour}
+
+Comme les commandes de recherche, les mises-\`a-jour utilisent
+les pointeurs courants.
+
+\begin{enumerate}
+  \item {\tt STORE <record>} ins\`ere un enregistrement. Cet
+        enregistrement est li\'e aux {\it set} des pointeurs courant
+        en mode AUTOMATIC.
+  \item {\tt ERASE <record>} d\'etruit un enregistrement. 
+  \item {\tt MODIFY <record>} modifie un enregistrement en fonction 
+        des donn\'ees de la zone m\'emoire attribu\'ee \`a cet enregistrement.
+\end{enumerate}
+
+\end{slide}
+
+\begin{slide}
+\subsection{Bilan du mod\`ele r\'eseau}
+
+Caract\'eristiques principales du mod\`ele r\'eseau\,: 
+ 
+\begin{enumerate} 
+ 
+  \item  Ind\'ependance (relative) du langage de manipulation et de 
+        l'implantation physique. 
+  \item Requ\^etes (et mises-\`a-jour) par {\bf navigation},
+        ce qui suppose un certaine comp\'etence.
+   \item Acc\`es \`a la base \'etroitement li\'ees \`a l'utilisation
+        d'un langage de programmation.
+\end{enumerate}
+ 
+\end{slide}
+\end{document}
+
+
+
+
+

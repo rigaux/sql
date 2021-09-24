@@ -1,0 +1,112 @@
+\frontslide{Hachage linéaire}
+
+
+%------------------------------------------------------------
+\begin{frame}{Le hachage linéaire}
+
+Hachage linéaire: un hachage qui s'adapte dynamiquement aux insertions
+et suppressions, avec une \alert{évolution minimale} du répertoire
+et des fragments.
+
+\vfill
+
+\begin{tabular}{l|c}
+titre & $h$(titre)   \\
+\hline
+Vertigo     & 14  \\
+Brazil      & 43  \\
+Twin Peaks  & 25  \\
+Underground & 24  \\
+Easy Rider  & 8 \\
+Psychose    &  33 \\
+Greystoke   &  17 \\
+Shining     &  16 \\
+Citizen Kane     &  48 \\\hline
+\end{tabular}
+
+\vfill
+Une fonction $h(c)$ immuable 
+s'applique à la clé et renvoie un entier.
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{La structure}
+
+Comme les autres hachages, plus un paramètre\,:  \alert{l'indice de partitionnement}.
+
+\vfill
+
+  \figSlideWithSize{hachageLineaire1}{8cm}
+
+\vfill
+\begin{blocgauche}
+On considère la famille de fonctions $h_i (c)  = h(c)\, mod\, 2^i$. Ici
+on appplique $h_1$ (modulo 2). 
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Insertions}
+
+On insère Psychose, puis Greystoke qui vont tous deux dans $f_1$.
+C'est $f_1$ qui déborde, \alert{mais c'est $f_0$ qui éclate en ($f_0, f_2$)}.
+\vfill
+
+  \figSlideWithSize{hachageLineaire2}{9cm}
+
+
+\vfill
+\begin{blocgauche}
+Maintenant on a deux fonctions: $h_1$ s'applique pour $f_1$, $h_2$
+pour les autres. Et $p$ vaut 1.
+\end{blocgauche}
+\end{frame}
+
+
+
+\begin{frame}{On insère Shining puis Citizen Kane}
+
+Tous les deux vont dans $f_0$ qui déborde.  \alert{Mais maintenant c'est $f_1$
+qui éclate}. 
+\vfill
+
+  \figSlideWithSize{hachageLineaire3}{10cm}
+
+
+\vfill
+
+\begin{blocgauche}
+On a \alert{découplé} les éclatements et les débordements. On sait que 
+les seconds seront rectifiés par les premiers, \alert{à terme}. 
+
+\smallskip
+
+ $p$ est revenu à 0; la fonction est $h_2$: c'est reparti pour un tour.
+\end{blocgauche}
+
+\end{frame}
+
+
+
+\begin{frame}{Résumé du hachage linéaire}
+
+À chaque moment, on a deux fonctions $(h_{n}, h_{n+1})$ et un indice
+de partitionnement $p$.
+
+\vfill
+
+\begin{redbullet}
+  \item La fonction $h_{n+1}$ s'applique à tous les fragments \alert{avant} $p$
+       car ils ont déjà éclaté.
+     \item La fonction $h_{n+1}$ à tous les autres fragments qui n'ont pas
+       encore éclaté.
+\end{redbullet}
+
+\vfill
+
+Quand le dernier fragment éclate ($p=n$) la fonction $h_n$ ne sert plus et la
+paire de fonction de hachage devient $(h_{n+1}, h_{n+2})$
+  
+
+\vfill
+
+Brillant!
+\end{frame}

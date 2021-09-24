@@ -1,0 +1,268 @@
+
+\begin{frame}[fragile]{Récapitulatif SQL: le bloc \texttt{select-from-where}}
+
+Dans cette session: présentation de quelques extensions pratiques au SQL fondamental.
+\vfill
+
+\begin{redbullet}
+  \item Les valeurs nulles
+  \item La jointure externe
+  \item Le tri
+\end{redbullet}
+
+\vfill
+
+\alert{Avant d'écouter}: consulter le schéma et le contenu de la base des immeubles.
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Valeurs nulles}
+
+Une \alert{valeur nulle}, ou plus précisément \alert{valeur à \texttt{null}} est une
+\alert{valeur manquante}. Ne pas confondre avec la valeur "null" ou "".
+
+\vfill
+
+Dans notre table des occupants, le prénom de Prof est à null.
+
+\vfill
+\begin{tabular}{c|c|c|c|c}
+\textbf{id} & \textbf{prénom} & \textbf{nom} & \textbf{profession} & \textbf{idAppart}\\ \hline 
+1 &  & Prof & Enseignant & 202\\ \hline 
+2 & Alice & Grincheux & Cadre & 103\\ \hline 
+3 & Léonie & Atchoum & Stagiaire & 100\\ \hline 
+4 & Barnabé & Simplet & Acteur & 102\\ \hline 
+5 & Alphonsine & Joyeux & Rentier & 201\\ \hline 
+6 & Brandon & Timide & Rentier & 104\\ \hline 
+7 & Don-Jean & Dormeur & Musicien & 200\\ \hline 
+\end{tabular}
+
+\vfill
+
+\begin{blocgauche}
+La présence de valeurs à \texttt{null} \alert{fausse} le résultat attendu des requêtes.
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}[fragile]{Comparaisons avec valeurs nulles}
+
+On ne sait pas comparer un valeur manquante, ou lui appliquer une fonction.
+
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+    select annéeNaissance
+     from Artiste as a
+     where a.nom='Depardieu'
+
+\end{minted}
+
+Prof (pas de prénom) n'est pas trouvé.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select  * from Personne where prénom not like  '%'
+\end{minted}
+Prof n'est pas trouvé non plus!
+\vfill
+
+\begin{blocgauche}
+Une comparaison avec \texttt{null} ne donne ni vrai, ni faux,
+mais une troisième valeur de vérité, \texttt{unknown}. 
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%
+\begin{frame}[fragile]{Calculs avec valeurs à null}
+
+Tout calcul appliqué avec une valeur à \texttt{null} renvoie \texttt{null} !
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select concat(prénom, ' ', nom) as 'nomComplet'
+from Personne
+\end{minted}
+
+\vfill
+
+\begin{tabular}{c}
+\textbf{nomComplet}\\ \hline 
+null\\ \hline 
+Alice Grincheux\\ \hline 
+Léonie Atchoum\\ \hline 
+Barnabé Simplet\\ \hline 
+Alphonsine Joyeux\\ \hline 
+Brandon Timide\\ \hline 
+Don-Jean Dormeur\\ \hline 
+\end{tabular}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Le test \texttt{is null}}
+
+Seule approche correcte: il faut tester explicitement l'absence de valeur avec \texttt{is null}.
+
+\vfill
+En SQL: 
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+   select * from Personne
+   where prénom like '%' 
+   or prénom is null
+\end{minted}
+
+\vfill
+
+\alert{Attention}\, le test \texttt{prénom = null} \alert{ne marche pas}.
+
+\vfill
+
+\begin{blocgauche}
+\alert{Conclusion}: éviter autant que possible les valeurs à \texttt{null}
+en les interdisant (dans le schéma).
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La jointure externe}
+
+On veut la liste des appartements avec leurs occupants.
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+    select idImmeuble, no, niveau, surface, nom, prénom
+    from  Appart as a, Personne as p
+    where  p.idAppart=a.id
+\end{minted}
+
+\vfill
+
+\begin{tabular}{c|c|c|c|c|c}
+\textbf{idI} & \textbf{no} & \textbf{niveau} & \textbf{surface} & \textbf{nom} & \textbf{prénom}\\ \hline 
+2 & 2 & 2 & 250 & Prof & null\\ \hline 
+1 & 52 & 5 & 50 & Grincheux & Alice\\ \hline 
+1 & 1 & 14 & 150 & Atchoum & Léonie\\ \hline 
+1 & 51 & 2 & 200 & Simplet & Barnabé\\ \hline 
+2 & 1 & 1 & 250 & Joyeux & Alphonsine\\ \hline 
+1 & 43 & 3 & 75 & Timide & Brandon\\ \hline 
+2 & 10 & 0 & 150 & Dormeur & Don-Jean\\ \hline 
+\end{tabular}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Il manque l'appartement 34 qui n'a pas d'occupant}.
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{L'opérateur \texttt{outer join}}
+
+L'opérateur algébrique \texttt{outer join} 
+
+\begin{redbullet}
+   \item Renvoie tous les nuplets de la table directrice (celle de gauche)
+   \item Associe à chaque nuplet un nuplet de la table de droite \alert{si un tel nuplet existe}
+   \item Sinon, les attributs
+provenant de la table de droite sont affichés à \texttt{null}
+\end{redbullet}
+
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select idImmeuble, no niveau, surface, nom, prénom
+from  Appart as a left outer join Personne as p on (p.idAppart=a.id)
+\end{minted}
+
+\vfill
+On obtient, en plus de la jointure standard: 
+
+\vfill
+\begin{tabular}{c|c|c|c|c}
+\hline
+1 & 34 & 50 & null & null\\ \hline 
+\end{tabular}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Le tri, \texttt{order by}}
+
+On peut demander explicitement le tri du résultat sur
+une ou plusieurs expressions avec la clause \texttt{order by}
+
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+   select *  
+   from Appart 
+   order by surface, niveau
+\end{minted}
+
+\vfill
+
+En ajoutant des clauses sur l'ordre du tri (\texttt{ascending} ou \texttt{descending})
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+    select *  
+    from Appart 
+    order by surface desc, niveau desc
+\end{minted}
+
+\end{frame}
+%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Les fondements du langage SQL (logique ou algèbre) sont une base sur laquelle
+beaucoup d'extensions pratiques sont possibles.
+
+\vfill
+
+\begin{redbullet}
+   \item Valeurs à \texttt{null}, jointures externes, tris
+  \item  Mais aussi des fonctions, spécifiques à chaque système
+  \item Ne change en rien \alert{l'interprétation} du langage, que vous devez maintenant maîtriser.
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+SQL est un standard, mais chaque système propose des spécificités au-delà du standard.
+\end{blocgauche}
+\end{frame}
+

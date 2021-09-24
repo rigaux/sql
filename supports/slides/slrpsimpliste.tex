@@ -1,0 +1,159 @@
+\documentclass[aspectratio=169, handout]{beamer} %aspectratio: définit le format 16/9 ; handout = supprime la barre de navigation
+
+\usepackage{mooc-macros}
+
+\title {Semaine 5\,: Reprise sur panne}
+\subtitle{}
+\author {Philippe}
+\date{}
+
+\begin{document}
+
+\begin{frame}{Comment reprendre sur panne légère}
+
+Une transaction s'exécute; \alert{l'image avant} est sur le disque; \alert{l'image après}
+est dans le buffer.
+
+\vfill
+
+Nous disposons de plusieurs options d'écriture: immédiate, différée, opportuniste.
+
+\vfill
+
+Si une panne légère survient: le contenu de la RAM est perdu.
+
+\vfill
+
+\alert{Existe-t-il une stratégie possible de reprise sur panne?}
+
+
+    
+    %insertion de la zone rouge auteur et du logo   
+        \begin{textblock*}{154px}(0.8cm,8.3cm)
+            \includegraphics[width=154px,height=19.5px]{cnam-auteur}
+        \end{textblock*} 
+        
+    %insertion du nom de l'auteur
+        \begin{textblock*}{80px}(1.1cm,8.5cm)
+            {\color{MoocLab-white}   \fontsize{9}{11}\selectfont Philippe Rigaux}
+        \end{textblock*}
+    
+\end{frame}
+
+\begin{frame}{Scénario 1: avec écritures opportunistes}
+
+Supposons que les écritures fonctionnent en mode 
+opportuniste.
+
+\vfill
+
+
+\begin{tabular}{m{.6\textwidth} m{.3\textwidth}}
+
+\figSlideWithSize{write-immediat}{7.5cm}
+&
+Si un bloc contenant des données non validées est écrit, \alert{l'image avant est écrasée}. 
+Pas de reprise possible.
+\end{tabular}
+
+\vfill
+
+
+\begin{tabular}{p{9cm}p{5cm}}
+\alert{Vrai, à plus forte raison, avec écritures immédiates.}
+&
+~
+\end{tabular}
+\end{frame}
+
+
+\begin{frame}{Scénario 2: avec écritures différées}
+
+Tentons une approche plus raisonnée.
+
+\begin{redbullet}
+  \item ne \alert{jamais} écrire un nuplet
+modifié \alert{avant} le \texttt{commit}\,; 
+  \item au moment
+du \texttt{commit} de $T$, forcer l'écriture de \alert{tous} les blocs modifiés
+par $T$.
+\end{redbullet}
+
+\vfill
+Le \texttt{commit} et le \texttt{rollback}.
+
+\vfill
+
+\begin{blocgauche}
+
+\begin{redbullet}
+\item Le \texttt{commit} transfère l'image après du buffer vers le disque
+
+\item Le \texttt{rollback} supprime les blocs modifiés: on en revient à l'image avant.
+\end{redbullet}
+
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Pourquoi ça ne marche pas?}
+
+Une panne  survient
+      \alert{après}
+         quelques écritures mais \alert{avant} l'enregistrement 
+        du \texttt{commit}.
+
+\vfill
+     
+\figSlideWithSize{write-naif}{7.5cm}
+
+\vfill
+
+\begin{blocgauche}
+\texttt{rollback} impossible si je ne garde pas
+\alert{sur disque} les données \alert{après} et \alert{avant} modification.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Résumé: buffer, disque et reprise sur panne}
+
+Au moment de l'exécution de l'ordre \texttt{commit}
+
+
+\begin{redbullet}
+
+  \item \alert{l'image avant doit être sur disque}: permet un \texttt{rollback} jusqu'à la complétion.
+
+  \item \alert{l'image après} doit être sur disque: assure la reprise sur panne  (légère).
+
+\end{redbullet}
+
+\vfill
+
+De plus, le mode d'écriture opportuniste doit être privilégié car
+
+\vfill
+
+\begin{redbullet}
+
+  \item  mode différé $\Rightarrow$ encombre le buffer.  
+
+  \item  mode immédiat $\Rightarrow$  écritures aléatoires.
+
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+La solution s'appelle le \alert{journal des transactions}.
+\end{blocgauche}
+\vfill
+\only<2|handout:2>{
+\centerline{\alert{Merci!}}
+}
+
+\end{frame}
+
+
+\end{document}

@@ -1,0 +1,144 @@
+\documentclass[aspectratio=169, handout]{beamer} %aspectratio: définit le format 16/9 ; handout = supprime la barre de navigation
+
+
+\usepackage{mooc-macros}
+
+\title {Semaine 5\,: Reprise sur panne}
+\subtitle{}
+\author {Philippe}
+\date{}
+
+
+\begin{document}
+
+
+\begin{frame}{La notion de panne}
+
+Panne = tout dysfonctionnement affectant le comportement du système
+
+\vfill
+
+Par souci de simplicité on va distinguer deux types de panne (quelle
+que soit la cause).
+
+\begin{redbullet}
+  \item \alert{Panne légère}\,: affecte la RAM du serveur de données, pas les disques
+  \item \alert{Panne lourde}\,: affecte un disque
+\end{redbullet}
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+\alert{Dans un premier temps, on se concentre sur les pannes légères.}
+&
+~
+\end{tabular}
+
+
+    
+    %insertion de la zone rouge auteur et du logo   
+        \begin{textblock*}{154px}(0.8cm,8.3cm)
+            \includegraphics[width=154px,height=19.5px]{cnam-auteur}
+        \end{textblock*} 
+        
+    %insertion du nom de l'auteur
+        \begin{textblock*}{80px}(1.1cm,8.5cm)
+            {\color{MoocLab-white}   \fontsize{9}{11}\selectfont Philippe Rigaux}
+        \end{textblock*}
+    
+\end{frame}
+
+
+\begin{frame}{Garantie en cas de panne}
+
+Souvenons-nous des propriétés des transactions. 
+
+\vfill
+\begin{blocgauche}
+\alert{Durabilité et atomicité}\,: quand le système rend la main après un \texttt{commit},
+\alert{toutes} les modifications de la transaction deviennent  \alert{permanentes}.
+\end{blocgauche}
+\vfill
+\begin{blocgauche}
+\alert{Recouvrabilité et Atomicité}\,: tant qu'un \texttt{commit} n'a pas eu lieu, 
+\alert{toutes} les modifications de la transaction doivent pouvoir être   \alert{annulées}
+par un \texttt{rollback}.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Garantir un \texttt{commit}}
+
+Pour garantir le \texttt{commit}, la condition suivante doit être respectée.
+\vfill
+
+\centerline{\alert{Les données modifiées par une transaction validée doivent
+être sur le disque}}
+
+\vfill
+
+
+On désigne  ces données par le terme "image après".
+
+\end{frame}
+
+
+\begin{frame}{Garantir un \texttt{rollback}}
+
+Pour garantir le \texttt{rollback}, la condition suivante doit être respectée.
+\vfill
+
+\centerline{\alert{Les données \emph{avant} modification doivent
+être sur le disque}}
+
+\vfill
+
+On désigne  ces données par le terme "image avant".
+
+\end{frame}
+
+\begin{frame}{L'état de la base}
+
+\alert{\'Etat de la base}: état résultant de l'ensemble des transactions \alert{validées} 
+depuis l'origine.
+
+\bigskip
+
+On résume ce qui précède par:
+
+\bigskip
+
+\centerline{\alert{L'état de la base doit \emph{toujours} être sur le disque.}}
+
+\end{frame}
+
+
+\begin{frame}{La difficulté}
+
+
+On peut résumer la difficulté ainsi\,:
+
+\vfill
+
+\begin{redbullet}
+   \item Jusqu'au \texttt{commit}, c'est \alert{l'image avant} qui 
+       fait partie de l'état de la base.
+     \item au \texttt{commit},  \alert{l'image après} remplace  \alert{l'image avant}
+     dans l'état de la base.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Problème}\,: Comment assurer que ce remplacement s'effectue de manière \alert{atomique} ("tout ou rien")\,?
+
+\medskip
+
+\only<2|handout:2>{
+\vfill
+\alert{Ce n'est pas facile...}
+}
+\end{blocgauche}
+
+\end{frame}
+
+\end{document}

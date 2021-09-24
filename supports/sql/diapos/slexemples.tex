@@ -1,0 +1,208 @@
+
+\begin{frame}[fragile]{Deux exemples de schémas et de bases normalisés}
+
+Cette session présente deux exemples de schémas relationnels normalisés. 
+
+\vfill
+
+Les notions
+illustrées sont:
+
+\begin{redbullet}
+  \item Les clés primaires
+  \item Les clés étrangères et les associations entre tables
+  \item Le nommage des relations et des attributs
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{La base des voyageurs}
+
+Le schéma est résumé ci-dessous. 
+\vfill
+
+\begin{redbullet}
+  \item Voyageur (\textbf{idVoyageur}, nom, prénom, ville, région)
+    \item  Séjour (\textbf{idSéjour}, \textit{idVoyageur}, \textit{codeLogement}, début, fin)
+    \item Logement (\textbf{code}, nom, capacité, type, lieu)
+    \item Activité (\textbf{\textit{codeLogement}, codeActivité}, description)
+\end{redbullet}
+
+\vfill
+
+En \textbf{gras}, les clés primaires, en
+\textit{italiques} les clés étrangères.
+
+\begin{blocgauche}
+\begin{remblock}{Nommage}
+Totalement libre. Il est préférable d'utiliser des conventions homogènes.
+\end{remblock}
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}[fragile]{Table des voyageurs et des logements}
+
+\begin{tabular}{c|c|c|c|c}
+\textbf{idVoyageur} & \textbf{nom} & \textbf{prénom} & \textbf{ville} & \textbf{région}\\ \hline 
+10 & Fogg & Phileas & Ajaccio & Corse\\ \hline 
+20 & Bouvier & Nicolas & Aurillac & Auvergne\\ \hline 
+30 & David-Néel & Alexandra & Lhassa & Tibet\\ \hline 
+40 & Stevenson & Robert Louis & Vannes & Bretagne\\ \hline 
+\end{tabular}
+
+\vfill
+
+\begin{tabular}{c|c|c|c|c}
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu}\\ \hline 
+ca & Causses & 45 & Auberge & Cévennes\\ \hline 
+ge & Génépi & 134 & Hôtel & Alpes\\ \hline 
+pi & U Pinzutu & 10 & Gîte & Corse\\ \hline 
+ta & Tabriz & 34 & Hôtel & Bretagne\\ \hline 
+\end{tabular}
+\end{frame}
+
+
+\begin{frame}[fragile]{Table des séjours}
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+\textbf{idSéjour} & \textbf{\textit{idVoyageur}} & \textbf{\textit{codeLogement}} & \textbf{début} & \textbf{fin}\\ \hline 
+1 & 10 & pi & 20 & 20\\ \hline 
+2 & 20 & ta & 21 & 22\\ \hline 
+3 & 30 & ge & 2 & 3\\ \hline 
+4 & 20 & pi & 19 & 23\\ \hline 
+5 & 20 & ge & 22 & 24\\ \hline 
+6 & 10 & pi & 10 & 12\\ \hline 
+7 & 30 & ca & 13 & 18\\ \hline 
+\end{tabular}
+\end{center}
+
+\vfill
+
+\begin{blocgauche}
+\begin{remblock}{Rôle des clés étrangères}
+Chaque nuplet référence \alert{un} voyageur et \alert{un} logement.
+Mais un voyageur ou un logement peut être
+référencé plusieurs fois.
+\end{remblock}
+\end{blocgauche}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Table des activités}
+\begin{center}
+\begin{tabular}{c|c|c}
+\textbf{\textit{codeLogement}} & \textbf{codeActivité} & \textbf{description}\\ \hline 
+ca & Randonnée & Sorties d’une journée en groupe\\ \hline 
+ge & Piscine & Nage loisir non encadrée\\ \hline 
+ge & Ski & Sur piste uniquement\\ \hline 
+pi & Plongée & Baptèmes et préparation des brevets\\ \hline 
+pi & Voile & Pratique du dériveur et du catamaran\\ \hline 
+\end{tabular}
+\end{center}
+
+
+\vfill
+
+\begin{blocgauche}
+\begin{remblock}{Clé primaire et étrangère }
+Une clé étrangère peut être une partie d'une clé primaire.
+\end{remblock}
+\end{blocgauche}
+\end{frame}
+
+%%%%%%ù
+
+%%%%%%%%%%%%
+\begin{frame}{La base des films}
+
+Clés primaires en \textbf{gras}, clés étrangères en \textit{italiques}.
+
+\vfill
+\begin{redbullet}
+  \item Film (\textbf{idFilm}, titre, année, genre, résumé, \textit{idRéalisateur}, \textit{codePays})
+  \item Artiste (\textbf{idArtiste}, nom, prénom, annéeNaissance)
+    \item Rôle (\textbf{\textit{idFilm}, \textit{idActeur}}, nomRôle)
+   \item Internaute (\textbf{email}, nom, prénom, région)
+     \item Notation (\textbf{\textit{email}, \textit{idFilm}}, note)
+   \item Pays (\textbf{code}, nom, langue)
+\end{redbullet}
+
+
+\vfill
+\begin{blocgauche}
+Rappel: le nommage des attributs est libre.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Petit exemple}
+
+
+\begin{small}
+\begin{center}
+\begin{tabular}{l|l|c|l|c|c}
+\textbf{idFilm} & titre & année  & genre & \textit{idMES} & \textit{codePays}\\
+\hline
+20 & Impitoyable & 1992 & Western & 100 & USA \\
+21 & Ennemi d'état & 1998 & Action & 102 & USA\\
+\hline
+\end{tabular}
+
+\centerline{La table \tble{Film}}
+\end{center}
+\begin{center}
+\begin{minipage}[b]{6cm}
+\begin{tabular}{l|l|l|c}
+\textbf{idArtiste} &  nom & prénom &  annéeNaiss \\
+\hline
+100 & Eastwood & Clint  & 1930 \\
+101 & Hackman & Gene  & 1930 \\
+102 & Scott & Tony  & 1930 \\
+103 & Smith  & Will  & 1968 \\
+\hline
+\end{tabular}
+\centerline{La table \tble{Artiste}}
+\end{minipage} \hspace*{2cm} \
+\begin{minipage}[b]{5cm}
+\begin{tabular}{l|c|l}
+\textbf{\textit{idFilm}} & \textbf{\textit{idActeur}}  & rôle \\
+\hline
+20  & 100  & William Munny\\
+20 & 101  & Little Bill\\
+21 & 101  & Bril\\
+21 & 103  & Robert Dean\\
+\hline
+\end{tabular}
+
+\centerline{La table \tble{Rôle}}
+\end{minipage}
+\end{center}
+\end{small}
+\end{frame}
+
+\begin{frame}{À retenir}
+
+Comprendre un schéma normalisé.
+
+\vfill
+\begin{redbullet}
+  \item Identifier la clé primaire de chaque relation (il doit \alert{toujours} y en avoir une)
+ \item Identifier les clés étrangères; comprendre quelle clé primaire elles référencent.
+ \item Comprendre comment les nuplets sont liés transitivement les uns aux autres.
+\end{redbullet}
+
+\vfill
+
+Ces deux bases sont accessibles en ligne: \url{http://deptfod.cnam.fr/bd/tp/sql}
+\end{frame}
+

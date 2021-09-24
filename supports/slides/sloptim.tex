@@ -1,0 +1,95 @@
+
+\begin{frame}[fragile]{Retour en arrière}
+
+Notre requête sur les films avec John Ferguson, après optimisation algébrique.
+
+\vfill
+\begin{small}
+\psset{levelsep=1cm,treesep=0.5cm}
+\IteratorSansNom{$\pi_{titre}$}{}{
+     \IteratorSansNom{$\Join$}{}{ 
+       \IteratorSansNom{$\sigma_{annee=1958}$}{}{
+       \Database{Film}{}
+       }
+  \IteratorSansNom{$\sigma_{nom\_role='Ferguson'}$}{}{
+       \Database{Role}{}
+    }
+   }
+}
+\end{small}
+
+
+\vfill
+
+Il nous restait à choisir les chemins d'accès et les algorithmes de jointure.
+
+
+    
+\end{frame}
+
+\begin{frame}{Continuons à optimiser notre requête}
+
+Hyp.: le système 
+cherche à utiliser les index pour les jointures .
+
+\vfill
+
+\[
+  Film \Join_{id=id\_film} Role
+\]
+  
+ou 
+
+\[
+   Role \Join_{id\_film=id} Film
+\]
+
+\vfill
+
+Après analyse des index, la bonne forme est
+\[
+   \pi_{titre}(\sigma_{nom\_role='John\ Ferguson'}(Role)  \Join_{id\_film=id}  \sigma_{annee=1958} (Film) )
+\]
+
+\end{frame}
+
+\begin{frame}{Le plan d'exécution}
+
+\figSlideWithSize{planEx-full1}{9cm}
+
+\end{frame}
+
+
+\begin{frame}{Et si je n'ai pas d'index?}
+
+\figSlideWithSize{planEx-full-hash}{7cm}
+
+\end{frame}
+\begin{frame}{Résumé: la phase d'optimisation}
+
+
+\vfill
+\figSlideWithSize{exec-optim-4}{14cm}
+\vfill
+
+
+\only<2|handout:2>{
+\centerline{\alert{Merci!}}
+}
+
+\end{frame}
+
+
+\begin{comment}
+\begin{frame}{Et si j'indexe le nom du rôle?}
+
+\figSlideWithSize{planEx-full2}{5.5cm}
+
+\end{frame}
+
+\begin{frame}{Et si j'indexe la clé étrangère?}
+
+\figSlideWithSize{planEx-full3}{5.5cm}
+
+\end{frame}
+\end{comment}

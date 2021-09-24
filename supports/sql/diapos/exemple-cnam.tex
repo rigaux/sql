@@ -1,0 +1,190 @@
+\include{template-cnam}
+\usepackage{csquotes}
+\title{Programme, types, instructions}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}[fragile]
+\frametitle{Structure minimale d'un programme}
+
+\begin{semiverbatim}\thecode{public class NomProgramme\{
+    public static void main(String[] args)\{}
+         \dots
+         \textit{Instructions}
+         \dots\thecode{
+    \}
+\}}
+\end{semiverbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Déclaration de variables}
+
+\begin{itemize}
+\item Déclaration de variables: type suivi du nom.
+\item Exemple: \\ \thecode{int nombre;}
+\item Effet de la déclaration: allocation de mémoire pour la variable.
+\item Pas de valeur initiale par défaut: obligation d'affecter une valeur.
+\item Initialisation à la déclaration\\ \thecode{int nombre = 128;}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Types primitifs}
+
+\begin{itemize}
+\item Types des valeurs de base atomiques.
+\item \thecode{int}
+\begin{itemize}
+\item nombres entiers codés sur 4  octets.
+\item opérateurs: +, *, -, /, \%.
+\item valeurs littérales: \thecode{123\ \ \ 0 \ \ \ -59}
+\end{itemize}
+\item \thecode{double}
+\begin{itemize}
+\item nombres à virgule codés sur 8  octets.
+\item opérateurs: +, *, -, /.
+\item valeurs littérales: \thecode{123.12\ \ \ 0.0 \ \ \ -59.056 \ \ \ 1.234e2}
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+   
+\begin{frame}[fragile]
+\frametitle{Types primitifs (suite)}
+
+\begin{itemize}
+\item \thecode{boolean}
+\begin{itemize}
+\item valeurs de vérité.
+\item valeurs littérales: \thecode{true}\ \ \ \thecode{false}
+\item opérateurs: \&\& (et) || (ou) ! (non)
+\end{itemize}
+\item \thecode{char}
+\begin{itemize}
+\item caractères codés sur 2 octets
+\item partie du codage \textit{unicode}
+\item opérateurs:  +, *, -, /.
+\item valeurs littérales: \thecode{'a'\ \ ';'\ \ '1'}
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{À noter}
+
+\begin{itemize}
+\item La division de deux entiers donne un entier.
+\item Exemple: 9/4 vaut 2
+\item Les calculs sur les nombres à virgule (\thecode{double})
+sont approximatifs.
+\item Exemple: 4.35*100.0 a pour résultat 434.99999999999994
+\end{itemize}
+
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Type String}
+
+\begin{itemize}
+\item Chaînes de caractères.
+\item Séquence ordonnée de caractères de type \thecode{char}
+\item Valeurs littérales entre guillemets: 
+\verb="Une chaîne de caractères"=
+\item Éventuellement vide: \verb=""=
+\item Opérateur: concaténation notée +
+\item Exemple \verb="abc"+"de"= $\rightarrow$ \verb="abcde"=
+\item Nom du type: \thecode{String}
+\item Les chaînes de caractères sont des objets.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Affichage}
+
+\begin{itemize}
+\item Méthode \thecode{System.out.print} pour afficher une valeur
+\item Exemple: \begin{semiverbatim}\thecode{System.out.print("Bonjour");}
+\end{semiverbatim}
+\item Fonctionne avec un paramètre de type primitif ou de type
+  \thecode{String} 
+\item Méthode \thecode{System.out.println}: affiche et passe à la ligne.
+\item Exemple: \begin{semiverbatim}\thecode{System.out.println("Bonjour");}
+\end{semiverbatim}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Affectation}
+
+\begin{itemize}
+\item Une variable suivie du signe = suivi d'une expression.
+\item Exemple: \begin{semiverbatim}\thecode{int douze;
+douze = 4 * 3;}
+\end{semiverbatim}
+\item Même type pour la variable et l'expression.
+\item Attention à ne pas confondre avec l'égalité et le test d'égalité.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Instruction if}
+
+\begin{semiverbatim}\thecode{if (condition)\{}
+    \dots
+    \textit{Instructions}
+    \dots\thecode{
+\}else\{}
+    \dots
+    \textit{Instructions}
+    \dots\thecode{
+\}}
+\end{semiverbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Condition du if}
+
+\begin{itemize}
+\item N'importe quelle expression donnant une valeur de type \thecode{boolean}
+\item Notamment, résultat d'un opérateur de comparaison.
+\item Égalité, différence: \thecode{== \ \ \ \ !=}
+\item Ordre: \thecode{< \ \ \ > \ \ \ <= \ \ \ >=}
+\item Ou résultat d'un opérateur booléen (\thecode{\&\&, ||, !})
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+%\frametitle{Exemple}
+
+\begin{semiverbatim}\thecode{public class Taciturne\{
+   public static void main(String[] args)\{
+      double nombreAuSort;
+      nombreAuSort = Math.random();
+      System.out.print("Nombre tiré au sort: ");
+      System.out.println(nombreAuSort);
+      System.out.print("Je suis de très ");
+      if (nombreAuSort<0.5)\{
+         System.out.println("bonne humeur");
+      \}else\{
+         System.out.println("mauvaise humeur");
+      \}
+   \}
+\}}
+\end{semiverbatim}
+\end{frame}
+
+
+\end{document}
+
+
+
+%% Local Variables: ***
+%% mode: latex ***
+%% coding: iso-latin-9 ***
+%% End: ***

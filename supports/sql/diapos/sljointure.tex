@@ -1,0 +1,227 @@
+
+\begin{frame}[fragile]{Algèbre relationnelle\,: la jointure algébrique}
+
+La jointure 
+$R \Join_{a=b} S$ est la composition du produit cartésien et de la sélection. 
+
+\vfill
+$R \Join_{a=b} S$ est équivalent à  $\sigma_{a=b} (R \times S)$.
+
+\vfill
+
+Opération très importante. 
+\begin{redbullet}
+  \item Elle permet de créer une relation associant  des nuplets distincts
+  \item C'est aussi une opération potentiellement coûteuse.
+\end{redbullet}
+
+\vfill
+
+Cette session présente la jointure algébrique et sa syntaxe SQL.
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Reprenons le produit cartésien $\text{Logement} \times \text{Activité}$ }
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c}
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu} & \textbf{codeLogement} & \textbf{codeActivité}\\ \hline 
+ca & Causses & 45 & Auberge & Cévennes & ca & Randonnée\\ \hline 
+ge & Génépi & 134 & Hôtel & Alpes & ca & Randonnée\\ \hline 
+pi & U Pinzutu & 10 & Gîte & Corse & ca & Randonnée\\ \hline 
+ta & Tabriz & 34 & Hôtel & Bretagne & ca & Randonnée\\ \hline 
+ca & Causses & 45 & Auberge & Cévennes & ge & Piscine\\ \hline 
+ge & Génépi & 134 & Hôtel & Alpes & ge & Piscine\\ \hline 
+pi & U Pinzutu & 10 & Gîte & Corse & ge & Piscine\\ \hline 
+ta & Tabriz & 34 & Hôtel & Bretagne & ge & Piscine\\ \hline 
+... & ... & ... & ... & ... & ... & ...\\ \hline 
+\end{tabular}
+\end{center}
+
+
+\vfill
+
+\begin{blocgauche}
+Beaucoup de lignes (probablement) sans  intérêt 
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Jointure: $\text{Logement} \Join_{code=codeLogement} \text{Activité}$}
+
+On conserve les nuplets avec le \alert{même} code logement.
+
+\vfill
+\begin{tabular}{c|c|c|c|c|c|c}
+\textbf{code} & \textbf{nom} & \textbf{capacité} & \textbf{type} & \textbf{lieu} & \textbf{codeLogement} & \textbf{codeActivité}\\ \hline 
+ca & Causses & 45 & Auberge & Cévennes & ca & Randonnée\\ \hline 
+ge & Génépi & 134 & Hôtel & Alpes & ge & Piscine\\ \hline 
+ge & Génépi & 134 & Hôtel & Alpes & ge & Ski\\ \hline 
+pi & U Pinzutu & 10 & Gîte & Corse & pi & Plongée\\ \hline 
+pi & U Pinzutu & 10 & Gîte & Corse & pi & Voile\\ \hline 
+\end{tabular}
+
+\vfill
+
+\begin{blocgauche}
+On a créé une nouvelle table associant des nuplets initialement distincts
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{En SQL: \sqlkw{join ... on ...}}
+
+La \alert{jointure algébrique} s'effectue en SQL dans la clause \sqlkw{from}.
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select *
+from Logement join Activité on (code=codeLogement)
+\end{minted}
+
+\vfill
+
+Rappel: la syntaxe \alert{déclarative} est la suivante:
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select *
+from Logement as l, Activité as a
+where l.code=a.codeLogement
+\end{minted}
+
+\begin{blocgauche}
+Interprétations différentes, résultat identique.
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Résolution des ambiguités}
+
+La requête suivante renvoie une erreur à cause de l'ambiguité  sur  \texttt{idVoyageur}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select *
+from Voyageur join Séjour on (idVoyageur=idVoyageur)
+\end{minted}
+
+\vfill
+
+Première solution: on énumère les attributs en effectuant des renommages.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select V.idVoyageur as idV1, V.nom, S.idVoyageur as idV2, début, fin
+    from Voyageur as V join Séjour as S  
+         on (V.idVoyageur=S.idVoyageur)
+\end{minted}
+
+\vfill
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Renommage \alert{avant} jointure}
+
+Seconde solution: le renommage a lieu \alert{avant} la jointure. 
+
+\vfill
+
+Expression algébrique:
+\begin{small}
+ $$\rho_{idVoyageur \to idV1} (\pi_{idVoyageur, nom}\texttt{Voyageur}) \Join_{idV1=idV2} \rho_{idVoyageur \to idV2} (\pi_{idVoyageur, d\acute{e}but, fin} \text{Séjour})$$
+ \end{small}
+ 
+ \vfill
+ Requête SQL:
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select *
+from (select idVoyageur as idV1, nom from Voyageur) as V 
+                join 
+     (select idVoyageur as idV2, début, fin from Séjour) as S  
+            on (V.idV1=S.idV2)
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+On met l'expression algébrique dans le \sqlkw{from}: elle
+définit la relation interrogée.
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Composition des jointures}
+
+On peut placer des expressions algébriques quelconques dans le \sqlkw{from}. Ici, deux jointures.
+\vfill
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select nomVoyageur, nomLogement
+from ( (select idVoyageur as idV, nom as nomVoyageur from Voyageur) as V
+                 join
+            Séjour as S on idV=idVoyageur)
+             join
+         (select code, nom as nomLogement from Logement) as L
+             on codeLogement = code
+\end{minted}
+
+\vfill
+
+Lisibilité aléatoire... À comparer avec la version déclarative.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+    select V.nom as nomVoyageur, L.nom as nomLogement
+    from   Voyageur as V, Séjour as S, Logement as L
+    where  V.idVoyageur = S.idVoyageur
+    and    S.codelogement = L. code
+\end{minted}
+
+\end{frame}
+
+%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+L'algèbre est un langage pour créer des relations à partir d'autres relations. Les 
+\alert{expressions} se placent dans le \sqlkw{from}.
+\vfill
+
+\begin{redbullet}
+   \item La jointure est une opération courante, essentielle et sensible (performances)
+  \item Elle peut s'exprimer littéralement en SQL avec \sqlkw{join ... on ...}
+  \item Ce n'est qu'une version alternative à l'expression équivalente de la syntaxe déclarative de SQL
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+La multiplication des jointures rend la syntaxe très lourde et peu lisible.
+\end{blocgauche}
+\end{frame}
+

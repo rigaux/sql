@@ -1,0 +1,164 @@
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Requêtes imbriquées}
+
+
+Exemple\,: Les logements où je peux faire du ski.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select distinct nom
+from  Logement, Activité
+where code = codeLogement
+and codeActivité = 'Ski'
+\end{minted}
+
+\vfill
+
+C'est la syntaxe classique, ``à plat''. 
+
+\vfill
+
+Cas particulier\,: je ne m'intéresse qu'aux attributs de la table
+\texttt{Logement}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Avec quantification existentielle}
+
+Formulation légèrement différente\,: les logements où \alert{il existe} 
+une activité 'Ski'
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select nom
+from  Logement
+where exists (select '' from Activité
+       where code = codeLogement
+       and codeActivité = 'Ski')
+\end{minted}
+
+\vfill
+
+Note\,: la clause \sqlkw{select} de
+la requête imbriquée ne sert à rien. Je m'intéresse 
+ uniquement à l'existence
+(ou non) des nuplets de \texttt{Activité}.
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Avec condition d'appartenance}
+
+Autre formulation\,:
+Les logements qui font partie de ceux où on trouve une activité 'Ski'
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select nom
+from  Logement
+where code in  (select codeLogement from Activité
+                where codeActivité = 'Ski')
+\end{minted}
+
+\vfill
+
+Note\,: correspondance entre les attributs \texttt{code}
+du bloc principal et \texttt{codeLogement} de
+la requête imbriquée
+
+\vfill
+\alert{Requêtes dites corrélées} à cause
+du lien établi entre les deux blocs.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Quand utiliser l'imbrication\,?}
+
+\alert{Condition}\,: c'est une jointure, mais on construit le résultat avec les nuplets d'une seule
+relation. Dans l'algèbre, c'est une \alert{semi-jointure}
+
+\vfill
+
+L'imbrication n'apporte pas d'expressivité supplémentaire. Le choix est une question de goût.
+
+\vfill
+
+Critères à prendre en compte\,:
+
+\vfill
+
+\begin{redbullet}
+  \item La lisibilité compte\,! Au-delà d'un niveau d'imbrication,
+      l'interprétation devient laborieuse
+  \item On ne peut pas construire le nuplet-résultat avec les nuplets des sous-requêtes
+  
+\end{redbullet}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Critère de lisibilité\,: un exemple (à étudier)}
+
+Les voyageurs qui sont allés en Corse.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select prénom, nom
+from  Voyageur as V
+where  exists (select '' from Séjour as S
+               where V.idVoyageur = S.idVoyageur
+               and exists (select '' from Logement
+                  where codeLogement=code
+                  and lieu='Corse') )
+\end{minted}
+\vfill
+La même requête, à plat.
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select distinct V.prénom, V.nom
+from  Voyageur as V, Séjour as S, Logement as L
+where V.idVoyageur = S.idVoyageur
+and   codeLogement=code
+and lieu='Corse'
+\end{minted}
+
+\end{frame}
+
+\begin{frame}{À retenir}
+
+Tant qu'on n'exprime pas de \alert{négation}, l'imbrication
+n'apporte que des manières alternatives d'exprimer une même requête.
+\vfill
+
+\begin{redbullet}
+ \item Bien comprendre les équivalences (étudier les exemples)
+  \item La lisibilité est le principal critère\,: SQL, c'est apprendre
+    à  exprimer des requêtes avec élégance\,!
+  \item Une requête imbriquée évite naturellement des doublons
+      qu'il faut éliminer dans la version ``à plat''
+\end{redbullet}
+
+\vfill
+
+Une séquence pour rien\,? Non car l'imbrication est indispensable
+pour les \alert{négations}. À suivre.
+\end{frame}
+

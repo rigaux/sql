@@ -1,0 +1,133 @@
+\usepackage{comment,times,epsfig,latexsym}
+\usepackage[T1]{fontenc}
+\usepackage{slidesec,semlayer,color,semcolor,pifont}
+\usepackage{sem-a4,xcomment}
+%\usepackage{sem_a4}
+%
+\slidewidth 260mm
+\slideheight 165mm
+%
+% colored slides
+%
+\usepackage{pstricks}
+\usepackage{pst-grad}
+%\renewcommand{\slideframewidth}{2pt}
+\renewcommand{\slidetopmargin}{4cm}
+%\renewcommand{\slideleftmargin}{5cm}
+%\setlength{\slideheight}{18cm}
+%\setlength{\slideframesep}{0pt}
+\newslideframe{myframe}[\SemcolorFrameOps]{\psframebox[fillstyle=gradient,gradangle=90,linestyle=none]{#1}}
+\def\incolor{
+% pstricks
+\newrgbcolor{gradbegin}{.63 0 0}  % DarkRed
+\newrgbcolor{gradend}{.38 0 .63}   % DarkViolet
+%
+\definecolor{section}{rgb}{0.8,0,0}
+\definecolor{subsection}{rgb}{0,0.8,0}
+\definecolor{page}{rgb}{0.2,0,0.8}
+\topmargin 0cm
+\pagecolor{page}
+\color{white}
+}
+%\def\printlandscape{\special{landscape}}    % Works with dvips.
+
+% \newenvironment{ditemize}{\list{}{\labelwidth\z@
+%  \topsep 0mm
+%  \itemsep 2mm
+%  \parsep 0mm
+%  \itemindent-\leftmargin
+%  \let\makelabel\labelitemi}}
+% {\endlist}
+
+\newenvironment{ditemize}{\begin{itemize}}{\end{itemize}}{\endlist}
+
+\newpagestyle{poly}%
+  {Vertigo/CNAM, Paris \hspace{\fill}\rightmark \hspace{\fill}\thepage}{}%
+\pagestyle{poly}
+
+%
+% PDF slides
+%
+\usepackage[hyperref,colorlinks,ps2pdf]{hyperref}
+\hypersetup{ 
+       pdfauthor={Bernd Amann, amann@cnam.fr},
+%       pdftitle={Titel der Arbeit},
+%       pdfsubject={Dissertation,....},
+%       pdfproducer={ps2pdf},
+        linkcolor=green,        %% for links on same page
+        pagecolor=blue,          %% for links to other pages
+        urlcolor=red,          %% links to URLs
+%        breaklinks=true,        %% allow links to break across lines!
+%        colorlinks=false,       %% obviously inverted logic :-(
+%       citebordercolor=0 0.5 0,        %% color for \cite
+%        filebordercolor=0 0.5 0,
+%        linkbordercolor=0.5 0 0,
+%        menubordercolor=0.5 0 0,
+%        pagebordercolor=0.5 0.5 0,
+%        urlbordercolor=0 0.5 0.5,
+%        pdfhighlight=/I,
+%        pdfborder=0 0 0.5,      %% to show _really_ only a box
+       %% around the links and not a
+       %% filled recangle
+       backref=true,
+       pagebackref=true,
+       bookmarks=true,
+       bookmarksopen=true,
+%       bookmarksnumbered=true,
+       pdfpagemode=UseOutlines
+%      pdfpagemode=FullScreen
+       }
+%
+% others
+%
+\newcommand{\myfigure}[1]{\begin{center}
+%BEGIN IMAGE
+  \epsfxsize=10cm
+  \epsfbox{#1}
+%END IMAGE
+%HEVEA\imageflush
+\end{center}
+}
+
+\newcommand{\mywidthfigure}[2]{\begin{center}
+%BEGIN IMAGE
+  \epsfxsize=#1
+  \epsfbox{#2}
+%END IMAGE
+%HEVEA\imageflush
+\end{center}
+}
+
+\newcommand{\myheightfigure}[2]{\begin{center}
+%BEGIN IMAGE
+  \epsfysize=#1
+  \epsfbox{#2}
+%END IMAGE
+%HEVEA\imageflush
+\end{center}
+}
+
+\renewcommand{\url}[2]{\href{#1}{#2}}
+\renewcommand{\section}[1]{\slideheading{#1}}
+\renewcommand{\subsection}[1]{\slidesubheading{#1}}
+\newcommand{\lhead}[1]{\markright{#1}}
+\newcommand{\rhead}[1]{\markleft{#1}}
+%
+% by modifying \fbox in latex.tex
+% \Underline & \Underbar
+%
+\def\Underline#1{%
+    \leavevmode%
+    \setbox\@tempboxa\hbox{#1}%
+    \@tempdima1pt
+    \advance\@tempdima 3pt
+    \advance\@tempdima \dp\@tempboxa
+    \hbox{\lower \@tempdima%
+          \hbox{\vbox{\hbox{\vbox{\box\@tempboxa\vskip3pt}}%
+                      \hrule height1pt}}}}
+
+% from plain.tex
+\def\Underbar#1{$\setbox\z@\hbox{#1}\dp\z@\z@
+  \m@th \Underline{\box\z@}$}
+%
+\def\Semijoin{\mathbin{\rhd\hbox to -.45em{}<}}

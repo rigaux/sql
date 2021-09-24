@@ -1,0 +1,144 @@
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Transactions sur la base Messagerie}
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{python}
+# Tous les messages non envoyés
+messages = connexion.cursor()
+messages.execute("select * from Message where dateEnvoi is null")
+for message in messages.fetchall():
+    # Marquage du message
+    connexion.begin()
+    maj = connexion.cursor()
+    maj.execute ("Update Message set dateEnvoi='2018-12-31' "
+                + "where idMessage=%s", message['idMessage'])
+                
+    # Ici on envoie les messages à tous les destinataires
+               
+    # Ici on valide
+    connexion.commit()
+\end{minted}
+
+\vfill
+
+\alert{Est-elle à l'abri de tout problème de concurrence\,?}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Analyse de la transaction}
+
+On crée une transaction par message. Chaque transaction:
+
+\vfill
+
+\begin{redbullet}
+  \item Lit un message sans date d'envoi dans le curseur
+   \item Modifie le message dans la base en affectant la date d'envoi
+  \item Envoie le message
+   \item Valide (\sqlkw{commit})
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Si chaque transaction s'exécutait seule et sans erreur,
+chaque message serait envoyé exactement une fois.}
+\end{blocgauche}
+\vfill
+
+Regardons de plus près...
+
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Que se passe-t-il en cas de panne\,?}
+
+Imaginons (pire scénario) une panne \alert{juste avant} le \sqlkw{commit}
+\vfill
+
+\figSlideWithSize{transaction-messages-1.pdf}{15cm}
+\vfill
+
+\only<2-2>{
+
+\begin{blocgauche}
+\begin{redbullet}
+   \item Le système effectue un \sqlkw{rollback}\,: le message se retrouve sans date d'envoi (à \sqlkw{null})
+   \item Le message a quand même été envoyé (le SGBD n'a aucun contrôle là-dessus).
+\end{redbullet}
+
+\end{blocgauche}
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Isolation\,: et si une autre transaction modifie le message}
+
+Deux exécutions concurrentes du programme d'envoi
+\vfill
+
+\figSlideWithSize{transaction-messages-2.pdf}{15cm}
+\vfill
+
+\only<2-2>{
+
+\begin{blocgauche}
+\begin{redbullet}
+   \item Le résultat du curseur est constitué au moment du \texttt{execute}
+   \item On continuera à lire des messages même s'ils ont été modifiés ou détruits entretemps\,!
+\end{redbullet}
+
+\end{blocgauche}
+}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Isolation et exécutions simultanées}
+
+Deux scripts d'envoi de message sont envoyés \alert{presque} en même temps
+
+\vfill
+
+\figSlideWithSize{transaction-messages-3.pdf}{14cm}
+\vfill
+
+\only<2-2>{
+
+\begin{blocgauche}
+\begin{redbullet}
+   \item \alert{Isolation totale} (mode \sqlkw{serializable})\,: on aboutira à des \textit{deadlocks}
+   (les lectures bloquent les écritures)
+   \item Sinon (autres modes), pas de blocage, et défaut d'isolation\,:  les messages seront envoyés deux fois...
+\end{redbullet}
+}
+
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{À retenir}
+
+Toujours utile de se poser la question ``Comment ma transaction se comporte-t-elle
+en cas de concurrence''
+\vfill
+
+\begin{redbullet}
+  \item En cas de doute il est préférable de se mettre en mode \texttt{serializable}
+  \item Les requêtes fournissant des données à une transaction doivent être \alert{dans} 
+        la transaction.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+On pourrait envoyer de l'argent au lieu de simples messages, et la
+question deviendrait très sensible...
+
+\end{blocgauche}
+\end{frame}
+

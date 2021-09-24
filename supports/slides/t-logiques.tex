@@ -1,0 +1,1300 @@
+\documentstyle[12pt,cours]{article}
+%\largerfonts
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\begin{center}
+{\Huge \bf Les Mod\`eles Logiques de Donn'ees\\}
+\vspace*{1cm}
+{\Large Philippe RIGAUX\\}
+\vspace*{1cm}
+{\large rigaux@cnam.fr \\}
+\vspace*{1cm}
+
+\end{center}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Introduction 1
+
+\begin{slide}
+\subsection{Contenu}
+
+\begin{itemize}
+  \item Repr\'esentation physique~: fichiers et bases de donn\'ees
+  \item Repr\'esentation conceptuelle, logique et physique
+  \item Du MCD au mod\`ele hi\`erarchique
+  \item Du MCD au mod\`ele r\'eseau
+  \item Du MCD au mod\`ele relationnel
+  \item Retour sur quelques probl\`emes~: choix des identifiants,
+	optimisation, ...
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Repr\'esentation physique~: fichiers et bases de donn\'ees}
+
+\begin{slide}[1.5cm]
+\subsection{Qu'est-ce qu'une base de donn\'ees}
+
+C'est un ensemble {\bf important} de donn\'ees avec les
+caract\'eristiques suivantes~:
+
+\begin{itemize}
+  \item {\bf Permanence}~: les donn\'ees
+        doivent survivre aux programmes,
+  \item {\bf Structuration}~: on doit transcrire (et stocker) au niveau
+	physique les notions conceptuelles
+	d'entit\'es, de relations, de propri\'et\'es, de cardinalit\'es.
+  \item {\bf Accessibilit\'e}~: on doit pouvoir extraire des
+	informations et leur structure. 
+\end{itemize}
+
+$\rightarrow$ une base de donn\'ees est {\bf toujours} implant\'ee
+		dans un ou plusieurs fichiers
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 2 Introduction 2
+
+\begin{slide}[1.5cm]
+\subsection{Rappels sur les fichiers}
+
+\begin{itemize}
+ \item Un fichier = un ensemble de blocs sur un disque
+ \item Organisation en {\bf articles}
+ \item Un article = 1 liste de champs
+\end{itemize}
+
+\noindent
+Fonctions sur les fichiers~:
+
+\begin{itemize}
+  \item Insertion
+  \item Suppression
+  \item Modification
+  \item Recherche
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Une application bas\'ee sur un SGF}
+%\centerline{\psfig{height=\textheight,figure=appli-sgf.ps}}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Inconv\'enients d'un SGF}
+
+Chaque programme est responsable individuellement de
+la pr\'eservation de la base. Or les probl\`emes suivants~:
+peuvent survenir.
+
+\begin{itemize}
+  \item Les s\'equences d'acc\`es au donn\'ees sont dupliqu\'ees
+	dans chaque fichier.
+  \item Evolution d'un fichier = \'evolution de tous les programmes
+  \item Concurence d'acc\`es~: deux programmes modifient en m\^eme
+	temps les m\^emes donn\'ees.
+  \item S\'ecurit\'e~: un programme d\'efectueux peut corrompre la
+	base.
+\end{itemize}
+	
+\noindent
+Solution~: un syst\`eme interm\'ediaire, le {\bf Syst\`eme de Gestion
+de Base de Donn\'ees (SGBD)} prend en charge l'acc\`es au fichier.
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Les fonctions d'un SGBD}
+
+Un SGBD propose les outils suivants~:
+
+\begin{itemize}
+  \item {\bf Mod\`eles de donn\'ees}~: description de l'organisation des
+      donn\'ees, dit {\bf Mod\`ele logique}.
+
+  \item {\bf S\'ecurit\'e}~: contr\^ole d'acc\`es, reprise sur panne,
+        journalisation 
+  \item {\bf Concurrence d'acc\`es}: multi-utilisateurs, transactions,
+        partage
+  \item {\bf Optimisation}~: index, hachage, gestion des tampons,
+	algorithmes divers, ... 
+\end{itemize}
+
+$\rightarrow$ on va s'int\'eresser au(x) mod\`ele(s) logique(s).
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Caract\'eristiques d'un mod\`ele logique}
+
+Mod\`ele de donn\'ees = fa\c{c}on de repr\'esenter les informations
+du monde r\'eel. Un mod\`ele logique doit poss\'eder les
+propri\'et\'es suivantes~:
+
+\begin{itemize}
+  \item Il est bas\'e sur des {\bf structures} pour repr\'esenter l'information
+	(graphes, arbres, tableaux, listes, ensembles, ...)
+  \item Il est associ\'e \`a des {\bf Langages} pour: 
+	\begin{itemize}
+          \item {\bf D\'efinir le mod\`ele de donn\'ees}~: langage de
+                d\'efinition de donn\'ees (LDD)
+          \item {\bf Interroger} et {\bf modifier} les donn\'ees~: 
+		langages de
+                requ\^etes et de manipulation de donn\'ees (LMD)
+	\end{itemize}
+  \item Il est asbtrait (ind\'ependant de l'implantation  physique)
+  \item Il est possible de convertir automatiquement la
+        repr\'esentation logique en repr\'esentation physique (des
+	fichiers)
+\end{itemize}
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+  \subsection{Architecture ANSI-SPARC}
+  \begin{itemize}
+    \item Sch\'ema Externe~: d\'efinition des vues adapt\'ees aux
+          utilisateurs  
+          
+    \item Sch\'ema Conceptuel~: d\'efinition des besoins de donn\'ees
+          ``r\'eelles'' ind\'ependamment du SGBD
+
+    \item Sch\'ema Interne: 
+
+    \begin{itemize}
+      \item Niveau Logique~: description de l'organisation des
+            donn\'ees en utilisant des mod\`eles de donn\'ees 
+            $\Rightarrow$ sch\'ema logique
+
+      \item Niveau Physique~: gestion de la m\'emoire secondaire (fichiers
+            et enregistrements), index  
+            $\Rightarrow$ sch\'ema physique
+    \end{itemize}
+  \end{itemize}
+\vfill{}
+\newpage
+\centerline{\psfig{height=\textheight,figure=fi-archie-ansi.ps}}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+\begin{slide}[1.5cm]
+\subsection{Ind\'ependance des Donn\'ees}
+\begin{itemize}
+  \item Ind\'ependance Physique: 
+        
+        On peut modifier l'implantation physique sans modifier le 
+        niveau logique.\\
+        
+        Exemple: Changement/ajout d'un index ne modifie pas le sch\'ema
+        logique dans la base de donn\'ees.
+   
+  \item Ind\'ependance Logique:
+        
+        On peut modifier le niveau logique sans toucher les
+	applications existantes.\\
+        
+        Exemple: l'ajout d'une relation ne change pas le code 
+	des applications.
+        
+ \end{itemize}
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+\begin{slide}[1.5cm]
+  \subsection{Historique des Mod\`eles de Donn\'ees}
+  \begin{itemize}
+    \item Ann\'ees 60-70~: mod\`eles hi\'erarchiques et r\'eseaux avec
+          des langages navigationnels.
+    \item Ann\'ees 80~: mod\`ele relationnel avec des langages d\'eclaratifs.
+    \item Ann\'ees 90~: nouvelles applications $\rightarrow$ mod\`eles
+          relationnels \'etendus, \`a valeurs structur\'ees et 
+	  orient\'ees-objet.
+  \end{itemize}
+\vfill{}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+\begin{slide}[4cm]
+\subsection{Exemple: Officiel de Spectacle}
+\begin{itemize}
+  \item Entit\'es: Cin\'ema, Salle, Film, Acteur, Directeur, Artiste
+  \item Attributs, Clefs~: nom, titre, ville
+  \item Associations~: s\'eance, joue, dirige
+  \item H\'eritage~: est-un(e)
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+\begin{slide}
+\centerline{\psfig{width=\textwidth,figure=exempleER.ps}}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+\section{Le Mod\`ele Relationnel}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+\begin{slide}
+\subsection{Rappels sur le mod\`ele relationnel}
+ 
+\begin{enumerate}
+  \item Repr\'esentation des entit\'es par des {\bf tables}. Chaque ligne
+        est une occurence de l'entit\'e (un n-uplet), chaque colonne un
+        attribut.
+  \item Les attributs sont d\'efinis sur des types de base (entiers,
+        cha\^{\i}nes de caract\`eres)
+  \item Le sch\'ema d'une relation est compos\'e d'un nom et d'une
+	liste de noms d'attributs avec leurs domaines.
+  \item Interrogation par SQL
+
+\end{enumerate}
+ 
+\end{slide}
+ 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+\begin{slide}
+\subsection{Relation~: Exemples}
+
+\begin{center}
+\begin{tabular}{||c|c|c||}\hline
+\multicolumn{3}{||c||}{CIN\`EMA}\\\hline Cin\'ema &Adresse & Ville\\ \hline
+"Rex"  & ``7, Bd Bonne Nouvelle'' & ``PARIS'' \\ \hline
+"Cinefil"  & ``8, rue Dunod'' & ``CRETEIL'' \\ \hline
+"Kino" &  ``123, Bd Raspail'' & ``PARIS''\\ \hline
+...  &...  &...  \\ \hline
+\end{tabular}
+\end{center}
+ 
+\vspace*{1cm}
+
+\begin{tabular}{||c|c|c||}\hline
+\multicolumn{3}{||c||}{SALLE}\\\hline 
+Cin\'ema & No salle & Capacit\'e \\ \hline
+``Rex'' & 1 & 200 \\\hline 
+``Rex'' & 3 & 120 \\\hline 
+``Kino'' & 1 & 300\\\hline 
+... &...  &...  \\\hline
+\end{tabular}
+\hfill
+\begin{tabular}{||c|c|c|c||}\hline
+\multicolumn{4}{|||c|||}
+{SEANCE}\\\hline
+Cinema & Salle & Film & Horaire\\\hline
+``Rex'' & 1 & ``Cyrano'' & 16-18 \\\hline 
+``Kino'' & 3 & ``Les oiseaux'' & 14-16 \\\hline
+...  &... \\\hline
+\end{tabular}
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+\begin{slide}[1cm]
+\subsection{Manipulation et Interrogation des Donn\'ees}
+\begin{itemize}
+\item Langage de D\'efinition des Donn\'ees (LDD)~: cr\'eation et
+      modification de sch\'emas
+\item Langage de Manipulation des Donn\'ees (LMD)~: cr\'eation, modification
+      et suppressions de n-uplets
+\item Langage d'Interrogation des Donn\'ees (LR)~: cr\'eation de nouvelles
+      relations (intentionnelles) \`a partir des relations existantes
+\end{itemize}
+\vfill
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+%\begin{slide}[1cm]
+%\subsection{Langages de Requ\^etes: Alg\`ebre et Calcul} 
+%
+%On peut distinguer entre deux types de langages formels~:
+%\begin{itemize}
+%\item Calcul Relationnel~: une requ\^ete correspond \`a un pr\'edicat
+%      dans la logique du premier ordre
+%\item Alg\`ebre Relationnelle~: \ 
+%	\begin{itemize}
+%	\item op\'erations de base~: s\'election ($\sigma$), projection
+%              ($\pi$), produit cart\'esien ($\times$), renommage~($\rho$)
+%	\item op\'erations ensemblistes~: union, diff\'erence, intersection
+%	\item op\'erations d\'eriv\'es~: jointure, division, \ldots{}
+%	\end{itemize}
+%\item Le langage SQL est issu du calcul relationnel
+%\end{itemize}
+%\end{slide}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+%
+%\begin{slide}[7cm]
+%\subsection{Exemples de Requ\^etes I}
+%
+%\centerline{\Underline{"Tous les films qui passent au REX" }}
+%
+%\begin{itemize}
+%\item Alg\`ebre :
+% 
+% $\pi_{Film} (\sigma_{Cin\'ema=''Rex''}(SEANCE))$
+%
+%\item Calcul Relationnel:
+%
+% $\{f | \exists x \exists y \exists z: Seance(x,y,f,z) \wedge x = ``Rex''\}$
+%
+%\item SQL: \
+%\begin{verbatim}
+%      select film
+%        from SEANCE
+%       where Nom-cinema = ``Rex''
+%\end{verbatim}
+%\end{itemize}
+%\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[7cm]
+\subsection{Exemples de Requ\^etes}
+
+\centerline{\Underline{"Quels films passent \`a Cr\'eteil ?"}}
+
+\begin{itemize}
+
+\item Il faut faire une {\bf jointure} entre SEANCE et CINEMA~: \
+\begin{verbatim}
+      select film
+        from SEANCE, CINEMA
+        where CINEMA.nom = SEANCE.nom-cinema
+        and	CINEMA.ville = ``CRETEIL''
+\end{verbatim}
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Avantages du Mod\`ele Relationnel}
+\begin{itemize}
+\item Simplicit\'e (une seule structure)
+\item D\'eclarativit\'e (compl\`ete ind\'ependance logique/physique)
+\item Facilit\'e d'emploi
+\item SQL
+\item C'est le standard actuel...
+\end{itemize}
+\vfill{}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Inconv\'enients du Mod\`ele Relationnel}
+\begin{itemize}
+\item {\bf Pauvret\'e du mod\`ele}~: impossibilit\'e de repr\'esenter
+	des donn\'ees complexes, pas de notion d'{\bf identifiant} 
+	d'une entit\'e
+
+\item {\bf Pauvret\'e du langage}~:
+  \begin{enumerate}
+	\item  On ne peut pas exprimer toutes 
+	les requ\^etes $\rightarrow$ int\'egration avec des langages de
+	programmation (C+SQL)
+	\item S\'eparation donn\'ees/traitements~: pas d'association
+	entre les aspects dynamiques et statiques des donn\'ees
+  \end{enumerate}
+
+\item {\bf Probl\`emes de performances} (op\'erations ensemblistes)
+
+\end{itemize}
+\vfill{}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Pauvret\'e de la Repr\'esentation}
+
+Une seule structure~: la table.
+
+\begin{itemize}
+\item Perte de s\'emantique~: on ne distingue plus les
+	entit\'es et les associations (Ex~: S\'eance)
+
+\item Repr\'esentation d'objets complexes par plusieurs tables (Ex~:
+	Cin\'ema, Salles, S\'eance). 
+	
+\item Impossible de distinguer des groupes d'attributs dans une
+	relation (Ex~: attribut ``Adresse'' dans Cin\'ema).
+	
+\item Pas de notion ``d'ensemble de valeurs''. Exemple~: chaque
+	horaire est un n-uplet alors que son importance s\'emantique
+	est faible.
+
+\item Pas de notion d'identit\'e. Elle doit \^etre g\'er\'ee
+	par le programmeur.
+
+\item Typage faible~: on voudrait d\'efinir un type ``P\'eriode
+	de temps'' par exemple.
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Pauvret\'e du Langage~ LP}
+
+\begin{enumerate}
+   \item Pas de r\'ecursivit\'e. \\
+	Exemple~: {\it Quelles sont toutes
+		les suites d'un film~?}
+   \item Langage non proc\'edural\\
+        Exemple~: repr\'esentation d'entit\'es spatiales~:
+\begin{enumerate}
+\item Point (id, x, y)
+\item Ligne (id\_ligne, no\_point, id\_point)
+\item Zone (id\_zone, no\_ligne, id\_ligne)
+\end{enumerate}
+ 
+On voudrait associer la fonction {\it Surface} \`a Zone,
+ {\it Longueur} \`a Ligne, etc.\\
+\end{enumerate}
+
+$\rightarrow$ On combine SQL et un langage proc\'edural (le C par exemple)
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Probl\`emes de performances}
+
+\centerline{\Underline{"Quels sont les points formant le contour de la zone 2?"}}
+
+Il faut faire une {\bf jointure} entre Zone, Ligne et Point~: \\
+\begin{verbatim}
+      select x,y
+        from Zone, Ligne, Point
+        where Zone.id-zone=2
+        and   Zone.id_ligne=Ligne.id-ligne
+        and   Ligne.id-point=Point.id-point
+\end{verbatim}
+
+Si un zone est d\'ecrite par 50 lignes, et une ligne par 100 points,
+il faudra 5~000 jointures pour reconstituer le contour~!
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+
+\section{Du Relationnel vers les SGBD Objets}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%
+
+% Slide 20
+
+\begin{slide}
+\subsection{Du Relationnel vers les SGBD Objets}
+
+Comment peut-on adapter les SGBD aux nouveaux besoins~?  
+\begin{itemize}
+  \item Plus de structures~: ensembles, listes, tableaux ...
+
+  \item Plus de manipulations complexes
+
+\end{itemize}
+
+Quelques propositions~:
+
+\begin{itemize}
+	\item Mod\`eles \`a valeurs structur\'ees
+	\item Mod\'eles relationnels \'etendus
+	\item Mod\`eles orient\'es-objet
+\end{itemize}
+\hfill
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+
+\begin{slide}
+\subsection{Valeurs Structur\'ees~: relations N1NF}
+
+Les constructeurs d'ensemble et de n-uplet sont appliqu\'es {\em
+alternativement}. Ainsi, il n'est pas possible de repr\'esenter des
+ensembles d'ensembles ou des n-uplets de n-uplets.
+
+\begin{center}
+  \begin{tabular}{|c|c|c|}
+    \multicolumn{3}{c}{\bf FILMS}    \\\hline
+    {\bf titre} & {\bf acteurs}      & {\bf cin\'emas} \\\hline
+    Arizona Dream & Johnny Depp      & Forum Horizon \\
+                  & Faye Dunaway     & Luxembourg \\
+                  & Jerry Lewis      &            \\\hline
+    Fatale        & Juliette Binoche & Montparnasse \\
+                  & Jeremy Irons     & \\\hline
+    \ldots{}      & \ldots{}         & \ldots{} \\\hline
+  \end{tabular}
+\end{center}
+
+Probl\`eme~: pas d'identit\'e pour une valeur, donc pas possible
+		de la {\bf partager}.
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{slide}
+%\subsection{\'Evolution du Relationnel \`a l'Objet}
+
+%\centerline{\psfig{width=\textwidth,figure=fi-reet.ps}}
+
+%\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+
+\begin{slide}
+\subsection{Relationnel \'etendu: les Types Abstraits de Donn\'ees}
+
+\Underline{Type Abstrait = Structure de Donn\'ees + Ensemble
+d'Op\'erations}
+
+Les donn\'ees sont {\bf encapsul\'ees} et on y acc\`ede
+uniquement \`au travers des op\'erations d\'efinies
+dans le type
+
+\begin{verbatim}
+     type Point     = [      type Rectangle = [
+          x:float,                xmin:float, ymin:float,
+          y:float]                xmax:float, ymax:float]
+
+     function contains(Rectangle, Point): Booleen
+     create table RECTANGLES(nom: string, geometry: Rectangle)
+
+     select R.nom
+       from R in RECTANGLES
+      where contains(R.geometry,"10.4,23.5")
+\end{verbatim}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+
+\section{Les Mod\`eles Orient\'es-Objet}
+
+\begin{slide}
+  \subsection{SGBD Orient\'es-objet}
+ 
+  Principles caract\'eristiques~:
+ 
+  \begin{enumerate}
+    \item Fusion des technologies SGBD et langages de programmation
+    \item Structuration plus riche qu'en relationnel
+    \item Association des donn\'ees et des traitements
+  \end{enumerate}
+ 
+  Bibliographie~:
+ 
+  \begin{enumerate}
+      \item Delobel, L\'ecluse, Richard, 
+	{\bf Bases de donn\'ees~: des syst\`emes
+                relationnels aux syst\`emes \`a objets}
+      \item Adiba, Collet, {\bf Le SGBD O$_{2}$}
+      \item Catell (ed.), {\bf The Object Database Standard}
+   \end{enumerate}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Objet: Identificateur et Valeur Structur\'ee}
+
+Un objet, c'est une paire~:
+
+\begin{enumerate}
+  \item identificateur ({\it oid})
+  \item valeur
+\end{enumerate}
+
+Caract\'eristiques~:
+
+\begin{enumerate}
+  \item L'objet garde le m\^eme {\it oid} toute sa vie
+  \item L'{\it oid} est ind\'ependant de la valeur de l'objet
+  \item La valeur est d\'ecrite par un {\it type} qui peut \^etre
+	complexe
+\end{enumerate}
+\end{slide}
+
+\begin{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+
+\subsection{Exemples d'Objets}
+
+\begin{verbatim}
+(i0, [Titre: 'Rambo', Acteurs: {i3,i4}, Suites: {i1,i2}])
+(i1, [Titre: 'Rambo II', Acteurs: {i3,i9}, Suites: {i2}])
+\end{verbatim}
+
+Autre notation~:
+\begin{verbatim}
+          (i3, tuple[Nom:`Stallone',
+                      adresse : tuple [No : 40,
+                                       Rue : ``Rambo Street'',
+                                       Ville : berverly-hills]
+                      Films : {i0, i1, i2}
+                     ]
+          )
+\end{verbatim}
+
+Les valeurs des objets sont construites \`a partir de valeurs
+atomiques et d'identificateurs d'autres objets en utilisant
+les constructeurs ensemble et tuple (n-uplet) dans n'importe
+quel ordre.
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Composition d'objets}
+
+L'identit\'e permet~:
+
+\begin{itemize}
+  \item La {\bf composition} d'un objet avec d'autres objets
+  \item Le {\bf partage} d'un m\^eme objet entre plusieurs objets compos\'es
+\end{itemize}
+
+Dans les exemples pr\'ec\'edents~:
+
+\begin{itemize}
+  \item L'objet film 'Rambo' est compos\'e de l'objet acteur 'Stallone'
+  \item L'objet acteur 'Stallone' est composant de plusieurs films
+\end{itemize}
+
+$\rightarrow$ La composition permet de 
+	 repr\'esenter avec le mod\`ele OO les associations
+ 	du mod\`ele E/R.
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Identit\'e et \'Egalit\'e}
+\begin{itemize}
+\item Deux objets de m\^eme identificateur sont {\bf identiques}\\
+	
+   	(i,1) et (i,3) repr\'esentent le m\^eme objet\\
+
+\item Deux objets sont {\bf \'egaux} s'ils ont la m\^eme valeur~: \\
+
+	$(i,5)$ est \'egal \`a $(j,5)$\\ 
+
+	$(i,[A: k, B: 5])$ est \'egal \`a $(j,[A:k,B:5])$.
+\end{itemize}
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{\'Egalit\'e en Profondeur}
+
+\Underline{D\'efinition:}
+\begin{itemize}
+\item Deux objets \'egaux sont \'egaux en profondeur
+\item Deux objets qui ont les m\^emes attributs et dont les valeurs
+      sont
+  \begin{itemize}
+    \item soit \'egales
+    \item soit des identificateurs d'objets \'egaux en
+          profondeur
+  \end{itemize}
+sont \'egaux en profondeur.
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Egalit\'e, \'egalit\'e en profondeur}
+ 
+\begin{verbatim}
+      o1: (i1,[A:i3,B:b])   
+      o2: (i2,[A:i4,B;b])
+      o3: (i3,5)            
+      o4: (i4,5)
+\end{verbatim}
+
+\begin{enumerate}
+  \item L'objet o1 n'est pas \'egal \`a o2
+  \item L'objet o3 est \'egal \`a o4
+  \item o1 est \'egal en profondeur \`a o2.
+\end{enumerate}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+
+\begin{slide}
+\subsection{Objets et Classes}
+
+Un objet est d\'efini par~:
+
+\begin{itemize}
+  \item Son {\it oid}
+  \item Sa valeur 
+  \item Sa structure
+  \item Son comportement (= ensemble des fonctions qu'on peut
+	appliquer \`a sa valeur)
+\end{itemize}
+
+3 et 4 constituent la {\bf classe} de l'objet. Une classe est donc 
+la description de tous les objets ayant m\^eme structure et m\^eme 
+comportement.
+
+\noindent
+{\bf Attention} : l'ensemble des objets d'une classe n'est pas
+forc\'ement stock\'e dans la base.\\
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+
+\begin{slide}
+\subsection{Classe : le type}
+
+Un type (structure) est construit \`a partir~:
+
+\begin{itemize}
+\item D'un ensemble de types atomiques (entier, r\'eel, caract\`ere,
+cha\^\i ne,...)
+\item D'un ensemble $C$ de noms de classes
+\item De constructeurs (n-uplet, ensemble, liste, tableau, ...)
+\end{itemize}
+
+\begin{enumerate}
+\item Un type atomique est un type.
+\item Un \'el\'ement de $C$ est un type.
+\item Si $t1,...,tn$ sont des types et $a1,...,an$ sont des attributs,
+      alors $[a1:t1,...,an:tn]$ est un type.
+\item Si $t$ est un type, alors $\{t\}$ est un type.
+\end{enumerate}
+
+Cette d\'efinition de type est celle des valeurs structur\'ees \`a
+laquelle on rajoute des noms de classes comme types.
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%
+
+\begin{slide}[1cm]
+\subsection{Classe : le Comportement}
+
+Les m\'ethodes d'un type d'objet sont l'ensemble des fonctions
+(proc\'edures) applicables aux objets ayant ce type.\\
+
+Le comportement d'un objet est d\'efini par un
+ensemble de signatures de m\'ethodes.\\
+ 
+La signature d'une m\'ethode et compos\'ee
+\begin{enumerate}
+\item du nom de la m\'ethode
+\item du type des arguments
+\item du type du r\'esultat
+\end{enumerate}
+
+\Underline{Exemple:} type PERSONNE avec m\'ethode {\it \^age~}: INT qui
+calcule l'\^age \`a partir de la date de naissance.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Sch\'ema d'une Base de Donn\'ees}
+
+Un sch\'ema est un ensemble de classes et types d'objets. Exemple~:
+
+\begin{verbatim}
+         class PERSONNE: 
+            type tuple (époux: PERSONNE,
+                        ss_nom: tuple (ss:INT,nom:STRING)
+                        enfants: set(PERSONNE))
+            method âge: INT
+
+         class ENTREPRISE:
+            type tuple   (nom: STRING,
+                     employés: set(PERSONNE))
+\end{verbatim}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[3cm]
+\subsection{Concepts OO : Message}
+
+Seule mani\`ere d'ex\'ecuter un traitement: envoi d'un message \`a un 
+objet dont le type contient la m\'ethode \`a ex\'ecuter
+
+\Underline{message:} objet$\rightarrow$m\'ethode(a1,...,an)
+
+\Underline{Exemple:} fran\c{c}ois est un objet de type
+PERSONNE. L'envoi du message fran\c{c}ois$\rightarrow$ \^age \`a
+fran\c{c}ois donne son \^age.  \vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Concepts OO : Encapsulation}
+
+Un objet est caract\'eris\'e par sa structure et par son
+interface. L'interface est un ensemble de m\'ethodes visible par
+l'ext\'erieur. Un objet ne peut \^etre manipul\'e que via son
+interface $\Rightarrow$ il s'agit du principe d'encapsulation. \`A
+l'ext\'erieur,
+
+\begin{itemize}
+\item On voit la signature des m\'ethodes 
+\item On ne voit pas la structure des objets  ni le
+	corps des m\'ethodes.
+\end{itemize}
+
+\Underline{Programmation Modulaire~:}
+
+\begin{itemize}
+\item S\'eparation entre l'implantation et la sp\'ecification
+\item Regroupement dans un m\^eme module des donn\'ees et de leurs
+      traitement
+\item Possibilit\'e d'avoir plusieures implantations pour une m\^eme
+      sp\'ecification 
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Traitements sur les Donn\'ees}
+\begin{itemize}
+\item Relationnel: \
+\begin{itemize}
+\item appel SQL \`a la base dans le programme d'applications
+\item donn\'ees dans la base et programmes dans une biblioth\`eque
+\item conception et sp\'ecification des programmes sont
+      ind\'ependantes des donn\'ees 
+\item toute donn\'ee est accessible \`a tout programme
+\end{itemize}
+
+\item SGBD Orient\'e-Objet Int\'egr\'e: \
+\begin{itemize}
+\item m\'ethodes
+\item donn\'ees et programmes dans la base
+\item donn\'ees seulement accessibles par des m\'ethodes de la m\^eme
+      classe (public, private, protected)
+\end{itemize}
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{H\'eritage: Classes - Sous-Classes}
+
+Une classe $C$ est une \Underline{sous-classe} d'une classe $C'$
+(h\'erite de $C'$), si
+\begin{itemize}
+\item chaque instance de (objet dans) $C$ est une instance (un
+      objet dans) $C'$.
+\item toutes les m\'ethodes de $C$ peuvent \^etre appliqu\'ees aux
+      instances de $C'$.
+\end{itemize}
+
+\Underline{Exemple:}
+\begin{verbatim}
+        class PERSONNE: type [nom:STRING, date: DATE, sexe: BOOL]
+              method âge(DATE): INT
+
+        class EMPLOYÉ: type [nom:STRING, date: DATE, sexe: BOOL
+              method diplômes: {STRING}
+                     âge(DATE): INT
+                     salaire:INT]
+\end{verbatim}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{H\'eritage : polymorphisme et surcharge}
+
+\Underline{Exemple :} classes g\'eom\'etriques
+
+\begin{verbatim}
+  Class Zone      Methodes : Intersection, Surface, ...
+    Class Rectangle inherit Zone
+    Class Cercle    inherit Zone
+    Class Triangle  inherit Zone
+\end{verbatim}
+            
+{\bf Polymorphisme}~: Le m\^eme code peut s'appliquer \`a des objets de
+	classes diff\'erentes
+
+{\bf Surcharge}~: On peut red\'efinir les m\'ethodes pour chaque sous-classe.\\
+
+\vfill{}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{H\'eritage~: r\'eutilisation}
+
+\centerline\Underline{On veut calculer la surface de diff\'erents
+objets g\'eom\'etriques:}
+
+\begin{verbatim}
+   sans objets                          avec objets
+   -----------                          -----------
+   for all g in geo_set do              for all g in geo_set
+     case of type(g):                     g->surface
+        cercle: surface_cercle(g)
+      triangle: surface_triangle(g)
+     rectangle: surface_rectangle(g)
+\end{verbatim}
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+\subsection{Typage dynamique}
+
+Le mod\`ele OO implique un certain degr\'e de typage dynamique~:
+
+\noindent
+{\bf R\'esolution tardive} : le syst\`eme d\'etermine 
+    {\bf au moment de l'ex\'ecution} la classe de l'objet et donc 
+    la m\'ethode \`a appliquer
+
+\noindent
+{\bf G\'en\'ericit\'e}
+\begin{itemize}
+  \item Le programmeur n'a pas besoin de conna\^\i tre le type de l'objet
+        dont il calcule la surface.
+       
+  \item L'adjonction d'un nouveau type d'objet set fait sans
+        modification du programme appelant.
+
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{H\'eritage Multiple}
+\begin{verbatim}
+       class PERSONNE = type [nom: STRING, ss: INT, naissance: INT]
+             method âge: INT
+
+       class EMPLOYÉ inherits PERSONNE = type [salaire:INT]
+             method augmente_salaire: INT
+
+       class ÉTUDIANT inherits PERSONNE = type [cours:{COURS}]
+             method notes: {INT}
+
+       class ATER inherits EMPLOYÉ, ÉTUDIANT = type [heures:{INT}]
+             method temps_recherche: INT
+\end{verbatim}
+
+ 
+ATER h\'erite des attributs et m\'ethodes de ses 2 superclasses 
+EMPLOY\'E et \'ETUDIANT.
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Conflit d'H\'eritage }
+
+\begin{verbatim}
+       class PROFESSEUR inherits PERSONNE = 
+             type [donne:{COURS}, horaires:HEURES]
+
+       class ÉTUDIANT inherits PERSONNE = 
+             type [suit:{COURS}, horaires:HEURES]
+
+       class ASSISTANT inherits PROFESSEUR, ÉTUDIANT 
+             rename horaires in PROFESSEUR:
+                    horaires_enseignant = 
+             type [temps_recherche: HEURES] 
+\end{verbatim}
+
+
+ASSISTANT h\'erite deux attributs de m\^eme nom (horaires) $\Rightarrow$
+il faut renommer l'un d'eux (ici celui h\'erit\'e de la classe
+PROFESSEUR)
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Utilisation de l'H\'eritage}
+\begin{itemize}
+\item {\bf R\'eutilisation de code}~: les m\'ethodes d'une classe sont
+      r\'eutilis\'ees dans ses sous-classes: la m\'ethode \^age a le
+      m\^eme code pour un employ\'e et pour une personne (diff\'erence
+      entre l'ann\'ee actuelle et l'ann\'ee de la naissance)
+
+\item {\bf Surcharge et liens dynamiques}~: la m\'ethode {\it \^age} est
+      red\'efinie pour les employ\'es. Une m\'ethode surcharg\'es a le
+      m\^eme nom que la m\'ethode dans la super-classe mais un code
+      diff\'erent.  Le ``bon'' code est trouv\'e \`a l'ex\'ecution par
+      des liens dynamiques (r\'esolution tardive).
+
+\item {\bf Modularit\'e}~: les modifications dans les m\'ethodes d'une classe
+      change uniquement le comportement de ses sous-classes.
+\end{itemize}
+La surcharge et la r\'eutilisation permettent un certain degr\'e de 
+polymorphisme. 
+\end{slide}
+
+%\sectioncontents
+\section{La persistance dans les SGBDOO}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Probl\'ematique de la persistance}
+
+Un SGBDOO doit permettre une int\'egration compl\`ete des
+outils de programmation (types, langages) et des outils
+'Base de donn\'ees' (stockage, extraction)\\
+
+Un objet doit donc pouvoir \^etre~:
+
+\begin{itemize}
+\item {\bf Temporaire} : c'est une 'variable' dans un programme. Il
+	n'existe que pendant l'ex\'ecution.
+\item {\bf Persistant} : il existe avant, pendant et apr\`es
+	l'ex\'ecution d'un programme.
+\end{itemize}
+
+D'o\`u le probl\`eme~: {\bf comment d\'eclare-t-on dans un programme 
+	les donn\'ees persistantes}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Quelques qualit\'es du mod\`ele de persistance}
+
+\begin{itemize}
+\item {\bf Orthogonalit\'e au type} : toute classe doit pouvoir contenir
+	des objets temporaires ou persistants.\\
+	Contre-exemple : les SGBDR.
+
+\item {\bf Persistance \`a la cr\'eation ou en cours de programme} : 
+	une donn\'ee temporaire doit pouvoir devenir persistante \`a tout
+	moment.
+
+\item {\bf Compatibilit\'e du code source} : le m\^eme programme doit
+	pouvoir manipuler des donn\'ees temporaires ou persistantes
+	de mani\`ere transparente.
+\end{itemize}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Persistance par attachement}
+
+Ne sont persistants :
+
+\begin{itemize}
+\item Que les points d'entr\'ee ou {\bf Racines de persistance}.
+
+\item Que les objets accessibles par composition \`a partir
+	d'un point d'entr\'ee.
+\end{itemize}
+
+Les points d'entr\'ee sont d\'efinis par des {\bf valeurs nomm\'ees}.
+\begin{verbatim}
+        NAME films     : set(Film)
+        NAME artistes  : set(Artiste)
+        NAME Belmondo  : Acteur
+\end{verbatim}
+
+Le m\^eme objet (Belmondo) peut \^etre accessible \`a partir de plusieurs
+points d'entr\'ee.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Le langage de requ\^ete}
+
+\begin{slide}[1.5cm]
+\subsection{Extraction : le langage de requ\^ete OQL}
+
+SQL n'est plus suffisant (car li\'e aux relations en premi\`ere
+forme normale). Les nouveaux besoins sont~:
+
+\begin{itemize}
+\item Exprimer des crit\`eres et des s\'elections sur des valeurs complexes.
+
+\item Parcourir un graphe de composition
+
+\item Ex\'ecuter des fonctions ou des m\'ethodes
+
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Exemple de sch\'ema I}
+
+\begin{verbatim}
+   class Cinema 
+         tuple (nom : string,
+              adresse : tuple (No : integer,
+                               Rue : string,
+                               ville : Ville)
+              salles : set(Salle))
+
+   class Salle
+         tuple (No : integer,
+                capacite: integer,
+                seances : list(tuple(heure:Heure,
+                                     film : Film))
+                )
+\end{verbatim}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Exemple de sch\'ema II}
+
+\begin{verbatim}
+    class Film
+          tuple (titre : string,
+                 acteurs: set(Acteur),
+                 metteur_en_scene : Artiste)
+
+    class Artiste
+          tuple (nom:String)
+
+    class Acteur inherit Artiste
+          tuple (roles : set(tuple(film:Film,
+                                  nom: string))
+                )
+\end{verbatim}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Exemple de requ\^etes I}
+
+{\it Tous les films de Jean-Luc Godard}
+
+\begin{verbatim}
+          SELECT film.titre
+          FROM   film in Films
+          WHERE  film.metteur_en_scene.nom = ``Godard''
+\end{verbatim}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Exemple de requ\^etes II}
+
+{\it Quels acteurs ont jou\'e ``Hamlet''}
+
+\begin{verbatim}
+    SELECT acteur.nom
+    FROM   acteur in Acteurs,
+              role in acteur.roles
+    WHERE  role.nom = ``Hamlet''
+\end{verbatim}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Exemple de requ\^etes III}
+
+{\it O\`u peut-on voir ``A bout de souffle''}
+
+\begin{verbatim}
+   SELECT acteur.nom
+   FROM cinemas in Cinemas,
+          salle in cinema.salle
+            seance in salle.seances
+   WHERE   seance.film.titre = ``A bout de souffle''
+\end{verbatim}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}[1.5cm]
+\subsection{Conclusion : situation actuelle des SGBDOO}
+
+\begin{itemize}
+  \item Une technologie r\'ecente, bas\'ee sur des concepts
+	issus en grande partie du monde de la recherche
+  \item Des SGBD complets existent (ObjectStore, Versant,
+	O$_{2}$, Matisse)
+  \item Les applications restent pour l'instant tr\`es sp\'ecifiques
+	(Syst\`emes d'Information G\'eographiques, Multim\'edia,
+	 Documents structur\'es, CAO)
+\end{itemize}
+
+Le march\'e d\'ecidera !
+
+\end{slide}
+
+\end{document}

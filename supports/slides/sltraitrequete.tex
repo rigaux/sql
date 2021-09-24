@@ -1,0 +1,352 @@
+
+
+
+\begin{frame}{\'Etapes du traitement d'une requête}
+
+Toute requête SQL est traitée en trois étapes\,:
+
+\begin{redbullet}
+  \item \alert{Analyse et traduction} de la requête. On vérifie
+            qu'elle est correcte, et on l'exprime sous forme
+             d'opérations.
+
+  \item \alert{Optimisation}\,: comment agencer au mieux les opérations,
+              et quels algorithmes utiliser. On obtient un \alert{plan
+              d'exécution}.
+
+    \item \alert{Exécution de la requête}\,: le plan d'exécution est compilé
+            et exécuté.
+\end{redbullet}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Support du traitement d'une requête}
+
+Le traitement s'appuie sur les éléments suivants\,:
+
+\begin{redbullet}
+  \item \alert{Le schéma de la base}, description
+          des tables et chemins d'accès (dans le catalogue)
+
+  \item \alert{Des statistiques}\,: taille des tables, des index,
+              distribution des valeurs
+
+    \item \alert{Des opérateurs}\,: il peuvent
+               différer selon  les systèmes
+\end{redbullet}
+
+\alert{Important}\,: on suppose que le temps d'accès à
+ces informations est négligeable par rapport à l'exécution
+de la requête.
+\end{frame}
+
+\begin{frame}[fragile]{Les blocs SQL}
+
+Une requête SQL est décomposée en blocs, et une optimisation d'applique
+à chaque bloc.
+
+\vfill
+
+Un bloc est une requête ``select-from-where``
+sans imbrication. Exemple:
+
+\vfill
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select titre
+    from   Film
+    where  annee = (select min (annee) from Film)
+\end{minted}
+
+\vfill
+Premier bloc: calcule une valeur $v$.
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+   select min (annee) from Film
+\end{minted}
+
+\vfill
+Second bloc: utilise $v$ comme critère.
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+ select titre from   Film  where  annee = v
+\end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]{Quelle est l'influence du découpage en blocs?}
+
+En principe, le système devrait pouvoir déterminer les requêtes équivalentes,
+indépendamment de la syntaxe.
+
+\vfill
+
+En principe, ça ne se passe pas tout à fait comme ça...
+
+\vfill
+
+Dans quel film paru en 1958 joue  James Stewart? 
+
+\vfill
+
+Expression SQL "à plat":
+
+\vfill
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select titre
+    from   Film f, Role r, Artiste a
+    where  a.nom = 'Stewart' and a.prenom='James'
+    and    f.id_film = r.id_film
+    and    r.id_acteur = a.idArtiste
+    and    f.annee = 1958
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Une autre syntaxe pour la même requête}
+
+Expression SQL équivalente, avec \texttt{in}.
+
+\vfill
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select titre
+    from   Film f, Role r
+    where  f.id_film = r.id_film
+    and    f.annee = 1958
+    and    r.id_acteur in (select id_acteur
+                          from Artiste
+                          where nom='Stewart' 
+                          and prenom='James')
+\end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]{Encore une autre syntaxe}
+
+Expression SQL équivalente, avec \texttt{exists}.
+
+\vfill
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select titre
+    from   Film f, Role r
+    where  f.id_film = r.id_film
+    and    f.annee = 1958
+    and    exists (select 'x'
+                   from Artiste a
+                   where nom='Stewart' 
+                   and prenom='James'
+                   and r.id_acteur = a.id_acteur)
+\end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]{Avec encore plus de blocs}
+
+C'est plus clair comme ça?
+
+\vfill
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select titre from Film
+    where annee = 1958
+    and  id_film in
+           (select id_film from Role
+            where id_acteur in 
+                 (select id_acteur 
+                  from Artiste
+                  where nom='Stewart'
+                  and prenom='James'))
+\end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]{Une dernière}
+
+
+Maintenant, avec \texttt{exists}.
+\vfill
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select titre from Film
+    where annee = 1958
+    and exists
+           (select * from Role
+            where id_film = Film.id
+            and exists 
+                 (select * 
+                  from Artiste
+                  where id = Role.id_acteur
+                  and nom='Stewart'
+                  and prenom='James'))
+\end{minted}
+
+\alert{Important}: On risque de fixer la manière dont le système évalue la requête.
+\end{frame}
+
+\begin{frame}{Pourquoi c'est mauvais?}
+
+Les deux dernières versions aboutissent à un plan d'exécution sous-optimal.
+
+\begin{itemize}
+  \item On parcourt tous les films parus en 1958
+
+  \item Pour chaque film\,: on cherche les rôles
+       du film, \textbf{mais pas d'index disponible}
+
+  \item Donc pas d'autre solution que de parcourir tous les rôles, \alert{pour chaque film}.
+   
+  \item Ensuite, pour chaque rôle on regarde si c'est James Stewart
+\end{itemize}
+
+Ca va coûter cher\,!!
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Comprendre: pourquoi pas d'index disponible sur \texttt{Role}?}
+
+La table \texttt{Role}, avec une clé composite.
+\vfill
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    create table Role (id_acteur integer not null,
+                       id_film integer not null,
+                       nom_role varchar(30) not null,
+                       primary key (id_acteur, id_film),
+                       foreign key (id_acteur) references Artiste(id),
+                       foreign key (id_film) references Film(id),                            
+                       );
+\end{minted}
+
+\vfill
+
+Regardez bien la clé primaire, et pensez à l'arbre B associé. \alert{Peut-on l'utiliser?}
+
+\begin{itemize}
+  \item Recherche sur \texttt{id\_acteur} et \texttt{id\_film}. \alert{Oui}.
+  \item Recherche sur \texttt{id\_acteur} . \alert{Oui}.
+  \item Recherche sur \texttt{id\_film} . \alert{Non}.  
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Conclusion: requêtes SQL et blocs}
+
+La leçon: mieux vaut écrire les requêtes SQL "à plat", en un seul bloc, 
+\alert{et laisser le système décider du meilleur agencement des accès}.
+
+\vfill
+
+Confronté à des requêtes SQL à plusieurs blocs: \alert{Etudier le plan d'exécution
+pour vérifier que les index sont correctement utilisés}.
+
+\vfill
+
+On va voir comment faire par la suite.
+\end{frame}
+
+\subsection{Traduction et réécriture}
+
+
+\begin{frame}[fragile]{Traitement d'un bloc}
+
+Plusieurs phases:
+
+\vfill
+
+\alert{Analyse syntaxique}: conformité SQL, conformité au schéma.
+
+\vfill
+
+\alert{Analyse de cohérence}: pas de clause comme \texttt{annee < 200 and annee > 2001}
+
+\vfill
+
+Si OK, traduction en une expression algébrique, plus "opérationnelle" que SQL.
+
+\vfill
+
+\begin{block}{Retenir}
+Toute requête SQL se réécrit en une expression de l'algèbre.
+\end{block}
+
+\vfill
+
+(Pas tout à fait vrai: \texttt{group by}, \texttt{having}, \texttt{order by}. Oublions.)
+\end{frame}
+
+
+\begin{frame}[fragile]{Exemple de réécriture}
+
+On prend comme exemple: le titre du film paru en 1958, où l'un des acteurs joue
+le rôle de John Ferguson.
+
+\vfill
+
+En SQL:
+
+ \begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select titre
+    from   Film f, Role r
+    where  nom_role ='John Ferguson'
+    and    f.id = r.id_ilm
+    and    f.annee = 1958
+\end{minted}
+
+\vfill
+
+En algèbre:
+\[
+  \pi_{titre}(\sigma_{annee=1958 \land nom\_role='\mathrm{John\ Ferguson}'}(Film \Join_{id=id\_film} Role))
+\]
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Le Plan d'Exécution Logique (PEL)}
+
+L'expression algébrique nous donne une ébauche de plan d'exécution.
+
+\vfill
+
+\figSlideWithSize{QTradAlg}{7cm}
+
+\vfill
+
+Est-ce le bon? Pas forcément: \alert{l'optimisation} va nous permettre d'en trouver
+d'autres et de les comparer.
+
+\end{frame}

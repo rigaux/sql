@@ -1,0 +1,286 @@
+
+
+\begin{frame}{Objectifs de cette session}
+
+Un catalogue des principales anomalies dues à un défaut dans le
+contrôle de concurrence
+
+\vfill
+
+\begin{redbullet}
+  \item les \alert{mises à jour perdues}\,: la plus importante, car autorisée
+      par les systèmes dans la configuration par défaut.
+ 
+    \item Les \alert{lectures non répétables}\,: des données apparaissent, disparaissent,
+        changent de valeur, au cours de l'exécution d'une transaction.
+      
+  \item  \alert{Lectures sales}\,: on peut lire une donnée modifiée mais non validée.
+  
+ \end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Nous verrons que les \alert{niveaux d'isolation} servent à éviter
+tout ou partie de ces anomalies.
+\end{blocgauche}
+\end{frame}
+
+
+\subsection{Anomalie 1: les mises à jour perdues}
+
+\begin{frame}{Mise à jour perdues}
+
+C'est \alert{le} cas d'anomalie permis par \alert{tous} les systèmes,
+en mode transactionnel par défaut.
+
+\vfill
+
+Retenir: deux transactions \alert{lisent} une même donnée, et \alert{l'écrivent} ensuite, l'une après l'autre:
+une des écritures est perdue.
+
+\vfill
+
+Exemple d'exécution concurrente avec deux transactions de réservation
+
+$$   r_1(s)  r_1(c_1) r_2(s)  r_2(c_2)  w_2(s)  w_2(c_2) w_1(s) w_1(c_1)$$
+
+\vfill
+\begin{blocgauche}
+On effectue d'abord les lectures pour $T_1$, puis les
+lectures pour $T_2$ enfin les écritures pour $T_2$ et $T_1$
+dans cet ordre.
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{L'anomalie}
+
+\begin{redbullet}
+  \item il reste 50 places libres, $c_1$ et $c_2$ 
+           n'ont encore rien réservé;
+  \item $T_1$ veut réserver 5 places pour  $s$;
+  \item $T_2$ veut réserver 2 places pour  $s$.
+\end{redbullet}
+
+\vfill
+
+\figSlideWithSize{trans-anom}{10cm}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Le déroulement}
+
+Pas à pas, voici ce qui se passe.
+
+\begin{redbullet}
+  \item $T_1$ lit $s$ et $c_1$. Nb places libres\,: 50.
+  \item $T_2$ lit $s$ et $c_2$. Nb places libres\,: 50.
+  \item $T_2$ écrit $s$ avec nb places = $50-2=48$.
+  \item $T_2$ écrit le nouveau compte de $c_2$.
+  \item $T_1$ écrit $s$ avec nb places = $50-5=45$.
+  \item $T_1$ écrit le nouveau compte de $c_1$.
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+À l'arrivée, 5 places réservées, 7 places payées. \alert{Incohérence}.
+\end{blocgauche}
+\end{frame}
+
+
+
+\begin{frame}{Pour bien comprendre}
+
+À la fin de l'exécution, il
+reste 45 places vides sur les 50 initiales
+alors que 7 places ont effectivement été
+réservées et payées.
+
+\vfill
+
+\alert{Cette anomalie ne survient qu'en cas d'entrelacement défavorable}. Dans la plupart
+des cas, une exécution concurrente ne pose pas de problème.
+
+\vfill
+
+\alert{Le programme est correct}. On peut le regarder 1000 fois, le tester 10000 fois sans jamais détecter
+d'anomalie.
+
+\vfill
+
+\begin{blocgauche}
+\begin{defblock}{\alert{Essentiel}}
+Si on ne sait pas qu'une anomalie de concurrence est possible, l'erreur est incompréhensible.
+\end{defblock}
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Solution radicale: exécution en série}
+
+Si on force l'exécution en série:
+
+$$r_1(s) r_1(c) w_1(s) w_1(c) r_2(s) r_2(c)  w_2(s) w_2(c)$$
+
+On est sûr qu'il n'y a pas de problème:
+
+\figSlideWithSize{trans-serie}{10cm}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Très pénalisant.}. Je débute une petite transaction, je vais déjeuner, je bloque
+tout le monde.
+\end{blocgauche}
+\end{frame}
+
+
+
+\begin{frame}{Les exécutions concurrentes sont possibles}
+
+Un exemple qui ne pose pas de problème:
+
+
+$$r_1(s)  r_1(c_1) w_1(s) r_2(s) r_2(c_2) w_2(s) w_1(c_1) w_2(c_2)$$
+
+\vfill
+
+
+\figSlideWithSize{trans-serialisable}{10cm}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Exécution dite sérialisable} car \alert{équivalente} à une exécution  en série.
+C'est ce que doit assurer le  contrôle de concurrence.
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}[fragile]{Lectures non répétables et autres fantômes}
+
+Deuxième catégorie d'anomalies. Prenons l'exemple du programme \texttt{Contrôle}.
+
+
+\begin{verbatim}
+  Procédure Contrôle()
+  Début
+    Lire tous les clients et effectuer la somme des places prises
+    Lire le spectacle 
+    SI (Somme(places prises) <> places réservées)
+      Afficher ("Incohérence dans la base") 
+  Fin
+\end{verbatim}
+
+\vfill
+
+Vérifie la cohérence de la base. Une transaction $T_c$ a la forme:
+
+$$r_c(c_1) \ldots r_c(c_n) r_c(s)$$
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Une exécution concurrente avec réservation}
+
+Entrelacement de Contrôle()  et 
+$Res(c_1, s, 5)$.
+
+
+$$r_1(c_1) r_1(c_2)  Res(c_2, s, 2)  \ldots r_1(c_n) r_1(s)$$
+
+\smallskip
+
+\figSlideWithSize{trans-controle}{9cm}
+
+\vfill
+\begin{blocgauche}
+\alert{Le contrôle en déduit (à tort) que la base est incohérente.}
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}[fragile]{Que s'est-t-il passé?}
+
+Une même transaction (le contrôle) a pu lire deux états \alert{différents} de la base.
+
+\vfill
+
+On a donc des problèmes liés au manque d'isolation. Deux types:
+
+\begin{redbullet}
+  \item La même donnée, lue deux fois de suite, a changé: \alert{lecture non répétable}.
+  \item Des données sont apparues (ou ont disparu): \alert{tuple fantômes}.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Dans les deux cas, isolation partielle (on voit les résultats d'une ou plusieurs
+autres transactions) et donc risque d'anomalie.
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Un dernier exemple d'anomalie: lectures sales}
+
+C'est un autre type de problème (dit "de recouvrabilité"): \alert{l'entrelacement empêche
+une bonne exécution des \alert{commit} et \alert{rollback}}.
+
+\vfill
+Exemple:
+
+$$r_1(s)  r_1(c_1) w_1(s) r_2(s) r_2(c_2) w_2(s)  w_2(c_2) C_2 w_1(c_1)  R_1$$
+
+\vfill
+
+Notez: $T_2$ a lu la donnée écrite par $T_1$; $T_2$ valide, $T_1$ annule.
+
+\vfill
+\alert{Comment gérer cette annulation?}
+
+\end{frame}
+
+
+\begin{frame}{Problème insoluble}
+
+Annuler $T_1$: les mises à jour de $T_1$ n'ont pas eu lieu.
+
+\vfill
+
+\alert{Oui mais}, $T_2$ a lu une des données qui vient d'être effacée.
+
+\vfill
+
+Alors il faudrait annuler $T_2$ aussi ? Mais $T_2$ a fait un \texttt{commit}.
+
+\vfill
+
+Et ainsi de suite... ingérable.
+
+
+\end{frame}
+
+
+\begin{frame}{À retenir}
+
+Des anomalies plus ou moins graves apparaissent en cas de défaut d'isolation.
+
+\vfill
+
+La plus sévère est celle des \alert{mises à jour perdues}\,: elle peut apparaître même
+avec un niveau d'isolation très élevé.
+
+\vfill
+
+Les anomalies de concurrence sont \alert{très difficiles} à reproduire et à interpréter.
+
+\vfill
+\begin{blocgauche}
+\alert{Comprendre et utiliser correctement les niveaux d'isolation est impératif
+pour les applications transactionnelles.}
+\end{blocgauche}
+
+\end{frame}
+

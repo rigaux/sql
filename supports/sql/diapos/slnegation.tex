@@ -1,0 +1,228 @@
+
+\begin{frame}[fragile]{SQL, quantificateurs et négation}
+
+Cette session présente les quantifications 
+\alert{existentielle} et \alert{universelle}.
+
+\vfill
+
+Les quantificateurs permettent l'expression de la négation: ``je veux tous ces nuplets \alert{sauf} ceux-là''.
+
+\vfill
+Dans cette session:
+\vfill
+
+\begin{redbullet}
+  \item Le quantificateur \texttt{exists} et l'expression du ``pour tout''
+  \item La négation
+  \item Equivalence des requêtes: plusieurs syntaxes, une seule signification.
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+%%%%%%ù
+\begin{frame}[fragile]{Le quantificateur ``exists``}
+
+Reprenons la requête ``les logements où l’on peut faire du ski''.
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select distinct l.nom
+from Logement as l, Activité as a
+where l.code = a.codeLogement
+and   a.codeActivité = 'Ski'
+\end{minted}
+
+\vfill
+
+``a``  n'intervient pas dans le nuplet-résultat. 
+On peut la remplacer par une variable liée.
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select distinct l.nom
+from Logement as l
+where exists (select ''
+              from Activité as a
+              where l.code = a.codeLogement
+              and a.codeActivité = 'Ski')
+\end{minted}
+
+
+\vfill
+\begin{blocgauche}
+Légère reformulation: maintenant on cherche les logements
+tels \alert{qu'il existe} une activité ``Ski''.
+\end{blocgauche}
+\end{frame}
+
+%%%%%%ù
+\begin{frame}[fragile]{Construction de formules complexes}
+
+On peut construire des formules imbriquées (sous-requêtes SQL) 
+sans limitation de profondeur.
+
+\vfill 
+
+Qui est allé dans les Alpes?
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+     select distinct v.prénom, v.nom
+     from Voyageur as v, Séjour as s, Logement as l
+     where v.idVoyageur=s.idVoyageur
+     and   s.codeLogement = l.code
+     and   l.lieu = 'Alpes'
+\end{minted}
+
+
+\vfill
+\begin{blocgauche}
+Ni \texttt{s} ni \texttt{l} ne sont utilisées dans la construction du nuplet-résultat 
+\end{blocgauche}
+\end{frame}
+
+
+
+%%%%%%ù
+\begin{frame}[fragile]{Qui est allé dans les Alpes}
+
+
+Avec quantificateur existentiel: "Les voyageurs tels \alert{qu'il existe} un de leurs séjours dans les Alpes".
+
+\vfill 
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select distinct v.prénom, v.nom
+from Voyageur as v
+where exists (select '' 
+              from Séjour as s, Logement as l
+              where v.idVoyageur=s.idVoyageur
+              and   s.codeLogement = l.code
+              and   l.lieu = 'Alpes')
+\end{minted}
+
+
+\vfill
+\begin{blocgauche}
+Plus clair? Moins clair?
+\end{blocgauche}
+\end{frame}
+
+%%%%%%ù
+\begin{frame}[fragile]{Imbrication d'imbrication}
+
+Avec quantificateur existentiel: "Les voyageurs tels qu'il \alert{existe} un de leurs séjours 
+tel que son logement \alert{existe} dans les Alpes".
+
+\vfill 
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select distinct v.prénom, v.nom
+from Voyageur as v
+where exists (select '' 
+              from Séjour as s
+              where v. idVoyageur=s.idVoyageur
+              and exists (select '' 
+                          from  Logement as l
+                          where s.codeLogement = l.code
+                          and   l.lieu = 'Alpes')
+                    )
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+Pas très naturel.
+\end{blocgauche}
+\end{frame}
+
+%%%%%%ù
+\begin{frame}[fragile]{Quantificateurs et négation}
+
+Les logements qui \alert{ne proposent pas} de Ski.
+
+\vfill 
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select distinct l.nom
+from Logement as l
+where not exists (select ''
+                 from Activité as a
+                 where l.code = a.codeLogement
+                 and a.codeActivité = 'Ski')
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+Correspond à la formulation: ``Les logements tels \alert{qu'il n'existe pas} d'activité Ski''.
+\end{blocgauche}
+\end{frame}
+
+
+
+%%%%%%ù
+\begin{frame}[fragile]{Quantificateur universel}
+
+Les voyageurs qui sont allés dans \alert{tous} les logements
+
+\vfill 
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+     select distinct v.prénom, v.nom
+     from Voyageur as v
+     where  not exists (select ''
+                        from Logement as l
+                        where not exists  (select ''
+                                           from Séjour as s
+                                           where l.code = s.codeLogement
+                                           and   v.idVoyageur = s.idVoyageur)
+                        )
+\end{minted}
+\vfill
+\begin{blocgauche}
+Reformulation avec double négation: on cherche les voyageurs tels \alert{qu’il n’existe pas} 
+de logement où \alert{ils ne sont pas} allés.
+\end{blocgauche}
+\end{frame}
+%%%%%%%%%
+\begin{frame}{À retenir}
+
+SQL = un langage à la définition très précise.
+\vfill
+
+\begin{redbullet}
+  \item  \alert{Tout ce qui peut s'exprimer par une formule logique est exprimable en SQL}. Ni plus, ni moins.
+
+  \item \alert{Inversement}, tout ce qui ne s'exprime pas par une formule (boucles, incrémentations, etc.)
+      ne s'exprime pas en SQL.
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+Maîtriser SQL = savoir exprimer sa requête de manière rigoureuse. 
+\end{blocgauche}
+
+\vspace*{1cm}
+
+Vous savez maintenant exprimer \alert{tout} ce qui est exprimable
+en SQL (sauf agrégations)
+\end{frame}
+
+
+

@@ -1,0 +1,114 @@
+
+%%%%%%%%
+\begin{frame}{Le problème étudié}
+
+
+\figSlideWithSize{exec-optim-1}{12cm}
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+Une requête SQL est \alert{déclarative}. Elle ne dit pas \alert{comment} calculer le résultat.
+
+\medskip
+
+Nous avons besoin d'une \alert{forme opératoire}\,: un programme.
+&
+~
+\end{tabular}
+
+    
+\end{frame}
+
+
+%%%%%%%%
+\begin{frame}{La notion de plan d'exécution}
+
+\figSlideWithSize{exec-optim-2}{12cm}
+\vfill
+\begin{tabular}{p{9cm}p{5cm}}
+Dans un SGBD le programme qui exécute une requête est appelé \alert{plan d'exécution}.
+
+\medskip
+Il a une forme particulière\,: c'est un \alert{arbre}, constitué \alert{d'opérateurs}.
+&
+~
+\end{tabular}
+\end{frame}
+
+
+%%%%%%%%
+\begin{frame}{De la requête SQL au plan d'exécution}
+
+\figSlideWithSize{exec-optim-3}{12cm}
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+Deux étapes: 
+\begin{redlist}
+ \item (A) plan d'exécution \alert{logique} (l'algèbre) ;
+  \item (B) plan d'exécution \alert{physique} (opérateurs).
+\end{redlist}
+\medskip
+Le SGBD s'appuie  sur un \alert{catalogue} d'opérateurs.
+&
+~
+\end{tabular}
+\end{frame}
+
+%%%%%%%%
+\begin{frame}{En quoi consiste l'optimisation\,?}
+
+
+\vfill
+\figSlideWithSize{exec-optim-4}{12cm}
+\vfill
+
+\alert{À chaque étape, plusieurs choix}. Le système les évalue et choisit le \guill{meilleur}.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Résumé}
+
+Ce cours explique comment un SGBD
+
+\begin{redbullet}
+  \item construit et applique un \alert{plan d'exécution}
+      pour produire le résultat d'une requête.
+
+   \item choisit ce plan  en fonction
+          de \alert{critères d'optimisation}.
+\end{redbullet}
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+
+Ce que vous aurez acquis à l'issue du cours.
+\vfill
+\begin{redbullet}
+  \item Compréhension de la manière dont  une requête est exécutée.
+
+  \item Capacité à interpréter le plan d'exécution  affiché
+     par un système (outil \texttt{explain}).
+
+   \item Bases pour explorer et ajuster les paramètres \guill{physiques}
+      qui conditionnent les performances d'un système.
+\end{redbullet}
+\vfill
+\begin{block}{\alert{Important}}
+Sujet complexe: le cours présente les bases, à approfondir.
+\end{block}
+&
+~
+\end{tabular}
+
+
+\vfill
+
+\only<2|handout:2>{
+\centerline{\alert{Merci!}}
+}
+
+\end{frame}

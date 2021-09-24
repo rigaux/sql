@@ -1,0 +1,157 @@
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La commande \sqlkw{create table}}
+
+Un premier exemple: la table \texttt{Voyageur}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Voyageur (idVoyageur integer not null,
+                      nom varchar(30) not null,
+                      prénom varchar(30)  not null,
+                      ville varchar(30) not null,
+                      région varchar(30) not null,
+                      primary key (idVoyageur)
+                   )
+\end{minted}
+
+\vfill
+Quelques choix à effectuer: conventions de nommage, accents, etc.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La contrainte \sqlkw{not null}}
+
+Les valeurs à \sqlkw{null} sont source de problèmes: on peut les interdire
+avec \sqlkw{not null} ou donner une valeur par défaut.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Logement 
+  (code varchar(4) not null,
+   nom varchar(50) not null,
+   capacité   integer not null,
+   type varchar(10) default 'Hôtel',
+   lieu varchar(30) not null,
+   primary key (code)
+)
+\end{minted}
+
+\vfill
+Le SGBD rejettera alors toute tentative d’insérer un nuplet avec une valeur manquante.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La clé primaire}
+
+Elle est spécifiée avec la clause  \sqlkw{primary key}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Activité 
+   (codeLogement varchar (4) not null,
+    codeActivité      varchar(30) not null,
+    description       varchar(255) not null,
+    primary key (codeLogement, codeActivité),
+    foreign key (codeLogement) 
+       references Logement(code)
+)
+\end{minted}
+
+\vfill
+Une clé primaire peut comprendre plusieurs attributs.
+\vfill
+Tous les attributs d'une clé primaire doivent être \sqlkw{not null}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Clé primaire, clés ``secondaires''}
+
+On peut définir d'autres clés avec la clause \sqlkw{unique}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Logement 
+   (code varchar(4) not null,
+    nom varchar(50) not null,
+    capacité   integer not null,
+    type varchar(10) default 'Hôtel',
+    adresse varchar(30) not null,
+    primary key (code),
+    unique (adresse)
+)
+\end{minted}
+
+\vfill
+
+Permet d'avoir un identifiant ``abstrait'', non modifiable, et d'ajouter des
+contraintes flexibles sur les attributs descriptifs.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Clé étrangère}
+
+Elle est spécifiée avec la clause  \sqlkw{foreign key}.
+
+\vfill
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Séjour  (idSéjour integer not null,
+                      idVoyageur integer not null,
+                      codeLogement varchar (4) not null,
+                      début integer not null,
+                      fin integer not null,
+                      primary key (idSéjour),
+                      foreign key (idVoyageur) 
+                         references Voyageur(idVoyageur),
+                      foreign key (codeLogement) 
+                         references Logement(code)
+                      )
+\end{minted}
+
+\vfill
+
+Si la clé étrangère est \sqlkw{not null}: association de type \texttt{1-n},
+sinon association de type \texttt{0-n}.
+
+\end{frame}
+
+%%%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Après la phase de conception, la création du schéma ne présente aucune difficulté.
+\vfill
+
+\begin{redbullet}
+   \item  Connaître les principaux types SQL (cf. support de cours)
+   \item Connaître la commande \sqlkw{create table}
+   \item Ajouter les contraintes de clés primaire et étrangères.
+\end{redbullet}
+
+\vfill
+
+La spécification des contraintes n'est pas une lourdeur. Elle garantit que la base est saine,
+et évité beaucoup d'ennuis.
+\end{frame}
+
+

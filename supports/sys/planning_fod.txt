@@ -1,0 +1,38 @@
+Plan d'avancement du cours NFE106
+=================================
+
+9 mars
+------
+
+Dispositifs de stockage (chap 2)
+
+19 mars
+-------
+
+Index et arbre B (chap 3)
+
+30 mars
+-------
+
+Hachage (chap 4)
+
+
+16 avril
+-------
+
+Opérateurs et algorithmes (chap 6)
+
+7 mai
+------
+
+Evaluation et optimisation
+
+18 mai
+------
+
+Transactions
+
+4 juin
+------
+
+Concurrence accès

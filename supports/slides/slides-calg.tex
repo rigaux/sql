@@ -1,0 +1,120 @@
+\documentstyle[12pt,cours,psfig]{article}
+
+
+%\usepackage{myfrench}
+%\usepackage{a4wide}
+%\usepackage[dvips]{epsfig}
+
+
+%\largerfonts
+\begin{document}
+
+
+\begin{slide}
+{\tt
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}\hline
+\multicolumn{5}{|c|}{Station}\\\hline \hline
+nomStation & capacit\'e & lieu & r\'egion & tarif \\ \hline
+Venusa & 350 & Guadeloupe & Antilles & 1200 \\
+Farniente & 200 & Seychelles & Oc\'ean Indien & 1500\\
+Santalba & 150 & Martinique & Antilles & 2000 \\
+Passac & 400 & Alpes & Europe & 1000 \\ \hline
+\end{tabular}
+\end{center}
+
+
+\begin{center}
+\begin{tabular}{|c|c|c|}\hline
+\multicolumn{3}{|c|}{Activite}\\\hline \hline
+NomStation & Libell\'e & Prix \\ \hline
+Venusa & Voile & 150 \\
+Venusa & Plong\'ee & 120 \\
+Farniente & Plong\'ee & 130 \\
+Passac & Ski  & 200 \\
+Passac & Piscine  & 20 \\
+Santalba & Kayac  & 50 \\ \hline
+\end{tabular}
+\end{center}
+}
+\end{slide}
+
+\begin{slide}
+
+{\tt
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}\hline
+\multicolumn{6}{|c|}{Client}\\\hline \hline
+idClient & nom & pr\'enom & ville & r\'egion & solde \\ \hline
+10 & Fogg & Phileas & Londres & Europe & 12465\\
+20 & Pascal & Blaise & Paris & Europe & 6763\\
+30 & Kerouac & Jack  & New York & Am\'erique & 9812\\ \hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}\hline
+\multicolumn{4}{|c|}{Sejour}\\\hline \hline
+idClient & station & d\'ebut  & nbPlaces\\ \hline
+10 & Passac & 1998-07-01 &  2 \\
+30 & Santalba &  1996-08-14 &    5 \\
+20 & Santalba & 1998-08-03  & 4 \\
+30 & Passac &  1998-08-15 &    3 \\
+30 & Venusa &  1998-08-03 &    3 \\
+20 & Venusa & 1998-08-03  & 6 \\
+30 & Farniente &  1999-06-24 &    5 \\
+10 & Farniente & 1998-09-05 &  3 \\ \hline
+\end{tabular}
+\end{center}
+}
+\end{slide}
+
+\begin{slide}
+
+{\tt
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
+\multicolumn{8}{|c|}{Station $\times$ Activites}\\\hline \hline
+S.nomSt. & cap. & lieu & r\'egion & tarif & A.nomSt. &
+    libelle & prix \\ \hline
+Venusa & 350 & Guadeloupe & Antilles & 1200 & Venusa & Voile & 150\\
+Venusa & 350 & Guadeloupe & Antilles & 1200 & Venusa & Plong\'ee & 120\\
+Venusa & 350 & Guadeloupe & Antilles & 1200 & Farniente & Plong\'ee & 130\\
+Venusa & 350 & Guadeloupe & Antilles & 1200 & Passac & Ski & 200\\
+Venusa & 350 & Guadeloupe & Antilles & 1200 & Passac & Piscine & 20\\
+Venusa & 350 & Guadeloupe & Antilles & 1200 & Santalba & Kayac & 50\\
+Farniente & 200 & Seychelles & Oc\'ean Indien & 1500 & Venusa & Voile & 150\\
+Farniente & 200 & Seychelles & Oc\'ean Indien & 1500 & Venusa & Plong\'ee&120\\
+Farniente & 200 & Seychelles & Oc\'ean Indien & 1500 & Farniente & Plong\'ee & 130\\
+Farniente & 200 & Seychelles & Oc\'ean Indien & 1500 & Passac & Ski & 200\\
+Farniente & 200 & Seychelles & Oc\'ean Indien & 1500 & Passac & Piscine & 20\\
+Farniente & 200 & Seychelles & Oc\'ean Indien & 1500 & Santalba & Kayac & 50\\
+Santalba & 150 & Martinique & Antilles & 2000 & Venusa & Voile & 150\\
+... & ... & ... & ... & ...  & ... & ... & ... \\ \hline
+\end{tabular}
+\end{center}
+}
+
+\end{slide}
+
+\begin{slide}
+
+{\tt
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
+\multicolumn{8}{|c|}{$\sigma_{S.nomStation=A.nomStation} (Station \times Activites$)}\\\hline \hline
+S.nomStation & cap. & lieu & r\'egion & tarif & A.nomStation &
+    libelle & prix \\ \hline
+Venusa & 350 & Guadeloupe & Antilles & 1200 & Venusa & Voile & 150\\
+Venusa & 350 & Guadeloupe & Antilles & 1200 & Venusa & Plong\'ee & 120\\
+Farniente & 200 & Seychelles & Oc\'ean Indien & 1500 & Farniente & Plong\'ee & 130\\
+Santalba & 150 & Martinique & Antilles & 2000 & Santalba & Kayac & 50\\
+Passac & 400 & Alpes & Europe & 1000  & Passac & Ski & 200\\
+Passac & 400 & Alpes & Europe & 1000  & Passac & Piscine & 20\\\hline
+\end{tabular}
+\end{center}
+}
+
+\end{slide}
+
+\end{document}

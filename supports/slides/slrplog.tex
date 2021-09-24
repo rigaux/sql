@@ -1,0 +1,198 @@
+\documentclass[aspectratio=169, handout]{beamer} %aspectratio: définit le format 16/9 ; handout = supprime la barre de navigation
+
+\usepackage{mooc-macros}
+
+\title {Semaine 5\,: Reprise sur panne}
+\subtitle{}
+\author {Philippe}
+\date{}
+
+\begin{document}
+
+
+\begin{frame}{Le journal des transactions (\textit{log})}
+
+Le fichier
+des transactions, ou \textit{log}, un fichier complémentaire à la base de données.
+
+\vfill
+
+\begin{redbullet}
+  \item le système y écrit \alert{séquentiellement}
+  \item le \textit{log} dispose de son propre buffer  
+    \item on n'efface \alert{jamais} un enregistrement du \textit{log}
+\end{redbullet}
+
+\vfill
+
+La reprise sur panne repose sur la stratégie suivannte:
+
+\vfill
+
+\begin{redbullet}
+  \item \alert{la base et son buffer}  sont  en écriture \alert{opportuniste}
+  \item \alert{le \textit{log} et son buffer} sont  en écriture \alert{immédiate}
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Le \textit{log} contient l'historique des
+mises à jour.
+\end{blocgauche}
+
+    
+    %insertion de la zone rouge auteur et du logo   
+        \begin{textblock*}{154px}(0.8cm,8.3cm)
+            \includegraphics[width=154px,height=19.5px]{cnam-auteur}
+        \end{textblock*} 
+        
+    %insertion du nom de l'auteur
+        \begin{textblock*}{80px}(1.1cm,8.5cm)
+            {\color{MoocLab-white}   \fontsize{9}{11}\selectfont Philippe Rigaux}
+        \end{textblock*}
+    
+\end{frame}
+
+
+\begin{frame}{Le système d'entrées/sorties avec \textit{log}}
+
+
+\figSlideWithSize{recovery}{10.5cm}
+
+
+\end{frame}
+ 
+ 
+ 
+\begin{frame}{Contenu du \textit{log}}
+
+Toutes les instructions de mise à jour.
+
+\vfill
+
+Chaque ligne contient un enregistrement d'une des formes suivantes.
+
+\begin{redbullet}
+  \item \texttt{start(T)}
+  \item \texttt{write(T, x, old\_val, new\_val)}
+  \item \texttt{commit(T)}
+  \item \texttt{rollback(T)}
+  \item \texttt{checkpoint}
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Le \texttt{write} peut être
+représenté sous forme \alert{logique}
+(instructions) ou \alert{physique}
+(enregistrements).
+\end{blocgauche}
+\end{frame}
+
+ 
+\begin{frame}{Le \textit{log} et la gestion des \texttt{commit}}
+
+La règle suivante est dite \alert{point de commit}:
+
+\vfill
+
+\begin{redbullet}
+
+  \item au \texttt{commit}, on force l'écriture des modifications effectuées
+  dans le \textit{log}
+\end{redbullet}
+
+\vfill
+Conséquences
+\vfill
+
+\begin{blocgauche}
+\begin{redbullet}
+  \item \alert{L'état de la base} peut être reconstitué à partir du \textit{log}
+\item Une transaction est validée  quand l'instruction \texttt{commit}  est écrite dans le \textit{log}
+\end{redbullet}
+\end{blocgauche}
+
+\end{frame}
+ 
+\begin{frame}{Illustration: après un \texttt{commit}}
+
+\figSlideWithSize{commit-point}{10.5cm}
+
+\end{frame}
+ 
+
+ 
+\begin{frame}{Le \textit{log} et la gestion des \texttt{rollback}}
+
+Un bloc \alert{modifié} mais pas encore \alert{validé} peut être écrit
+dans la base. 
+
+\vfill
+
+En cas de panne, il faudra reprendre l'image avant.
+
+\vfill
+
+La règle suivante est dite \textit{write-ahead logging}
+
+\begin{redbullet}
+  \item quand un bloc modifié est écrit dans la base, il faut \alert{d'abord} 
+      écrire les modifications dans le \textit{log}.
+\end{redbullet}
+
+\vfill
+Conséquence
+\vfill
+
+\begin{blocgauche}
+\begin{redbullet}
+  \item Le \textit{log} contient des modifications qui n'ont pas été validées.
+\end{redbullet}
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Illustration du \textit{write-ahead}}
+
+\figSlideWithSize{write-ahead}{10.5cm}
+
+\end{frame}
+
+\begin{frame}{Résumé: le \textit{log}}
+
+Retenir:
+
+\vfill
+
+\begin{redbullet}
+
+  \item Le \textit{log} est un fichier séquentiel dans lequel
+     on enregistre toutes les mises à jour
+     
+   \item un \texttt{commit} est effectif quand l'instruction est écrite dans le \textit{log}
+
+        $\Rightarrow$ l'état de la base est dans le \textit{log}
+
+   \item un \texttt{rollback} peut s'effectuer en reprenant l'image avant dans le \textit{log}
+   
+  \item performances: on laisse la base et son buffer en mode d'écriture opportuniste   
+
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Prochaine étape: l'algorithme de reprise sur panne
+\end{blocgauche}
+\vfill
+\only<2|handout:2>{
+\centerline{\alert{Merci!}}
+}
+
+\end{frame}
+
+
+\end{document}

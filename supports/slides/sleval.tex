@@ -1,0 +1,443 @@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction à l'optimisation des performances}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{\'Etapes du traitement d'une requête}{
+
+Toute requête SQL est traitée en trois étapes\,:
+
+\begin{enumerate}
+  \item \textbf{Analyse et traduction} de la requête. On vérifie
+            qu'elle est correcte, et on l'exprime sous forme
+             d'opérations.
+
+  \item \textbf{Optimisation}\,: comment agencer au mieux les opérations,
+              et quels algorithmes utiliser. On obtient un \textbf{plan
+              d'exécution}.
+
+    \item \textbf{Exécution de la requête}\,: le plan d'exécution est compilé
+            et exécuté.
+\end{enumerate}
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Support du traitement d'une requête}{
+
+Le traitement s'appuie sur les éléments suivants\,:
+
+\begin{enumerate}
+  \item \textbf{Le schéma de la base}, description
+          des tables et chemins d'accès (dans le catalogue)
+
+  \item \textbf{Des statistiques}\,: taille des tables, des index,
+              distribution des valeurs
+
+    \item \textbf{Des algorithmes}\,: il peuvent
+               différer selon  les systèmes
+\end{enumerate}
+
+\textbf{Important}\,: on suppose que le temps d'accès à
+ces informations est négligeable par rapport à l'exécution
+de la requête.
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{L'optimisation sur un exemple}
+{
+Consid\'erons le sch\'ema\,:
+
+\begin{itemize}
+  \item $CINEMA (Cin\acute{e}ma, Adresse, G\acute{e}rant)$\\
+   \item $SALLE (Cin\acute{e}ma, NoSalle, Capacit\acute{e})$
+\end{itemize}
+avec les hypothèses\,:
+\begin{enumerate}
+\item Il y a 300 n-uplets dans CINEMA, occupant 30 pages.
+\item Il y a 1200 n-uplets dans SALLE, occupant 120 pages.
+\end{enumerate}
+}
+\end{tsp}
+
+\begin{tsp}{Expression d'une requ\^ete}
+{
+On considère  la requ\^ete\,:
+{\it Adresse des cinémas ayant des salles
+de plus  de 150 places}
+
+En SQL, cette requ\^ete s'exprime de la manière suivante\,:\\
+
+{\tt
+\begin{tabbing}
+\=SELECT \=Adresse\\
+\>FROM   \>CINEMA, SALLE\\
+\>WHERE  \>capacité $>$ 150\\
+\> AND   \> CINEMA.cinéma = Salle.cinéma
+\end{tabbing}
+}
+}
+\end{tsp}
+
+\begin{tsp}{En algèbre relationnelle}
+{
+Traduit en algèbre, on a plusieurs possibilit\'es. En voici deux\,:
+\begin{enumerate}
+\item    $ \pi_{Cinema} (\sigma_{Capacite > 150}
+        (CINEMA \Join SALLE))$
+\item $ \pi_{Cinema}(CINEMA \Join
+    \sigma_{Capacite>150}(SALLE))$
+\end{enumerate}
+
+Soit une jointure suivie d'une s\'election, ou l'inverse.\\
+\vspace*{0.4cm}
+
+NB\,: on peut les représenter comme des arbres.
+}
+\end{tsp}
+
+\begin{frame}
+\frametitle{\'Evaluation des co\^uts (très simplifiée)}
+
+On suppose qu'il n'y a que 5\,\% de salles de plus de 150
+places.
+
+\begin{enumerate}
+\item Jointure\,: on
+lit 3\,600 pages (120x30); Sélection\,: on obtient 5\,\% de 120 pages, 
+soit 6 pages.\\ 
+
+Nombre d'E/S\,: 3\,600 + 120x2 + 6 = 3\,846.
+
+\item S\'election\,: on lit 120 pages et on
+obtient 6 pages. Jointure\,:
+on lit 180 pages (6x30) et on obtient 6 pages.\\
+Nombre d'E/S\,: 120 + 6 + 180 + 6 = 312.
+\end{enumerate}
+
+$\Rightarrow$ la deuxième strat\'egie est de loin la meilleure\,!
+\end{frame}
+
+\begin{comment}
+\begin{tsp}{Optimisation\,: principes généraux}
+{
+\begin{enumerate}
+\item Il faut {\bf traduire} une requ\^ete exprim\'ee avec un langage
+d\'eclaratif en une suite d'op\'erations (typiquement
+les op\'erateurs de l'algèbre relationnelle).
+
+\item En fonction (i) des co\^uts de chaque op\'eration (ii)
+des caract\'eristiques de la base, (iii) des algorithmes
+utilis\'es, on cherche \`a estimer la meilleure strat\'egie.
+
+\item On obtient
+le {\bf plan d'ex\'ecution} de la requ\^ete. Il
+n'y a plus qu'\`a le traiter au niveau physique.
+\end{enumerate}
+}
+\end{tsp}
+
+
+\begin{tsp}{Les paramètres de l'optimisation}
+{
+Comme on l'a vu sur l'exemple, l'optimisation s'appuie sur\,:
+\begin{enumerate}
+\item Des {\bf règles de r\'e\'ecriture} des expressions de l'algèbre.
+\item Des connaissances sur {\bf l'organisation physique} de la base 
+(index, hachage,\ldots)
+\item Des {\bf statistiques} sur les caract\'eristiques de
+la base (taille des relations par exemple).
+\end{enumerate}
+
+Un {\bf modèle de co\^ut} permet de classer les diff\'erentes
+strat\'egies envisag\'ees 
+}
+\end{tsp}
+
+\begin{tsp}{Traduction alg\'ebrique}
+{
+D\'eterminer l'expression alg\'ebrique
+\'equivalente \`a la requ\^ete\,:
+
+\begin{enumerate}
+\item  arguments du SELECT\,:  projections.
+\item arguments du WHERE\,: $NomAttr1=NomAttr2$ correspond en g\'en\'eral
+\`a une jointure, $NomAttr=constante$ \`a une s\'election.
+\end{enumerate}
+
+On obtient une expression alg\'ebrique qui peut \^etre repr\'esent\'ee
+par un {\bf arbre de requ\^ete}. 
+}
+\end{tsp}
+
+\begin{tsp}{Traduction alg\'ebrique\,: exemple}
+{
+Consid\'erons l'exemple suivant\,:\\
+\centerline{\textit{Quels films passent au
+REX à 20 heures\,?}}
+
+{\tt\small
+\begin{tabbing}
+\=SELECT  \=film\\
+\>FROM    \>Cinéma, Salle, Séance\\
+\>WHERE   \>Cinéma.nom-cinéma = 'Le Rex'\\
+\>AND     \>Séance.heure-début = 20\\
+\>AND     \>Cinéma.nom-cinéma = Salle.nom-cinéma\\
+\>AND     \>Salle.salle = Séance.salle
+\end{tabbing}
+}
+
+$\pi_{film} (\sigma_{Nom='Le\,REX' \wedge heure-d\acute{e}but=20}
+        ((CINEMA \Join SALLE) \Join SEANCE))$
+}
+\end{tsp}
+
+
+\begin{tsp}{Restructuration}
+{
+Il y a plusieurs expressions
+{\bf \'equivalentes} pour une m\^eme requ\^ete.\\
+
+
+ROLE  DE L'OPTIMISEUR
+\begin{enumerate}
+  \item Trouver les expressions \'equivalentes \`a une requ\^ete.
+  \item Les \'evaluer et choisir la meilleure.
+\end{enumerate}
+
+On convertit une expression en une expression \'equivalente
+en employant des {\bf règles de réécriture}.
+}
+\end{tsp}
+
+\begin{tsp}{Exemples de règles de réécriture}
+{
+\begin{enumerate}
+\item {\bf Commutativit\'e des jointures}\,:\\
+        $ R \Join S  \equiv S \Join R$
+\item {\bf Associativit\'e des jointures}\,:\\
+        $(R \Join S) \Join T \equiv R \Join (S \Join T)$
+\item {\bf Regroupement des s\'elections}\,:\\
+        $\sigma_{A='a' \wedge B='b'}(R) \equiv
+        \sigma_{A='a'}(\sigma_{B='b'}(R))$
+\item {\bf Commutativit\'e de la s\'election et de la projection}\\
+%               $\pi_{A_1, A_2, \ldots A_p}(\sigma_{A_i='a} (R)) \equiv
+%               \pi_{A_1, A_2, \ldots A_p}(\sigma_{A_i='a}( 
+%               \pi_{A_1, A_2, \ldots A_p, A_i}(R)))$
+        $\pi_{A_1, A_2, \ldots A_p}(\sigma_{A_i='a} (R)) \equiv
+        \sigma_{A_i='a}(\pi_{A_1, A_2, \ldots A_p}(R)), i 
+        \in \{1,\ldots,p\}$
+\end{enumerate}
+}
+\end{tsp}
+\begin{tsp}{Règles de réécriture (suite)}
+{
+\begin{enumerate}
+\item {\bf Commutativit\'e de la s\'election et de la jointure}.\\
+$\sigma_{A='a'} (R(\ldots A\ldots) \Join S) \equiv
+     \sigma_{A='a'}(R) \Join S$
+\vfill
+%\item {\bf Distributivit\'e de la s\'election sur l'union}.\\
+% $\sigma_{A='a'} (R \cup S) \equiv 
+%     \sigma_{A='a'} (R) \cup \sigma_{A='a'} (S)$\\
+%NB\,: valable aussi pour la diff\'erence.
+\item  {\bf Commutativit\'e de la projection et de la jointure}\\
+ $\pi_{A_1 \ldots A_pB_1\ldots B_q}(R \Join_{A_i=B_j} S) \equiv$\\
+        $\pi_{A_1 \ldots A_p}(R) \Join_{A_i=B_j}\pi_{B_1\ldots B_q}(S))
+  \;i \in \{1,\ldots ,p\}, j \in \{1,\ldots,q\}$
+%\item {\bf Distributivit\'e de la projection sur l'union}
+% $\pi_{A_1A_2\ldots A_p} (R \cup S) \equiv 
+%     \pi_{A_1A_2\ldots A_p} (R) \cup \pi_{A_1A_2\ldots A_p} (S)$
+\end{enumerate}
+}
+\end{tsp}
+
+
+\begin{tsp}{Exemple d'un algorithme}
+{
+\begin{enumerate}
+\item S\'eparer les s\'elections avec plusieurs pr\'edicats
+en plusieurs s\'elections \`a un pr\'edicat (règle 3).
+\item Descendre les s\'elections le plus bas possible dans l'arbre 
+(règles 4, 5, 6).
+\item Regrouper les s\'elections sur une m\^eme relation 
+(règle 3).
+\item Descendre les projections le plus bas possible (règles
+7 et 8).
+\item Regrouper les projections sur une m\^eme relation.
+\end{enumerate}
+}
+\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Que cherche-t-on à optimiser\,?}
+{
+On peut en fait définir plusieurs critères\,:
+
+\begin{enumerate}
+  \item \textbf{Temps d'exécution}\,: temps total d'exécution,
+           souvent utilisé comme critère par défaut
+
+  \item \textbf{Temps de réponse}\,: temps pour obtenir la
+           première ligne du résultat. \`A considérer pour les
+                     traitements en tâche de fond.
+
+    \item \textbf{Débit transactionnel}\,: recherche de la fluidité
+                 des traitements concurrents.
+
+    \item \textbf{Transfert réseau}\,: pour les applications distribuées
+\end{enumerate}
+
+}\end{tsp}
+\end{comment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{En résumé}
+{
+Un module du SGBD, \textbf{l'optimiseur}, est chargé de\,:
+
+\begin{enumerate}
+  \item Prendre en entrée une requête, et la mettre sous forme d'opérations
+
+  \item Se fixer comme objectif l'optimisation d'un certain 
+           paramètre (en général le temps d'exécution)
+
+    \item construire un programme s'appuyant sur
+         les index existants, et les opérations disponibles.
+\end{enumerate}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Le schéma de la base}{
+\begin{itemize}
+  \item Film (\cle{idFilm}, titre, année, genre, résumé,
+                                \fk{idMES}, \fk{codePays})
+ \item Artiste (\cle{idArtiste}, nom, prénom, annéeNaissance)
+  \item Role (\cle{\fk{idActeur}, \fk{idFilm}}, nomRôle)
+   \item Internaute (\cle{email}, nom, prénom, région)
+  \item Notation (\cle{\fk{email}, \fk{idFilm}}, note)
+   \item Pays (\cle{code}, nom, langue)
+\end{itemize}
+
+}\end{tsp}
+
+\section{Plans d'exécution}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{L'essentiel de ce qu'il faut savoir}
+{
+Qu'est-ce qu'un plan d'exécution\,?
+  \begin{itemize}
+      \item C'est un \textbf{programme} combinant 
+               des opérateurs physiques (chemins d'accès
+                     et traitements de données).
+
+      \item Il a la forme d'un \textbf{arbre}\,: chaque
+              n{\oe}ud est un opérateur qui
+  \begin{itemize}
+      \item prend des données en entrée
+      \item applique un traitement
+      \item produit les données traitées en sortie
+   \end{itemize}
+\end{itemize}
+
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{L'essentiel de ce qu'il faut savoir (suite)}
+{
+La phase d'optimisation proprement dite\,:
+
+  \begin{itemize}
+     \item Pour \textbf{une} requête, le système a le choix
+               entre \textbf{plusieurs} plans d'exécution.
+
+     \item Ils diffèrent par l'ordre des opérations, 
+             les algorithmes, les chemins d'accès.
+
+     \item Pour chaque plan on peut estimer\,:
+      \begin{itemize}
+          \item le coût de chaque opération
+         \item la taille du résultat
+      \end{itemize}
+      
+\end{itemize}
+
+\textbf{Objectif}\,: diminuer le plus vite possible la taille
+des données manipulées.
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Laissons le choix au système\,!}
+{
+Bon à savoir\,: il y a autant de plans d'exécution que
+de \alert{blocs} dans une requête.
+
+
+Exemple\,: cherchons tous les films avec James Stewart, parus
+en 1958.\\
+
+  \fichier{QStewart1.sql}
+
+Pas d'imbrication\,: un bloc, OK\,!
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Seconde requête (2 blocs)}{
+
+La même, mais avec un niveau d'imbrication.
+
+  \fichier{QStewart2.sql}
+
+Une imbrication sans nécessité\,: moins bon\,!
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Troisième requête (2 blocs)}{
+
+La même, mais avec \texttt{EXISTS} au lieu de \texttt{IN}.\\
+
+  \fichier{QStewart3.sql}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Quatrième requête (3 blocs)}{
+
+La même, mais avec deux imbrications\,:\\
+
+  \fichier{QStewart4.sql}
+
+Très mauvais\,: on force le plan d'exécution, et il
+est très inefficace.
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Pourquoi c'est mauvais}{
+
+\begin{itemize}
+  \item On parcourt tous les films parus en 1958
+
+  \item Pour chaque film\,: on cherche les rôles
+       du film, \textbf{mais pas d'index disponible}
+ 
+  \item Ensuite, pour chaque rôle on regarde si c'est James Stewart
+\end{itemize}
+
+Ca va coûter cher\,!!
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Exemples de plans d'exécution}{
+
+Gardons la même requête. Voici les opérations disponibles\,:\\
+
+\figWithSize{algphys}{9}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Sans index sur le nom}{
+\figWithSize{PE1}{10}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Avec index sur le nom}{
+\figWithSize{PE2}{10}
+
+}\end{tsp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tsp}{Sans index}{
+\figWithSize{PE4}{9}
+
+}\end{tsp}
+

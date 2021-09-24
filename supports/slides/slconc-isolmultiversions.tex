@@ -1,0 +1,160 @@
+
+\subsection{Versionnement}
+
+\begin{frame}{Versionnement}
+
+Toute transaction $T$ en cours a deux choix à chaque instant
+
+\begin{redbullet}
+  \item Valider les maj effectuées avec \texttt{commit}.
+  \item Les annuler avec \texttt{rollback}.
+\end{redbullet}
+
+\vfill
+
+Le SGBD maintient, pendant l'exécution de $T$, deux versions des nuplets mises à jour :
+
+\begin{redbullet}
+   \item une version du nuplet \alert{après} la mise à jour ;
+    \item une version du nuplet \alert{avant} la mise à jour.
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+On parle \alert{d'image après} et \alert{d'image avant} pour ces deux versions.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Isolation basée sur les versions}
+
+Soit deux transactions $T$ et $T'$. 
+
+\begin{redbullet}
+
+    \item  Chaque fois que $T$ met à jour un nuplet, la version courante est 
+       copiée dans \alert{l’image avant}, puis remplacée par la valeur de \alert{l’image après} fournie par $T$.
+        
+     \item Quand $T$ lit des nuplets, 
+        le système doit lire dans l’image après pour assurer une vision cohérente de la base
+      
+    \item En revanche,  une autre transaction $T'$ 
+        doit lire  dans \alert{l’image avant} pour éviter les effets de lectures sales.
+\end{redbullet}
+
+
+\vfill
+\begin{blocgauche}
+\alert{Combien d'images avant / après}? Une seule mise à jour est autorisée à la fois, donc
+une seule paire (image avant, image après). 
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Illustration}
+
+Le nuplet $e_2$ est en cours de modification.
+
+
+\medskip
+
+\figSlideWithSize{read-committed}{13cm}
+
+\vfill
+
+$T_1$ et $T_2$ ne lisent pas la même version. 
+
+
+\end{frame}
+
+
+\begin{frame}{Les lectures ne sont pas répétables}
+
+Le mode précédent est correct pour le niveau \texttt{read committed}.
+
+
+\vfill
+
+
+\figSlideWithSize{unrepeatable-read}{13cm}
+
+
+\vfill
+
+\begin{blocgauche}
+Mais les lectures ne sont pas répétables: $T_2$ lit la dernière version validée.
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Image avant et lectures répétables}
+
+Les images avant constituent un "cliché" de la base pris à un moment donné.
+
+\vfill
+
+\alert{Principe des lectures répétables}: 
+ toute transaction ne lit que dans le cliché valide au moment où elle a débuté.
+ 
+\vfill
+
+\alert{Estampillage}: 
+
+\begin{redbullet}
+   \item Toute transaction $T_i$ est ``estampillée'' par le moment $\tau_i$
+     où elle a commencé. 
+     \item Chaque nuplet $e$ est marqué par le moment $\tau_e$
+         de sa validation (\texttt{commit}).
+      \item $T_i$ ne peut lire que les images avant $e$  dont l'estampille $\tau_e < \tau_i$.   
+\end{redbullet}
+
+\begin{blocgauche}
+Ce mécanisme de \alert{versionnement} assure les lectures cohérentes.
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Lectures répétables (niveau \texttt{repeatable read}) }
+
+Une transaction ne lit que
+les nuplets dont l'estampille est inférieure à la sienne. 
+
+\vfill
+
+
+\figSlideWithSize{repeatable-read}{13cm}
+
+
+\vfill
+\begin{blocgauche}\alert{Combien de versions?} Il faut maintenir le ``cliché'' de la base pris
+  pour la transaction la plus ancienne en cours d'exécution.
+\end{blocgauche}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Notion \alert{d'image avant} et \alert{image après}
+\begin{redbullet}
+  \item \alert{Image après}\,: les dernières versions de chaque nuplet; certaines
+      ne sont pas encore validées.
+       
+  \item \alert{Image avant}: toutes les versions antérieures
+\end{redbullet}
+
+\vfill
+
+Le multi-versions assure les niveaux \texttt{read committed} et \texttt{repeatable read}.
+
+\begin{redbullet}
+  \item \texttt{read committed} : il suffit de conserver une version dans l'image avant
+  \item \texttt{repeatable read} : il faut conserver les versions immédiatement antérieure
+    au début de la transaction (``cliché'' = \textit{snapshot})
+\end{redbullet}
+
+\vfill
+
+Niveau plus élevé = performances affectées
+\end{frame}

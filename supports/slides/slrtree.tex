@@ -1,0 +1,102 @@
+
+
+%------------------------------------------------------------
+\begin{frame}{Indexation de données géométriques}
+
+Certaines applications stockent des données géométriques
+(ex, cadastre, réseaux routiers, etc.). Requêtes
+courantes\,:
+\begin{enumerate}
+  \item pointé,
+   \item fenêtrage,
+  \item jointure spatiale. 
+\end{enumerate}
+Comment optimiser ces opérations avec des index\,?
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Obstacles}
+
+Principaux obstacles à l'utilisation d'un index standard\,:
+\begin{enumerate}
+  \item On ne peut pas utiliser un arbre-B
+
+      car 
+      pas d'ordre sur les points ou les polygones.
+
+  \item Opérations coûteuses
+
+      Algorithmes géométriques, souvent de complexité
+            polynomiale, difficiles à implanter.
+\end{enumerate}
+
+$\Rightarrow$ des structures spécialisées pour les
+données géométriques
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Principes}
+
+Pour limiter le coût des opérations, on 
+utilise une approximation rectangulaire 
+des données géométriques\,: le rectangle englobant.
+
+\begin{enumerate}
+  \item l'index est construit sur l'ensemble des rectangles\,;
+  \item On effectue un {\em filtrage} basé sur les rectangles
+         pour les pointés, fenêtrages et jointures.
+  \item Quand on accède aux objets eux-mêmes, on effectue
+          une seconde opération sur la vraie géométrie
+          (étape de {\em raffinement})
+\end{enumerate}
+
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{L'arbre R, définition}
+
+Assez proche de l'arbre-B dans ses principes\,:
+
+\begin{enumerate}
+  \item c'est un arbre équilibré\,;
+  \item chaque entrée est une paire $[adresse, rectangle]$\,;
+  \item tous les n{\oe}uds sont occupés au moins à 50\,\%
+  \item le rectangle d'une entrée  $[adresse, rectangle]$
+          englobe {\em tous} les rectangles du n{\oe}ud
+           pointé par $adresse$\,;
+\end{enumerate}
+
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{L'arbre R, exemple}
+
+
+\figSlideWithSize{rtree}{11cm}
+
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{L'arbre R, pointé}
+
+
+\figSlideWithSize{pqRtree}{11cm}
+
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{L'arbre R, insertion (1)}
+
+
+\figSlideWithSize{insRtree1}{11cm}
+
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{L'arbre R, insertion (2)}
+
+
+\figSlideWithSize{insRtree2}{11cm}
+
+
+\end{frame}

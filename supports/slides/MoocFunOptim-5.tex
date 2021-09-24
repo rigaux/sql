@@ -1,0 +1,252 @@
+\documentclass[aspectratio=169, handout]{beamer} %aspectratio: définit le format 16/9 ; handout = supprime la barre de navigation
+\usepackage{mooc-macros}
+
+\title {Semaine 3\,: Exécution et optimisation}
+\subtitle{}
+\author {Philippe}
+\date{}
+
+\begin{document}	
+
+\begin{frame}{C018SA-W3-S5}
+	\centerline{\includegraphics[height=\textheight]{moocstyle/clap}}
+\end{frame}
+
+\begin{frame}
+	
+		\titlepage
+		
+\begin{redlist}
+  \item Introduction
+  \item Réécriture algébrique
+  \item Opérateurs
+  \item Plans d'exécution
+  \item \textbf{Tri et hachage}
+  \item Algorithmes de jointure
+ \item Optimisation
+\end{redlist}
+	
+	%insertion de la zone rouge auteur et du logo	
+		\begin{textblock*}{154px}(0.8cm,8.3cm)
+			\includegraphics[width=154px,height=19.5px]{inria-auteur}
+		\end{textblock*} 
+		
+	%insertion du nom de l'auteur
+		\begin{textblock*}{80px}(1.1cm,8.5cm)
+			{\color{MoocLab-white}   \fontsize{9}{11}\selectfont Philippe Rigaux}
+ 		\end{textblock*}
+	
+	\end{frame}
+
+\begin{frame}{Tri externe}
+
+Le \alert{tri externe} est utilisé,
+
+\begin{redbullet}
+  \item pour les algorithmes de jointure (\textit{sort/merge})
+
+   \item l'élimination des doublons (clause \texttt{distinct})
+
+    \item pour les opérations de regroupement (\texttt{group by})
+
+   \item ... et bien sûr pour les \texttt{order by}
+\end{redbullet}
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+Opération  coûteuse
+sur de grands jeux de données.
+
+\bigskip
+
+Algorithme de \alert{tri-fusion} (externe).
+&
+~
+\end{tabular}
+
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Première phase\,: le tri}
+
+
+\only<1-1|handout:1>{
+
+Il faut une zone de tri, en RAM, allouée par le système.
+\bigskip
+
+\figSlideWithSize{triFusion-1}{9cm}\bigskip
+
+On veut trier une source de données (ici, un fichier).
+}
+\only<2-2|handout:2-2>{
+
+Cas favorable: tout le fichier tient en mémoire.
+
+\bigskip
+ 
+\figSlideWithSize{triFusion-2}{10cm}
+
+\bigskip
+
+On charge, on trie avec \textit{quicksort}\,: prêt pour l'itération.
+}
+\only<3-3|handout:3-3>{
+
+Et si le fichier ne tient pas en mémoire?
+
+\bigskip
+ 
+\figSlideWithSize{triFusion-3a}{10cm}
+
+\bigskip
+
+On lit le premier fragment, on trie, on stocke.
+}
+\only<4-4|handout:4-4>{
+
+On lit le fragment suivant, on trie, on stocke.
+
+\bigskip
+ 
+\figSlideWithSize{triFusion-3b}{10cm}
+
+\bigskip
+
+Chaque fragment est \alert{trié}.
+}
+\only<5-5|handout:5-5>{
+
+Production du dernier fragment trié
+
+\bigskip
+ 
+\figSlideWithSize{triFusion-3c}{10cm}
+
+\bigskip
+
+Prêt pour   la phase suivante.
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Fusion de listes triées}
+
+
+\only<1-1|handout:1-1>{
+
+À l'issue de la phase de tri: $n$ fragments triés.
+
+\bigskip
+ 
+\figSlideWithSize{fusion-init}{10cm}
+
+\bigskip
+
+Il faut maintenant les \alert{fusionner}.
+}
+\only<2-2|handout:2>{
+
+On place un curseur au début de chaque liste.
+
+\vfill
+
+\figSlideWithSize{fusion-1}{8cm}
+
+\vfill
+
+On compare les valeurs, et on prend la plus petite.
+}
+
+\only<3-3|handout:3-3>{
+
+On a avancé sur le curseur de la valeur extraite.
+
+\vfill
+
+\figSlideWithSize{fusion-2}{8cm}
+
+\vfill
+
+On applique la même méthode.
+}
+\only<4-4|handout:4-4>{
+
+On continue sur le même principe.
+
+\vfill
+
+\figSlideWithSize{fusion-3}{8cm}
+
+\vfill
+
+On ne revient jamais en arrière.
+}
+\only<5-5|handout:5-5>{
+
+Une dernière fois...
+
+\vfill
+
+\figSlideWithSize{fusion-4}{8cm}
+
+\vfill
+
+Le résultat est la liste triée globale.
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Résumé: tri et opérateurs bloquants}
+
+L'opérateur de tri est \alert{bloquant}
+
+\vfill
+
+\begin{redbullet}
+  \item La phase de tri est effectuée pendant le \textit{open()}
+  \item Le \textit{next()} correspond à la progression de l'étape de fusion.
+\end{redbullet}
+
+\vfill
+
+Conséquence: \alert{latence importante des requêtes impliquant un tri.}
+
+\vfill
+\begin{blocgauche}
+\begin{redbullet}
+  \item Il faut lire \alert{au moins une fois} toute la table.
+  \item Si mémoire insuffisante, il faut lire deux fois, écrire une fois.
+  \item Parfois pire...
+\end{redbullet}
+\end{blocgauche}
+\vfill
+
+\only<2|handout:2>{
+\vfill
+\centerline{\alert{Merci!}}
+}
+
+
+\end{frame}
+
+
+\end{document}
+
+
+Grosse différence (pour de grosses tables) entre:
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select * from Film
+\end{minted}
+et
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+select * from Film order by titre
+\end{minted}

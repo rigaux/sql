@@ -1,0 +1,96 @@
+
+%%%%%%%%
+\begin{frame}{Le problème étudié}
+
+
+\figSlideWithSize{exec-optim-1}{12cm}
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+Une requête SQL est \alert{déclarative}. Elle ne dit pas \alert{comment} calculer le résultat.
+
+\medskip
+
+Nous avons besoin d'une \alert{forme opératoire}\,: un programme.
+&
+~
+\end{tabular}
+
+    
+\end{frame}
+
+
+%%%%%%%%
+\begin{frame}{La notion de plan d'exécution}
+
+\figSlideWithSize{exec-optim-2}{12cm}
+\vfill
+\begin{tabular}{p{9cm}p{5cm}}
+Dans un SGBD le programme qui exécute une requête est appelé \alert{plan d'exécution}.
+
+\medskip
+Il a une forme particulière\,: c'est un \alert{arbre}, constitué \alert{d'opérateurs}.
+&
+~
+\end{tabular}
+\end{frame}
+
+
+%%%%%%%%
+\begin{frame}{De la requête SQL au plan d'exécution}
+
+\figSlideWithSize{exec-optim-3}{12cm}
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+Deux étapes: 
+\begin{redlist}
+ \item (A) plan d'exécution \alert{logique} (l'algèbre) ;
+  \item (B) plan d'exécution \alert{physique} (opérateurs).
+\end{redlist}
+\medskip
+Le SGBD s'appuie  sur un \alert{catalogue} d'opérateurs.
+&
+~
+\end{tabular}
+\end{frame}
+
+%%%%%%%%
+\begin{frame}{En quoi consiste l'optimisation\,?}
+
+
+\vfill
+\figSlideWithSize{exec-optim-4}{12cm}
+\vfill
+
+\alert{À chaque étape, plusieurs choix}. Le système les évalue et choisit le \guill{meilleur}.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+
+
+\begin{redbullet}
+  \item SQL est conçu comme un langage qui ne détermine
+     pas la manière dont une requête est exécutée (\alert{même}
+     dans sa forme algébrique)
+
+   \item Les opérations à appliquer par le système sont réduites
+        à celles de l'algèbre relationnelle
+        
+    \item Chaque opérateur peut être évalué avec des algorithmes différents
+\end{redbullet}
+
+\vfill
+
+Au niveau du réglage de l'organisation physique, on peut améliorer
+(``optimiser'') les performances: c'est le boulot de l'administrateur
+\vfill
+
+\alert{Conclusion\,: il faut écrire les requêtes pour qu'elles soient lisibles
+et claires}. L'efficacité est un problème indépendant.
+
+\end{frame}

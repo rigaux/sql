@@ -1,0 +1,237 @@
+
+
+\subsection{Optimisation d'une requête}
+
+\begin{frame}{Restructuration}
+
+Il y a plusieurs expressions
+\alert{équivalentes} pour une même requête.
+
+\vfill
+
+Rôle de l'optimiseur: 
+\begin{enumerate}
+  \item Trouver les expressions équivalentes à une requête.
+  \item Les évaluer et choisir la meilleure.
+\end{enumerate}
+
+\vfill
+
+On convertit une expression en une expression \alert{équivalente}
+en employant des \alert{règles de réécriture}.
+
+\end{frame}
+
+
+\begin{frame}{Extrait des règles de réécriture}
+
+\begin{enumerate}
+\item \alert{Commutativité des jointures}\,:        $ R \Join S  \equiv S \Join R$
+
+\item \alert{Associativité des jointures}\,:
+        $(R \Join S) \Join T \equiv R \Join (S \Join T)$
+
+\item \alert{Regroupement des sélections}\,:\\
+        $\sigma_{A='a' \wedge B='b'}(R) \equiv
+        \sigma_{A='a'}(\sigma_{B='b'}(R))$
+\item \alert{Commutativité de la sélection et de la projection}\\
+        $\pi_{A_1, A_2, \ldots A_p}(\sigma_{A_i='a} (R)) \equiv
+        \sigma_{A_i='a}(\pi_{A_1, A_2, \ldots A_p}(R)), i 
+        \in \{1,\ldots,p\}$
+        \item \alert{Commutativité de la sélection et de la jointure}.\\
+$\sigma_{A='a'} (R(\ldots A\ldots) \Join S) \equiv
+     \sigma_{A='a'}(R) \Join S$
+\item  \alert{Commutativité de la projection et de la jointure}\\
+ $\pi_{A_1 \ldots A_pB_1\ldots B_q}(R \Join_{A_i=B_j} S) \equiv$\\
+        $\pi_{A_1 \ldots A_p}(R) \Join_{A_i=B_j}\pi_{B_1\ldots B_q}(S))
+  \;i \in \{1,\ldots ,p\}, j \in \{1,\ldots,q\}$
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Exemple d'un algorithme}
+
+On ne peut pas \alert{énumérer} tous les plans possibles (trop long).
+
+\vfill
+
+On applique des heuristiques correspondant au meilleur choix dans la plupart des cas.
+
+\vfill
+
+
+\begin{enumerate}
+\item Séparer les sélections avec plusieurs prédicats
+en plusieurs sélections \`a un prédicat (règle 3).
+\item Descendre les sélections le plus bas possible dans l'arbre 
+(règles 4, 5, 6).
+\item Regrouper les sélections sur une même relation 
+(règle 3).
+\item Descendre les projections le plus bas possible (règles
+7 et 8).
+\item Regrouper les projections sur une même relation.
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Un exemple pour comprendre}
+
+Reprenons: le film
+paru en 1958 avec un rôle "John Ferguson".
+
+\vfill
+
+ $$\pi_{titre}(\sigma_{annee=1958 \land nom\_role='John\ Ferguson'}(Film \Join_{id=id\_film} (Role) )$$
+
+\vfill
+
+Première étape de réécriture:
+\[
+    \pi_{titre}(\sigma_{annee=1958} ( \sigma_{nom\_role='John\ Ferguson'}(Film \Join_{id=id\_film} (Role) ))
+\]
+\vfill
+
+On descend les sélections.
+
+\[
+    \pi_{titre}( \sigma_{annee=1958} (Film) \Join_{id=id\_film} \sigma_{nom\_role='John\ Ferguson'}(Role) )
+\]
+
+\vfill
+
+
+Presque bon: reste à choisir les chemins d'accès et les algorithmes de jointure.
+
+\end{frame}
+
+\subsection{Plans d'exécution}
+
+
+\begin{frame}{Le catalogue des opérateurs}
+
+Le système crée un plan à partir du PEL optimisé et de ses opérateurs.
+
+\vfill
+
+\alert{Les opérateurs d'accès}:
+\begin{itemize}
+  \item le parcours séquentiel d'une table, \texttt{FullScan},
+  \item le parcours d'index, \texttt{IndexScan},
+  \item l'accès direct à un enregistrement par son adresse, \texttt{DirectAccess}
+\end{itemize}
+
+\alert{Les opérateurs de manipulation}
+
+\begin{itemize}
+  \item la sélection, \texttt{Filter};
+  \item  la projection, \texttt{Project};
+  \item  le tri, \texttt{Sort};
+  \item  la fusion de deux listes, \texttt{Merge};
+  \item  jointure par boucles imbriquées indexées, \texttt{IndexedNestedLoop}, ou  \texttt{INL}.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Continuons à optimiser notre requête}
+
+Beaucoup de critères possibles. On suppose (raisonnable) que le système 
+cherche toujours à appliquer  \texttt{IndexedNestedLoop} pour les jointures.
+
+\vfill
+
+Ici, la jointure entre \texttt{Film} et \texttt{Role}, ce dernier  indexé sur 
+\texttt{(id\_acteur, id\_film)}. 
+
+\vfill
+
+Quelle forme permet d'appliquer \texttt{IndexedNestedLoop}?
+
+\[
+  Film \Join_{id=id\_film} Role
+\]
+  
+ou 
+
+\[
+   Role \Join_{id\_film=id} Film
+\]
+
+\vfill
+
+Après analyse des index, la bonne forme est
+\[
+   \pi_{titre}(\sigma_{nom\_role='John\ Ferguson'}(Role)  \Join_{id\_film=id}  \sigma_{annee=1958} (Film) )
+\]
+
+\end{frame}
+
+\begin{frame}{Le plan d'exécution}
+
+\figSlideWithSize{planEx-full1}{5.5cm}
+
+\end{frame}
+
+\begin{frame}{Et si j'indexe le nom du rôle?}
+
+\figSlideWithSize{planEx-full2}{5.5cm}
+
+\end{frame}
+
+\begin{frame}{Et si j'indexe la clé étrangère?}
+
+\figSlideWithSize{planEx-full3}{5.5cm}
+
+\end{frame}
+
+
+\begin{frame}{Et si je n'ai pas d'index?}
+
+\figSlideWithSize{planEx-full4}{5.5cm}
+
+\end{frame}
+
+\subsection{Arbres en profondeur à gauche}
+
+\begin{frame}[fragile]{Généralisons l'approche}
+
+Pour les jointures "\alert{naturelles}", il est \alert{toujours} possible
+de généraliser l'approche basée sur \texttt{IndexedNestedLoop} .
+
+\vfill
+Exemple:
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select *
+    from Film, Role, Artiste, Pays
+    where Pays.nom='Islande'
+    and   Film.id=Role.id_film
+    and   Role.id_acteur=Artiste.id
+    and   Artiste.pays = Pays.code    
+\end{minted}
+
+\vfill
+
+C'est une "chaîne" de jointures naturelles.
+
+\[
+   Film \Join Role \Join Artiste \Join Pays
+\]
+\end{frame}
+
+
+\begin{frame}[fragile]{Arbres en profondeur à gauche}
+
+On lit \alert{une} table \alert{séquentiellement}, et les autres par
+\alert{parcours d'index}.
+
+\vfill
+
+
+\figSlideWithSize{planEx-leftTree}{10cm}
+\end{frame}
+

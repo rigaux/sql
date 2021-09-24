@@ -1,0 +1,204 @@
+\documentclass[aspectratio=169, handout]{beamer} %aspectratio: définit le format 16/9 ; handout = supprime la barre de navigation
+
+
+\usepackage{mooc-macros}
+
+\title {Semaine 5\,: Reprise sur panne}
+\subtitle{}
+\author {Philippe}
+\date{}
+
+\begin{document}
+
+\begin{frame}{Refaire et défaire}
+
+En cas de  panne \alert{légère}, 
+\alert{l'écriture opportuniste} a pour conséquences:
+
+\begin{redbullet}
+  \item Des modifications \alert{validées} qui ne sont
+   pas encore dans la base.
+     
+  \item  Inversement, des modifications \alert{non validées} qui sont
+    dans la base.
+\end{redbullet}
+
+\vfill
+
+À la reprise, il faut donc
+
+\begin{redbullet}
+  \item \alert{Refaire} (\textsc{Redo}) les transactions validées\,;
+     
+  \item   \alert{Défaire} (\textsc{Undo}) les
+        transactions en cours.
+
+\end{redbullet}
+
+\vfill
+
+Ces deux opérations sont basées sur le journal.
+
+
+    
+    %insertion de la zone rouge auteur et du logo   
+        \begin{textblock*}{154px}(0.8cm,8.3cm)
+            \includegraphics[width=154px,height=19.5px]{cnam-auteur}
+        \end{textblock*} 
+        
+    %insertion du nom de l'auteur
+        \begin{textblock*}{80px}(1.1cm,8.5cm)
+            {\color{MoocLab-white}   \fontsize{9}{11}\selectfont Philippe Rigaux}
+        \end{textblock*}
+    
+\end{frame}
+
+
+\begin{frame}{Les informations du \textit{log}}
+
+On peut reconstituer, à partir du log
+
+\vfill
+
+\begin{redbullet}
+  \item la liste $L_V$ des transactions validées\,: on trouve un
+      \texttt{commit} dans le \textit{log}
+  \item la liste $L_A$ des transactions actives ou annulées\,:
+      pas de \texttt{commit} dans le \textit{log}
+   \item l'image après (\texttt{new\_val}) et l'image avant (\texttt{old\_val})
+      pour chaque transaction.
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+Ces informations sont nécessaires et suffisantes pour la reprise sur panne
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Défaire}
+
+Les transactions non validées, $L_A$,  celles qui n'ont pas
+de \texttt{commit} dans le journal
+
+\vfill
+
+L'algorithme de \textsc{Undo} prend chaque $T$ de $L_A$, 
+\alert{dans l'ordre inverse d'exécution}.
+
+\vfill
+
+Puis, pour chaque \texttt{write(T, x, old\_val, new\_val)}, on écrit
+\texttt{old\_val} dans \texttt{x}.
+
+\end{frame}
+
+\begin{frame}{Refaire}
+
+Les transactions validées, $L_V$\,: 
+pour lesquelles on trouve un \texttt{commit(T)} dans le \textit{log}
+
+\vfill
+
+L'algorithme de \textsc{Redo} prend chaque $T$ de $L_V$, 
+\alert{dans l'ordre d'exécution}.
+
+\vfill
+
+Puis, pour chaque \texttt{write(T, x, old\_val, new\_val)}, on écrit
+\texttt{new\_val} dans \texttt{x}.
+
+\vfill
+
+\begin{blocgauche}
+Et si la reprise subit une panne\,?
+
+\smallskip
+
+ Il faut recommencer:
+le \textsc{Redo} est \alert{idempotent}.
+\end{blocgauche}
+\end{frame}
+
+
+
+
+
+\begin{frame}{L'algorithme de reprise \textsc{Undo/Redo}}
+
+C'est le plus général.
+
+\begin{redbullet}
+  \item on constitue la liste des transactions actives
+       $L_A$ et la liste des transactions validées $L_V$
+          au moment de la panne;
+
+  \item on \alert{défait} les écritures de $L_A$ 
+  
+   $\Rightarrow$ attention
+            les annulations se font dans l'ordre inverse de 
+                l'exécution initiale;
+                
+   \item on \alert{refait} les écritures de $L_V$ avec le journal.
+\end{redbullet}
+
+
+\end{frame}
+
+
+\begin{frame}{À propos des \textit{checkpoints}}
+
+
+En cas de panne, il faudrait en principe refaire
+toutes les transactions du journal, \alert{depuis l'origine
+de la création de la base}.
+
+\vfill
+
+Un \alert{checkpoint} écrit sur disque tous les blocs
+modifiés, ce qui garantit que les données validées par
+\texttt{commit}
+sont dans la base. 
+
+\vfill
+
+\figSlideWithSize{checkpoint}{9cm}
+
+\end{frame}
+
+\begin{frame}{Résumé: reprise sur panne \textsc{Undo/Redo}}
+
+Retenir:
+
+\vfill
+
+\begin{redbullet}
+
+  \item Le \textit{log} contient la liste des transactions
+      validées; la liste des transactions annulées.
+      
+  \item Une reprise ne prend en compte que celles depuis le dernier \textit{checkpoint}.
+  
+  \item La reprise consiste à parcourir le \textit{log} et à \alert{défaire} les
+     transactions annulées, puis \alert{refaire} les transactions validées.
+ \end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Schéma général: variantes dans les systèmes, voir
+exercices.
+\end{blocgauche}
+\vfill
+\only<2|handout:2>{
+\centerline{\alert{Merci!}}
+}
+
+\end{frame}
+
+
+
+\end{document}
+
+
+Exo: proposer un REDO plus efficace: on lit en sens inverse de l'exécution, on
+n'effectue que la dernière MAJ pour x.

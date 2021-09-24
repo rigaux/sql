@@ -1,0 +1,23 @@
+\documentclass[french]{beamer}
+ 
+\usetheme[secheader]{Boadilla}
+ 
+\usepackage{minted}
+
+\begin{document}
+
+\begin{frame}[fragile]{Test minted}
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select a1, a2, .., an
+    from T1, T2, ..., Tm
+    where T1.x = T2.y and ... 
+    order by ...
+\end{minted}
+\end{frame}
+
+\end{document}
+

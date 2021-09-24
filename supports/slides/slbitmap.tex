@@ -1,0 +1,212 @@
+
+
+%------------------------------------------------------------
+\section{Index bitmap}
+%------------------------------------------------------------
+\begin{frame}{Le problème}
+
+Comment indexer une table sur un attribut
+qui ne prend qu'un petit nombre de valeurs\,?
+\begin{itemize}
+  \item Avec un arbre B\,: pas très bon car chaque valeur
+      est peu sélective
+ \item Avec un hachage\,: pas très bon non plus
+          car il y a beaucoup de collisions.
+\end{itemize}
+
+Or situation fréquente, notamment dans les entrepôts de données
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Exemple\,: codification des films}
+
+\begin{center}
+\begin{tabular}{l|l|c|c}
+rang & titre & genre  & ...  \\
+\hline
+1 & Vertigo  & Suspense & ... \\
+2 & Brazil & Science-Fiction & ... \\
+3 & Twin Peaks & Fantastique & ... \\
+4 & Underground & Drame & ... \\
+5 & Easy Rider &  Drame & ...\\
+6 & Psychose & Drame & ... \\
+7 & Greystoke &  Aventures & ... \\
+8 & Shining & Fantastique & ... \\
+... & ... &  ... & ...\\
+\hline
+\end{tabular}
+\end{center}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Principes de l'index bitmap}
+
+Soit un attribut $A$, prenant $n$ valeurs possibles $[v_1, \ldots v_n]$
+\begin{itemize}
+  \item On crée $n$ tableaux de bit, un pour chaque valeur $v_i$ 
+
+   \item Ce tableau contient un bit pour  chaque enregistrement $e$
+
+   \item   Le bit d'un enregistrement $e$ est à 1 si $e.A=v_i$,
+                à 0 sinon
+\end{itemize}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Exemple}
+
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+\hline
+ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8\\
+\hline
+Drame & 0 & 0 & 0 & 1 & 1 & 1 & 0 & 0 \\
+Science-Fiction  & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+Comédie  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+\hline
+\end{tabular}
+
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+\hline
+ & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16\\
+\hline
+Drame &  0 & 0 & 0 & 0 & 0 & 0 & 1 & 0\\
+Science-Fiction  & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+Comédie  &  1 & 0 & 0 & 1 & 0 & 0 & 0 & 1\\
+\hline
+\end{tabular}
+\end{center}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Recherche}
+
+Soit une requête comme\,:\\
+\texttt{SELECT * FROM Film WHERE genre='Drame'}
+
+\begin{itemize}
+  \item On prend le tableau pour la valeur \texttt{Drame}
+
+   \item On garde toutes les cellules à 1
+
+   \item On accède aux enregistrements par l'adresse
+\end{itemize}
+
+=$>$ très efficace si $n$, le nombre de valeurs, est petit.
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Autre exemple}
+
+\texttt{SELECT COUNT(*) FROM   Film
+WHERE  genre IN ('Drame', 'Comédie')}
+
+\begin{itemize}
+  \item On compte le nombre de 1 dans le tableau \texttt{Drame}
+  \item On compte le nombre de 1 dans le tableau \texttt{Comédie}
+   \item On fait la somme et c'est fini
+\end{itemize}
+
+=$>$ typique des requêtes \textit{DataWarehouse}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Indexation de données géométriques}
+
+Certaines applications stockent des données géométriques
+(ex, cadastre, réseaux routiers, etc.). Requêtes
+courantes\,:
+\begin{enumerate}
+  \item pointé,
+   \item fenêtrage,
+  \item jointure spatiale. 
+\end{enumerate}
+Comment optimiser ces opérations avec des index\,?
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Obstacles}
+
+Principaux obstacles à l'utilisation d'un index standard\,:
+\begin{enumerate}
+  \item On ne peut pas utiliser un arbre-B
+
+      car 
+      pas d'ordre sur les points ou les polygones.
+
+  \item Opérations coûteuses
+
+      Algorithmes géométriques, souvent de complexité
+            polynomiale, difficiles à implanter.
+\end{enumerate}
+
+$\Rightarrow$ des structures spécialisées pour les
+données géométriques
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Principes}
+
+Pour limiter le coût des opérations, on 
+utilise une approximation rectangulaire 
+des données géométriques\,: le rectangle englobant.
+
+\begin{enumerate}
+  \item l'index est construit sur l'ensemble des rectangles\,;
+  \item On effectue un {\em filtrage} basé sur les rectangles
+         pour les pointés, fenêtrages et jointures.
+  \item Quand on accède aux objets eux-mêmes, on effectue
+          une seconde opération sur la vraie géométrie
+          (étape de {\em raffinement})
+\end{enumerate}
+
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{L'arbre R, définition}
+
+Assez proche de l'arbre-B dans ses principes\,:
+
+\begin{enumerate}
+  \item c'est un arbre équilibré\,;
+  \item chaque entrée est une paire $[adresse, rectangle]$\,;
+  \item tous les n{\oe}uds sont occupés au moins à 50\,\%
+  \item le rectangle d'une entrée  $[adresse, rectangle]$
+          englobe {\em tous} les rectangles du n{\oe}ud
+           pointé par $adresse$\,;
+\end{enumerate}
+
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{L'arbre R, exemple}
+
+
+\figSlideWithSize{rtree}{11cm}
+
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{L'arbre R, pointé}
+
+
+\figSlideWithSize{pqRtree}{11cm}
+
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{L'arbre R, insertion (1)}
+
+
+\figSlideWithSize{insRtree1}{11cm}
+
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{L'arbre R, insertion (2)}
+
+
+\figSlideWithSize{insRtree2}{11cm}
+
+
+\end{frame}

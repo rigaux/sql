@@ -1,0 +1,243 @@
+
+\frontslide{Rappels}
+
+
+
+\begin{frame}{Vue d'ensemble d'un système relationnel}
+
+
+\figSlideWithSize{physique-logique-sql.pdf}{12cm}
+
+\vfill
+
+
+\begin{blocgauche}
+\alert{Retenir}\,: indépendance entre le niveau logique et le niveau physique. Condition
+nécessaire de l'administration des SGBD.
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Fonctionnalités d'un SGBD}
+
+\alert{Stockage}\,: les données sont stockées de manière ordonnée sur des supports persistants
+
+\vfill
+
+\alert{Indexation}\,: des structures de données permettent des accès très rapides à la base
+
+\vfill
+
+\alert{Interrogation et mise à jour}\,: les requêtes de haut niveau d'abstraction (SQL) sont transcrites en algorithmes 
+efficaces
+
+\vfill
+
+\alert{Partage / Concurrence d'accès}\,: de très nombreuses applications peuvent accéder simultanément à une même base
+
+
+\vfill
+\begin{blocgauche}
+\alert{Sécurité}\,: contrôle des accès et gestion des pannes logicielles ou matérielles
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}[fragile]{Rappels sur le modèle relationnel (par l'exemple)}
+
+Les données sont structurées en \alert{tables} (relations) et \alert{lignes} (nuplets). 
+La ligne est l'unité d'information.
+
+\vfill
+
+\begin{small}
+\begin{tabular}{l|l|l|c}
+\textbf{idArtiste} &  nom & prénom &  annéeNaiss \\
+\hline
+100 & Eastwood & Clint  & 1930 \\
+101 & Hackman & Gene  & 1930 \\
+102 & Scott & Tony  & 1930 \\
+103 & Smith  & Will  & 1968 \\
+\hline
+\end{tabular}
+\end{small}
+
+\vfill
+Les données sont structurées et contraintes par un \alert{schéma}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Artiste  (idArtiste INTEGER NOT NULL,
+                   nom VARCHAR (30) NOT NULL,
+                   prénom VARCHAR (30) NOT NULL,
+                   annéeNaissance INTEGER,
+                   PRIMARY KEY (idArtiste));
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Clé primaire, clé étrangère}
+
+Les tables sont liées par des valeurs partagées entre clé primaire
+et clé étrangère.
+
+\vfill
+
+\begin{small}
+\begin{tabular}{l|l|c|l|c|c}
+\textbf{idFilm} & titre & année  & genre & \textit{idMES} & \textit{codePays}\\
+\hline
+20 & Impitoyable & 1992 & Western & 100 & USA \\
+21 & Ennemi d'état & 1998 & Action & 102 & USA\\
+\hline
+\end{tabular}
+\end{small}
+\vfill
+
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Film  (idFilm integer NOT NULL,
+                    titre    varchar (80) NOT NULL,
+                    année    integer NOT NULL,
+                    genre varchar (20) NOT NULL,
+                    idRéalisateur    integer,
+                    codePays    varchar (4),
+                    primary key (idFilm),
+                    foreign key (idRéalisateur) 
+                      references Artiste(idArtiste),
+                    foreign key (codePays) 
+                      references Pays(code));
+
+\end{minted}
+
+\end{frame}
+
+\begin{frame}{Les langages}
+
+Le modèle relationnel s'appuie sur deux langages très différents mais \alert{équivalents} 
+en pouvoir expressif.
+
+\vfill
+
+\begin{redbullet}
+
+   \item SQL a pour fondement la logique des prédicats. 
+   
+       \medskip
+       
+       C'est un langage \alert{déclaratif} qui indique ce que l'on veut obtenir
+          sans spécifier \alert{comment} on calcule le résultat.
+          
+          
+        \item L'\alert{algèbre relationnel} est un langage fonctionnel composé
+            d'opérateurs. 
+            
+            
+            L'algèbre permet de construire des \alert{plans d'exécutions} indiquant
+            comment on évalue une requête.
+\end{redbullet}
+
+
+\vfill
+\begin{blocgauche}
+
+\begin{defblock}{Evaluation et optimisation}
+Le SGBD transforme une requête au niveau logique (SQL) en un programme d'évaluation
+algébrique au niveau physique.
+\end{defblock}
+
+
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Le langage SQL: supposé connu\,!}
+
+Une sélection
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select titre
+from Film
+where année = 2016
+\end{minted}
+
+\vfill
+
+Une jointure
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select titre, prénom, nom
+from Film as f, Artiste as a
+where f.idRéalisateur = a.idArtiste
+and  année = 2016
+\end{minted}
+
+\vfill
+
+La méthode de calcul n'est jamais spécifiée.
+
+\end{frame}
+
+
+\frame{\frametitle{Algèbre relationnelle\,: : supposé connue également}
+
+Opérateurs qui prennent une ou deux tables en entrée et produisent une table en sortie.
+
+\vfill
+
+\begin{redbullet}
+	\item Sélection($\sigma$) : Restriction sur valeur des tuples
+	\item Projection($\pi$) : Suppression de colonnes (allège le résultat)
+	\item Jointure($\Join$) : Fusionne deux ensembles sur valeur
+	\item Différence($-$) : Sous ensemble non présent dans le second
+	\item Union($\cup$) : Union des deux ensembles
+\end{redbullet}
+
+\vfill
+
+Les opérateurs sont \alert{composables} pour construire des \alert{expressions}
+\begin{blocgauche}
+$$\pi_{titre} (\sigma_{ann\acute{e}e = 2016} (Film))$$
+$$\pi_{titre, pr\acute{e}nom, nom} (\sigma_{ann\acute{e}e = 2016} (Film) \Join_{idR\acute{e}alisateur=idArtiste} Artiste)$$
+\end{blocgauche}
+}
+
+
+
+\begin{frame}{À retenir}
+
+Suivre et comprendre un cours sur les aspects systèmes des SGBDs relationnels suppose
+des connaissances préalables
+
+
+\vfill
+
+\begin{redbullet}
+  \item Sur l'architecture des systèmes relationnels, et notamment \alert{l'indépendance entre niveau physique et niveau logique}
+  
+   \item Sur les principes de conception des schémas relationnels et leurs contraintes
+   
+   \item Le langage SQL
+   \item Et l'algèbre relationnelle
+\end{redbullet}
+
+\vfill
+
+À réviser d'urgence si vous avez des doutes ou des lacunes.
+\end{frame}

@@ -1,0 +1,200 @@
+
+
+\subsection{Les niveaux d'isolation SQL}
+
+\begin{frame}{Ce qu'on doit savoir }
+
+\alert{Il existe plusieurs niveaux d'isolation, du plus permissif au plus strict}.
+
+\vfill
+
+Plus le niveau est permissif, plus l'exécution est fluide, plus les anomalies sont possibles.
+
+\vfill
+
+Plus le niveau est strict, plus l'exécution risque de rencontrer des blocages, moins
+les anomalies sont possibles.
+
+\vfill
+
+\alert{Le niveau d'isolation par défaut n'est jamais le plus strict}. Car
+
+\begin{redbullet}
+  \item inutile dans la grande majorité des cas;
+  \item provoque rejets et blocages difficiles à expliquer à l'utilisateur.  
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Quand l'isolation totale est nécessaire, il faut l'indiquer explicitement.}  
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Niveaux d'isolation SQL}
+
+Définis en fonction des anomalies: lectures sales,  lectures non répétables, tuples fantômes.
+
+\begin{redbullet}
+  \item \texttt{read uncommitted}: tout est permis, toutes les anomalies sont possibles.
+  
+  \item \texttt{read committed}: lectures sales non permises.
+  
+  \item \texttt{repeatable read}: seuls les tuples fantômes sont permis.
+  
+  \item \texttt{serializable}: isolation totale, aucune anomalie, interblocages possibles.
+\end{redbullet}
+
+Niveau par défaut: \texttt{read committed} (Oracle) ou \texttt{repeatable read} (MySQL, PostgreSQL).
+ 
+ \vfill
+ 
+ 
+\begin{blocgauche}
+\alert{Il faut se mettre en mode \texttt{serializable} pour les processus transactionnels.}
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Le mode \texttt{read committed}}
+
+\alert{Retenir}: une requête accède à l'état de la base \alert{au moment où la
+requête est exécutée}.
+
+\vfill
+
+Pas de lecture sale, car donnée en cours de modification ne fait pas partie de l'état de la base.
+
+\vfill
+
+Assez fluide, mais autorise beaucoup d'anomalies (mises à jour perdues, contrôle).
+ 
+\vfill
+
+
+\begin{blocgauche}
+\alert{Démonstration}: on peut lire deux fois le même tuple dans une transaction et obtenir
+des résultats différents.
+\end{blocgauche}
+
+
+\end{frame}
+
+
+\begin{frame}{Le mode \texttt{repeatable read}}
+
+\alert{Retenir}: une requête accède à l'état de la base \alert{au moment où la
+transaction a débuté}.
+
+\vfill
+
+Pas de lecture sale, pas de lecture non répétable: les requêtes accèdent toujours
+au même état de la base. 
+
+\vfill
+
+Autorise les mises à jour perdues.
+ 
+\vfill
+
+
+
+\begin{blocgauche}
+\alert{Démonstration}: on peut lire $n$ fois le même tuple dans une transaction et obtenir
+toujours le même résultat.
+\end{blocgauche}
+
+
+\end{frame}
+
+
+\begin{frame}{Est-ce suffisant?}
+
+\alert{Non}, car des exécutions non sérialisables restent quand même possibles.
+
+
+\vfill
+
+
+\alert{Démonstration}: On prend notre base et on déroule l'exécution des mises à jour perdues.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Le mode \texttt{serializable}}
+
+
+\alert{Retenir}: garantit l'isolation totale, et donc la cohérence de la base.
+
+\vfill
+
+\alert{mais ...}: risque non négligeable de \alert{rejet} de l'une des transactions.
+
+
+\vfill
+
+On se place dans ce mode avec la commande suivante, au début du code de la transaction.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.8,
+               fontsize=\small,
+               framesep=2mm]{sql}
+  set transaction isolation level serializable;
+\end{minted}
+
+\vfill
+
+Démonstration...
+
+\end{frame}
+
+\begin{frame}{La clause \texttt{for update}}
+
+\alert{Fait}: le problème vient du fait qu'on \alert{lit} une donnée pour la \alert{modifier} ensuite.
+
+\begin{redbullet}
+  \item Le système ne peut pas le deviner!
+  \item Il est obligé de tracer toutes les lectures (coût élevé)
+  \item Il pose des verrous faibles $\rightarrow$ rejet quand les choses tournent mal
+\end{redbullet}
+
+\vfill
+
+
+La clause \texttt{for update}
+\begin{redbullet}
+  \item Le programmeur déclare qu'une lecture va être suivie d'une mise à jour
+   \item Le système pose un verrou fort pour celles-là, pas de verrou pour les autres
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Permet de monter le niveau de blocage uniquement quand c'est nécessaire} ...
+mais repose sur le facteur humain, pas assez fiable.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{À retenir}
+
+Savoir repérer les transactions dans une application. Elle doivent respecter la 
+\alert{cohérence applicative} (le système ne peut pas la deviner pour vous).
+
+\vfill 
+
+Dans ce cas, appliquer le mode sérialisable.
+
+\vfill
+
+La clause \texttt{for update}  est en théorie meilleure, mais repose 
+sur le facteur humain: probablement à éviter.
+
+\vfill
+
+Savoir qu'en mode sérialisable on risque des rejets.
+
+\vfill
+
+Comprendre les risques dans les autres modes.
+
+\end{frame}

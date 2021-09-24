@@ -1,0 +1,201 @@
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Le problème}
+
+Représentation relationnelle  des entités\,: nuplets (entités),
+et mécanisme clés primaire / clé étrangère (liens entre entités).
+
+ 
+\vfill
+
+Les applications objet (Java, C\#, Python, PHP, ...) représentent les entités
+comme des \alert{objets} directement liés les uns aux autres.
+
+
+\vfill
+
+\alert{Problème}\,: comment \alert{convertir}  d'une représentation à l'autre\,?
+
+\begin{remblock}{Bases objets}
+Une idée serait d'utiliser des bases \alert{objets} et
+pas relationnelles. Elle n'a pas vraiment abouti.
+\end{remblock}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Premier exemple de conversion}
+
+Pour lire les contacts comme des objets d'une classe \texttt{Contact}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{python}
+class Contact:
+     def __init__(self,id,prenom,nom,email):
+                self.id=id
+                self.prenom=prenom
+                self.nom=nom
+                self.email=email
+
+curseur.execute("select * from Contact")
+for cdict in curseur.fetchall():
+    # Conversion du dictionnaire en objet
+    cobj = Contact(cdict["idContact"], cdict["prénom"], 
+                cdict["nom"], cdict["email"])
+    print(cobj.prenom, cobj.nom)
+\end{minted}
+
+
+\vfill
+
+Implique des instructions lourdes, répétitives,
+sujettes à erreur.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Plus compliqué\,: la classe  \texttt{Message}}
+
+Composition d'objets,  associations, méthodes.
+
+\vfill
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{python}
+class Message:
+    # Emetteur: un objet 'Contact'
+    emetteur = Contact(0, "", "", "")
+    # Prédecesseur: peut ne pas exister
+    predecesseur = None
+    # Liste des destinataires = des objets 'Contacts'
+    destinataires = []
+
+    # La méthode d'envoi de message
+    def envoi(self):
+        for dest in self.destinaires:
+           ...
+\end{minted}
+
+\vfill
+
+Conversion depuis la base\,? Très pénible....
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Comment une application objet ``voit'' les données}
+
+Comme un graphe\,!
+
+\vfill
+
+\vfill
+
+\figSlideWithSize{instance-messagerie.pdf}{9cm}
+
+\vfill
+Trop différent de la représentation relationnelle\,: il nous faut des outils.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Le \textit{mapping} objet-relationnel (ORM)}
+
+Un système ORM convertit \alert{automatiquement}, 
+\alert{à la demande}, la base relationnelle sous forme d’un graphe d’objet
+
+\vfill
+
+\figSlideWithSize{mapping.pdf}{8cm}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Exemple avec le \textit{framework} Hibernate (Java)}
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{java}
+@Entity(table="Message")
+public class Message {
+  @Id
+  private Integer id;
+  
+  @Column
+  private String contenu;
+  
+  @ManyToOne
+  private Contact emetteur;
+  
+  OneToMany
+  private Set<Contact> destinataires ;
+}
+\end{minted}
+
+
+\vfill
+
+On indique au système ORM tout ce qui est nécessaire pour associer
+objets et nuplets de la base.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Parcours d'un graphe d'objets}
+
+Exemple (un peu simplifié) d'envoi des messages de Serge. 
+\vfill
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{java}
+List<Message> resultat =
+     session.execute("from Message as m "
+                      + " where m.emetteur.prenom = 'Serge'");
+                      
+for (Message m : resultat) {
+        for (Contact c : m.destinataires) {
+           mail (c.email, m.contenu);
+        }
+}
+\end{minted}
+
+\vfill
+
+Le système engendre et exécute les requêtes SQL. 
+
+\vfill
+
+Tendance à 
+produire \alert{beaucoup} de `requêtes élémentaires là où \alert{une seule}
+jointure
+serait plus efficace.
+\end{frame}
+
+%%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Les ORMs sont maintenant très utilisés pour les développements d'envergure
+\vfill
+
+\begin{redbullet}
+  \item Les accès à la base prennent la forme d'une navigation dans un graphe d'objets
+  \item Le système engendre les requêtes SQL pour matérialiser le graphe
+  \item Conversion entièrement automatique
+  \item Gains de productivité, \alert{mais} utilisation sous-optimale de SQL
+\end{redbullet}
+
+\vfill
+Pour aller plus loin\,: la mini-application Django sur \url{http://sql.bdpedia.fr}
+ou le cours complet \url{http://orm.bdpedia.fr}
+
+\end{frame}
+

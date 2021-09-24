@@ -1,0 +1,80 @@
+\documentstyle[12pt,cours,psfig]{article}
+
+
+%\usepackage{myfrench}
+%\usepackage{a4wide}
+%\usepackage[dvips]{epsfig}
+
+
+%\largerfonts
+\begin{document}
+
+
+\begin{slide}
+\subsection{Mod\`ele E/A (centre médical)}
+
+
+  \begin{figure}[htb]  
+    \centerline{\psfig{width=15cm,figure=medical.eps}}  
+  \end{figure}  
+
+\end{slide}
+
+\begin{slide}
+\subsection{Mod\`ele E/A (tournoi de tennis)}
+
+
+  \begin{figure}[htb]  
+    \centerline{\psfig{width=15cm,figure=tennis.eps}}  
+  \end{figure}  
+
+\end{slide}
+
+\begin{slide}
+
+
+  \begin{figure}[htb]  
+    \centerline{\psfig{width=15cm,figure=quotidien.eps}}  
+  \end{figure}  
+
+\end{slide}
+
+
+\begin{slide}
+\subsection{Mod\`ele E/A (médiath\`eque)}
+
+
+  \begin{figure}[htb]  
+    \centerline{\psfig{width=15cm,figure=media.eps}}  
+  \end{figure}  
+
+\end{slide}
+
+
+\begin{slide}
+\subsection{Un sch\'ema relationnel}
+
+
+\begin{itemize}
+  \item {\tt IMMEUBLE} ({\bf Adresse}, 
+                Nb-\'etages, Date-construction, Nom-G\'erant)
+
+  \item {\tt APPART} ({\bf Adresse, 
+                Num\'ero}, Type, Superficie, Etage)
+
+  \item {\tt PERSONNE} ({\bf Nom}, Age, Code-Profession)
+
+  \item {\tt OCCUPANT} ({\bf Adresse, Num\'ero-Appart,
+                  Nom-Occupant},
+                        Date-arriv\'ee, Date-d\'epart)
+
+  \item {\tt PROPRI\'ET\'E} ({\bf Adresse, 
+                        Nom-Propri\'etaire}, Quote-part)
+
+  \item {\tt TYPE-APPART} ({\bf Code}, Libell\'e)
+
+  \item {\tt PROFESSION} ({\bf Code}, Libell\'e)
+\end{itemize}
+
+\end{slide}
+\end{document}

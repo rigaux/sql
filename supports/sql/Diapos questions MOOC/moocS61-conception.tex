@@ -1,0 +1,109 @@
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Une application de messagerie}
+
+
+On collecte les \alert{besoins} des utilisateurs 
+
+\begin{redbullet}
+  \item ``Je veux pouvoir envoyer un message à n'importe quel utilisateur'' 
+   \item ``Je veux pouvoir avoir plusieurs destinataires''
+  \item ``Je veux savoir qui a envoyé, qui a reçu, quel message''
+  \item ``Je veux pouvoir répondre à un message en le citant''
+  \item ``Je veux pouvoir retrouver tous les messages suivant des critères comme le 
+    nom du destinataire, ou un mot du sujet''
+\end{redbullet}
+
+
+\vfill
+Et encore: je veux envoyer des fichiers, masquer l'expéditeur, etc., etc.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Conception: premières entités}
+
+Rôle du concepteur\,: définir les entités et leurs associations.
+
+\vfill
+
+\figSlideWithSize{ea-messagerie-1.pdf}{8cm}
+
+
+\vfill
+\begin{blocgauche}
+Il faut \alert{nommer} les entités, définir leur \alert{identifiant}
+et les \alert{cardinalités} des associations.
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Conception: ajout d'association(s)}
+
+On complète le schéma avec l'avancement de la conception.
+
+\vfill
+
+\figSlideWithSize{ea-messagerie-2.pdf}{8cm}
+
+
+\vfill
+Associations plusieurs-plusieurs\,: on pourrait 
+les qualifier. Exemple\,: mode d'envoi (principal, copie
+copie cachée, ...)
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Conception: finalisation (?) }
+
+Ici, on ajoute la notion de successeur/prédecesseur aux messages.
+
+\vfill
+
+\figSlideWithSize{ea-messagerie.pdf}{9.5cm}
+\vfill
+
+
+\alert{On va s'en tenir là.} Il faut, si possible, anticiper
+les évolutions futures.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Imaginer une instance}
+
+Pour vérifier, on peut toujours dessiner une instance du modèle.
+
+\vfill
+
+\figSlideWithSize{instance-messagerie.pdf}{9cm}
+
+\vfill
+
+
+\alert{Encore mieux}\,: On réalise une maquette de la future application 
+
+
+\end{frame}
+
+
+\begin{frame}{À retenir}
+
+Conception d'une base = une affaire d'expérience. Constats\,:
+
+\vfill
+
+\begin{redbullet}
+\item Faire valider la conception par les utilisateurs régulièrement
+  \item Faire simple\,: associations binaires, identifiants séquentiels
+  \item Comprendre ce qu'on va pouvoir / ne pas pouvoir représenter
+  \item Faire des maquettes, des graphes, des dessins pour vérifier qu'on se comprend bien
+\end{redbullet}
+
+\vfill
+
+Délicat  car les besoins ne sont pas toujours très clairs.
+\end{frame}
+

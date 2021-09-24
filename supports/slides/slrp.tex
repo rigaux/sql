@@ -1,0 +1,917 @@
+
+
+
+\begin{frame}{La notion de panne}
+
+Panne = tout dysfonctionnement affectant le comportement du système
+
+\vfill
+
+Par souci de simplicité on va distinguer deux types de panne (quelle
+que soit la cause).
+
+\begin{itemize}
+  \item \alert{Panne légère}\,: affecte la RAM du serveur de données, pas les disques
+  \item \alert{Panne lourde}\,: affecte un disque
+\end{itemize}
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+\alert{Dans un premier temps, on se concentre sur les pannes légères.}
+&
+~
+\end{tabular}
+
+\end{frame}
+
+
+\begin{frame}{Garantie en cas de panne}
+
+Souvenons-nous des propriétés des transactions. 
+
+\vfill
+\begin{block}{}
+\alert{Durabilité et atomicité}\,: quand le système rend la main après un \texttt{commit},
+\alert{toutes} les modifications de la transaction deviennent  \alert{permanentes}.
+\end{block}
+\vfill
+\begin{block}{}
+\alert{Recouvrabilité et Atomicité}\,: tant qu'un \texttt{commit} n'a pas eu lieu, 
+\alert{toutes} les modifications de la transaction doivent pouvoir être   \alert{annulées}
+par un \texttt{rollback}.
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Garantir un \texttt{commit}}
+
+Pour garantir le \texttt{commit}, la condition suivante doit être respectée.
+\vfill
+
+\centerline{\alert{Les données modifiées par une transaction validée doivent
+être sur le disque}}
+
+\vfill
+
+
+On désigne  ces données par le terme "image après".
+
+\end{frame}
+
+
+\begin{frame}{Garantir un \texttt{rollback}}
+
+Pour garantir le \texttt{rollback}, la condition suivante doit être respectée.
+\vfill
+
+\centerline{\alert{Les données \emph{avant} modification doivent
+être sur le disque}}
+
+\vfill
+
+On désigne  ces données par le terme "image avant".
+
+\end{frame}
+
+\begin{frame}{L'état de la base}
+
+\alert{\'Etat de la base}: état résultant de l'ensemble des transactions \alert{validées} 
+depuis l'origine.
+
+\bigskip
+
+On résume ce qui précède par:
+
+\bigskip
+
+\centerline{\alert{L'état de la base doit \emph{toujours} être sur le disque.}}
+
+\end{frame}
+
+
+\begin{frame}{La difficulté}
+
+
+On peut résumer la difficulté ainsi\,:
+
+\vfill
+
+\begin{itemize}
+   \item Jusqu'au \texttt{commit}, c'est \alert{l'image avant} qui 
+       fait partie de l'état de la base.
+     \item au \texttt{commit},  \alert{l'image après} remplace  \alert{l'image avant}
+     dans l'état de la base.
+\end{itemize}
+
+\vfill
+
+\begin{block}{}
+\alert{Problème}\,: Comment assurer que ce remplacement s'effectue de manière \alert{atomique} ("tout ou rien")\,?
+
+\medskip
+
+\vfill
+\alert{Ce n'est pas facile...}
+
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}{Le buffer et le disque}
+
+\figSlideWithSize{buffer-disque}{8cm}
+
+\end{frame}
+
+\begin{frame}{Opération de lecture}
+
+Toute opération de lecture contient l'adresse du bloc à lire. 
+
+\vfill
+
+ Si le bloc est dans  le buffer, le système accède à la donnée dans le bloc,  et la retourne.
+
+\vfill
+
+Sinon il faut d'abord lire un bloc du disque, et le placer dans le buffer.
+
+\vfill
+
+Le SGBD garde en mémoire
+les blocs après lecture.
+
+\end{frame}
+
+
+\begin{frame}{Stratégie de remplacement}
+
+
+Que faire quand la mémoire est pleine?
+
+\vfill
+
+L'algorithme le plus courant est dit Least Recently Used (LRU).
+
+\begin{itemize}
+  \item  La "victime" est le bloc dont la dernière date de lecture logique est la plus ancienne. 
+  \item Ce bloc est alors soustrait de la mémoire centrale.
+  \item  Le nouveau bloc vient le remplacer.
+\end{itemize}
+
+\vfill
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Opération de mise à jour}
+
+\vfill
+
+
+\begin{tabular}{p{.6\textwidth}p{.3\textwidth}}
+
+\figSlideWithSize{write-naif}{8cm}
+&
+On trouve le bloc (comme pour une lecture), on modifie la donnée.
+\end{tabular}
+
+
+\medskip
+
+Faut-il écrire le bloc ou non? 
+
+\end{frame}
+
+\begin{frame}{Mise à jour immédiate}
+
+
+\vfill
+
+\begin{tabular}{p{.6\textwidth}p{.3\textwidth}}
+
+\figSlideWithSize{write-immediat}{8cm}
+&
+Dès qu'un bloc est modifié, on écrit sur le disque pour synchroniser.
+\end{tabular}
+
+\medskip
+
+\begin{tabular}{p{9cm}p{5cm}}
+\begin{itemize}
+  \item Peu performant: \alert{écritures aléatoires}
+  \item \alert{On écrase l'image avant} 
+\end{itemize}
+&
+~
+\end{tabular}
+
+
+\end{frame}
+
+
+
+\begin{frame}{Mise à jour différée}
+
+
+\begin{tabular}{p{.6\textwidth}p{.3\textwidth}}
+
+\figSlideWithSize{write-differe}{8cm}
+&
+On \alert{interdit} l'écriture d'un bloc modifié avant le \texttt{commit}
+\end{tabular}
+
+\medskip
+
+\begin{tabular}{p{9cm}p{5cm}}
+\begin{itemize}
+  \item Risque de surcharger le buffer
+  \item Préserve l'image avant
+\end{itemize}
+&
+~
+\end{tabular}
+
+\end{frame}
+
+\begin{frame}{Mise à jour opportuniste}
+
+\vfill
+
+\begin{tabular}{p{.6\textwidth}p{.3\textwidth}}
+
+\figSlideWithSize{write-opportuniste}{7.5cm}
+&
+C'est la méthode la plus souple: on attend la meilleure
+opportunité pour synchroniser le buffer et le disque.
+\end{tabular}
+
+\medskip
+
+\begin{tabular}{p{9cm}p{5cm}}
+Le moins pénalisant; permet des écritures
+successives dans le buffer.
+&
+~
+\end{tabular}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Résumé: lecture/écriture, buffer et disque}
+
+
+Retenir:
+\vfill
+\begin{itemize}
+  \item Une partie de la base est copiée dans le buffer.
+      
+   \item Tout mise à jour s'effectue \alert{d'abord dans le buffer}.
+      
+    \item La synchronisation avec le disque peut s'effectuer
+       de manière \alert{immédiate}, \alert{différée}, ou \alert{opportuniste}.
+
+\end{itemize}
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+La méthode de synchronisation a un impact fort sur la reprise sur panne.
+&
+~
+\end{tabular}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}{Comment reprendre sur panne légère}
+
+Une transaction s'exécute; \alert{l'image avant} est sur le disque; \alert{l'image après}
+est dans le buffer.
+
+\vfill
+
+Nous disposons de plusieurs options d'écriture: immédiate, différée, opportuniste.
+
+\vfill
+
+Si une panne légère survient: le contenu de la RAM est perdu.
+
+\vfill
+
+\alert{Existe-t-il une stratégie possible de reprise sur panne?}
+
+\end{frame}
+
+\begin{frame}{Scénario 1: avec écritures opportunistes}
+
+Supposons que les écritures fonctionnent en mode 
+opportuniste.
+
+\vfill
+
+
+\begin{tabular}{p{.6\textwidth}p{.3\textwidth}}
+
+\figSlideWithSize{write-immediat}{7.5cm}
+&
+Si un bloc contenant des données non validées est écrit, \alert{l'image avant est écrasée}. 
+Pas de reprise possible.
+\end{tabular}
+
+\vfill
+
+
+\begin{tabular}{p{9cm}p{5cm}}
+\alert{Vrai, à plus forte raison, avec écritures immédiates.}
+&
+~
+\end{tabular}
+\end{frame}
+
+
+\begin{frame}{Scénario 2: avec écritures différées}
+
+Tentons une approche plus raisonnée.
+
+\begin{itemize}
+  \item ne \alert{jamais} écrire un nuplet
+modifié \alert{avant} le \texttt{commit}\,; 
+  \item au moment
+du \texttt{commit} de $T$, forcer l'écriture de \alert{tous} les blocs modifiés
+par $T$.
+\end{itemize}
+
+\vfill
+Le \texttt{commit} et le \texttt{rollback}.
+
+\vfill
+
+\begin{block}{}
+
+\begin{itemize}
+\item Le \texttt{commit} transfère l'image après du buffer vers le disque
+
+\item Le \texttt{rollback} supprime les blocs modifiés: on en revient à l'image avant.
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Pourquoi ça ne marche pas?}
+
+Une panne  survient
+      \alert{après}
+         quelques écritures mais \alert{avant} l'enregistrement 
+        du \texttt{commit}.
+
+\vfill
+     
+\figSlideWithSize{write-naif}{7.5cm}
+
+\vfill
+
+\begin{block}{}
+\texttt{rollback} impossible si je ne garde pas
+\alert{sur disque} les données \alert{après} et \alert{avant} modification.
+\end{block}
+\end{frame}
+
+\begin{frame}{Résumé: buffer, disque et reprise sur panne}
+
+Au moment de l'exécution de l'ordre \texttt{commit}
+
+
+\begin{itemize}
+
+  \item \alert{l'image avant doit être sur disque}: permet un \texttt{rollback} jusqu'à la complétion.
+
+  \item \alert{l'image après} doit être sur disque: assure la reprise sur panne  (légère).
+
+\end{itemize}
+
+\vfill
+
+De plus, le mode d'écriture opportuniste doit être privilégié car
+
+\vfill
+
+\begin{itemize}
+
+  \item  mode différé $\Rightarrow$ encombre le buffer.  
+
+  \item  mode immédiat $\Rightarrow$  écritures aléatoires.
+
+\end{itemize}
+
+\vfill
+
+\begin{block}{}
+La solution s'appelle le \alert{journal des transactions}.
+\end{block}
+
+
+\end{frame}
+
+
+
+\begin{frame}{Le journal des transactions (\textit{log})}
+
+Le fichier
+des transactions, ou \textit{log}, un fichier complémentaire à la base de données.
+
+\vfill
+
+\begin{itemize}
+  \item le système y écrit \alert{séquentiellement}
+  \item le \textit{log} dispose de son propre buffer  
+    \item on n'efface \alert{jamais} un enregistrement du \textit{log}
+\end{itemize}
+
+\vfill
+
+La reprise sur panne repose sur la stratégie suivannte:
+
+\vfill
+
+\begin{itemize}
+  \item \alert{la base et son buffer}  sont  en écriture \alert{opportuniste}
+  \item \alert{le \textit{log} et son buffer} sont  en écriture \alert{immédiate}
+\end{itemize}
+
+\vfill
+
+\begin{block}{}
+Le \textit{log} contient l'historique des
+mises à jour.
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Le système d'entrées/sorties avec \textit{log}}
+
+
+\figSlideWithSize{recovery}{10.5cm}
+
+
+\end{frame}
+ 
+ 
+ 
+\begin{frame}{Contenu du \textit{log}}
+
+Toutes les instructions de mise à jour.
+
+\vfill
+
+Chaque ligne contient un enregistrement d'une des formes suivantes.
+
+\begin{itemize}
+  \item \texttt{start(T)}
+  \item \texttt{write(T, x, old\_val, new\_val)}
+  \item \texttt{commit(T)}
+  \item \texttt{rollback(T)}
+  \item \texttt{checkpoint}
+\end{itemize}
+
+\vfill
+
+\begin{block}{}
+Le \texttt{write} peut être
+représenté sous forme \alert{logique}
+(instructions) ou \alert{physique}
+(enregistrements).
+\end{block}
+\end{frame}
+
+ 
+\begin{frame}{Le \textit{log} et la gestion des \texttt{commit}}
+
+La règle suivante est dite \alert{point de commit}:
+
+\vfill
+
+\begin{itemize}
+
+  \item au \texttt{commit}, on force l'écriture des modifications effectuées
+  dans le \textit{log}
+\end{itemize}
+
+\vfill
+Conséquences
+\vfill
+
+\begin{block}{}
+\begin{itemize}
+  \item \alert{L'état de la base} peut être reconstitué à partir du \textit{log}
+\item Une transaction est validée  quand l'instruction \texttt{commit}  est écrite dans le \textit{log}
+\end{itemize}
+\end{block}
+
+\end{frame}
+ 
+\begin{frame}{Illustration: après un \texttt{commit}}
+
+\figSlideWithSize{commit-point}{10.5cm}
+
+\end{frame}
+ 
+
+ 
+\begin{frame}{Le \textit{log} et la gestion des \texttt{rollback}}
+
+Un bloc \alert{modifié} mais pas encore \alert{validé} peut être écrit
+dans la base. 
+
+\vfill
+
+En cas de panne, il faudra reprendre l'image avant.
+
+\vfill
+
+La règle suivante est dite \textit{write-ahead logging}
+
+\begin{itemize}
+  \item quand un bloc modifié est écrit dans la base, il faut \alert{d'abord} 
+      écrire les modifications dans le \textit{log}.
+\end{itemize}
+
+\vfill
+Conséquence
+\vfill
+
+\begin{block}{}
+\begin{itemize}
+  \item Le \textit{log} contient des modifications qui n'ont pas été validées.
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Illustration du \textit{write-ahead}}
+
+\figSlideWithSize{write-ahead}{10.5cm}
+
+\end{frame}
+
+\begin{frame}{Résumé: le \textit{log}}
+
+Retenir:
+
+\vfill
+
+\begin{itemize}
+
+  \item Le \textit{log} est un fichier séquentiel dans lequel
+     on enregistre toutes les mises à jour
+     
+   \item un \texttt{commit} est effectif quand l'instruction est écrite dans le \textit{log}
+
+        $\Rightarrow$ l'état de la base est dans le \textit{log}
+
+   \item un \texttt{rollback} peut s'effectuer en reprenant l'image avant dans le \textit{log}
+   
+  \item performances: on laisse la base et son buffer en mode d'écriture opportuniste   
+
+\end{itemize}
+
+\vfill
+
+\begin{block}{}
+Prochaine étape: l'algorithme de reprise sur panne
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}{Refaire et défaire}
+
+En cas de  panne \alert{légère}, 
+\alert{l'écriture opportuniste} a pour conséquences:
+
+\begin{itemize}
+  \item Des modifications \alert{validées} qui ne sont
+   pas encore dans la base.
+     
+  \item  Inversement, des modifications \alert{non validées} qui sont
+    dans la base.
+\end{itemize}
+
+\vfill
+
+À la reprise, il faut donc
+
+\begin{itemize}
+  \item \alert{Refaire} (\textsc{Redo}) les transactions validées\,;
+     
+  \item   \alert{Défaire} (\textsc{Undo}) les
+        transactions en cours.
+
+\end{itemize}
+
+\vfill
+
+Ces deux opérations sont basées sur le journal.
+
+\end{frame}
+
+
+\begin{frame}{Les informations du \textit{log}}
+
+On peut reconstituer, à partir du log
+
+\vfill
+
+\begin{itemize}
+  \item la liste $L_V$ des transactions validées\,: on trouve un
+      \texttt{commit} dans le \textit{log}
+  \item la liste $L_A$ des transactions actives ou annulées\,:
+      pas de \texttt{commit} dans le \textit{log}
+   \item l'image après (\texttt{new\_val}) et l'image avant (\texttt{old\_val})
+      pour chaque transaction.
+\end{itemize}
+
+\vfill
+\begin{block}{}
+Ces informations sont nécessaires et suffisantes pour la reprise sur panne
+\end{block}
+\end{frame}
+
+\begin{frame}{Défaire}
+
+Les transactions non validées, $L_A$,  celles qui n'ont pas
+de \texttt{commit} dans le journal
+
+\vfill
+
+L'algorithme de \textsc{Undo} prend chaque $T$ de $L_A$, 
+\alert{dans l'ordre inverse d'exécution}.
+
+\vfill
+
+Puis, pour chaque \texttt{write(T, x, old\_val, new\_val)}, on écrit
+\texttt{old\_val} dans \texttt{x}.
+
+\end{frame}
+
+\begin{frame}{Refaire}
+
+Les transactions validées, $L_V$\,: 
+pour lesquelles on trouve un \texttt{commit(T)} dans le \textit{log}
+
+\vfill
+
+L'algorithme de \textsc{Redo} prend chaque $T$ de $L_V$, 
+\alert{dans l'ordre d'exécution}.
+
+\vfill
+
+Puis, pour chaque \texttt{write(T, x, old\_val, new\_val)}, on écrit
+\texttt{new\_val} dans \texttt{x}.
+
+\vfill
+
+\begin{block}{}
+Et si la reprise subit une panne\,?
+
+\smallskip
+
+ Il faut recommencer:
+le \textsc{Redo} est \alert{idempotent}.
+\end{block}
+\end{frame}
+
+
+
+
+
+\begin{frame}{L'algorithme de reprise \textsc{Undo/Redo}}
+
+C'est le plus général.
+
+\begin{itemize}
+  \item on constitue la liste des transactions actives
+       $L_A$ et la liste des transactions validées $L_V$
+          au moment de la panne;
+
+  \item on \alert{défait} les écritures de $L_A$ 
+  
+   $\Rightarrow$ attention
+            les annulations se font dans l'ordre inverse de 
+                l'exécution initiale;
+                
+   \item on \alert{refait} les écritures de $L_V$ avec le journal.
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}{À propos des \textit{checkpoints}}
+
+
+En cas de panne, il faudrait en principe refaire
+toutes les transactions du journal, \alert{depuis l'origine
+de la création de la base}.
+
+\vfill
+
+Un \alert{checkpoint} écrit sur disque tous les blocs
+modifiés, ce qui garantit que les données validées par
+\texttt{commit}
+sont dans la base. 
+
+\vfill
+
+\figSlideWithSize{checkpoint}{9cm}
+
+\end{frame}
+
+\begin{frame}{Résumé: reprise sur panne \textsc{Undo/Redo}}
+
+Retenir:
+
+\vfill
+
+\begin{itemize}
+
+  \item Le \textit{log} contient la liste des transactions
+      validées; la liste des transactions annulées.
+      
+  \item Une reprise ne prend en compte que celles depuis le dernier \textit{checkpoint}.
+  
+  \item La reprise consiste à parcourir le \textit{log} et à \alert{défaire} les
+     transactions annulées, puis \alert{refaire} les transactions validées.
+ \end{itemize}
+
+\vfill
+
+\begin{block}{}
+Schéma général: variantes dans les systèmes, voir
+exercices.
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}{Panne d'un disque}
+
+Panne la plus grave, car on risque de perdre \alert{l'état de la base}.
+
+\vfill
+
+Solution\,: \alert{la réplication}. Réfléchissons.
+
+\vfill
+
+\begin{itemize}
+  \item L'état de la base est dans le fichier journal.
+    \item L'état de la base est \alert{aussi} dans le fichier de la base et le buffer.
+\end{itemize}
+
+\vfill
+
+\begin{block}{}
+\alert{Constat}\,: pour qu'il y ait réplication, il est \alert{impératif} de stocker la base et le \textit{log} 
+sur deux disques \alert{distincts}.
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Cas 1\,: panne du disque de la base}
+
+Solution de base: 
+
+       \begin{itemize}
+       \item On réinstalle un disque pour la base.
+     \item  On ré-exécute toutes les transactions du \textit{log}.
+    \end{itemize}
+
+
+\vfill
+
+\begin{block}{}
+Inconvénients\,:
+       \begin{itemize}
+       \item Phase de latence longue au moment du redémarrage.
+     \item Implique de conserver tous les \textit{log} depuis l'origine.
+    \end{itemize}
+
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Panne du disque de la base\,: avec sauvegarde}
+
+Une \alert{sauvegarde} $S_t$ est une copie de \alert{l'état de la base} à un instant $t$.
+
+\vfill
+
+\figSlideWithSize{dbdump}{10cm}
+
+\vfill
+
+\begin{block}{}
+Avec  $S_t$, il suffit
+de réappliquer le  \textit{log} depuis $t$.
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Illustration}
+
+Avec une sauvegarde datant du 15 mars, et un fichier \textit{log} par jour.
+
+\vfill
+
+\figSlideWithSize{reprise_froid}{7cm}
+
+\vfill
+\begin{block}{}
+On applique à la sauvegarde les transactions depuis le 15 mars.
+\end{block}
+\end{frame}
+
+\begin{frame}{Cas 2\,: panne du disque du \textit{log}}
+
+Rappel\,: l'état de la base est dans les fichiers \alert{et} le buffer.
+
+\vfill
+
+On gère la panne en effectuant un \textit{checkpoint}
+
+\begin{itemize}
+  \item on écrit les blocs modifiés sur le disque de la base,
+        \item on fait les réparations nécessaires et on redémarre.
+\end{itemize}
+
+\vfill
+
+\begin{block}{}
+Assez fragile: \textit{quid} en cas de panne électrique
+\alert{et} panne du disque de \textit{log}\,?
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Cas 2, avec réplication du \textit{log}}
+
+On peut répliquer le \textit{log} pour plus de sûreté.
+
+\vfill
+
+\figSlideWithSize{log-replique}{7cm}
+
+\vfill
+
+\begin{block}{}
+Et pourquoi ne pas répliquer la base? On obtient un \alert{système
+distribué}: c'est pour la semaine prochaine.
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Résumé: les pannes de disque}
+
+Retenir:
+
+\vfill
+
+\begin{itemize}
+
+  \item Le \textit{log} et la base doivent être sur des disques distincts.
+  
+  
+  \item Il faut mettre en place une politique de sauvegarde.
+ 
+ \item La reprise combine choix de la sauvegarde et application du \textit{log}.
+ \end{itemize}
+
+\vfill
+
+En principe, on \alert{garantit} la durabilité.
+\vfill
+
+\alert{Sûreté totale}\,? 
+
+\begin{itemize}
+
+  \item  Obtenue (asymptotiquement)
+par \alert{réplication}. 
+
+\item Une des motivations des systèmes distribués.
+\end{itemize}
+\end{frame}
+

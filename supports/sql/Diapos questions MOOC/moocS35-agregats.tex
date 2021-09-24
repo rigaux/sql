@@ -1,0 +1,151 @@
+
+
+\begin{frame}[fragile]{Principe général}
+
+On définit des \alert{groupes} de lignes partageant une ou plusieurs valeurs.
+
+\vfill
+
+On ramène chaque groupe à une seule valeur en appliquant une \alert{fonction d'agrégation}.
+
+\vfill
+
+Cas le plus simple:  groupe = résultat d'une requête classique
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select count(*) as nombre, sum(capacité) as totalCapacité
+from Logement
+where type='Hôtel'
+\end{minted}
+
+\vfill
+
+\begin{tabular}{c|c}
+\textbf{nombre} & \textbf{totalCapacité}\\ \hline 
+2 & 168\\ \hline 
+\end{tabular}
+
+\end{frame}
+
+%%%%%%ù
+\begin{frame}[fragile]{Le \texttt{group by}}
+
+La clause \sqlkw{group by} \texttt{att1, ..., attn} \alert{partitionne} le résultat d'un
+\sqlkw{select from where} en fonction des \texttt{att1, ..., attn}
+
+\vfill 
+
+Chaque \alert{groupe} contient les lignes qui partagent les mêmes valeurs pour \texttt{att1, ..., attn}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select type, count(*) as Nombre, 
+           sum(capacité)as totalCapacité
+from Logement
+group by type
+\end{minted}
+
+\vfill
+Procède en deux étapes: d'abord on groupe, puis on agrège.
+\end{frame}
+
+
+%%%%%%ù
+\begin{frame}[fragile]{Décomposons\,: l'étape de regroupement}
+
+On obtient une structure intermédiaire, avec autant de lignes que de valeurs
+distinctes pour les attributs de regroupement (ici, \texttt{type}).
+
+\vfill
+\begin{footnotesize}
+\begin{tabular}{c|c}
+\textbf{type} & Groupe (Logement) \\ \hline 
+Auberge & \begin{tabular}{c} 
+            (ca, Causses,    45,  Auberge,     Cévennes) \\ 
+       \end{tabular}                
+       \\ \hline 
+Gîte &  \begin{tabular}{c} 
+            (pi,     U Pinzutu,   10,  Gîte,    Corse)\\ 
+       \end{tabular}                \\ \hline 
+Hôtel &  \begin{tabular}{c} 
+            (ge,     Génépi,  134,     Hôtel,   Alpes)\\
+             (ta,     Tabriz,  34,  Hôtel,   Bretagne) \\ 
+       \end{tabular}                \\ \hline 
+\end{tabular}
+\end{footnotesize}
+\vfill
+
+\alert{Ce n'est pas une table en première forme normale (atomicité
+des valeurs).}
+\end{frame}
+
+%%%%%%ù
+\begin{frame}[fragile]{L'étape d'agrégation}
+
+La fonction d'agrégation ramène chaque groupe à une valeur
+\vfill
+
+\begin{tabular}{c|c|c}
+\textbf{type} & \textbf{count(*)} & \textbf{sum(capacité)}\\ \hline 
+Auberge & 1 & 45\\ \hline 
+Gîte & 1 & 10\\ \hline 
+Hôtel & 2 & 168\\ \hline 
+\end{tabular}
+
+\vfill
+\alert{Cette fois c'est une table en première forme normale.}
+\end{frame}
+
+
+%%%%%%ù
+\begin{frame}[fragile]{La clause \sqlkw{having}}
+
+Filtrage dans un deuxième temps, après calcul des agrégats, 
+portant sur le résultat de la fonction d'agrégation.
+\vfill
+
+\alert{Bien distinguer de la clause \sqlkw{where} qui s'applique aux nuplets}
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select type, count(*) as nombre, 
+           sum(capacité) as totalCapacité
+from Logement
+group by type
+having count(*) > 1
+\end{minted}
+
+\vfill
+
+\begin{tabular}{c|c|c}
+\textbf{type} & \textbf{nombre} & \textbf{totalCapacité}\\ \hline 
+Hôtel & 2 & 168\\ \hline 
+\end{tabular}
+
+\end{frame}
+
+%%%%%%%%%
+\begin{frame}{À retenir}
+
+Agrégats = extension de SQL
+
+\vfill
+
+\begin{redbullet}
+  \item  S'applique au \alert{résultat} d'une requête standard
+  \item \alert{Partitionne} en groupes de nuplets partageant les mêmes valeurs de regroupement
+  \item \alert{Réduit} chaque groupe à une valeur atomique grâce à une fonction d'agrégation
+  \item On peut \alert{filtrer} les groupes obtenus avec \sqlkw{having}
+\end{redbullet}
+
+
+\end{frame}

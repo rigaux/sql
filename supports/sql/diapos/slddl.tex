@@ -1,0 +1,223 @@
+
+\begin{frame}[fragile]{Création d'un schéma relationnel}
+
+La partie \textit{Data Definition Language} (DDL) définit
+les commandes de création d'un schéma relationnel.
+
+\vfill
+
+Dans cette session:
+
+\begin{redbullet}
+  \item La commande \sqlkw{create table}
+  \item Contrainte de clé primaire \sqlkw{primary key}
+  \item Contrainte de clé étrangère \sqlkw{foreign key}
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La commande \sqlkw{create table}}
+
+Un premier exemple: la table \texttt{Internaute}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Internaute (email varchar (40) not null, 
+                         nom varchar (30) not null ,
+                         prénom varchar (30) not null,
+                         région varchar (30),
+                     primary key (email));
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+Quelques choix à effectuer: conventions de nommage, accents, etc.
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La contrainte \sqlkw{not null}}
+
+Les valeurs à \sqlkw{null} sont source de problèmes: on peut les interdire
+avec \sqlkw{not null} ou donner une valeur par défaut.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Cinéma (idCinéma integer not null,
+                     nom varchar (30) not null ,
+                     adresse varchar(255) default 'Inconnue',
+                     primary key (id));
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+Le SGBD rejettera alors toute tentative d’insérer un nuplet avec une valeur manquante.
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La clé primaire}
+
+Elle est spécifiée avec la clause  \sqlkw{primary key}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Pays (code varchar(4) not null,
+                  nom  varchar (30)  not null,
+                  langue varchar (30) not null,
+                  primary key (code));
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+Il doit \alert{toujours} y avoir une clé primaire
+dans une table et le système garantit l'unicité de ses valeurs.
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Clé primaire composée}
+
+Une clé primaire peut comprendre plusieurs attributs.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Notation (idFilm integer not null,
+                       email  varchar (40) not null,
+                       note  integer not null,
+                       primary key (idFilm, email));
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+Tous les attributs d'une clé primaire doivent être \sqlkw{not null}
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Clé primaire, clés "secondaires"}
+
+On peut définir d'autres clés avec la clause \sqlkw{unique}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Artiste  (idArtiste integer not null,
+                       nom varchar (30) not null,
+                       prénom varchar (30) not null,
+                       annéeNaiss integer,
+                       primary key (idArtiste),
+                       unique (nom, prénom))
+\end{minted}
+
+\vfill
+
+\begin{blocgauche}
+Permet d'avoir un identifiant "abstrait", non modifiable, et d'ajouter des
+contraintes flexibles sur les attributs descriptifs.
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Clé étrangère}
+
+Elle est spécifiée avec la clause  \sqlkw{foreign key}.
+
+\vfill
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Film  (idFilm integer not null, 
+                    titre    varchar (50) not null,
+                    année    integer not null,
+                    idRéalisateur    integer,
+                    genre varchar (20) not null,
+                    résumé      varchar(255),
+                    codePays    varchar (4),
+                    primary key (idFilm),
+                    foreign key (idRéalisateur) 
+                         references Artiste(idArtiste),
+                    foreign key (codePays) 
+                         references Pays(code))
+\end{minted}
+
+\vfill
+
+\begin{blocgauche}
+Si la clé étrangère est \sqlkw{not null}: association de type \texttt{1-n},
+sinon association de type \texttt{0-n}.
+\end{blocgauche}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Actions liées clé primaire / étrangère}
+
+On peut associer les actions appliquées à un nuplet et aux nuplets
+qui le référencent.
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+create table Salle  (idCinéma integer not null, 
+                     no    integer not null,
+                     capacité    integer not null,
+                     primary key (idCinéma, noSalle),
+                     foreign key (idCinéma) 
+                       references Cinéma(idCinéma)
+                       on delete cascade,
+                       on update cascade)
+\end{minted}
+
+\vfill
+
+\begin{blocgauche}
+Utile en particulier pour les entités dites ``faibles''
+\end{blocgauche}
+\end{frame}
+%%%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Après la phase de conception, la création du schéma ne présente aucune difficulté.
+\vfill
+
+\begin{redbullet}
+   \item  Connaître les principaux types SQL (cf. support de cours)
+   \item Connaître la commande \sqlkw{create table}
+   \item Ajouter les contraintes de clés primaire et étrangères.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+La spécification des contraintes n'est pas une lourdeur. Elle garantit que la base est saine,
+et évité beaucoup d'ennuis.
+\end{blocgauche}
+\end{frame}
+

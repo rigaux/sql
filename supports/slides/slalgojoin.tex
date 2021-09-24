@@ -1,0 +1,313 @@
+
+\begin{frame}[fragile]{L'opérateur qui nous manque}
+
+La jointure: opération très courante, potentiellement coûteuse.
+
+\vfill
+
+L'opérateur de jointure complète notre petit catalogue pour (presque) toutes 
+les requêtes SQL.
+
+\vfill
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+    select a1, a2, .., an
+    from T1, T2, ..., Tm
+    where T1.x = T2.y and ... 
+    order by ...
+\end{minted}
+
+\vfill
+
+Plusieurs algorithmes possibles.
+
+
+\end{frame}
+
+\begin{frame}{Principaux algorithmes}
+
+On ve se limiter à quelques exemples représentatifs:
+
+\vfill
+
+
+\alert{Jointure avec index}
+
+\begin{redbullet}
+
+  \item Algorithme de jointure par boucles imbriquées indexées.
+
+\end{redbullet}
+
+\vfill
+
+\alert{Jointure sans index}
+
+\vfill
+\begin{blocgauche}
+\begin{redbullet}
+
+  \item Le plus simple\,: \alert{boucles imbriquées (non indexée)}.
+
+   \item Plus sophistiqué\,: la \alert{jointure par hachage}.
+\end{redbullet}
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Jointure avec index}
+
+Très \alert{courant}\,; on effectue
+\alert{naturellement} la jointure sur les clés primaires/étrangères.
+
+\begin{redbullet}
+
+ \item Les films et leur metteur en scène
+ 
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+      select * from Film as f, Artiste as a 
+      where f.id_realisateur = a.id
+\end{minted}
+
+      
+ \item Les employés et leur département
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+      select * from emp e, dept d
+      where e.dnum = d.num
+\end{minted}
+
+\end{redbullet}
+
+Garantit \alert{au moins} un index sur la condition de jointure.
+\end{frame}
+
+
+
+\begin{frame}{Jointure avec index: l'algorithme}
+
+
+\only<1-1|handout:1>{
+On parcourt séquentiellement la table contenant la clé étrangère.
+
+
+\vfill
+\figSlideWithSize{planEx-indexedjoin-1}{5cm}
+\vfill
+On obtient des nuplets \texttt{employé}, avec leur no de département.
+}
+\only<2-2|handout:2>{
+On utilise le no de département pour un accès à l'index \texttt{Dept}.
+
+\vfill
+\figSlideWithSize{planEx-indexedjoin-2}{7cm}
+\vfill
+On obtient des paires \texttt{[employé, adrDept]}.
+}
+\only<3-3|handout:3>{
+Il reste à résoudre l'adresse du département avec un accès direct.
+
+\vfill
+\figSlideWithSize{planEx-indexedjoin-3}{7cm}
+\vfill
+On obtient des paires \texttt{[employé, dept]}.
+}
+
+\only<4-4|handout:4>{
+Avantages\,:
+  \begin{redbullet}
+      \item  Efficace (un parcours, plus des recherches par adresse)
+
+      \item Favorise le temps de réponse \textbf{et} le temps
+                 d'exécution
+\end{redbullet}
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Jointures par boucles imbriquées}
+
+Pas d'index\,? La méthode de base est d'énumérer \alert{toutes}
+les solutions possibles.
+
+\vfill
+
+\figSlideWithSize{joinlist}{10cm}
+
+
+\vfill
+
+\alert{Coût quadratique}. 
+Acceptable pour
+deux petites tables.
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Jointures par hachage}
+
+Meilleure solution: construire une table de hachage sur une des tables.
+
+\vfill
+
+\figSlideWithSize{hashjoinlist}{9cm}
+
+
+\vfill
+
+Evite les $O(n^2)$ comparaisons. Appelons cette méthode \alert{JoinList}.
+\end{frame}
+
+\begin{frame}{Mémoire insuffisante?}
+
+Essayons de placer \alert{une} des deux tables en mémoire.
+
+\vfill
+
+
+\figSlideWithSize{nestedloop-improved}{8cm}
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+
+On charge l'autre bloc par bloc; on applique  \alert{JoinList}.
+
+\vfill
+
+Une seule lecture de chaque table suffit.
+&
+~
+\end{tabular}
+
+.
+
+\end{frame}
+
+
+\begin{frame}{Et quand \emph{aucune} table ne tient en mémoire?}
+
+
+\only<1-1|handout:1>{
+
+ On hache la plus petite des deux tables en $k$ fragments.
+\vfill
+
+\figSlideWithSize{hashjoin-1}{9cm}
+
+\vfill
+
+\alert{Essentiel}\,: les fragments
+doivent tenir, chacun, en mémoire.
+}
+
+
+\only<2-2|handout:2-2>{
+
+ On hache la seconde table, avec la même fonction $h()$, 
+             en $k$ autres fragments.
+\vfill
+
+\figSlideWithSize{hashjoin}{9cm}
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+
+Cette fois, on n'impose pas la contrainte que les fragments tiennent en mémoire.
+&
+~
+\end{tabular}
+}
+\only<3-3|handout:3-3>{
+\alert{On effectue
+la jointure sur les paires de fragments $(F_1^R, F_1^S), (F_2^R, F_2^S),
+ (F_k^R, F_k^S),$}
+
+\vfill
+
+\figSlideWithSize{hashjoin}{9cm}
+
+\vfill
+\begin{tabular}{p{9cm}p{5cm}}
+\alert{Propriété}: Deux nuplets  $r$ et  $s$
+doivent être joints si et seulement si ils sont dans des fragments associés.
+&
+~
+\end{tabular}
+
+}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Illustration\,: phase de jointure}
+
+On charge  $F_R^i$ de $R$ en mémoire; on parcourt 
+$F_S^i$ de $S$ et on joint.
+
+\vfill
+
+\figSlideWithSize{hashjoin2}{9cm}
+
+\vfill
+\begin{tabular}{p{9cm}p{5cm}}
+\alert{Déjà vu?} Oui: jointure par boucles imbriquées
+quand une table tient en mémoire.
+&
+~
+\end{tabular}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Résumé: la jointure}
+
+Un opérateur potentiellement coûteux. Quelques principes généraux:
+
+\vfill
+
+\begin{redbullet}
+
+   \item Si \alert{une} table tient en mémoire: jointure par boucle imbriquées, ou hachage.
+
+\item
+ Si \alert{au moins un} index est utilisable: jointure par boucle imbriquées indexée.
+
+\item
+Si une des deux tables beaucoup plus petite que l'autre: jointure par hachage.
+
+\item
+
+Sinon: jointure par tri-fusion (non présenté).
+
+\end{redbullet}
+
+\vfill
+
+\begin{tabular}{p{9cm}p{5cm}}
+
+\alert{Décision très complexe}, prise par la système en fonction des statistiques.
+
+&
+~
+\end{tabular}
+
+
+\only<2|handout:2>{
+\centerline{\alert{Merci!}}
+}
+
+\end{frame}

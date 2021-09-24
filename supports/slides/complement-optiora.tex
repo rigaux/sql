@@ -1,0 +1,245 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Analyse des coûts}{
+
+Avec l'utilitaire \texttt{TKPROF}, on obtient\,:
+
+\begin{itemize}
+    \item Le coût CPU
+   \item Le nombre d'entrées/sorties physiques
+   \item Le nombre d'entrées/sorties en mémoire
+   \item Le nombre de tris
+   \item etc
+\end{itemize}
+
+Un excellent outil à utiliser\,: la
+trace automatique qui donne à la fois le 
+\texttt{EXPLAIN} et les coûts d'exécution.
+}\end{frame}
+
+\end{document}
+%------------------------------------------------------------
+\section{Exercices d'application}
+%------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{L'environnement}{
+
+Sur la machine FENRIS, se connecter sous 
+le compte form$<1, 2, 3, 4, 5, 6>$ (pas de mot de passe).
+
+\begin{itemize}
+   \item Récupérer les fichiers \textit{schema.sql}
+                   et \textit{CrFilms} (ou bien travailler
+                   avec la base EKIP)
+
+   \item Créer une base
+
+   \item Sous SQLPLUS, se mettre en mode trace avec la commande\,:
+
+\texttt{ALTER SESSION SET AUTOTRACE TRACEONLY}
+
+\end{itemize}
+
+Et c'est parti\,!
+}\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Optimiseur en mode règles}{
+
+Effectuer et analyser des requêtes représentatives
+ sur la base \textit{Films}.
+
+\begin{itemize}
+  \item Des sélections sur des champs indexés
+        ou non indexés (faire une sélection sur le genre par exemple)
+
+  \item Des jointures (penser à inverser l'ordre des tables
+          dans le \sqlcom{FROM})
+
+  \item Des requêtes avec \texttt{NOT IN} ou \texttt{NOT EXISTS}
+\end{itemize}
+
+}\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Optimiseur en mode coûts}{
+
+Maintenant, analyser les tables, les index et les distributions
+      avec \texttt{ANALYSE}, et regarder les modifications
+des plans d'exécution en optimisation par les coûts.
+\begin{itemize}
+  \item Chercher des films par le genre en mode règles
+  \item Chercher des films par le genre en mode coûts
+\end{itemize}
+Le genre étant peu sélectif, l'optimiseur ne devrait pas
+utiliser l'index dans le second cas.
+
+}\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Requêtes imbriquées}{
+
+\begin{itemize}
+  \item Reprendre les requêtes du polycopié
+cherchant le film paru en 1958 avec James Stewart.
+
+ \item Analyser les différentes versions 
+(sans imbrication, avec
+imbrication mais sans corrélation (\texttt{IN}),
+avec imbrication et corrélation (\texttt{EXISTS}), 
+etc). 
+
+ \item Comparer les plans d'exécution obtenus
+dans chaque cas.
+\end{itemize}
+
+}\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Fonctions de groupe}{
+
+\begin{itemize}
+  \item  Maintenant appliquez des fonctions de groupe,
+des \texttt{GROUP BY} et des \texttt{HAVING},
+regardez les plans d'exécution et interprétez-les.
+
+ \item Essayer d'appliquer l'opérateur \texttt{LIKE}
+dans des sélections sur des attributs indexés.
+Que constate-t-on\,? 
+\end{itemize}
+
+}\end{frame}
+
+\end{document}
+
+\begin{frame}{Sélection conjonctive avec deux index}{
+
+
+\begin{verbatim}
+   SELECT  nom FROM   Salle 
+    WHERE ID-cinéma = 1098 AND capacité = 150
+\end{verbatim}
+Plan d'exécution\,:
+\begin{verbatim}
+0 SELECT STATEMENT
+  1 TABLE ACCESS BY ROWID SALLE
+    2 AND-EQUAL
+      3 INDEX RANGE SCAN IDX-SALLE-CINEMA-ID
+      4 INDEX RANGE SCAN IDX-CAPACITE
+\end{verbatim}
+}\end{frame}
+
+\begin{frame}{Sélection disjonctive avec index}{
+
+
+\begin{tabbing}
+   \=  SELECT \= nom FROM   Salle \\
+   \>  WHERE  \>  ID-cinéma = 1098 OR capacité $>$ 150
+\end{tabbing}
+Plan d'exécution\,:
+\begin{verbatim}
+0 SELECT STATEMENT
+  1 CONCATENATION
+    2 TABLE ACCESS BY ROWID SALLE
+      3 INDEX RANGE SCAN IDX-CAPACITE
+    4 TABLE ACCESS BY ROWID SALLE
+      5 INDEX RANGE SCAN IDX-SALLE-CINEMA-ID
+\end{verbatim}
+}\end{frame}
+
+\begin{frame}{Sélection disjonctive avec et sans index}{
+
+
+\begin{verbatim}
+    SELECT  nom FROM   Salle 
+    WHERE   ID-cinema = 1098 OR nom = 'Salle 1'
+\end{verbatim}
+Plan d'exécution\,:
+\begin{verbatim}
+0 SELECT STATEMENT
+  1 TABLE ACCESS FULL SALLE 
+\end{verbatim}
+}\end{frame}
+
+\begin{frame}{Jointure avec index}{
+
+
+\begin{verbatim}
+    SELECT Cinéma.nom,capacité FROM cinéma, salle
+    WHERE  Cinéma.ID-cinéma = salle.ID-cinéma
+\end{verbatim}
+Plan d'exécution\,:
+\begin{verbatim}
+0 SELECT STATEMENT
+  1 NESTED LOOPS
+    2 TABLE ACCESS FULL SALLE
+    3 TABLE ACCESS BY ROWID CINEMA
+      4 INDEX UNIQUE SCAN IDX-CINEMA-ID
+\end{verbatim}
+}\end{frame}
+
+\begin{frame}{Jointure et sélection avec index}{
+
+
+\begin{tabbing}
+   \= SELECT \= Cinéma.nom,capacité FROM Cinéma, Salle\\
+   \=  WHERE \=  Cinema.ID-cinéma = salle.ID-cinéma \\
+   \=  AND   \= capacité $>$ 150 
+\end{tabbing}
+Plan d'exécution\,:
+\begin{verbatim}
+0 SELECT STATEMENT
+  1 NESTED LOOPS
+    2 TABLE ACCESS BY ROWID SALLE
+      3 INDEX RANGE SCAN IDX-CAPACITE
+    4 TABLE ACCESS BY ROWID CINEMA
+      5 INDEX UNIQUE SCAN IDX-CINEMA-ID
+\end{verbatim}
+}\end{frame}
+
+\begin{frame}{Jointure sans index}{
+
+
+\begin{verbatim}
+    SELECT titre
+    FROM Film, Séance 
+    WHERE  Film.ID-film  = Séance.ID-film
+    AND     heure-début = '14H00'
+\end{verbatim}
+Plan d'exécution\,:
+\begin{verbatim}
+0 SELECT STATEMENT
+  1 MERGE JOIN
+    2 SORT JOIN
+      3 TABLE ACCESS FULL SEANCE
+    4 SORT JOIN
+      5 TABLE ACCESS FULL FILM
+\end{verbatim}
+}\end{frame}
+
+\begin{frame}{Différence}{
+
+
+Dans quel cinéma ne peut-on voir de film après 23H\,?
+\begin{tabbing}
+  \=  SELECT \= Cinéma.nom \\
+  \>  FROM   \> Cinéma, Salle\\
+  \>  WHERE  \> Cinéma.ID-cinéma = Salle.ID-cinéma\\
+  \>  AND    \> NOT EXISTS \= (SELECT * FROM séance\\
+ \>         \>             \> WHERE  Salle.ID-salle = Séance.ID-salle\\
+ \>         \>             \> AND    heure-fin $>$ '23H00')
+\end{tabbing}
+}\end{frame}
+
+\begin{frame}{Plan d'exécution donné par EXPLAIN}
+{
+
+\begin{verbatim}
+0 SELECT STATEMENT
+  1 FILTER
+    2 NESTED LOOPS
+      3 TABLE ACCESS FULL SALLE
+      4 TABLE ACCESS BY ROWID CINEMA
+        5 INDEX UNIQUE SCAN IDX-CINEMA-ID
+    6 TABLE ACCESS BY ROWID SEANCE
+      7 INDEX RANGE SCAN IDX-SEANCE-SALLE-ID
+\end{verbatim}
+}\end{frame}
+
+

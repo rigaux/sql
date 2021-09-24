@@ -1,0 +1,69 @@
+\documentclass[aspectratio=169, handout]{beamer} %aspectratio: définit le format 16/9 ; handout = supprime la barre de navigation
+
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{enumitem} %pour personnalisation des listes numérotées (cf. beamerthemeMoocLab.sty)
+
+
+
+\usetheme{MoocLab}
+\usefonttheme{MoocLab}
+
+
+
+\title {Titre du cours}
+\subtitle{Titre de la semaine}
+\author {auteur}
+\date{}
+
+
+\begin{document}
+
+	\begin{frame}
+	
+		\titlepage
+		
+		\begin{redbullet}
+		\item Titre de la séquence
+		\end{redbullet}
+	
+	%insertion de la zone rouge auteur et du logo	
+		\begin{textblock*}{154px}(0.8cm,8.3cm)
+			\includegraphics[width=154px,height=19.5px]{inria-auteur}
+		\end{textblock*} 
+		
+	%insertion du nom de l'auteur
+		\begin{textblock*}{80px}(1.1cm,8.5cm)
+			{\color{MoocLab-white}   \fontsize{9}{11}\selectfont Nom de l'auteur}
+ 		\end{textblock*}
+	
+	\end{frame}
+
+	\begin{frame}
+	
+		\frametitle{Un exemple de titre}
+		\begin{redbullet} %exemple de liste à puce
+		\item Item 1
+		\item Item 2
+		\end{redbullet}
+		
+	\end{frame}
+
+	\begin{frame}
+		\frametitle{Un exemple de titre}
+		Texte de présentation
+	\end{frame}
+
+
+	\begin{frame}
+	
+		\frametitle{Un exemple de titre}
+		\begin{redlist} %exemple de liste numérotée
+		\item Item 1
+		\item Item 2
+		\end{redlist}
+		
+	\end{frame}
+
+\end{document}

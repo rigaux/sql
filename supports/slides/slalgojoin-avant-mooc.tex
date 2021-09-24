@@ -1,0 +1,447 @@
+
+\subsection{Algorithmes de jointure}
+
+\begin{frame}[fragile]{L'opérateur qui nous manque}
+
+La jointure: opération très courante, potentiellement coûteuse.
+
+\vfill
+
+L'opérateur de jointure complète notre petit catalogue pour (presque) toutes 
+les requêtes SQL.
+
+\vfill
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+    select a1, a2, .., an
+    from T1, T2, ..., Tm
+    where T1.x = T2.y and ... 
+    order by ...
+\end{minted}
+
+\vfill
+
+Plusieurs algorithmes possibles.
+\end{frame}
+
+\begin{frame}{Principaux algorithmes}
+
+\alert{Jointure avec index}
+
+\begin{itemize}
+
+  \item Avec un index\,: \alert{jointure par boucles imbriquées indexées}.
+   
+  \item  Avec deux index\,: on fait comme si on avait
+            un seul index
+\end{itemize}
+
+\vfill
+
+\alert{Jointure sans index}
+
+\begin{itemize}
+
+  \item Le plus simple\,: \alert{jointure
+           par boucles imbriquées} (non indexée)
+
+  \item Le plus courant\,: \alert{jointure par tri-fusion} 
+
+   \item Parfois le meilleur\,: \alert{jointure par hachage}
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Jointure avec index}
+
+C'est la jointure la plus \alert{courante} car on effectue
+\alert{naturellement} la jointure sur les clés primaires/étrangères.
+
+\begin{itemize}
+
+ \item Les films et leur metteur en scène
+ 
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+      select * from Film as f, Artiste as a 
+      where f.id_realisateur = a.id
+\end{minted}
+      
+ \item Les artistes et leurs rôles      
+ 
+ \begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+      select * from Artiste as a, Role as r
+      where a.id = r.id_acteur
+\end{minted}
+
+      
+ \item Les employés et leur département
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{sql}
+      select * from emp e, dept d
+      where e.dnum = d.num
+\end{minted}
+
+\end{itemize}
+
+Garantit \alert{au moins} un index sur la condition de jointure.
+\end{frame}
+
+\begin{frame}{Jointure avec index: l'algorithme}
+
+Algorithme dit de \alert{boucles imbriquées indexées}.
+
+\begin{itemize}
+
+  \item on parcourt séquentiellement la table contenant la clé étrangère;
+ 
+   \item pour chaque tuple, on utilise la valeur de la clé étrangère pour
+   accéder à l'index sur la clé primaire
+   de la second table: on récupère l'adresse \texttt{adr} d'un tuple;
+ \item il reste à effectuer un accès direct, avec l'adresse \texttt{adr}, pour
+   obtenir le second tuple et constituer la paire. 
+
+\end{itemize}
+
+\vfill
+
+Avantages\,:
+  \begin{itemize}
+      \item  Efficace (un parcours, plus des recherches par adresse)
+
+      \item Favorise le temps de réponse \textbf{et} le temps
+                 d'exécution
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{L'opérateur}
+
+Réutilise des méthodes existantes.
+
+\vfill
+
+\figSlideWithSize{planEx-indexedjoin}{5cm}
+
+\end{frame}
+
+\begin{frame}[fragile]{Le code? Simplissime}
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{bash}
+    function nextIndexJoin
+    {
+      # $tScan est le parcours de la table      
+      $tuple = $tScan.next();
+
+      # On instancie un parcours d'index
+      iScan = new IndexScan ();
+      # Le parcours d'index avec la cle etrangere
+      $iScan.open ($tuple.foreignKey);
+      # On prend l'adresse 
+      addr = $iScan.next();
+ 
+      # Et on renvoie la paire avec le tuple et l'adresse      
+      return [$tuple, $addr];
+     }
+\end{minted}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Et avec deux index\,?}
+
+On pourrait penser à la solution suivante\,:
+
+\begin{itemize}
+  \item Fusionner les deux index\,: on obtient des paires
+                d'adresse.
+
+  \item Pour chaque paire, aller chercher la ligne $A$,
+         la ligne $B$.
+\end{itemize}
+
+Problématique car beaucoup d'accès aléatoires
+(cf. \alert{Quand utiliser un index}). 
+
+\vfill
+
+En pratique\,:
+
+  \begin{itemize}
+      \item On se ramène à la jointure avec un index
+
+      \item On prend la petite table comme table extérieure.
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Jointures par boucles imbriquées}
+
+Pas d'index\,? On fait bête et méchant: énumération de toutes
+les solutions.
+
+\begin{minted}[frame=leftline,
+               baselinestretch=.9,
+               fontsize=\footnotesize,
+               framesep=2mm]{bash}
+    function JoinList
+    {
+      # $L1, $L2, listes à joindre
+      # $condition est la condition de jointure
+      resultat = [];
+      for tuple1 in $L1
+      do
+       for tuple2 in $L2
+       do
+         if (condition ($tuple1, $tuple2) = true) the
+           $resultats[] = ($tuple1, $tuple2);
+         fi
+       done
+     done
+   }
+\end{minted}
+
+C'est la \alert{jointure par boucles imbriquées}
+\end{frame}
+
+
+\begin{frame}{Comment parcourir les tables}
+
+On prend toutes les paires de blocs, on les joint.
+\vfill
+
+\figSlideWithSize{nestedloop}{12cm}
+
+\vfill
+
+Peu de mémoire, mais coût très élevé: $B_R + B_R \times B_S$.
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Essentiel\,: la mémoire}
+
+On alloue le maximum à la table intérieure de la boucle
+imbriquée.
+
+\medskip
+
+
+\figSlideWithSize{nestedloop-improved}{12cm}
+
+\medskip
+
+Si la table intérieure tient en mémoire\,: une seule
+lecture des deux tables suffit: $B_R + B_S$.
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Jointure par tri fusion}
+
+Plus efficace que les boucles imbriquées pour de grosses
+tables.
+
+\begin{itemize}
+
+  \item On trie les deux tables sur les colonnes de jointures
+
+  \item On effectue la fusion
+\end{itemize}
+
+\vfill
+
+C'est le tri qui coûte cher.
+
+\vfill
+\begin{block}{Important}
+\alert{Opérateur bloquant:}\,: on ne peut {\em rien} obtenir
+tant que le tri n'est pas fini.
+\end{block}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{La procédure de fusion}
+
+On tri $R$ et $S$ et on parcourt ensuite les tables
+triées en parallèle.
+
+\vfill
+
+La fusion:on commence avec les premiers enregistrements $r_1$ 
+et $s_1$  de chaque 
+table. 
+
+\begin{itemize}
+   \item Si $r_1.a = s_1.b$, on joint les deux enregistrements,  on passe au
+      enregistrements suivants, jusqu'à ce que $r_i.a \not= s_i.b$.
+    \item Si $r_1.a < s_1.b$, on avance sur la liste de $R$. 
+    \item Si $r_1.a > s_1.b$, on avance sur la liste de $S$. 
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}{Tri-fusion\,: illustration}
+
+\figSlideWithSize{sortmerge}{7.5cm}
+
+\end{frame}
+
+
+\begin{frame}{Tri-fusion\,: l'opérateur}
+
+On a déjà le tri: un opérateur de fusion (\texttt{Merge}) vient le compléter.
+
+
+\figSlideWithSize{planEx-trifusion}{7.5cm}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Jointure par hachage}
+
+En théorie le plus efficace.
+
+\begin{itemize}
+
+  \item Très rapide quand
+         une des deux tables est petite (1, 2, 3 fois
+           la taille de la mémoire).
+
+   \item Pas très robuste (efficacité dépend de plusieurs
+      facteurs).
+\end{itemize}
+
+\vfill
+
+Principe:
+\begin{itemize}
+
+  \item On hache la plus petite des deux tables en $n$ fragments.
+
+  \item On hache la seconde table, avec la même fonction $h()$, 
+             en $n$ autres fragments.
+
+  \item On réunit les fragments par paire, et on fait la jointure.
+\end{itemize}
+
+\alert{Essentiel}\,: pour chaque paire, au moins un fragment
+doit tenir en mémoire.
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Illustration\,: phase de hachage}
+
+On suppose que $R$ est la plus petite.  
+
+\vfill
+
+On détermine $k$ pour que
+$\frac{|R|}{k} < M$, la taille de la mémoire.
+
+\vfill
+
+\figSlideWithSize{hashjoin}{9cm}
+
+\vfill
+
+On hache $S$ en $k$ fragments avec la même fonction.
+
+\end{frame}
+
+\begin{frame}{Jointure: la propriété clé}
+
+Un enregistrement  $r$ de $R$ est  
+placé dans le fragment  $F_R^{h(r.a)}$;
+
+\vfill
+
+un enregistrement  $s$ de $S$ est  
+placé dans le fragment  $F_S^{h(s.b)}$.
+
+\vfill
+
+\begin{block}{Propriété}
+Si deux tuples  $r$ et  $s$
+doivent être joints, alors on a  $h(r.a) = h(s.b)=u$ 
+et on les trouvera, respectivement, dans  $F_R^u$
+et $F_S^u$.
+\end{block}
+
+\vfill
+
+\alert{En d'autres termes, il suffit d'effectuer
+la jointure sur les paires de fragments correspondant à la même valeur
+de la fonction de hachage.}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Illustration\,: phase de jointure}
+
+On chaque un fragment $F_R^i$ de $R$ en mémoire (il tient).
+
+\vfill
+
+On parcourt le fragment $F_S^i$ de $S$ et on joint.
+
+\vfill
+
+\figSlideWithSize{hashjoin2}{9cm}
+
+\vfill
+
+\alert{Déjà vu?} Oui: on s'est ramené à la jointure par boucles imbriquées
+quand une table tient en mémoire.
+\end{frame}
+
+\begin{frame}{L'opérateur de jointure par hachage}
+Comment implanter cet algorithme de jointure sous forme d'itérateur? 
+
+\begin{itemize}
+  \item Toute la phase de hachage s'effectue dans le \texttt{open()}
+  \item Le \texttt{next()} avance d'une étape dans la jointure de deux fragments.
+\end{itemize}
+
+\alert{Cet opérateur est donc bloquant}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Pour des requêtes effectuées régulièrement: il faut utiliser
+la jointure par boucle imbriquées indexée.
+
+\begin{itemize}
+  \item si nécessaire, créer un index;
+  \item si jointure sur clés, l'index doit \alert{déjà} exister.
+\end{itemize}
+
+\vfill
+
+Si jointure sur attributs non indexés
+\begin{itemize}
+  \item l'optimiseur est censé prendre la bonne décision;
+  \item ça risque d'être long si aucune des deux tables ne tient en mémoire.
+\end{itemize}
+
+\vfill
+
+Requête très lente? \alert{Vérifier l'algorithme choisi pour la jointure.}
+\end{frame}

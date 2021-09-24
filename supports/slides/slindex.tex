@@ -1,0 +1,309 @@
+
+\frontslide{Structures d'indexation}
+
+
+\begin{frame}[fragile]{Structures d'index}
+
+Contenu de ce cours\,:
+
+\begin{redbullet}
+   \item Qu'est-ce qu'un index?
+   
+   \item Principes généraux
+   
+   \item Index denses et non-denses
+\end{redbullet}
+
+\vfill
+
+\alert{En l'absence d'un index}, seule solution\,: le parcours séquentiel du fichier.
+\vfill
+
+\alert{Avec un index}: \alert{accès direct à l'enregistrement}, amélioration \alert{très importante} des temps de réponse
+
+
+\vfill
+
+
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sys.bdpedia.fr/arbreb.html\#s1-indexation-de-fichiers}}
+\end{blocgauche}
+
+\end{frame}
+
+
+%------------------------------------------------------------
+\begin{frame}{Exemple 1\,: une table}
+
+\begin{center}
+\begin{small}
+\begin{tabular}{l|c|c||l|c|c}
+titre & année  & ...  & titre & année  & ...  \\
+\hline
+Vertigo  & 1958 & ... & Annie Hall & 1977 & ... \\
+Brazil & 1984 & ... & Jurasic Park & 1992 & ... \\
+Twin Peaks & 1990 & ...&  Metropolis & 1926 & ... \\
+Underground & 1995 & ... & Manhattan & 1979 & ... \\
+Easy Rider & 1969 & ... & Reservoir Dogs & 1992 & ... \\
+Psychose & 1960 & ... & Impitoyable & 1992 & ... \\
+Greystoke & 1984 & ... & Casablanca & 1942 & ... \\
+Shining & 1980 & ... & Smoke & 1995 & ... \\
+\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Exemple 2}
+
+La table des films,  avec\,:
+\begin{redbullet}
+  \item 1\,000\,000 (un million) de films
+  \item Un enregistrement = 1200 octets
+  \item Un bloc = 4K =$>$ 3 enregistrements par bloc 
+  \item environ 300\,000 blocs, 1,2 Go
+\end{redbullet}
+
+\end{frame}
+%------------------------------------------------------------
+\section{Principes}
+%------------------------------------------------------------
+
+
+\begin{frame}{Index = concept bien connu}
+
+Prenons un livre à contenu technique (pas une fiction!), par
+exemple un livre de recettes. Il contient (au moins) un index.
+
+\vfill
+\begin{blocgauche}
+\begin{redbullet}
+  \item L'index présente les termes importants, classés par ordre alphabétique
+  
+  \item À chaque terme sont associés les numéros de page où on trouve le terme.
+  
+  \item En parcourant l'index (par dichotomie!) on trouve la ou les pages qui nous intéressent.
+\end{redbullet}
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}{Les index informatiques}
+
+Même principe! C'est un fichier qui permet de trouver 
+un enregistrement dans une table.  
+ Vocabulaire:
+
+\vfill
+\begin{blocgauche}
+\begin{redbullet}
+  \item \alert{Clé d'indexation} = une \alert{liste}
+     d'un ou plusieurs attributs.
+   \item Une \alert{adresse} (déjà vu) est une adresse de bloc ou une adresse d'enregistrement.
+   \item \alert{Entrée d'index}: enregistrements de la forme \texttt{[valeur, addr]}, \texttt{valeur}
+     est une valeur de clé. 
+  \item L'index est \alert{trié} sur \texttt{valeur}
+
+\end{redbullet}
+\end{blocgauche}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Exemples}
+
+Clés de recherche\,:
+\begin{redbullet}
+  \item Le titre du film (c'est aussi la clé primaire)
+  \item l'année du film 
+  \item Une paire constituée du  titre et de l'année  
+\end{redbullet}
+
+\vfill
+
+Opérations\,:
+\begin{redbullet}
+  \item Rechercher \textit{Vertigo}
+  \item Rechercher les films parus entre 1960 et 1975
+  \item Rechercher les films commençant par 'V'
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{L'index ne sert à rien pour toute recherche
+ne portant pas sur la clé}.
+\end{blocgauche}
+\end{frame}
+
+\begin{frame}[fragile]{Le cas des dictionnaires}
+
+Les dictionnaires ont la particularité de \alert{trier} les termes.
+
+\vfill
+
+On peut alors créer un index qui ne référence que \alert{le premier mot de chaque page}.
+
+\begin{minted}{text}
+  - ...
+  - ballon, page 56
+  - bille, page 57
+  - bulle, page 65,
+  - cable, page 72
+  - ...
+\end{minted}
+
+\begin{blocgauche}
+\alert{On peut quand même utiliser cet index pour trouver n'importe quel mot}.
+("armée", "crabe", "botte", "belle").
+\end{blocgauche}
+\end{frame}
+%%%%%%%%%
+\section{Index non dense}
+%------------------------------------------------------------
+
+%------------------------------------------------------------
+\begin{frame}{Index non dense}
+
+
+ \figSlideWithSize{indexNonDense}{13cm}
+
+\vfill
+\begin{blocgauche}
+\alert{Hypothèse}\,: le fichier de données est \alert{trié sur la clé},
+comme un dictionnaire. \alert{L'index ne référence que la première
+valeur de chaque bloc}.
+\end{blocgauche}
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Opérations}
+
+Recherches\,:
+\begin{redbullet}
+  \item \textbf{Par clé}\,: je recherche \textit{Shining}
+  \item \textbf{Par intervalle}\,: tous les films entre \textit{Greystocke}
+    et \textit{Psychose}.
+
+  \item \textbf{Par préfixe}\,: tous les films commençant par 'M'.
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{Mais pas par suffixe}: tous les films terminant par 'e'?
+\end{blocgauche}
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Exemple concret}
+
+Sur notre fichier de 1,2 Go
+\begin{redbullet}
+  \item En supposant qu'un titre occupe 20 octets, une adresse 8 octets
+   \item Taille de l'index\,: $300\,000 * (20 + 8)=8,4 Mo$ octets
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+Beaucoup plus petit que le fichier\,!
+
+\medskip
+
+Problème\,: maintenir l'ordre sur le fichier \alert{et}
+sur l'index.
+\end{blocgauche}
+
+\end{frame}
+\section{Index dense}
+%------------------------------------------------------------
+\begin{frame}{Index dense}
+
+  \figSlideWithSize{indexDense}{13cm}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Fichier de données non trié. Toutes les valeurs de clé sont représentées}
+\end{blocgauche}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Exemple concret}
+
+Sur notre fichier de 1,2 Go
+\begin{redbullet}
+  \item Une année = 4 octets, une adresse 8 octets
+   \item Taille de l'index\,: $1\,000\,000 * (4 + 8)=12$ Mo
+\end{redbullet}
+
+Encore 100 fois plus petit que le fichier.
+
+\vfill
+
+Recherches\,:
+\begin{redbullet}
+  \item Par clé\,: comme sur un index non-dense
+
+   \item Par intervalle (exemple [1950, 1979])\,:
+     \begin{itemize}
+       \item recherche, dans l'index de la borne inférieure
+       \item parcours séquentiel {\em dans l'index}
+      \item à chaque valeur\,: accès au fichier de données
+   \end{itemize}
+   \alert{Engendre des accès aléatoires.}
+\end{redbullet}
+
+
+\end{frame}
+\subsection{Index multi-niveaux}
+%------------------------------------------------------------
+\begin{frame}{Index multi-niveaux: on indexe l'index}
+
+
+  \figSlideWithSize{index2Niveaux}{12cm}
+
+\vfill
+\begin{blocgauche}
+\begin{redbullet}
+  \item \alert{Essentiel}\,: l'index est trié,
+     donc on peut l'indexer par un second niveau
+          \alert{non-dense}
+   \item Sinon ça ne servirait à rien (pourquoi\,?)
+ \end{redbullet}
+\end{blocgauche}
+
+\end{frame}
+%------------------------------------------------------------
+\begin{frame}{Index multi-niveaux: jusqu'où?}
+
+
+  \figSlideWithSize{indexMultiNiv}{12cm}
+
+\vfill
+\begin{blocgauche}
+\begin{redbullet}
+  \item Arrêt quand racine constitué d'un seul bloc.
+   \item structure \alert{hiérarchique}; recherche
+    \alert{de haut en bas}.
+ \end{redbullet}
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Résumé}
+
+\vfill 
+\alert{Retenir}:
+
+\begin{redbullet}
+  \item Un index accélère des opérations de recherche portant sur la \alert{clé d'indexation} ou sur un préfixe de la clé
+  \item La structure repose sur le tri des valeurs de clé indexées
+  \item On peut créer un \alert{index non dense} sur un fichier trié, \alert{dense} sur un fichier non-trié.
+  \item Les index multi-niveaux s'appuient sur un premier niveau dense, puis sur des niveaux supérieurs non-denses.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Les index ont un coût}, il faut les maintenir au fur et à mesure des insertions dans le fichier indexé.
+\end{blocgauche}
+
+\end{frame}

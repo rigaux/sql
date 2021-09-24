@@ -1,0 +1,212 @@
+
+\begin{frame}
+\frametitle{Plan du cours}
+
+\alert{Tout} ce qu'il faut comprendre pour \alert{utiliser} efficacement un SGBD relationnel.
+
+\begin{redbullet}
+  \item Architecture 
+  \item Structuration d'une base relationnelle
+  \item Interrogation: approches déclarative et procédurale
+  \item Conception
+  \item Quelques aspects pratiques (schémas, programmation)
+  \item Transactions
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Pas (ou très peu) d'information sur le fonctionnement interne du système
+\end{blocgauche}
+
+\end{frame}
+
+
+
+\begin{frame}{Organisation du cours}
+
+Le cours est découpé en \alert{chapitres}, couvrant un sujet bien déterminé, et en \alert{sessions}.
+
+\smallskip
+
+\alert{L'unité de travail est la session}. Chaque session
+demande environ 2 ou 3  heures de travail personnel (bien sûr, cela dépend également de vous).
+
+\vfill
+
+
+Pour assimiler une session vous pouvez combiner les ressources suivantes:
+
+\begin{redbullet}
+  \item \alert{La lecture} du \href{http://sql.bdpedia.fr}{support en ligne}, 
+       également disponible en \href{http://sql.bdpedia.fr/files/cbd-sql.pdf}{PDF} ou en 
+       \href{http://sql.bdpedia.fr/files/cbd-sql.epub}{ePub}.
+    \item \alert{Le suivi du cours}, en vidéo ou en présentiel.
+    \item Vous devriez alors  savoir répondre aux Quiz en fin de session
+   \item \alert{La réalisation des exercices et des ateliers} proposés en fin de chapitre.
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{La réalisation des exercices est essentielle} pour vérifier que vous maîtrisez le
+contenu.
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Les données}
+
+\alert{Donnée} = valeur numérisée décrivant de manière élémentaire
+un fait, une mesure, une réalité
+
+\smallskip
+
+\alert{Exemple}: le nom de l'auteur, l'âge du capitaine, le titre du livre ...
+
+
+\vfill
+
+Les données décrivent des \alert{entités} du monde réel, elles-mêmes associées les unes aux autres.
+
+\smallskip
+\alert{Exemple}: \textit{Nicolas Bouvier est un écrivain suisse auteur de récit de voyage
+culte "l'usage du monde" paru en 1963}: deux entités, liées par la notion d'auteur.
+
+\vfill
+\begin{blocgauche}
+Une base de données a donc une \alert{structure}, sinon c'est autre chose
+(une collection, un tas de documents, textes ou images).
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Base de  données}
+
+Caractères essentiels: structuration, persistance (vs. volatilité).
+
+\vfill
+
+\begin{defblock}{Base de données}
+Une base de données est un ensemble d’informations structurées mémorisées sur un support persistant.
+\end{defblock}
+
+\vfill
+
+
+\begin{blocgauche}
+Des fichiers structurés (tableur, CSV) sont des bases de données.
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Exemple de fichiers structurés}
+
+Format CSV: une ligne par entité ; champs séparés par des ';'
+\begin{small}
+\begin{minted}{C}
+"Bouvier" ; "Nicolas"; "L'usage du monde" ; 1963
+\end{minted}
+\end{small}
+\vfill
+
+Base de données = 2, 10 ou 1 million de lignes sur le même format.
+
+\begin{small}
+\begin{minted}{C}
+"Bouvier"   ; "Nicolas"; "L'usage du monde" ; 1963
+"Stevenson" ; "Robert-Louis"  ; "Voyage dans les Cévennes avec un âne" ; 1879
+...
+\end{minted}
+\end{small}
+
+\vfill
+Suffisant?
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Fichiers = base de données ? }
+
+Peut-on construire des applications directement sur des fichiers?
+\vfill
+
+\figSlideWithSize{sans-serveur}{7cm}
+
+\vfill
+
+Insurmontables problèmes de productivité, de fiabilité, d'efficacité
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Les SGBD }
+
+Système informatique qui assure la gestion de l'ensemble des informations
+stockées dans une base de données.
+
+
+\vfill
+
+\figSlideWithSize{avec-serveur}{10cm}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Niveaux d'abstraction et modèle de données}
+
+Le serveur peut présenter une représentation \alert{logique} des données très éloignée
+de la représentation \alert{physique}.
+
+\vfill
+
+\figSlideWithSize{physique-logique}{10cm}
+
+\vfill
+
+Le niveau logique définit la \alert{modélisation} des données.
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Langages - SQL}
+
+Pour manipuler les données, le serveur propose un \alert{langage d'interrogation}.
+
+\vfill
+
+Le plus répandu est SQL: interrogation, mise à jour, contraintes sur la base, droits d'accès...
+
+\vfill
+
+\figSlideWithSize{physique-logique-sql}{9.5cm}
+
+\end{frame}
+
+
+\begin{frame}{À retenir}
+
+Les \alert{bases de données} sont des ensembles structurés stockés dans des fichiers.
+
+\vfill 
+
+Les \alert{systèmes de gestion de base de données (SGBD)} sont des systèmes qui prennent en charge
+toute la complexité de gestion des fichiers.
+
+\vfill
+
+\vfill 
+
+Un SGBD propose aux applications une vue \alert{logique} indépendante du niveau \alert{physique} (stockage).
+
+\vfill
+\begin{blocgauche}
+SQL est le langage qui permet d'interagir avec la vue logique d'une base de données (relationnelle)
+\end{blocgauche}
+\end{frame}
+

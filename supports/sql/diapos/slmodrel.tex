@@ -1,0 +1,163 @@
+
+\begin{frame}[fragile]{Le modèle relationnel}
+
+Le modèle relationnel, c'est
+
+\begin{redbullet}
+  \item Une structure unique, la relation (ou table)
+  \item Des contraintes qui définissent des \alert{formes normales}, évitant les défauts de conception
+  \item Des langages, concrétisés en pratique par SQL
+\end{redbullet}
+
+\vfill
+
+Dans ce cours, on parle de la structure
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Qu'est-ce qu'une relation?}
+
+\alert{Notion mathématique}: 
+Etant donné un ensemble d'objets $O$, une \alert{relation} (binaire)
+sur $O$  est un sous-ensemble du produit cartésien $O \times O$.
+
+\vfill
+ Dans notre contexte, les ``objets''  sont des \alert{valeurs élémentaires} (ou \alert{atomiques}), comme 
+ les entiers $I$, les flottants $F$, les chaînes de caractères $S$.
+
+
+\vfill
+\begin{blocgauche}
+L'ensemble des paires constituées des noms de département et 
+et de leur numéro de code  est une relation sur $S \times I$. 
+
+\begin{defblock}{Définition: relation}
+Une relation de degré $n$ sur les domaines $A_1, A_2, \cdots, A_n$
+    est un sous-ensemble fini du produit cartésien  $A_1 \times A_2 \times  \cdots \times A_n$
+\end{defblock}
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Représentation}
+
+Comment représente-t-on une relation? Sous forme de table, le plus pratique.
+
+\vfill
+
+\begin{tabular}{l|l}
+\textbf{nom} & \textbf{code}\\ \hline
+  Ardèche & 07\\
+   Gard & 30\\
+   Manche & 50\\
+   Paris& 75\\ \hline
+\end{tabular}
+
+\vfill
+
+\begin{blocgauche}
+Attention, ce n'est pas \alert{n'importe quelle table}. Se
+souvenir de la définition.
+\end{blocgauche}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Les nuplets}
+
+Un élément d'une relation de dimension $n$ est un \alert{nuplet}
+$(a_1, a_2, \cdots, a_n)$.
+
+\vfill
+
+Exemple: \texttt{(Manche, 50)}
+\vfill
+
+Dans la représentation par table, 
+un nuplet est une ligne. 
+
+\vfill
+
+\begin{blocgauche}
+On assimile nuplet et ligne, mais attention, ce n'est pas \alert{n'importe quelle ligne}. Se
+souvenir de la définition.
+\end{blocgauche}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Schéma de relation}
+
+On peut  \alert{décrire} une relation par 
+
+\begin{redbullet}
+  \item Le nom de la relation.
+  \item Un nom (distinct) pour chaque dimension, dit \alert{nom d'attribut}
+  \item Le domaine de valeur de chaque dimension.
+\end{redbullet}
+
+\vfill
+
+C'est le \alert{schéma} de la relation, de la forme 
+$R (A_1: D_1, A_2: D_2, \cdots, A_n: D_n)$
+
+\vfill
+\begin{blocgauche}
+\alert{Exemple}:  \texttt{Département (nom: string, code: string)}, ou plus simplement
+\texttt{Département (nom, code)}
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}{Première forme normale}
+
+ On \alert{ne peut
+pas} avoir une valeur d'attribut qui soit construite, comme par
+exemple une liste, ou une sous-relation. 
+
+\vfill
+
+Les valeurs dans une base de données sont dites \alert{atomiques} 
+
+\vfill
+
+\begin{defblock}{Première forme normale}
+Une relation est en première forme normale si toutes les valeurs d'attribut sont connues et atomiques
+et si elle ne contient aucun doublon.
+\end{defblock}
+
+\end{frame}
+
+
+
+\begin{frame}{À retenir}
+
+\alert{Notions et vocabulaire}
+
+\vfill
+
+\begin{tabular}{l|l}
+\textbf{Terme du modèle} & \textbf{Terme de la représentation par table}\\ \hline
+ Relation& Table\\
+   nuplet& ligne\\
+   Nom d'attribut &Nom de colonne\\
+   Valeur d'attribut& Cellule\\
+   Domaine&Type\\
+\hline
+\end{tabular}
+
+\vfill
+
+\alert{Très simple\,!} (parfois trop). Favorise la rigueur et la clarté.
+\end{frame}
+

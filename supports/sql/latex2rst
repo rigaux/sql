@@ -1,0 +1,30 @@
+Sans expressions régulières
+
+{\em -> \emph{
+{\it -> \textit{
+{\bf -> \textbf{
+<< -> "
+>> -> "
+
+Avec expressions régulières
+
+\\attr\{((\w|\s|,)*)\} -> ``$1``
+\\ref\{((\w|\s|,|-)*)\} -> :ref:`$1`
+\\emph\{((\w|\s|,|-)*)\} -> *$1*
+\\textit\{((\w|\s|,)*)\} -> *$1*
+\\textsc\{((\w|\s|,)*)\} -> *$1*
+\$(.)*\$ -> :math:`$1` 
+\\guill\{((\w|\s|,)*)\} -> "$1"
+\\sqlcom\{((\w|\s|,)*)\} -> ``$1``
+\\film\{((\w|\s|,)*)\} -> *1*
+
+Replace | by #
+Replace (\R)# by \R   (regex)
+Replace #(\R) by \R   (regex)
+Replace # by ,
+Replace + by 
+Replace - by 
+
+.. csv-table:: 
+   :header:  id_personne , id_appart, quote_part
+   :widths: 4, 4, 4

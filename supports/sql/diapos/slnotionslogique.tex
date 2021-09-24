@@ -1,0 +1,267 @@
+
+\begin{frame}[fragile]{Notions élémentaires de logique formelle}
+
+Cette session présente les notions essentielles de logique formelle à connaître: 
+
+\vfill
+
+\begin{redbullet}
+  \item Le calcul propositionnel: valeurs de vérité et formules
+  \item Les prédicats 
+  \item Collections et quantificateurs
+  \item Importance pour les bases de données et SQL
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+
+%%%%%%ù
+
+\begin{frame}[fragile]{Calcul propositionnel}
+
+\alert{Proposition}: énoncé auquel on peut affecter deux valeurs de vérité, Vrai ou Faux.
+
+\vfill
+
+\alert{Formule}: expression basée sur des propositions et leur combinaison
+par des \alert{connecteurs logiques}.
+
+
+\vfill
+\begin{redbullet}
+   \item la conjonction, notée $\land$
+   \item  la disjonction, notée $\lor$
+   \item la négation, notée $\neg$
+\end{redbullet}
+
+\vfill
+
+Exemple: $(p \land q) \lor r$
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Valeur de vérité d'une formule}
+
+Induite à partir de valeurs de vérité des propositions, et des règles suivantes:
+
+\vfill
+
+\begin{tabular}{c|c|c|c|c}
+$p$ & $q$ & $p \land q$ & $p \lor q$ & $\neg p$\\ \hline
+Vrai & Vrai & Vrai & Vrai &  Faux \\ \hline
+Vrai & Faux & Faux & Vrai &  Faux \\ \hline
+Faux & Vrai & Faux & Vrai &  Vrai \\ \hline
+Faux & Faux & Faux & Faux &  Vrai \\ \hline
+\end{tabular}
+\vfill
+
+Exemple: $(p \land q) \lor r$ est Vrai pour les valeurs V, V, F de $p, q, r$
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Equivalences}
+
+Un informaticien averti sait manier avec agilité les équivalences. Quelques exemples.
+
+\vfill
+
+\begin{redbullet}
+   \item  $\neg (\neg F)$ est équivalente à $F$ 
+  \item  $F \lor (F_1 \land F_2)$ est équivalente à $(F\lor F_1) \land (F \lor F_2)$ (distribution)
+   \item  $F \land (F_1 \lor F_2)$ est équivalente à $(F\land F_1) \lor (F \land F_2)$ (distribution)
+   \item  $\neg (F_1 \land F_2)$ est équivalente à $(\neg F_1) \lor (\neg F_2)$ (loi DeMorgan)
+   \item  $\neg (F_1 \lor F_2)$ est équivalente à $(\neg F_1) \land (\neg F_2)$ (loi DeMorgan)
+\end{redbullet}
+
+\vfill
+
+Donc $p \lor \neg (p \land \neg q)$ est une \alert{tautologie}.
+\end{frame}
+
+
+\begin{frame}{Prédicats}
+
+Extension puissante des propositions : \alert{construire des énoncés sur des ``objets''}.
+
+\vfill
+
+Le prédicat $Compose (X, Y)$ permet de construire des énoncés de la forme:
+
+\begin{redbullet}
+   \item $Compose  (\text{'Mozart'}, \text{'Don Giovanni'})$
+   \item $Compose  (\text{'Debussy'}, \text{'La mer'})$
+  \item  Etc.
+\end{redbullet}
+
+\vfill
+
+Ce sont des nuplets (ou des atômes, ou des faits). 
+
+\begin{redbullet}
+   \item Il en existe une infinité
+   \item Un \alert{contexte} (ou ``interprétation'') définit ceux qui sont vrais / faux.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\begin{remblock}{Base de données?}
+C'est un contexte donnant un ensemble fini de faits vrais. Tous les autres sont considérés comme faux.
+\end{remblock}
+\end{blocgauche}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Nuplets ouverts et fermés}
+
+Un nuplet énoncé avec des constantes est un nuplet \alert{fermé}. 
+$$Compose  (\text{'Mozart'}, \text{'Don Giovanni'})$$
+\vfill
+Un nuplet énoncé avec au moins une variable est un nuplet \alert{ouvert}. 
+$$Compose  (X, \text{'Don Giovanni'})$$
+\vfill
+Un nuplet ouvert désigne une infinité de faits possibles. 
+
+\vfill
+
+
+\begin{blocgauche}
+\begin{remblock}{Interêt?}
+En général on s'intéresse aux valeurs de $X$ pour lesquelles les faits sont vrais.
+\alert{On a effectué une requête}.
+\end{remblock}
+\end{blocgauche}
+
+
+\end{frame}
+
+
+
+\begin{frame}{Collections et quantificateurs}
+
+Les nuplets libres expriment des contraintes sur un fait. 
+
+\vfill
+
+
+On peut exprimer des contraintes sur des collections de faits avec les quantificateurs.
+
+
+\begin{redbullet}
+   \item $\exists x P(x)$ est vraie s'il existe \alert{au moins} une affectation de $x$
+     pour laquelle $P(x)$ est 
+     vraie.
+   \item $\forall x P(x)$ est vraie si $P(x)$ est 
+     vraie pour \alert{toutes} les valeurs de $x$.
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Variables libres et liées}: un variable quantifiée est libre; sinon elle est liée.
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{SQL = formules logique}
+
+\alert{Requête SQL } = une formule avec des variables libres.
+
+\vfill
+
+\alert{Résultat d'une requête} = les valeurs des variables libres qui satisfont la formule.
+
+\vfill
+ La formule $Compose  (X, \text{'Don Giovanni'})$ s'écrit en SQL
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+     select compositeur
+       from Compose
+       where oeuvre='Don Giovanni'
+\end{minted}
+
+SQL c'est une syntaxe pour écrire des formules.
+\vfill
+
+
+\begin{blocgauche}
+\begin{remblock}{Déclarativité}
+On ne dit pas comment on calcule!
+\end{remblock}
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Exemples}
+
+Deux relations/prédicats:  
+
+\begin{redbullet}
+  \item \texttt{Expert (id\_expert, nom)} 
+  \item \texttt{Manuscrit (id\_manuscrit, auteur, titre, 
+id\_expert, commentaire)}
+\end{redbullet}
+
+\vfill 
+
+$Manuscrit (\_, \text{'Proust'}, t, x, \_) \land Expert (x, n)$
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select titre, nom from Expert, Manuscrit
+where Expert.id_expert = Manuscrit.id_expert
+and auteur = 'Proust'
+\end{minted}
+
+\vfill
+
+$Expert (x, n) \land \exists Manuscrit (\_, \text{'Proust'}, \_, x, \_) $
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select nom from Expert as e 
+where exists (select *  from Manuscrit as m
+              where e.id_expert = m.id_expert
+              and auteur = 'Proust')
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}{À retenir}
+
+SQL est un langage \alert{déclaratif} qui exprime par une formule logique
+les propriétés du résultat à construire. 
+
+\vfill
+Avantages prouvés et éprouvés depuis les années 1970.
+
+\begin{redbullet}
+  \item  signification précise, non ambigue
+  \item algorithmes efficaces 
+  \item  langage robuste, universellement connu et adopté, 
+     \alert{normalisé}
+  \item \alert{déclarativité}: SQL 
+    ne donne  aucune indication sur la manière dont le système doit trouver le résultat.
+\end{redbullet}
+
+\end{frame}
+

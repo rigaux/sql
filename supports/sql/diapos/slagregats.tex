@@ -1,0 +1,195 @@
+
+\begin{frame}[fragile]{SQL, agrégation}
+
+Cette session présente les agrégats en SQL. Elle consiste à regrouper des lignes
+et à appliquer à chaque groupe une fonction d'agrégation.
+
+\vfill
+
+Contenu:
+
+\begin{redbullet}
+  \item La clause \sqlkw{group by}
+  \item Fonctions d'agrégation
+  \item La clause \sqlkw{having}
+\end{redbullet}
+
+\vfill
+\begin{blocgauche}
+\alert{Ces diapositives correspondent au support en ligne disponible sur
+le site \url{http://sql.bdpedia.fr/}}
+\end{blocgauche}
+
+\end{frame}
+
+%%%%%%ù
+\begin{frame}[fragile]{Principe général}
+
+On définit des \alert{groupes} de lignes ayant en commun une ou plusieurs valeurs.
+
+\vfill
+
+On ramène chaque groupe à une seule valeur en appliquant une \alert{fonction d'agrégation}.
+
+\vfill
+
+Cas le plus simple: un seul groupe, obtenu par un bloc \texttt{select from where}.
+
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select count(*) as nbPersonnes, count(prénom) as nbPrénoms, 
+         count(nom) as nbNoms
+from Personne
+\end{minted}
+
+\vfill
+
+\begin{tabular}{c|c|c}
+\textbf{nbPersonnes} & \textbf{nbPrénoms} & \textbf{nbNoms}\\ \hline 
+7 & 6 & 7\\ \hline 
+\end{tabular}
+
+\end{frame}
+
+%%%%%%ù
+\begin{frame}[fragile]{Le \texttt{group by}}
+
+La clause \sqlkw{group by} \texttt{att1, ..., attn} \alert{partitionne} le résultat d'un bloc
+\sqlkw{select from where} en fonction des \texttt{att1, ..., attn}
+
+\vfill 
+
+Chaque \alert{groupe} contient les lignes qui partagent les mêmes valeurs pour \texttt{att1, ..., attn}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select  idAppart, sum(quotePart) as totalQP
+from    Propriétaire
+group by idAppart
+\end{minted}
+
+\vfill
+\begin{blocgauche}
+Procède en deux étapes: d'abord on groupe, puis on agrège.
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%ù
+\begin{frame}[fragile]{Décomposons\,: l'étape de regroupement}
+
+On obtient une structure intermédiaire, avec autant de lignes que de valeurs
+distinctes pour les attributs de regroupement (ici, \texttt{idAppart}).
+
+\vfill
+
+\begin{tabular}{c|c}
+\textbf{idAppart} & Groupe (\textbf{idPersonne}, \textbf{idAppart}, \textbf{quotePart}) \\ \hline 
+100 & \begin{tabular}{c} 
+            [(1, 100, 33), (5, 100, 67)] \\ 
+       \end{tabular}                
+       \\ \hline 
+101 &  \begin{tabular}{c} 
+            [(1, 101, 100)] \\ 
+       \end{tabular}                \\ \hline 
+102 &  \begin{tabular}{c} 
+            [(5, 102, 100)] \\ 
+       \end{tabular}                \\ \hline 
+103 &  \begin{tabular}{c} 
+            [(2, 103, 100)] \\ 
+       \end{tabular}                \\ \hline 
+104 &  \begin{tabular}{c} 
+            [(2, 104, 100)] \\ 
+       \end{tabular}                \\ \hline 
+201 &  \begin{tabular}{c} 
+            [(5, 201, 100)] \\ 
+       \end{tabular}                \\ \hline 
+202 &  \begin{tabular}{c} 
+            [(1, 202, 100)] \\ 
+       \end{tabular}                \\ \hline 
+\end{tabular}
+
+\vfill
+\begin{blocgauche}
+\alert{Ce n'est pas une table en première forme normale.}
+\end{blocgauche}
+\end{frame}
+
+%%%%%%ù
+\begin{frame}[fragile]{L'étape d'agrégation}
+
+La fonction d'agrégation ramène un groupe à une valeur
+\vfill
+
+\begin{tabular}{c|c}
+\textbf{idAppart} & SUM(\textbf{quotePart}) \\ \hline 
+100 & SUM (33, 67) = 100 \\ \hline 
+101 &  SUM (100) = 100\\ \hline 
+102 &  SUM (100) = 100\\ \hline  
+103 &  SUM (100) = 100\\ \hline 
+104 &  SUM (100) = 100\\ \hline  
+201 &  SUM (100) = 100\\ \hline  
+202 & SUM (100) = 100\\ \hline  
+\end{tabular}
+
+\vfill
+\begin{blocgauche}
+\alert{Cette fois c'est une table en première forme normale.}
+\end{blocgauche}
+\end{frame}
+
+
+%%%%%%ù
+\begin{frame}[fragile]{La clause \sqlkw{having}}
+
+Exprime un critère de sélection sur le résultats de la fonction d'agrégation.
+\vfill
+
+\alert{Bien distinguer de la clause \sqlkw{where} qui s'applique aux nuplets}
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+     select  idAppart, count(*) as nbProprios
+     from    Propriétaire
+     group by idAppart
+     having count(*) >= 2
+\end{minted}
+
+\vfill
+
+\begin{tabular}{c|c}
+\textbf{idAppart} & \textbf{nbProprios}\\ \hline 
+100 & 2\\ \hline 
+\end{tabular}
+
+\end{frame}
+
+%%%%%%%%%
+\begin{frame}{À retenir}
+
+Agrégats = extension de SQL.
+
+\vfill
+
+\begin{redbullet}
+  \item  S'applique au \alert{résultat} d'une requête standard
+  \item Partitionne en groupes de nuplets partageant les mêmes valeurs de regroupement
+  \item Réduit chaque groupe à une valeur grâce à une fonction d'agrégation
+  \item On peut filtrer les groupes obtenus avec \sqlkw{having}
+\end{redbullet}
+
+\vfill
+
+\begin{blocgauche}
+Attention aux valeurs  à \texttt{null} et aux doublons.
+\end{blocgauche}
+\end{frame}
+

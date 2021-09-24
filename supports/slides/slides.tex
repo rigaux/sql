@@ -1,0 +1,29 @@
+\documentclass{beamer}
+
+\usepackage[french]{babel}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%\usepackage{local}
+\usepackage{minted}
+
+\begin{document}
+
+
+
+\begin{frame}[fragile]{Affectation de tables}
+
+\begin{minted}{sql}
+create table Film (...)
+pctfree 10
+pctused 40
+tablespace TB1
+storage ( initial 50K
+          next 50K
+         maxextents 10
+pctincrease 25 );
+\end{minted}
+
+\end{frame}
+\end{document}
+

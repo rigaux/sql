@@ -1,0 +1,230 @@
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\textsc{Forme de base d'une requête SQL}}
+
+La forme de base est celle d'un ``bloc'' constitué de 
+trois \alert{clauses}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select expressions
+from  une_table
+[where conditions]
+\end{minted}
+
+\vfill
+
+L'interprétation est \alert{toujours} la suivante (dans l'ordre)\,:
+
+\begin{redbullet}
+   \item \sqlkw{from}\,: \alert{l'espace de recherche}\,; c'est toujours une table
+     \item \sqlkw{where}\,: \alert{conditions} imposées aux nuplets
+            du \sqlkw{from}
+       \item \sqlkw{select}\,: construit un  \alert{nuplet-résultat} à partir de chaque nuplet
+          du \sqlkw{from} qui satisfait le \sqlkw{where}
+\end{redbullet}
+
+\vfill
+
+Dans un premier temps\,: on suppose que l'espace de recherche est une des tables de la base
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Illustration}
+
+
+Un premier exemple très simple.
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select prénom, nom from Voyageur where idVoyageur=10
+\end{minted}
+
+\vfill
+
+Donne une table avec un nuplet-résultat.
+
+\vfill
+
+\begin{tabular}{c|c}
+\textbf{prénom} & \textbf{nom}\\ \hline 
+Phileas & Fogg\\ \hline 
+\end{tabular}
+
+\vfill 
+
+\begin{redbullet}
+   \item L'espace de recherche est la table \texttt{Voyageur}
+     \item La condition est une égalité sur un attribut (\texttt{idVoyageur=10})
+     \item On construit le nuplet-résultat à partir d'un nuplet-voyageur
+\end{redbullet}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{D'où vient SQL\,?}
+
+SQL ne sort pas du chapeau de quelques bricoleurs. Il a pour fondement
+deux langages complémentaires.
+
+\vfill
+\begin{redbullet}
+  \item \alert{L'algèbre relationnelle} (déjà vu) est un ensemble d'opérations
+     applicables à des tables\,;
+    \item \alert{La logique formelle} (à voir en complément)  donne à SQL son aspect \alert{déclaratif} 
+    (ce que l'on veut, et pas comment on veut le calculer).
+\end{redbullet}
+
+\vfill
+
+Nous avons choisi de baser nos explications sur l'algèbre. 
+
+\vfill
+
+La requête précédente correspond à l'expression\,:
+$$\pi_{pr\acute{e}nom, nom}(\sigma_{idVoyageur=10} (Voyageur))$$
+ 
+\end{frame}
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Clause \sqlkw{where} = opérateur $\sigma$ de l'algèbre}
+
+Les conditions sont celles déjà vues pour $\sigma$
+
+
+\vfill
+\begin{redbullet}
+  \item Comparaison ($=$, $<$, $>$, $!=$) entre un attribut et une constante
+  \item Comparaison entre un attribut et un autre attribut
+\end{redbullet}
+
+\vfill
+
+Le \sqlkw{where} est un formule propositionnelle (avec \sqlkw{and}, \sqlkw{or},
+\sqlkw{not} et le parenthésage) combinant ces conditions.
+
+
+\vfill
+ 
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select * from Logement 
+where lieu = 'Corse' or (capacité > 50 and type='Hôtel')
+\end{minted}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Clause \sqlkw{select} = opérateurs $\pi$ et $\rho$  de l'algèbre}
+
+La projection  $\pi_{A_{1}, \cdots, A_{n}}$ correspond à 
+ \texttt{\sqlkw{select} A1, .., An}
+ 
+\vfill
+
+Le \alert{renommage} ($\rho$ en algèbre) s'exprime avec \sqlkw{as}.
+
+\vfill
+
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select idVoyageur as id, prénom as p,  nom as n 
+from Voyageur 
+where idVoyageur < 30
+\end{minted}
+
+\vfill
+ \begin{tabular}{c|c|c}
+\textbf{id} & \textbf{p} & \textbf{n}\\ \hline 
+10 & Phileas & Fogg\\ \hline 
+20 & Nicolas & Bouvier\\ \hline 
+\end{tabular}
+ 
+\vfill
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Attention aux doublons}
+
+
+Pour éviter le tri, SQL n'élimine pas les doublons.
+
+\vfill
+
+
+Si on le souhaite, on peut les éliminer
+avec  \sqlkw{distinct}.
+
+
+\vfill
+
+\begin{center}
+\begin{minipage}[b]{4cm}
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select type 
+from Logement
+\end{minted}
+
+\begin{tabular}{c}
+\textbf{type}\\ \hline 
+Auberge\\ \hline 
+Hôtel\\ \hline 
+Gîte\\ \hline 
+Hôtel\\ \hline 
+\end{tabular}
+\end{minipage} \hspace*{1cm} \
+\begin{minipage}[b]{4cm}
+\begin{minted}[baselinestretch=.9,
+               fontsize=\small,
+               framesep=2mm]{sql}
+select distinct type 
+from Logement
+\end{minted}
+
+\begin{tabular}{c}
+\textbf{type}\\ \hline 
+Auberge\\ \hline 
+Hôtel\\ \hline 
+Gîte\\ \hline 
+\end{tabular}
+\end{minipage}
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}{À retenir}
+
+Nous savons déjà faire beaucoup de choses\,: toutes
+les requêtes exprimables avec $\sigma$, $\pi$ et $\rho$
+
+\vfill
+
+\begin{redbullet}
+  \item Retenir l'interprétation d'une requête\,: d'abord
+  le   \sqlkw{from}, puis le \sqlkw{where}, et enfin le \sqlkw{select}
+  \item SQL présente quelques extensions à l'algèbre (SQL permet d'utiliser des 
+    fonctions par
+exemple\,: voir la documentation de votre système)
+  \item Le \sqlkw{distinct} est à réserver aux cas où les doublons
+  sont à éliminer
+\end{redbullet}
+
+\end{frame}
+

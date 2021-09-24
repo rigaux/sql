@@ -1,0 +1,117 @@
+\documentclass[12pt,aspectratio=169]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{bold-extra}
+\usepackage[french]{babel}
+\usepackage{textcomp}
+\usepackage{eurosym}
+\usepackage{hyperref}
+
+\usepackage{tabularx}
+\usepackage{graphicx}
+
+\usepackage{mooc-macros}
+
+
+\subtitle{Bases relationnelles: modèles et langages}
+\author[S. Abiteboul, P. Rigaux]{S. Abiteboul, Directeur de Recherche INRIA et P. Rigaux}
+\institute[Le Cnam]{Le Cnam, Département Informatique}
+\date{}
+
+\usetheme{Boadilla}
+\usecolortheme{beaver}
+
+
+\definecolor{gris}{rgb}{0.59,0.59,0.58}
+\definecolor{grisclair}{rgb}{0.8,0.8,0.8}
+\definecolor{rouge}{rgb}{0.6,0,0}
+
+\makeatletter
+\setbeamertemplate{headline}
+{
+}
+\makeatother
+
+\setbeamersize{text margin right=25ex} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\setbeamercolor{date in head/foot}{fg=rouge,bg=grisclair}
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.10\paperwidth,ht=6.25ex,dp=3ex,center]{author in head/foot}%
+   \textbf{ \small{\bf \insertframenumber{} }}\hspace*{1ex}
+    %\usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+  \end{beamercolorbox}}%
+   \begin{beamercolorbox}[wd=.90\paperwidth,ht=6.25ex,dp=3ex]{date in head/foot}%
+    \hspace*{5ex}\usebeamerfont{author in head/foot}\textbf{\small{\bf\insertshortauthor\hspace*{2ex}\hspace*{2ex}\insertshorttitle}}%\expandafter\beamer@ifempty\expandafter{\beamer@shortinstitute}{}{~~(\insertshortinstitute)}%
+  \end{beamercolorbox}%
+  }%
+  \vskip0pt%
+
+\makeatother
+
+\setbeamerfont{frametitle}{series=\bfseries}
+\setbeamerfont{frametitle}{size=\large}
+
+\definecolor{codecolor}{rgb}{0, 0, 1}
+\newcommand{\code}[1]{\textcolor{codecolor}{\texttt{\textbf{#1}}}}
+\newcommand{\prend}{$\leftarrow$}
+\newcommand{\paseg}{$\neq$}
+\beamertemplatenavigationsymbolsempty
+   
+\usefonttheme{structurebold}
+\setbeamerfont{title}{series=\bfseries,parent=structure}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+
+\newcommand{\thecode}[1]{\textcolor{blue}{#1}}
+\newcommand{\somecode}[1]{
+\begin{semiverbatim}
+\thecode{#1}
+\end{semiverbatim}}
+
+
+%\usepackage{macros}
+
+% Paramètres indiquant le titre des diapos, et le fichier 
+\providecommand{\titreDiapos}{Titre diapos}% fallback definition
+\providecommand{\inputFile}{}% fallback definition
+
+
+\section{\titreDiapos}
+
+
+\author {Philippe Rigaux - \titreDiapos}
+\date{}
+
+\begin{document}    
+
+
+\begin{frame}
+  \nointerlineskip
+  \setbeamercolor{postit}{bg=white}
+  \begin{beamercolorbox}[ht=1.8em,wd=\paperwidth]{postit}
+    \usebeamerfont{frametitle}%
+    \vbox{}\vskip-1ex%
+     \strut\insertframetitle\strut
+               \hfill
+            \includegraphics[width=3cm]{Logo_cnam}
+  \end{beamercolorbox}
+
+%\titlepage 
+\medskip
+{\huge
+\alert{\titreDiapos}
+}
+
+\vfill
+\alert{Serge Abiteboul, Directeur de Recherche INRIA \\ Philippe Rigaux, Professeur des Universités au Cnam}
+\end{frame}
+
+\input{\inputFile}
+
+\end{document}
+

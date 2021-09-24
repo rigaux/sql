@@ -1,0 +1,393 @@
+
+######################
+Présentation générale
+######################
+
+
+Données, bases de données et  SGBD
+==================================
+
+La première chose à faire est d'établir quelques points de
+terminologie. Qu'est-ce qu'une donnée ? C'est une information quelconque comme, par
+exemple : voici une personne, elle s'appelle Jean. C'est aussi une 
+relation entre des informations : Jean *enseigne* les bases de données.
+Des relations de ce genre définissent des *structures*.
+Une base de données est un ensemble, en général volumineux, de telles
+informations, avec une caractéristique essentielle : on souhaite
+les mémoriser de manière permanente. D'où la définition :
+
+.. admonition:: Définition
+
+   Une base de données est un gros ensemble d'informations 
+   structurées mémorisées sur un support {\em
+   permanent.
+ 
+On peut remarquer qu'une organisation consistant en
+un (ou plusieurs) fichier(s) stockés sur
+mémoire secondaire est conforme à cette définition. Un ensemble
+de fichiers ne  présentant qu'une complexité assez faible, il n'y 
+aurait pas là matière à longue dissertation. Malheureusement
+l'utilisation directe de fichiers soulève de très gros problèmes :
+
+   * Lourdeur d'accès aux données. En pratique,
+     pour chaque accès, même le plus simples, il faudrait
+     écrire un programme.
+   * Manque de sécurité. Si tout programmeur
+     peut accéder directement aux fichiers, il est impossible
+     de garantir la sécurité et l'intégrité des données.
+   * Pas de contrôle de concurrence. Dans un environnement
+     où plusieurs utilisateurs accèdent aux même fichiers,
+     des problèmes de concurrence d'accès se posent.  
+
+D'où le recours à un logiciel chargé de gérer les
+fichiers constituant une base de données, de prendre
+en charge les fonctionnalités de protection et de
+sécurité et de fournir
+les différents types d'interface nécessaires à l'accès
+aux données.
+Ce logiciel (le *Système de Gestion de Bases de Données* ou SGBD) est
+très complexe et fournit le sujet principal de ce cours.
+En particulier, une des tâches principales du SGBD est de masquer
+à l'utilisateur les détails complexes et fastidieux liés à la
+gestion de fichiers. D'où la définition.
+
+.. admonition:: Définition
+
+   Un Système de Gestion de Bases de 
+   Données (SGBD) est un logiciel de haut niveau qui
+   permet de manipuler les informations stockées dans
+   une base de données.
+ 
+La complexité d'un SGBD est essentiellement issue de la diversité
+des techniques mises en œuvre, de la multiplicité des composants
+intervenant dans son architecture, et des différents types d'utilisateurs
+(administrateurs, programmeurs, non informaticiens, ...)
+qui sont confrontés, à différents niveaux, au système. 
+Voici quelques
+exemples illustrant tous les cas de figure qu'il faudrait envisager
+dans un cours exhaustif :
+
+  * Les modèles de données : entité-relation, 
+    relationnel, orienté-objet, modèles semi-structurés, etc.
+  * Les langages de requêtes : fondements théoriques
+    (logiques du premier ordre, du point fixe, algèbres
+    diverses) et les langages comme SQL, Datalog, SparcQL, et une infinité de variantes.
+  * Les techniques de stockage : sur disque, en mémoire, distribuées.
+  * L'organisation des fichiers : index, arbre-B, hachage, ... 
+  * L'architecture : centralisé, distribué, fédérées.
+  * Les techniques d'évaluation et d'optimisation de requêtes.
+  * La concurrence d'accès et les techniques de reprise sur pane.
+
+
+Pour mettre un peu d'ordre dans tout cela, on peut s'appuyer sur une distinction
+des utilisateurs des SGBD en trois catégories.
+
+    * Utilisateur naïf :du non spécialiste des SGBD au non informaticien.
+    * Concepteur et programmeur d'application : à partir des besoins des différents utilisateurs, écrit
+      l'application pour des utilisateurs "naïfs".
+    * Utilisateur expert :  informaticien connaissant le fonctionnement
+      interne d'un SGBD et chargé d'administrer la base.
+
+Chaque niveau du SGBD remplit (réalise) un certain nombre de
+fonctions :
+\begin{itemize
+  * Niveau physiques : gestion sur mémoire secondaire 
+        (fichiers) des données, du schéma, des index ; 
+    Partage de données et gestion de la concurrence d'accès ;
+    Reprise sur pannes (fiabilité) ; 
+    Distribution des données et interopérabilité (accès
+          aux réseaux).
+
+  * Niveau logique : 
+   Définition de la structure de données : Langage de
+          Description de Données (LDD) ;
+     Consultation et Mise à Jour des données : Langages de 
+          Requ\^{etes (LR) et Langage de Manipulation de Données
+          (LMD) ;
+    Gestion de la confidentialité (sécurité) ; 
+    Maintien de l'intégrité ;
+ 
+   * Niveau externe : Vues ; 
+    Environnement de programmation (intégration avec un
+          langage de programmation) ;
+    Interfaces conviviales et Langages de 4e Génération
+          (L4G) ;
+   Outils d'aides (e.g. conception de schémas) ;
+   Outils de saisie, d'impression d'états.
+\end{itemize 
+
+%
+% Decrire les trois niveaux et leur independance
+%
+En résumé, un SGBD est destiné à gèrer  
+  un gros volume d'informations, persistantes (années) 
+et fiables (protection sur pannes), partageables entre plusieurs
+utilisateurs et/ou programmes et manipulées 
+indépendamment de leur représentation physique.
+
+Que doit-on savoir pour utiliser un SGBD ?
+==========================================
+
+L'utilisation d'un SGBD suppose de comprendre (et donc de savoir
+utiliser) les fonctionnalités suivantes :
+
+\begin{enumerate
+  * Définition du schéma de données en utilisant les
+         modèles de données du SGBD.
+  * Opérations sur les données : recherche,
+        mises-à-jour, etc. 
+  * Partager les données entre plusieurs utilisateurs.
+        (Mécanisme de transaction).
+  * Optimiser les performances, par le réglage de
+        l'organisation physique des données. Cet aspect relève
+      plutôt de l'administration et ne sera évoqué
+      que dans l'introduction.
+\end{enumerate
+
+Reprenons dans l'ordre ces différents points.
+
+\subsection{Définition du schéma de données
+
+Un schéma est simplement la description des données contenues 
+dans la base.
+Cette description est conforme à  un modèle de données 
+qui propose
+des outils de description (structures, contraintes  et opérations).
+En fait, dans un SGBD, il existe plusieurs modèles plus ou moins
+abstraits des mêmes objets, e.g. :
+  \begin{itemize 
+    * Le modèle conceptuel : la description du système
+          d'information
+    * Le modèle logique :  interface avec le SGBD 
+    * Le modèle physique : fichiers.
+  \end{itemize  
+Ces différents modèles correspondent aux niveaux
+dans l'architecture d'un SGBD. Prenons l'exemple du
+modèle conceptuel le plus courant : le modèle Entité/Association.
+C'est essentiellement une description très abstraite qui présente
+les avantages suivants :   
+          \begin{itemize 
+            * l'analyse du monde réel 
+            * la conception du système d'information 
+            * la communication entre différents acteurs de
+                  l'entreprise
+          \end{itemize 
+En revanche, il ne propose pas d'opérations. Or définir
+des structures sans disposer d'opérations pour agir sur les données
+stockées dans ces structures ne présente pas d'intérêt pratique
+pour un SGBD. D'où, à un 
+niveau inférieur, des modèles dits ``logiques''
+qui proposent :
+    \begin{enumerate
+      * Un langage de définition de données (LDD) pour décrire
+        la structure, incluant des contraintes.
+      * Un langage de manipulation de données (LMD) pour
+                appliquer des opérations aux données.
+    \end{enumerate
+
+Ces langages sont abstraits : le LDD est 
+indépendant de la représentation physique des données, et 
+le LMD est indépendant de l'implantation des  opérations. On
+peut citer une troisième caractéristique : oute les structures et 
+les opérations, un modèle logique doit permettre d'exprimer 
+des contraintes d'intégrité sur les données. Exemple :
+\begin{verbatim
+  nom character 15, not null; 
+  âge integer between 0 and 120; 
+  débit = crédit;
+  ...
+\end{verbatim
+
+Bien entendu, le SGBD doit être capable de garantir le respect
+de ces contraintes.
+
+\begin{prof
+Il existe plusieurs générations de modèles logiques.
+Les premiers étaient peu abstraits (navigationnels). Voici un 
+historique présentant les principales générations.
+
+\begin{tabbing 
+~~~~\=   $<$ 60 ~~~~\=~~~ S.G.F. (e.g. COBOL)~~~~~~~\= \\
+\>  mi-60  \> HIÉRARCHIQUE IMS (IBM) \> navigationnel \\
+\>        \> RÉSEAU                 \> navigationnel \\
+\> 73-80  \> RELATIONNEL            \> déclaratif \\
+\> mi-80  \> RELATIONNEL            \> explosion sur micro\\
+\> Fin 80 \> RELATIONNEL ETENDU     \> nouvelles applications\\ 
+\>        \> DATALOG (BD déductifs) \> pas encore de marché\\
+\>        \> ORIENTÉ-OBJET          \> navig. + déclaratif
+\end{tabbing 
+ 
+\end{prof
+
+Quand on con\c{coit une application pour une BD, on tient
+compte (plus ou moins consciemment) de cette architecture en plusieurs
+niveaux. Typiquement : (1) On décide la structure logique, (2)
+on décide la structure physique, (3) on écrit les programmes 
+d'application en utilisant la structure logique, enfin (4) 
+Le SGBD se charge de transcrire les commandes du LMD
+en instructions appropriées appliquées à la
+          représentation physique.
+
+Cette aproche offre de très grands avantages qu'il est 
+important de souligner. 
+Tout d'abord elle ouvre l'utilisation des SGBD à de utilisateurs 
+non-experts :
+les langages proposés par les modèles logiques 
+sont plus simples, et donc      plus accessibles, que les outils de gestion
+de fichiers. Ensuite, on obtient une caractéristique essentielle :
+l'indépendance physique. 
+On peut modifier l'implantation physique sans modifier les 
+programmes d'application. Un concept voisin est celui
+d'indépendance logique : 
+on peut modifier les programmes d'application sans toucher à
+ l'implantation.
+
+Enfin le SGBD décharge l'utilisateur, et en grande partie l'administrateur, 
+de la lourde tâche de contrôler la sécurité et l'intégrité
+des données.
+
+\subsection{Les opérations sur les données
+
+Il existe 4 opérations classiques (ou requêtes) :
+\begin{enumerate
+  * La création (ou insertion).
+  * La modification (ou mise-à-jour).
+  * La destruction.
+  * La recherche.
+\end{enumerate
+
+Ces opérations correspondent à des commandes du LMD. La plus
+complexe est la recherche en raison de la variété des
+critères. 
+\begin{prof
+Quelques exemples de requêtes :
+\begin{verbatim
+  Insérer un employé nommé Jean
+  Augmenter Jean de 10%.
+  Détruire Jean (de la base !)
+  Chercher les employés cadres
+  Chercher les employés du département comptabilité
+  Salaire moyen des employés comptables, avec deux enfants, 
+  nés avant 1960 et travaillant à Paris
+  ...
+\end{verbatim
+\end{prof
+
+Pour l'utilisateur, une bonne requête a les caractéristiques
+suivantes. Tout d'abord 
+elle s'exprime facilement : l'idéal serait de pouvoir
+utiliser le langage naturel, mais celui-ci présente trop d'ambiguités.
+Ensuite le langage ne devrait pas demander d'expertise technique 
+(syntaxe compliquée, 
+structures de données, implantation particulière ...).
+Il est également souhaitable de ne pas attendre trop longtemps
+(à charge pour le SGBD de fournir des performances acceptables). Enfin
+, et peut-être surtout, la réponse doit être fiable.
+
+Une bonne partie du travail sur les SGBD consiste à satisfaire ces
+besoins. Le résultat est ce que l'on 
+appelle un langage de requêtes,
+et constitue à la fois un sujet majeur d'étude et une 
+caractéristique
+essentielle de chaque SGBD. Le langage le plus répandu à l'heure
+actuelle est SQL.
+\begin{prof
+Si on se place du point de vue du système, le traitement d'une requête
+comprend les étapes suivantes :
+  \begin{itemize 
+    * Analyse syntaxique
+    * Modification de la requête.\\
+           Nécessaire si la requête est faite sur une vue
+    * Optimisation\\
+           Génération (par le SGBD) d'un programme optimisé 
+           à partir de la
+           connaissance de la structure des données, de l'existence
+           d'index, de statistiques sur les données.
+            
+    * Exécution.\\
+        NB : on
+        doit tenir compte du fait que d'autres utilisateurs sont 
+        peut-être en train de modifier les données qu'on interroge !
+  \end{itemize 
+
+On retrouve deux aspects évoqués précédemment : optimisation
+et concurrence d'accès.
+ 
+\end{prof
+
+\subsection{Optimisation
+
+L'optimisation (d'une requête) s'appuie sur l'organisation
+physique des données. Les principaux types d'organisation sont
+les fichiers séquentiels, les index (denses. secondaires, arbres B)
+et le regroupement des données par hachage.
+
+Un module particulier du SGBD, l'optimiseur, tient compte de
+cette organisation et des caractéristiques de la requête pour
+choisir le meilleur séquencement des opérations.
+
+\subsection{Concurrence d'accès
+
+Plusieurs utilisateurs doivent pouvoir accéder en même temps
+aux mêmes données. Le SGBD doit savoir :
+
+\begin{itemize
+  * Gérer les conflits si les deux font des mises-à-jour.
+  * Offrir un mécanisme de retour en arrière si on décide
+        d'annuler des modifications en cours.
+  * Donner une image cohérente des données si l'un fait
+        des requêtes et l'autre des mises-à-jour.
+\end{itemize
+
+Le but : éviter les blocages, tout en empéchant des modifications
+anarchiques.
+
+\section{Le plan du cours
+
+Le cours comprend trois parties consacrées successivement
+à la conception d'une base de données relationnelles,
+aux langages de requêtes relationnels, enfin à la pratique 
+d'un SGBD relationnel.
+
+\subsection{Conception d'un schéma relationnel
+
+Le cours présente d'abord la technique classique
+de conception à l'aide du modèle entité/association,
+suivie de la transcription du schéma obtenu
+dans le modèle relationnel. On obtient un moyen simple
+et courant de créer des schémas ayant de bonnes propriétés.
+Les concepts de 'bon' et de 'mauvais' schémas sont
+ensuite revus plus formellement avec la théorie de la 
+normalisation.
+
+\subsection{Langages relationnels
+
+Les langages d'interrogation et de manipulation de données
+suivants sont présentés : l'algèbre relationnelle
+qui fournit un petit ensemble d'opérateurs permettant
+d'exprimer des requêtes complexes et le langage
+SQL, norme SQL2.
+
+\subsection{Pratique d'un SGBD relationnel
+
+Cette partie reprend et étend les sujets précédents
+et développe leur mise en pratique dans
+l'environnement d'un SGBD relationnel. Elle comprend :
+
+\begin{enumerate
+  * Une revue complète du langage de définition
+    de données SQL2 pour la création de {\em
+   schémas relationnels, incluant l'expression
+    de contraintes, les vues et les {\it triggers.
+
+  * Une introduction au  développement d'applications
+      avec SQL.
+
+  * Une introduction à la concurrence
+   d'accès et à ses implications pratiques.
+
+  * Une série de travaux pratiques et d'exercices
+   avec le SGBD Oracle. 
+\end{enumerate
+
+

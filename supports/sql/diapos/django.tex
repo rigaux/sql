@@ -1,0 +1,342 @@
+
+
+\section{Frameworks MVC}
+
+
+\begin{frame}{Le framework Django}
+
+Django est un framework en langage Python pour développer
+des applications Web.
+
+\begin{itemize}
+   \item S'appuie sur le modèle MVC.
+    \item Propose tous les outils concevables: traduction, services, authentification,
+        etc, etc.
+    \item Repose beaucoup sur les \alert{conventions} de codage (nom des fichiers,
+       variables) et le moins possible sur la \alert{configuration}.   
+    \item Comprend un moteur de template, un \textit{mapping} vers les bases
+        de données, des fonctions de service Web.  
+\end{itemize}  
+
+Représentatif d'un framework MVC. Très utilisé pour de bonnes raisons : simple,
+puissant, concis, performant.
+\end{frame}
+
+
+\begin{frame}[fragile]{Pour installer}
+
+Il faut disposer d'un environnement Python: \url{https://www.python.org/downloads}{https://www.python.org/downloads}
+
+\vfill
+
+Pour installer Django: il suffit en principe d'exécuter:
+
+\begin{minted}{bash}
+pip3 install django
+\end{minted}
+
+\vfill
+
+Vérifier que Django est bien installé.
+
+\begin{verbatim}
+bash-3.2$ python3
+>>> import django
+>>> print(django.__path__)
+>>> print(django.get_version())
+\end{verbatim}
+
+\vfill
+
+À partir de maintenant on va suivre le 
+\url{Tutoriel}{https://docs.djangoproject.com/en/1.8/intro/tutorial01/}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Créer un nouveau projet}
+
+Django est installé avec un utilitaire \texttt{django-admin}.
+
+\begin{minted}{bash}
+django-admin startproject messagerie
+\end{minted}
+
+\vfill
+
+On peut lancer un serveur
+
+\begin{minted}{bash}
+python3 manage.py runserver
+\end{minted}
+
+\vfill
+
+Le serveur est en écoute sur le port 8000: \url{Tester}{http://localhost:8000}
+
+\vfill
+
+À partir de là, on peut travailler sur le projet avec un éditeur
+de texte ou (mieux) un IDE comme Eclipse.
+
+\end{frame}
+
+\begin{frame}{Organisation d'un projet}
+
+Un projet Django = un ensemble \alert{d'applications}.
+
+\vfill
+
+\includegraphics[width=12cm]{inidjango}
+
+\vfill
+
+Au départ, une application nommée comme le projet\,: elle
+contient la configuration.
+\end{frame}
+
+\begin{frame}[fragile]{Créons notre première application}
+
+Avec la commande suivante:
+\begin{minted}{bash}
+python3 manage.py startapp polls
+\end{minted}
+
+\vfill
+
+\includegraphics[width=11cm]{django-newapp}
+
+\vfill
+
+Ensuite, il faut ajouter l'application \texttt{polls} dans \texttt{mysite/settings.py}.
+\end{frame}
+
+\begin{frame}[fragile]{Nos modèles}
+
+On définit des \alert{classes} représentant les objets de la base.
+
+\begin{minted}{python}
+from django.db import models
+
+class Question(models.Model):
+    question_text = models.CharField(max_length=200)
+    pub_date = models.DateTimeField('date published')
+
+    def __str__(self):           
+        return self.question_text
+
+class Choice(models.Model):
+    question = models.ForeignKey(Question)
+    choice_text = models.CharField(max_length=200)
+    votes = models.IntegerField(default=0)
+    
+    def __str__(self):           
+        return self.choice_text
+    
+\end{minted}
+
+Django se charge de créer et de maintenir la base de données. 
+\end{frame}
+
+
+\begin{frame}[fragile]{Gestion de la base de données}
+
+Génération des requêtes SQL:
+
+\begin{minted}{bash}
+python3 manage.py makemigrations polls
+\end{minted}
+
+\vfill
+
+Contrôle des requêtes SQL
+\begin{minted}{bash}
+python3  manage.py sqlmigrate polls 0001
+\end{minted}
+
+\vfill
+
+Exécution des requêtes SQL
+\begin{minted}{bash}
+python3 manage.py migrate
+\end{minted}
+
+\vfill
+
+Django mémorise toutes les évolutions de la base et produit les commandes pour
+les exécuter.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{L'interface d'administration}
+
+\alert{Django a créé une interface Web d'administration des données!}
+
+\vfill
+Commençons par créer un super-utilisateur.
+
+\begin{minted}{bash}
+python3 manage.py createsuperuser
+\end{minted}
+
+\vfill
+
+Indiquer qu'on veut engendrer une interface sur les questions: on ajoute
+les lignes suivantes dans \texttt{polls/admin.py}.
+
+\begin{minted}{python}
+from django.contrib import admin
+
+from .models import Question
+
+admin.site.register(Question)
+\end{minted}
+
+\end{frame}
+
+\begin{frame}{L'interface d'administration}
+
+Automatiquement engendrée et gérée par le framework.
+\vfill
+
+\includegraphics[width=11cm]{admin-django}
+
+\vfill
+
+Tester les insertions et mises à jour.
+
+\vfill
+
+Ajouter l'interface sur les Choix, de la même manière.
+
+\end{frame}
+
+\subsection{Les vues}
+
+\begin{frame}[fragile]{Passons aux vues}
+
+La notion de \alert{vue} dans Django correspond plutôt
+à la notion de \alert{contrôleur} dans d'autres frameworks.
+
+\vfill
+
+Une vue est constituée \alert{d'actions}. Dans \texttt{polls/views.py}
+
+\begin{minted}{python}
+from django.http import HttpResponse
+
+def index(request):
+    return HttpResponse("Je suis l'application 'polls', action 'index'.")
+\end{minted}
+
+\vfill
+
+Une action reçoit une \alert{requête} (HTTP) et retourne une \alert{réponse} (HTTP).
+\end{frame}
+
+\begin{frame}[fragile]{Les actions et leurs URLs}
+
+
+\alert{Chaque action est associée à une URL}. 
+
+\vfill
+
+Dans \texttt{mysite/urls.py}.
+
+\begin{minted}{python}
+from django.conf.urls import include, url
+from django.contrib import admin
+
+urlpatterns = [
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^polls/', include('polls.urls')),
+]
+\end{minted}
+
+\vfill
+
+Et dans \texttt{polls/urls.py}.
+
+\begin{minted}{python}
+from . import views
+
+urlpatterns = [
+    url(r'^$', views.index, name='index'),
+]
+\end{minted}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Dernière étape: les templates}
+
+Template = un fragment HTML, avec des commandes pour afficher un 
+\alert{contexte.}
+
+\vfill
+
+Créer le fichier \texttt{polls/templates/polls/index.html}.
+
+\begin{minted}{html}
+{% if questions %}
+    <ul>
+    {% for question in questions %}
+        <li>
+             {{ question.question_text }}
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+\end{minted}
+
+\vfill
+
+"Contexte" = des données passées au template par l'action.
+\end{frame}
+
+\begin{frame}[fragile]{L'action crée le contexte et appelle le template}
+
+Redéfinir l'action \texttt{index} dans \texttt{polls/views.py} de la manière suivante:
+
+\begin{minted}{python}
+from .models import Question
+
+def index(request):
+    questions = Question.objects.order_by('-pub_date')[:5]
+    context = {'questions': questions}
+    
+    return render(request, 'polls/index.html', context)
+\end{minted}
+
+\vfill
+
+tester!
+
+\end{frame}
+
+\begin{frame}{Récapitulons}
+
+\textit{Framework} = cadre de travail. C'est bien ça, on développe une application
+en définissant
+
+\begin{itemize}
+  \item Des \alert{modèles}, qui représentent les données et la logique "métier".
+  \item Des \alert{actions} qui traitent des requêtes HTTP.
+  \item Des \alert{templates} (ou vues) qui affichent.
+\end{itemize}
+
+\vfill
+Et tout un environnement complémentaire: tests, déploiement, intégration, etc.
+
+
+\vfill
+
+Pour aller plus loin: reprendre le tutoriel Django (qui est plus complet) et le faire
+dans son intégralité.
+
+
+
+\end{frame}

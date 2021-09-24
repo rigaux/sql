@@ -1,0 +1,158 @@
+
+\subsection{Sérialisabilité}
+
+
+\begin{frame}{Définition de la sérialisabilité}
+
+
+\begin{defblock}{Définition (à connaître et -- surtout -- comprendre:)}
+Une exécution concurrente $H$ de $n$ transactions $T_1, \cdots, T_n$
+est \alert{sérialisable} si et seulement si
+il existe toujours un ordonnancement $H’$ de $T_1, \cdots, T_n$ tel que le résultat 
+de l’exécution de $H$ est le même que celui de l'exécution \alert{en série} de $H’$.
+\end{defblock}
+
+\vfill
+
+\begin{blocgauche}
+Bien comprendre: si j'ai deux transactions $T_1$ et $T_2$, leur exécution imbriquée
+est sérialisable ssi équivalente à $T_1$ puis $T_2$, ou à $T_2$ puis $T_1$ (\alert{en série}).
+
+\medskip
+
+En d'autres termes, à une exécution \alert{en isolation complète}
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Caractérisation de la sérialisabilité\,: conflits}
+
+La définition précédente est \alert{déclarative}\,: elle dit ce qu'est la sérialisabilité,
+pas la manière de la vérifier en pratique.
+
+\medskip
+
+Nous avons besoin de caractérisation plus opérationnelle.
+\vfill
+
+\begin{defblock}{Définition (à connaître)}
+Deux opérations  $p_i[x]$ et $q_j[y]$ sont 
+\alert{en conflit} si $x=y$, $i \not= j$,  $p$ ou 
+$q$ est une écriture.
+\end{defblock}
+
+\vfill
+\begin{blocgauche}
+En clair: deux transactions accèdent au même nuplet, et (au moins) une veut le modifier.
+\end{blocgauche}
+
+\end{frame}
+
+\begin{frame}{Exemple}
+
+Reprenons une nouvelle fois l'exemple des mises à jour perdues:
+$$r_1(s)  r_1(c_1) r_2(s)  r_2(c_2)  w_2(s)  w_2(c_2) w_1(s) w_1(c_1)$$
+
+\begin{redbullet}
+  \item $r_1(s)$ et $w_2(s)$ sont en conflit\,;
+  \item $r_2(s)$ et $w_1(s)$ sont en conflit\,;
+  \item $w_2(s)$ et $w_1(s)$ sont en conflit.
+\end{redbullet}
+
+\vfill
+
+ $r_1(s)$ et $r_2(s)$ \alert{ne sont  pas} en conflit (lectures)\,; pas de conflit sur
+$c_1$ et $c_2$.
+
+\vfill
+\begin{blocgauche}
+Qui des conflits ici?
+$$r_1(c_1) r_1(c_2) r_2(s)  r_2(c_2)  w_2(s)   w_2(c_2) r_1(s)$$
+\end{blocgauche}
+
+\end{frame}
+
+
+\begin{frame}{Relation entre les transactions}
+
+\begin{defblock}{Définition (à connaître)}
+$H$  exécution concurrente des transactions $T = \{T_1, T_2, \cdots, T_n\}$.
+
+Il existe une relation $\lhd$ sur
+cet ensemble, définie par\,:
+$$T_i \lhd T_j \Leftrightarrow \exists p \in T_i, q \in T_j, p\ est\ en\
+conflit\ avec \ q\ et\ p <_H q $$
+\noindent
+où $p <_H q$ indique que $p$ apparaît avant $q$ dans $H$.
+\end{defblock}
+
+\vfill
+\begin{blocgauche}
+Dans l'exemple précédent: on a  $T_1 \lhd T_2$,
+ainsi que $T_2 \lhd T_1$.
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Condition de sérialisabilité}
+La condition sur la sérialisabilité
+s'exprime sur le graphe de la relation $(T, \lhd)$,
+dit
+\alert{graphe de sérialisation}.
+
+\vfill
+
+
+\begin{defblock}{Condition de sérialisabilité}
+Soit $H$ une exécution concurrente d'un ensemble de transactions
+$T$. Si le graphe de $(T, \lhd)$ est acyclique, $H$ est sérialisable.
+\end{defblock}
+
+\vfill
+
+\begin{blocgauche}
+Autrement dit, $(T, \lhd)$ est une relation d'ordre partiel (antisymétrie).
+\end{blocgauche}
+\end{frame}
+
+
+\begin{frame}{Graphes de sérialisabilité}
+
+Lesquels correspondent à une exécution sérialisable?
+
+\vfill
+
+\figSlideWithSize{graphe-serial}{10cm}
+
+\vfill
+
+\begin{blocgauche}
+\alert{Important}: un algorithme de contrôle de concurrence doit vérifier qu'aucun cycle ne peut intervenir
+dans ce graphe.
+\end{blocgauche}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{À retenir}
+
+Caractérisation ``sémantique'' de la sérialisabilité\,: équivalence avec une exécution en série, pour au moins
+un ordonnancement des transactions impliquées
+
+\vfill
+
+Caractérisation ``syntaxique'' de la sérialisabilité\,: pas de cycle dans le graphe de sérialisation
+construit sur les conflits entre opérations.
+
+\vfill
+
+\alert{Objectif d'un algorithme de contrôle}\: s'assurer que toutes les exécutions sont sérialisables
+
+\begin{blocgauche}
+\begin{redbullet}
+  \item en surveillant le graphe de sérialisation et en rejetant une transaction si un cycle apparaît (variante ``optimiste'')
+  \item en tentant de prévenir l'apparition de cycles (variante ``pessimiste'')
+\end{redbullet}
+\end{blocgauche}
+
+\end{frame}
