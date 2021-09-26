@@ -1710,7 +1710,7 @@ Exercices
 
    Il est possible de mettre toute formule en forme normale conjonctive (FNC) :math:`(F_1) \land (F_2) \land \cdot \land F_n`
    où les ;math:`F_i` sont des disjonctions de propositions, 
-   de la forme :math:`p \lor \q \lor ... \lor u`. La négation n'est possible que devant une proposition.
+   de la forme :math:`p \lor q \lor ... \lor u`. La négation n'est possible que devant une proposition.
    Utilisez les règles d'équivalence pour obtenir la FNC des formules suivantes
     
      - :math:`((a \land b) \lor (q \land r)) \lor z`
