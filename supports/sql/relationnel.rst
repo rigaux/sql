@@ -844,7 +844,7 @@ Quiz
 .. eqt:: depfonc5
 
     Sur une table de schéma (ABCD), on donne les dépendances 
-    :math:`A \to B`, :math:`B \to C, D`. Quelle est la clé?
+    :math:`A \to B` et :math:`B \to C, D`. Quelle est la clé?
 
     A) :eqt:`I` ``B`` 
     #) :eqt:`I` ``(C,D)`` 
@@ -854,7 +854,7 @@ Quiz
 .. eqt:: depfonc5bis
 
     Sur une table de schéma (ABCD), on donne les dépendances 
-    :math:`A \to B`, :math:`C \to D`. Quelle est la clé?
+    :math:`A \to B` et :math:`C \to D`. Quelle est la clé?
 
     A) :eqt:`I` ``A`` 
     #) :eqt:`C` ``(A, C)``  

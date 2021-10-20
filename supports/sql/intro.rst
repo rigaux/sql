@@ -512,7 +512,7 @@ Quiz
    Une base relationnelle peut-elle être stockée dans un fichier CSV?
 
    A) :eqt:`I` Non, car ce ne sont pas les mêmes modèles de données
-   #) :eqt:`C` Oui, car les tables relationnelles sont au niveau logiue, et CSV
+   #) :eqt:`C` Oui, car les tables relationnelles sont au niveau logique, et CSV
       est un format physique de stockage
 
 
