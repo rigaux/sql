@@ -1577,7 +1577,7 @@ Voici le contenu de la table *Immeuble*.
 Voici le contenu de la table *Appart*.
 
 .. csv-table:: 
-   :header:  "id" , no , surface , niveau , idImmeuble 
+   :header: "id", no, surface, niveau, idImmeuble 
    :widths: 4, 4, 5, 5, 8
    
    100 , 1  , 150 , 14 , 1

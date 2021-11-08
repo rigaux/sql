@@ -263,7 +263,7 @@ Quiz
         :widths: 8, 8, 8
    
         Orwell, 1984, 1949
-        Montaigne, "Essais", "(1580, 1582, 1588)" 
+        Montaigne, "Essais", "(1580, 1582, 1588)"
         Pascal, Pensées,
  
     Pourquoi n'est pas une relation correcte?

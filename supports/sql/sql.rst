@@ -1536,7 +1536,7 @@ on trouve cette valeur. Ces nuplets "imbriqués" sont séparés
 par des points-virgule dans la représentation ci-dessous.
 
 .. csv-table:: 
-   :header:  idAppart ,"Groupe" , "count"  
+   :header: idAppart, "Groupe", "count"  
    :widths: 4, 10, 4 
    
    100  , (idPersonne=1 quotePart=33 ; idPersonne=5 quotePart=67) , 2 

@@ -35,7 +35,7 @@ lecture.
 Voici le contenu de la table *Immeuble*.
 
 .. csv-table:: 
-   :header:  "id",  "nom", "adresse"
+   :header: "id",  "nom", "adresse"
    :widths: 4, 15, 20
 
    1 , Koudalou , 3 Rue Blanche 
@@ -45,17 +45,17 @@ Voici le contenu de la table *Immeuble*.
 
 Voici le contenu de la table *Appart*.
 
-.. csv-table:: 
-   :header:  "id" , no , surface , étage , id_immeuble 
+.. csv-table::
+   :header: "id", no, surface, étage, id_immeuble
    :widths: 4, 4, 10, 10, 4
-   
-   100 , 1  , 150 , 14 , 1
-   101 , 34  , 50 , 15 , 1
-   102 , 51  , 200 , 2 , 1
-   103 , 52  , 50 , 5  , 1
-   201 , 1  , 250 , 1 , 2
-   202 , 2 , 250 , 2 , 2 
- 
+
+   100 , 1 , 150 , 14 , 1
+   101 , 34 , 50 , 15 , 1
+   102 , 51 , 200 , 2 , 1
+   103 , 52 , 50 , 5 , 1
+   201 , 1 , 250 , 1 , 2
+   202 , 2 , 250 , 2 , 2
+
 **La table Personne**
 
 Voici le contenu de la table *Personne*.
@@ -1904,7 +1904,7 @@ on trouve cette valeur. Ces lignes "imbriquées" sont séparées
 par des points-virgule dans la représentation ci-dessous.
 
 .. csv-table:: 
-   :header:  id_appart ,"Groupe" , "count"  
+   :header: id_appart,"Groupe", "count"  
    :widths: 4, 10, 4 
    
    100  , (id_personne=1 quote_part=33 ; id_personne=5 quote_part=67) , 2 
