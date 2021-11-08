@@ -95,10 +95,10 @@ ternaire et au-delà.
    :header:  "nom", "code"
    :widths: 15, 10
    
-   Ardèche, 07
-   Gard, 30
-   Manche, 50
-   Paris, 75
+   "Ardèche", 07
+   "Gard", 30
+   "Manche", 50
+   "Paris", 75
 
 Dans une base relationnelle, on utilise toujours la représentation d'une relation sous forme
 de table. À partir de maintenant nous pourrons nous permettre d'utiliser les deux termes
@@ -107,7 +107,8 @@ comme synonymes.
 Les nuplets
 ===========
 
-Un élément d'une relation de dimension *n* est un *nuplet* :math:`(a_1, a_2, \cdots, a_n)`. 
+Un élément d'une relation de dimension *n* est un *nuplet* 
+:math:`(a_1, a_2, \cdots, a_n)`. 
 Dans la représentation par table, 
 un nuplet est une ligne. Là encore nous assimilerons les deux termes, 
 en privilégiant toutefois *nuplet* qui indique plus précisément la structure constituée d'une liste de valeurs.

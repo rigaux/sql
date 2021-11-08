@@ -1,0 +1,3529 @@
+
+<!DOCTYPE html>
+
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SQL, ANCIENNE VERSION &#8212; Documentation Cours de bases de données Septembre 2021</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/agogo.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/translations.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" /> 
+  </head><body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">SQL, ANCIENNE VERSION</a></div>
+        <div class="rel">
+          <a href="genindex.html" title="Index général"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-68468919-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+<script type="text/javascript" src="_static/dynsite.js"></script>
+
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sql-ancienne-version">
+<span id="chapsql-ancien"></span><h1>SQL, ANCIENNE VERSION<a class="headerlink" href="#sql-ancienne-version" title="Lien permanent vers ce titre">¶</a></h1>
+<p>Le langage SQL est l’outil standard pour effectuer des recherches ou mises à
+jour dans une base de données relationnelle.  Ce chapitre est consacré à la
+partie <em>Langage de Manipulation de Données</em> (LMD) complémentaire de la
+partie <em>Langage de Définition de Données</em> (LDD) présentée
+précédemment.</p>
+<p>SQL est un langage relativement facile dans la mesure où il ne permet que des
+opérations assez limitées: manipuler plusieurs tables en entrée
+(celles de la
+base) pour obtenir une table en sortie (le résultat). La seule véritable
+difficulté réside dans l’interprétation des requêtes complexes qui font parfois
+appel à des logiques sophistiquées.  Par ailleurs la multiplicité des variantes
+syntaxiques offre de nombreuses manières d’exprimer la même interrogation ce
+qui peut parfois troubler. Nous avons donc choisi  d’insister sur la signification des opérations SQL et
+sur la démarche de conception d’une requête.</p>
+<p>Nous utilisons le schéma
+de la base <em>Immeuble</em> du chapitre précédent et l’instance de base donnée ci-dessous.
+Ce schéma et cette base sont fournis respectivement dans les scripts
+<a class="reference external" href="http://sql.bdpedia.fr/files/SchemaImmeuble.sql">SchemaImmeuble.sql</a>  et
+<a class="reference external" href="http://sql.bdpedia.fr/files/BaseImmeuble.sql">BaseImmeuble.sql</a>
+sur notre site si vous
+souhaitez effectuer réellement les requêtes proposées parallèlement à votre
+lecture.</p>
+<p><strong>La table Immeuble</strong></p>
+<p>Voici le contenu de la table <em>Immeuble</em>.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 38%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>adresse</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Barabas</p></td>
+<td><p>2 Allée Nikos</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>La table Appart</strong></p>
+<p>Voici le contenu de la table <em>Appart</em>.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 31%" />
+<col style="width: 31%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>no</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>étage</p></th>
+<th class="head"><p>id_immeuble</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>1</p></td>
+<td><p>150</p></td>
+<td><p>14</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>101</p></td>
+<td><p>34</p></td>
+<td><p>50</p></td>
+<td><p>15</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>102</p></td>
+<td><p>51</p></td>
+<td><p>200</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>103</p></td>
+<td><p>52</p></td>
+<td><p>50</p></td>
+<td><p>5</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>201</p></td>
+<td><p>1</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>202</p></td>
+<td><p>2</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>La table Personne</strong></p>
+<p>Voici le contenu de la table <em>Personne</em>.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>prénom</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>profession</p></th>
+<th class="head"><p>id_appart</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td></td>
+<td><p>Ross</p></td>
+<td><p>Informaticien</p></td>
+<td><p>202</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Alice</p></td>
+<td><p>Black</p></td>
+<td><p>Cadre</p></td>
+<td><p>103</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Rachel</p></td>
+<td><p>Verte</p></td>
+<td><p>Stagiaire</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>William</p></td>
+<td><p>Dupont</p></td>
+<td><p>Acteur</p></td>
+<td><p>102</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>Doug</p></td>
+<td><p>Ramut</p></td>
+<td><p>Rentier</p></td>
+<td><p>201</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>La table Possede</strong></p>
+<p>Voici le contenu de la table <em>Possede</em>.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id_personne</p></th>
+<th class="head"><p>id_appart</p></th>
+<th class="head"><p>quote_part</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>100</p></td>
+<td><p>33</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>100</p></td>
+<td><p>67</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>101</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>102</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>202</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>201</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>103</p></td>
+<td><p>100</p></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="principes-de-sql">
+<h2>Principes de SQL<a class="headerlink" href="#principes-de-sql" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Nous commençons par un abrégé d’interprétation
+des requêtes SQL qui va nous guider pendant tout ce
+chapitre. Il existe quelques principes généraux
+qui s’appliquent quelle que soit la complexité
+de la requête et auxquels il est très utile
+de pouvoir se ramener en présence d’un cas complexe.</p>
+<div class="section" id="forme-de-base-et-interpretation">
+<h3>Forme de base et interprétation<a class="headerlink" href="#forme-de-base-et-interpretation" title="Lien permanent vers ce titre">¶</a></h3>
+<p>La recherche s’effectue avec la commande
+<code class="docutils literal notranslate"><span class="pre">select</span></code> dont la forme de base est:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">liste_expressions</span>
+<span class="k">from</span>   <span class="k">source</span>
+<span class="p">[</span><span class="k">where</span> <span class="n">liste_conditions</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>L’ordre des trois clauses <code class="docutils literal notranslate"><span class="pre">select</span></code>
+<code class="docutils literal notranslate"><span class="pre">from</span></code> et <code class="docutils literal notranslate"><span class="pre">where</span></code> est trompeur pour
+la signification d’une requête. En fait l’inteprétation
+s’effectue <em>toujours</em> de la manière suivante:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>la clause <code class="docutils literal notranslate"><span class="pre">from</span></code> définit l’espace
+de recherche en fonction d’un ensemble
+de sources de données: cet espace
+a <em>toujours</em> conceptuellement
+la forme d’une table relationnelle que nous appellerons <em>Tfrom</em>;</p></li>
+<li><p>la clause <code class="docutils literal notranslate"><span class="pre">where</span></code>  exprime un
+ensemble de conditions sur les lignes
+de la table <em>Tfrom</em>:
+seules les lignes pour lesquelles ces
+conditions sont satisfaites sont conservées;</p></li>
+<li><p>enfin la clause <code class="docutils literal notranslate"><span class="pre">select</span></code> consiste en
+une liste d’expressions appliquées à chaque ligne de <em>Tfrom</em>
+ayant passé le filtre du <code class="docutils literal notranslate"><span class="pre">where</span></code>.</p></li>
+</ul>
+</div></blockquote>
+<p>Nous vous conseillons de revenir toujours à
+la définition ci-dessus quand vous avez un problème
+avec vos requêtes SQL. Elle permet de rendre
+compte uniformément de leur signification
+de la requête la plus simple à
+la plus complexe. Le sens de lecture
+<code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">where</span> <span class="pre">select</span></code> facilite la conception
+et l’interprétation.
+Voyons tout de suite concrètement
+comme elle s’applique à une requête très simple.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">nom</span> <span class="n">adresse</span> <span class="k">from</span> <span class="n">Immeuble</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>Cette requête renvoie le résultat suivant.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>nom</p></th>
+<th class="head"><p>adresse</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+</tr>
+</tbody>
+</table>
+<p>L’espace de recherche est ici constitué d’une seule table
+de la base Immeuble. Il s’agit du  cas le plus simple et le plus courant. On évalue
+ensuite pour toutes les lignes de cette table les
+conditions exprimées dans le <code class="docutils literal notranslate"><span class="pre">where</span></code>:
+seules les lignes (une seule en l’occurrence)
+pour lesquelles l’attribut
+<code class="docutils literal notranslate"><span class="pre">id</span></code> vaut 1 satisfont cette condition.
+Finalement on extrait de cette ligne les
+valeurs des attributs <code class="docutils literal notranslate"><span class="pre">nom</span></code> et <code class="docutils literal notranslate"><span class="pre">adresse</span></code>.</p>
+</div>
+<div class="section" id="l-espace-de-recherche-clause-from">
+<h3>L’espace de recherche: clause <code class="docutils literal notranslate"><span class="pre">from</span></code><a class="headerlink" href="#l-espace-de-recherche-clause-from" title="Lien permanent vers ce titre">¶</a></h3>
+<p>L’espace de recherche est défini dans la clause <code class="docutils literal notranslate"><span class="pre">from</span></code>
+par une table ou une combinaison de plusieurs tables.
+Par « table » il ne faut pas ici comprendre
+forcément « une des tables de la base » courante
+même si c’est le cas le plus souvent rencontré.
+SQL est beaucoup général que cela: une table
+dans un <code class="docutils literal notranslate"><span class="pre">from</span></code> peut également être  <em>résultat</em>
+d’une autre requête. On parlera de table
+<em>basée</em> et de table <em>calculée</em> pour distinguer
+ces deux cas.
+Ce peut également être une table stockée  dans une
+autre base ou une table calculée à partir de
+tables basées dans plusieurs bases ou une combinaison
+de tout cela.</p>
+<p>La première requête effectuée ci-dessus
+ramène les immeubles dont l’id
+vaut 1. Il n’aura pas échappé au lecteur attentif
+que le résultat est lui-même une table calculée. Pourquoi
+ne pourrait-on pas interroger cette table
+calculée comme une autre? C’est possible
+en SQL comme le montre l’exemple suivant:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="p">(</span><span class="k">select</span> <span class="n">nom</span> <span class="n">adresse</span> <span class="k">from</span> <span class="n">Immeuble</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">as</span> <span class="n">Koudalou</span>
+</pre></div>
+</div>
+<p>On a donc placé une requête SQL dans le <code class="docutils literal notranslate"><span class="pre">from</span></code>
+où elle définit un espace de recherche constitué de
+son propre résultat.  Le mot-clé <code class="docutils literal notranslate"><span class="pre">as</span></code> permet
+de donner un nom temporaire au résultat. En d’autres
+termes <code class="docutils literal notranslate"><span class="pre">Koudalou</span></code> est le nom de la table
+calculée sur laquelle s’effectue la requête.
+Cette table temporaire n’existe que pendant l’exécution.</p>
+<p>On peut aller un peu plus loin et donner
+définivement un nom à cette requête qui sélectionne
+l’immeuble. En SQL cela s’appelle
+une <em>vue</em>.
+On crée une vue dans un schéma avec la
+commande <code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">view</span></code>
+(les vues sont traitées en détail plus loin). Par exemple:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">view</span> <span class="n">Koudalou</span> <span class="k">as</span>
+       <span class="k">select</span> <span class="n">nom</span> <span class="n">adresse</span> <span class="k">from</span> <span class="n">Immeuble</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>Une fois créée une vue peut être utilisée comme
+espace de recherche exactement comme une table basée.
+Le fait que son contenu soit calculé
+reste transparent pour l’utilisateur.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">nom</span> <span class="n">adresse</span> <span class="k">from</span> <span class="n">Koudalou</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>nom</p></th>
+<th class="head"><p>adresse</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+</tr>
+</tbody>
+</table>
+<p>Encore une fois, l’interprétation du <code class="docutils literal notranslate"><span class="pre">from</span></code>
+est indépendante  de l’origine
+des tables: tables basées, tables calculées, et vues.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On peut également interroger les tables ou vues
+d’une <em>autre</em> base pourvu que l’utilisateur connecté
+ait les droits suffisants. Dans ce cas on
+préfixe le nom de la table par le nom
+de la base.</p>
+</div>
+<p>Venons-en maintenant au cas où le <code class="docutils literal notranslate"><span class="pre">from</span></code> est défini
+par plusieurs tables. Dans un tel cas les
+contenus des tables sont <em>toujours</em> combinées
+de manière à définir une table virtuelle (le <em>Tfrom</em> évoqué
+précédemment) qui tient
+lieu d’espace de recherche par la suite. La
+combinaison la plus simple
+de deux tables <em>A</em> et <em>B</em>, obtenue en séparant
+les noms des tables par une virgule,
+consiste à effectuer
+toutes les associations possibles d’une
+ligne de <em>A</em> et d’une ligne de <em>B</em>. Voici
+par exemple ce que cela donne pour
+les tables <em>Immeuble</em> et <em>Appart</em>.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Immeuble</span><span class="p">,</span> <span class="n">Appart</span>
+</pre></div>
+</div>
+<p>L’affichage ci-dessus nous montre quel est l’espace
+de recherche <em>Tfrom</em> considéré quand on place ces deux tables dans
+un <code class="docutils literal notranslate"><span class="pre">from</span></code>.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>adresse</p></th>
+<th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>id_immeuble</p></th>
+<th class="head"><p>no</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>100</p></td>
+<td><p>150</p></td>
+<td><p>14</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Barabas</p></td>
+<td><p>2 Allée Nikos</p></td>
+<td><p>100</p></td>
+<td><p>150</p></td>
+<td><p>14</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>101</p></td>
+<td><p>50</p></td>
+<td><p>15</p></td>
+<td><p>1</p></td>
+<td><p>34</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Barabas</p></td>
+<td><p>2 Allée Nikos</p></td>
+<td><p>101</p></td>
+<td><p>50</p></td>
+<td><p>15</p></td>
+<td><p>1</p></td>
+<td><p>34</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>102</p></td>
+<td><p>200</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+<td><p>51</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Barabas</p></td>
+<td><p>2 Allée Nikos</p></td>
+<td><p>102</p></td>
+<td><p>200</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+<td><p>51</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>103</p></td>
+<td><p>50</p></td>
+<td><p>5</p></td>
+<td><p>1</p></td>
+<td><p>52</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Barabas</p></td>
+<td><p>2 Allée Nikos</p></td>
+<td><p>103</p></td>
+<td><p>50</p></td>
+<td><p>5</p></td>
+<td><p>1</p></td>
+<td><p>52</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>201</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Barabas</p></td>
+<td><p>2 Allée Nikos</p></td>
+<td><p>201</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>202</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Barabas</p></td>
+<td><p>2 Allée Nikos</p></td>
+<td><p>202</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p>La virgule est en fait un
+synonyme de <code class="docutils literal notranslate"><span class="pre">cross</span> <span class="pre">join</span></code>, terme
+qui indique que l’on effectue un produit
+cartésien (<em>cross product</em>) des deux tables vues comme
+des ensembles. Reportez-vous au chapitre <a class="reference internal" href="alg.html#chap-alg"><span class="std std-ref">SQL, langage algébrique</span></a>
+pour des explications détaillées. La requête donnant le même
+résultat est donc:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Immeuble</span> <span class="k">cross</span> <span class="k">join</span> <span class="n">Appart</span>
+</pre></div>
+</div>
+<p>D’autre types de combinaisons plus
+restrictives et souvent plus utiles sont les <em>jointures</em>.
+Regardons à nouveau le résultat précédent. Le fait
+d’associer chaque ligne de <em>Immeuble</em>
+à chaque ligne de <em>Appart</em> nous donne
+des résultats peu utiles à priori. La seconde ligne
+associe par exemple le Barabas à un appartement du Koudalou.
+On ne voit pas quelle application peut trouver intérêt
+à un tel regroupement. En revanche, associer un appartement
+à l’immeuble où il se situe est très utile (ne serait-ce
+que pour trouver son adresse).</p>
+<p>Un peu de réflexion suffit pour se convaincre que
+les lignes intéressantes dans le résultat du produit
+cartésien sont celles pour lesquelles l’attribut
+<code class="docutils literal notranslate"><span class="pre">id</span></code> provenant de la table <em>Immeuble</em>
+est égal à l’attribut <code class="docutils literal notranslate"><span class="pre">id_immeuble</span></code>
+provenant de <em>Appart</em>. Un tel
+produit cartésien « restreint » est
+une <em>jointure</em> dans la terminologie du modèle
+relationnel. Une combinaison de deux
+tables par jointure doit indiquer quelles
+sont les conditions d’association de deux lignes.
+En SQL on l’exprime avec la syntaxe suivante:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="n">table1</span> <span class="k">join</span> <span class="n">table2</span> <span class="k">on</span> <span class="p">(</span><span class="n">conditions</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Donc on peut effectuer la jointure dans
+la clause <code class="docutils literal notranslate"><span class="pre">from</span></code>. On obtient un espace
+de recherche constitué des paires de lignes pour
+lesquelles la condition de jointure est vraie.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Immeuble</span> <span class="k">join</span> <span class="n">Appart</span> <span class="k">on</span> <span class="p">(</span><span class="n">Immeuble</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">Appart</span><span class="p">.</span><span class="n">id_immeuble</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>On obtient le résultat suivant.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>adresse</p></th>
+<th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>id_immeuble</p></th>
+<th class="head"><p>no</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>100</p></td>
+<td><p>150</p></td>
+<td><p>14</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>101</p></td>
+<td><p>50</p></td>
+<td><p>15</p></td>
+<td><p>1</p></td>
+<td><p>34</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>102</p></td>
+<td><p>200</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+<td><p>51</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>103</p></td>
+<td><p>50</p></td>
+<td><p>5</p></td>
+<td><p>1</p></td>
+<td><p>52</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Barabas</p></td>
+<td><p>2 Allée Nikos</p></td>
+<td><p>201</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Barabas</p></td>
+<td><p>2 Allée Nikos</p></td>
+<td><p>202</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p>Les jointures seront revues plus loin. Comment souvent en SQL
+il existe plusieurs moyens de les exprimer, la plus
+utilisée consistant à effectuer un produit cartésien
+(virgules dans le <code class="docutils literal notranslate"><span class="pre">from</span></code>) suivi de conditions
+de jointures exprimées dans le <code class="docutils literal notranslate"><span class="pre">where</span></code>.</p>
+<p>Ce qu’il faut retenir: le <code class="docutils literal notranslate"><span class="pre">from</span></code> consiste
+à définir un espace de recherche qui est constitué
+par combinaison d’une ou plusieurs
+tables basées ou calculées provenant du même schéma
+ou d’un autre schéma. Quel que soit le cas
+cet espace est lui-même une table (calculée) dont
+on va chercher à extraire une ou plusieurs
+lignes (par le <code class="docutils literal notranslate"><span class="pre">where</span></code>) puis une
+ou plusieurs colonnes (par le <code class="docutils literal notranslate"><span class="pre">select</span></code>).</p>
+<p>Beaucoup de difficultés d’interprétation proviennent
+d’une mauvaise compréhension de l’espace
+dans lequel on cherche les données. La première
+étape pour les résoudre consiste à  se poser correctement la question:
+que signifie le <code class="docutils literal notranslate"><span class="pre">from</span></code> de ma requête.</p>
+</div>
+<div class="section" id="les-conditions-la-clause-where">
+<h3>Les conditions: la clause <code class="docutils literal notranslate"><span class="pre">where</span></code><a class="headerlink" href="#les-conditions-la-clause-where" title="Lien permanent vers ce titre">¶</a></h3>
+<p>La clause <code class="docutils literal notranslate"><span class="pre">where</span></code> permet d’exprimer des conditions portant
+sur les lignes de la table définie par la clause <code class="docutils literal notranslate"><span class="pre">from</span></code>.
+Ces conditions prennent la forme classique
+de tests combinés par les connecteurs booléens
+classiques <code class="docutils literal notranslate"><span class="pre">and</span></code>, <code class="docutils literal notranslate"><span class="pre">or</span></code> et <code class="docutils literal notranslate"><span class="pre">not</span></code>.
+Les règles de priorité sont exprimées par des parenthèses.
+Voici quelques exemples simples de requêtes avec leur résultat.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Appart</span> <span class="k">where</span> <span class="n">surface</span> <span class="o">&gt;</span> <span class="mi">50</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 31%" />
+<col style="width: 31%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>id_immeuble</p></th>
+<th class="head"><p>no</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>150</p></td>
+<td><p>14</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>102</p></td>
+<td><p>200</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+<td><p>51</p></td>
+</tr>
+<tr class="row-even"><td><p>201</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>202</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Appart</span>
+<span class="k">where</span> <span class="n">surface</span> <span class="o">&gt;</span> <span class="mi">50</span>
+<span class="k">and</span> <span class="n">etage</span> <span class="o">&gt;</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 31%" />
+<col style="width: 31%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>id_immeuble</p></th>
+<th class="head"><p>no</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>150</p></td>
+<td><p>14</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Appart</span>
+<span class="k">where</span> <span class="p">(</span><span class="n">surface</span> <span class="o">&gt;</span> <span class="mi">50</span> <span class="k">and</span> <span class="n">etage</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span>
+<span class="k">or</span> <span class="n">id_immeuble</span><span class="o">=</span><span class="mi">2</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 31%" />
+<col style="width: 31%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>id_immeuble</p></th>
+<th class="head"><p>no</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>150</p></td>
+<td><p>14</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>201</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>202</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p>Il est également possible d’exprimer des conditions
+sur des tables calculées par d’autre requêtes
+SQL incluses dans la clause <code class="docutils literal notranslate"><span class="pre">where</span></code>
+et habituellement désignées par
+le terme de « requêtes imbriquées ».
+On pourra par exemple demander la liste
+des personnes dont l’appartement fait partie
+de la table calculée des appartements
+situés au-dessus du troisième étage.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Personne</span>
+<span class="k">where</span> <span class="n">id_appart</span> <span class="k">in</span> <span class="p">(</span><span class="k">select</span> <span class="n">id</span> <span class="k">from</span> <span class="n">Appart</span> <span class="k">where</span> <span class="n">etage</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 31%" />
+<col style="width: 31%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>prenom</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>profession</p></th>
+<th class="head"><p>id_appart</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>null</p></td>
+<td><p>Ross</p></td>
+<td><p>Informaticien</p></td>
+<td><p>202</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>William</p></td>
+<td><p>Dupont</p></td>
+<td><p>Acteur</p></td>
+<td><p>102</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>Doug</p></td>
+<td><p>Ramut</p></td>
+<td><p>Rentier</p></td>
+<td><p>201</p></td>
+</tr>
+</tbody>
+</table>
+<p>Avec les requêtes imbriquées on entre dans le monde
+incertain des requêtes qui semblent claires
+mais finissent par ne plus l’être du tout. La
+difficulté vient souvent du fait qu’il faut raisonner
+simultanément sur plusieurs requêtes qui,
+de plus, sont souvent interdépendantes
+(les données sélectionnées dans l’une servent de
+paramètre à l’autre). Il est très souvent possible
+d’éviter les requêtes imbriquées comme nous l’expliquons
+dans ce chapitre.</p>
+</div>
+<div class="section" id="les-expressions-la-clause-select">
+<h3>Les expressions: la clause <code class="docutils literal notranslate"><span class="pre">select</span></code><a class="headerlink" href="#les-expressions-la-clause-select" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Finalement, une fois obtenues les lignes du <code class="docutils literal notranslate"><span class="pre">from</span></code>
+qui satisfont le <code class="docutils literal notranslate"><span class="pre">where</span></code> on crée à
+partir de ces lignes le résultat final
+avec les expressions du <code class="docutils literal notranslate"><span class="pre">select</span></code>.
+Le terme « expression » désigne ici, comme
+dans tout langage, une construction syntaxique
+qui prend une ou plusieurs valeurs en entrée
+et produit une valeur en sortie. Dans sa
+forme la plus simple,
+une expression est simplement un nom d’attribut
+ou une constante comme dans l’exemple suivant.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">surface</span> <span class="n">etage</span> <span class="mi">18</span> <span class="k">as</span> <span class="s1">&#39;Euros/m2&#39;</span>
+<span class="k">from</span> <span class="n">Appart</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 42%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>Euros/m2</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>150</p></td>
+<td><p>14</p></td>
+<td><p>18</p></td>
+</tr>
+<tr class="row-odd"><td><p>50</p></td>
+<td><p>15</p></td>
+<td><p>18</p></td>
+</tr>
+<tr class="row-even"><td><p>200</p></td>
+<td><p>2</p></td>
+<td><p>18</p></td>
+</tr>
+<tr class="row-odd"><td><p>50</p></td>
+<td><p>5</p></td>
+<td><p>18</p></td>
+</tr>
+<tr class="row-even"><td><p>250</p></td>
+<td><p>1</p></td>
+<td><p>18</p></td>
+</tr>
+<tr class="row-odd"><td><p>250</p></td>
+<td><p>2</p></td>
+<td><p>18</p></td>
+</tr>
+</tbody>
+</table>
+<p>Les attributs <code class="docutils literal notranslate"><span class="pre">surface</span></code> et <code class="docutils literal notranslate"><span class="pre">etage</span></code> proviennent de <em>Appart</em> alors
+que 18 est une constante qui sera répétée autant de fois
+qu’il y a de lignes dans le résultat. De plus, on
+peut donner un nom à cette colonne avec la commande <code class="docutils literal notranslate"><span class="pre">as</span></code>.
+Voici un second exemple qui montre une expression plus complexe.
+L’utilisateur (certainement un agent immobilier avisé
+et connaissant bien SQL) calcule le loyer d’un appartement
+en fonction d’une savante formule qui fait intervenir
+la surface et l’étage.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">no</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">surface</span> <span class="o">*</span> <span class="mi">18</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">03</span> <span class="o">*</span> <span class="n">etage</span><span class="p">))</span> <span class="k">as</span> <span class="n">loyer</span>
+<span class="k">from</span> <span class="n">Appart</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>no</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>loyer</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>150</p></td>
+<td><p>14</p></td>
+<td><p>3834.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>34</p></td>
+<td><p>50</p></td>
+<td><p>15</p></td>
+<td><p>1305.00</p></td>
+</tr>
+<tr class="row-even"><td><p>51</p></td>
+<td><p>200</p></td>
+<td><p>2</p></td>
+<td><p>3816.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>52</p></td>
+<td><p>50</p></td>
+<td><p>5</p></td>
+<td><p>1035.00</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+<td><p>4635.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+<td><p>4770.00</p></td>
+</tr>
+</tbody>
+</table>
+<p>SQL fournit de très nombreux opérateurs et fonctions
+de toute sorte qui sont clairement énumérées dans la
+documentation de chaque système. Elles sont particulièrement utiles
+pour des types de données un peu délicat à manipuler
+comme les dates.</p>
+<p>Une extension rarement utilisée consiste à effectuer des tests
+sur la valeur des attributs à l’intérieur de
+la clause <code class="docutils literal notranslate"><span class="pre">select</span></code>
+avec l’expression <code class="docutils literal notranslate"><span class="pre">case</span></code> dont
+la syntaxe est:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">case</span>
+  <span class="k">when</span> <span class="n">test</span> <span class="k">then</span> <span class="n">expression</span>
+  <span class="p">[</span><span class="k">when</span> <span class="p">...]</span>
+  <span class="k">else</span>  <span class="n">expression</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>Ces tests peuvent
+être utilisés par exemple pour effectuer un
+<em>décodage</em> des valeurs quand celles-ci sont
+difficiles à interpréter ou quand on souhaite
+leur donner une signification dérivée. La requête
+ci-dessous classe les appartements
+en trois catégories selon la surface.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span> <span class="k">select</span> <span class="k">no</span> <span class="n">etage</span> <span class="n">surface</span>
+       <span class="k">case</span> <span class="k">when</span> <span class="n">surface</span> <span class="o">&lt;=</span> <span class="mi">50</span> <span class="k">then</span> <span class="s1">&#39;Petit&#39;</span>
+            <span class="k">when</span> <span class="n">surface</span> <span class="o">&gt;</span> <span class="mi">50</span> <span class="k">and</span> <span class="n">surface</span> <span class="o">&lt;=</span> <span class="mi">100</span> <span class="k">then</span> <span class="s1">&#39;Moyen&#39;</span>
+            <span class="k">else</span> <span class="s1">&#39;Grand&#39;</span>
+       <span class="k">end</span> <span class="k">as</span> <span class="n">categorie</span>
+<span class="k">from</span> <span class="n">Appart</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>no</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>catégorie</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>14</p></td>
+<td><p>150</p></td>
+<td><p>Grand</p></td>
+</tr>
+<tr class="row-odd"><td><p>34</p></td>
+<td><p>15</p></td>
+<td><p>50</p></td>
+<td><p>Petit</p></td>
+</tr>
+<tr class="row-even"><td><p>51</p></td>
+<td><p>2</p></td>
+<td><p>200</p></td>
+<td><p>Grand</p></td>
+</tr>
+<tr class="row-odd"><td><p>52</p></td>
+<td><p>5</p></td>
+<td><p>50</p></td>
+<td><p>Petit</p></td>
+</tr>
+<tr class="row-even"><td><p>65</p></td>
+<td><p>12</p></td>
+<td><p>70</p></td>
+<td><p>Moyen</p></td>
+</tr>
+<tr class="row-odd"><td><p>65</p></td>
+<td><p>12</p></td>
+<td><p>70</p></td>
+<td><p>Moyen</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>250</p></td>
+<td><p>Grand</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>250</p></td>
+<td><p>Grand</p></td>
+</tr>
+</tbody>
+</table>
+<p>Voici donc tout ce qu’il faut savoir sur l’interprétation
+des requêtes SQL exprimées « à plat », sans requête imbriquée.
+Nous reprenons maintenant la présentation du langage en apportant
+des précisions sur chaque partie.</p>
+</div>
+</div>
+<div class="section" id="recherche-avec-sql">
+<h2>Recherche avec SQL<a class="headerlink" href="#recherche-avec-sql" title="Lien permanent vers ce titre">¶</a></h2>
+<p>La recherche la plus simple consiste à récupérer
+le contenu complet d’une table. On n’utilise
+pas la clause <code class="docutils literal notranslate"><span class="pre">where</span></code> et le * désigne tous les attributs.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Immeuble</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>adresse</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Barabas</p></td>
+<td><p>2 Allée Nikos</p></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="construction-d-expressions">
+<h3>Construction d’expressions<a class="headerlink" href="#construction-d-expressions" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Si on indique explicitement les attributs
+au lieu d’utiliser *, leur nombre détermine
+le nombre de colonnes de la table calculée. Le nom
+de chaque attribut dans cette table est par défaut
+l’expression du <code class="docutils literal notranslate"><span class="pre">select</span></code> mais
+on peut indiquer explicitement ce nom
+avec <code class="docutils literal notranslate"><span class="pre">as</span></code>. Voici un exemple qui
+illustre également une
+fonction assez utile, la concaténation de chaînes.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span> <span class="o">||</span> <span class="n">nom</span> <span class="k">as</span> <span class="s1">&#39;Prenom et nom&#39;</span>
+<span class="k">from</span> <span class="n">Personne</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Prenom et nom</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>null</p></td>
+</tr>
+<tr class="row-odd"><td><p>Alice Black</p></td>
+</tr>
+<tr class="row-even"><td><p>Rachel Verte</p></td>
+</tr>
+<tr class="row-odd"><td><p>William Dupont</p></td>
+</tr>
+<tr class="row-even"><td><p>Doug Ramut</p></td>
+</tr>
+</tbody>
+</table>
+<p>Le résultat montre que l’une des valeurs est à <code class="docutils literal notranslate"><span class="pre">null</span></code>.
+Le <code class="docutils literal notranslate"><span class="pre">null</span></code> en SQL correspond à <em>l’absence</em> de valeur. Logiquement
+toute opération appliquée à un <code class="docutils literal notranslate"><span class="pre">null</span></code> renvoie un
+<code class="docutils literal notranslate"><span class="pre">null</span></code> en sortie puisqu’on ne peut calculer
+aucun résultat à partir d’une  valeur inconnue. Ici
+c’est le prénom de l’une des personnes qui manque.
+La concaténation du prénom
+avec le nom est une opération qui « propage » cette
+valeur à <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p>
+</div>
+<div class="section" id="la-clause-where">
+<h3>La clause <code class="docutils literal notranslate"><span class="pre">where</span></code><a class="headerlink" href="#la-clause-where" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Les conditions de la clause <code class="docutils literal notranslate"><span class="pre">where</span></code> suivent
+en général la syntaxe <code class="docutils literal notranslate"><span class="pre">expr1</span> <span class="pre">[not]</span></code> <span class="math notranslate nohighlight">\(\Theta\)</span> <code class="docutils literal notranslate"><span class="pre">expr2</span></code>,
+où <code class="docutils literal notranslate"><span class="pre">expr1</span></code> et <code class="docutils literal notranslate"><span class="pre">expr2</span></code> sont deux expressions
+construites à partir de noms d’attributs de constantes et
+des fonctions  et <span class="math notranslate nohighlight">\(\Theta\)</span> est l’un des opérateurs
+de comparaison classique <em>&lt;</em> <em>&gt;</em> <em>&lt;=</em> <em>&gt;=</em> <em>!=</em>.</p>
+<p>Les conditions se combinent avec les connecteurs
+booléens <code class="docutils literal notranslate"><span class="pre">and</span></code> <code class="docutils literal notranslate"><span class="pre">or</span></code> et <code class="docutils literal notranslate"><span class="pre">not</span></code>.
+SQL propose également un prédicat <code class="docutils literal notranslate"><span class="pre">in</span></code>
+qui teste l’appartenance d’une valeur
+à un ensemble. Il s’agit (du moins
+tant qu’on n’utilise pas
+les requêtes imbriquées) d’une facilité d’écriture
+pour remplacer le <code class="docutils literal notranslate"><span class="pre">or</span></code>. La requête</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Personne</span>
+<span class="k">where</span> <span class="n">profession</span><span class="o">=</span><span class="s1">&#39;Acteur&#39;</span>
+<span class="k">or</span> <span class="n">profession</span><span class="o">=</span><span class="s1">&#39;Rentier&#39;</span>
+</pre></div>
+</div>
+<p>s’écrit de manière équivalente avec un <code class="docutils literal notranslate"><span class="pre">in</span></code> comme
+suit:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Personne</span>
+<span class="k">where</span> <span class="n">profession</span> <span class="k">in</span> <span class="p">(</span><span class="s1">&#39;Acteur&#39;</span><span class="p">,</span> <span class="s1">&#39;Rentier&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>prenom</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>profession</p></th>
+<th class="head"><p>id_appart</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>William</p></td>
+<td><p>Dupont</p></td>
+<td><p>Acteur</p></td>
+<td><p>102</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>Doug</p></td>
+<td><p>Ramut</p></td>
+<td><p>Rentier</p></td>
+<td><p>201</p></td>
+</tr>
+</tbody>
+</table>
+<p>Pour les chaînes de caractères, SQL propose l’opérateur
+de comparaison  <code class="docutils literal notranslate"><span class="pre">like</span></code>, avec deux
+caractères de substitution:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>le « % » remplace n’importe quelle sous-chaîne;</p></li>
+<li><p>le « _ » remplace n’importe quel caractère.</p></li>
+</ul>
+</div></blockquote>
+<p>L’expression <code class="docutils literal notranslate"><span class="pre">_ou%ou</span></code> est donc interprétée par
+le <code class="docutils literal notranslate"><span class="pre">like</span></code> comme toute chaîne commençant
+par un caractère suivi de « ou » suivi de n’importe
+quelle chaîne suivie une nouvelle fois de « ou ».</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Immeuble</span>
+<span class="k">where</span> <span class="n">nom</span> <span class="k">like</span> <span class="s1">&#39;_ou%ou&#39;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 42%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>adresse</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="valeurs-nulles">
+<h3>Valeurs nulles<a class="headerlink" href="#valeurs-nulles" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Il est impossible de déterminer quoi que ce
+soit à partir d’une valeur à <code class="docutils literal notranslate"><span class="pre">null</span></code>. Nous avons
+vu que toute opération appliquée à un
+<code class="docutils literal notranslate"><span class="pre">null</span></code> renvoie <code class="docutils literal notranslate"><span class="pre">null</span></code>. Dans le cas
+des comparaisons, la présence d’un <code class="docutils literal notranslate"><span class="pre">null</span></code>
+renvoie un résultat qui n’est ni <code class="docutils literal notranslate"><span class="pre">true</span></code>
+ni <code class="docutils literal notranslate"><span class="pre">false</span></code> mais <code class="docutils literal notranslate"><span class="pre">unknown</span></code>,
+une valeur booléenne intermédiaire. Reprenons
+à nouveau la table <em>Personne</em> avec un
+des prénoms à <code class="docutils literal notranslate"><span class="pre">null</span></code>. La requête
+suivante devrait ramener toutes les lignes.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Personne</span>
+<span class="k">where</span> <span class="n">prenom</span> <span class="k">like</span> <span class="s1">&#39;%&#39;</span>
+</pre></div>
+</div>
+<p>Mais la présence d’un <code class="docutils literal notranslate"><span class="pre">null</span></code> empêche
+l’inclusion de la ligne correspondante dans le
+résultat.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>prenom</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>profession</p></th>
+<th class="head"><p>id_appart</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Alice</p></td>
+<td><p>Black</p></td>
+<td><p>Cadre</p></td>
+<td><p>103</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>Rachel</p></td>
+<td><p>Verte</p></td>
+<td><p>Stagiaire</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>William</p></td>
+<td><p>Dupont</p></td>
+<td><p>Acteur</p></td>
+<td><p>102</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>Doug</p></td>
+<td><p>Ramut</p></td>
+<td><p>Rentier</p></td>
+<td><p>201</p></td>
+</tr>
+</tbody>
+</table>
+<p>Cependant la condition <code class="docutils literal notranslate"><span class="pre">like</span></code>
+n’a pas été évaluée à <code class="docutils literal notranslate"><span class="pre">false</span></code> comme
+le montre la requête suivante.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span>  <span class="o">*</span>
+<span class="k">from</span> <span class="n">Personne</span>
+<span class="k">where</span> <span class="n">prenom</span> <span class="k">not</span> <span class="k">like</span>  <span class="s1">&#39;%&#39;</span>
+</pre></div>
+</div>
+<p>On obtient un résultat vide, ce qui  montre  bien que le <code class="docutils literal notranslate"><span class="pre">like</span></code> appliqué à un
+<code class="docutils literal notranslate"><span class="pre">null</span></code> ne renvoie pas <code class="docutils literal notranslate"><span class="pre">false</span></code>
+(car sinon on aurait <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">false</span> <span class="pre">=</span> <span class="pre">true</span></code>).
+C’est d’ailleurs tout à fait normal
+puisqu’il n’y a aucune raison de dire
+qu’une absence de valeur ressemble à n’importe
+quelle chaîne.</p>
+<p>Les tables de vérité de la logique trivaluée de SQL
+sont définies de la manière suivante. Tout d’abord
+on affecte une valeur aux trois constantes logiques:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code> vaut 1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> vaut 0</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">unknown</span></code> vaut 0.5</p></li>
+</ul>
+</div></blockquote>
+<p>Les connecteurs booléens s’interprètent alors ainsi:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">val1</span> <span class="pre">and</span> <span class="pre">val2</span></code> = max(val1 val2)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">val1</span> <span class="pre">or</span> <span class="pre">val2</span></code> = min(val1 val2)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">val1</span></code> =  1 - val1.</p></li>
+</ul>
+</div></blockquote>
+<p>On peut vérifier notamment que <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">unknown</span></code>
+vaut toujours <code class="docutils literal notranslate"><span class="pre">unknown</span></code>. Ces définitions
+sont claires et cohérentes. Cela étant
+il faut mieux prévenir de mauvaises surprises
+avec les valeurs à <code class="docutils literal notranslate"><span class="pre">null</span></code>, soit
+en les interdisant à la création de la table
+avec les options <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">null</span></code> ou
+<code class="docutils literal notranslate"><span class="pre">default</span></code>, soit en utilisant le
+test <code class="docutils literal notranslate"><span class="pre">is</span> <span class="pre">null</span></code> (ou son complément
+<code class="docutils literal notranslate"><span class="pre">is</span> <span class="pre">not</span> <span class="pre">null</span></code>). La requête
+ci-dessous ramène toutes les lignes de la table,
+même en présence de <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Personne</span>
+<span class="k">where</span> <span class="n">prenom</span> <span class="k">like</span> <span class="s1">&#39;%&#39;</span>
+<span class="k">or</span> <span class="n">prenom</span> <span class="k">is</span> <span class="k">null</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>prenom</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>profession</p></th>
+<th class="head"><p>id_appart</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>null</p></td>
+<td><p>Ross</p></td>
+<td><p>Informaticien</p></td>
+<td><p>202</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Alice</p></td>
+<td><p>Black</p></td>
+<td><p>Cadre</p></td>
+<td><p>103</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Rachel</p></td>
+<td><p>Verte</p></td>
+<td><p>Stagiaire</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>William</p></td>
+<td><p>Dupont</p></td>
+<td><p>Acteur</p></td>
+<td><p>102</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>Doug</p></td>
+<td><p>Ramut</p></td>
+<td><p>Rentier</p></td>
+<td><p>201</p></td>
+</tr>
+</tbody>
+</table>
+<p>Attention le test <code class="docutils literal notranslate"><span class="pre">valeur</span> <span class="pre">=</span> <span class="pre">null</span></code> n’a pas
+de sens. On ne peut pas être égal à une absence de valeur.</p>
+</div>
+<div class="section" id="tri-et-elimination-de-doublons">
+<h3>Tri et élimination de doublons<a class="headerlink" href="#tri-et-elimination-de-doublons" title="Lien permanent vers ce titre">¶</a></h3>
+<p>SQL renvoie les lignes du résultat sans se soucier
+de la présence de doublons. Si on cherche par exemple
+les surfaces des appartements avec</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">surface</span>
+<span class="k">from</span> <span class="n">Appart</span>
+</pre></div>
+</div>
+<p>on obtient le résultat suivant.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>surface</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>150</p></td>
+</tr>
+<tr class="row-odd"><td><p>50</p></td>
+</tr>
+<tr class="row-even"><td><p>200</p></td>
+</tr>
+<tr class="row-odd"><td><p>50</p></td>
+</tr>
+<tr class="row-even"><td><p>250</p></td>
+</tr>
+<tr class="row-odd"><td><p>250</p></td>
+</tr>
+</tbody>
+</table>
+<p>On a  autant de fois une valeur qu’il y a de lignes
+dans le résultat intermédiaire après exécution
+des clauses <code class="docutils literal notranslate"><span class="pre">from</span></code> et <code class="docutils literal notranslate"><span class="pre">where</span></code>. En général,
+on ne souhaite pas conserver ces lignes identiques
+dont la répétition n’apporte aucune information. Le
+mot-clé <code class="docutils literal notranslate"><span class="pre">distinct</span></code> placé juste après le
+<code class="docutils literal notranslate"><span class="pre">select</span></code> permet d’éliminer ces doublons.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">distinct</span> <span class="n">surface</span>
+<span class="k">from</span> <span class="n">Appart</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>surface</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>150</p></td>
+</tr>
+<tr class="row-odd"><td><p>50</p></td>
+</tr>
+<tr class="row-even"><td><p>200</p></td>
+</tr>
+<tr class="row-odd"><td><p>250</p></td>
+</tr>
+</tbody>
+</table>
+<p>Le <code class="docutils literal notranslate"><span class="pre">distinct</span></code> est à éviter quand c’est possible
+car l’élimination des doublons peut entraîner des
+calculs coûteux. Il faut commencer par calculer entièrement
+le résultat, puis le trier ou construire une table de hachage, et
+enfin utiliser la structure temporaire obtenue pour trouver
+les doublons et les éliminer. Si le résultat est de petite taille
+cela ne pose pas de problème. Sinon, on risque de constater une
+grande différence de temps de réponse entre une requête
+sans <code class="docutils literal notranslate"><span class="pre">distinct</span></code> et la même avec <code class="docutils literal notranslate"><span class="pre">distinct</span></code>.</p>
+<p>On peut demander explicitement le tri du résultat sur
+une ou plusieurs expressions avec la clause <code class="docutils literal notranslate"><span class="pre">order</span> <span class="pre">by</span></code>
+qui vient toujours à la fin d’une requête <code class="docutils literal notranslate"><span class="pre">select</span></code>. La requête
+suivante trie les appartements par surface puis, pour
+ceux de surface identique, par l’étage.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Appart</span>
+<span class="k">order</span> <span class="k">by</span> <span class="n">surface</span> <span class="n">etage</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>id_immeuble</p></th>
+<th class="head"><p>no</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>103</p></td>
+<td><p>50</p></td>
+<td><p>5</p></td>
+<td><p>1</p></td>
+<td><p>52</p></td>
+</tr>
+<tr class="row-odd"><td><p>101</p></td>
+<td><p>50</p></td>
+<td><p>15</p></td>
+<td><p>1</p></td>
+<td><p>34</p></td>
+</tr>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>150</p></td>
+<td><p>14</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>102</p></td>
+<td><p>200</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+<td><p>51</p></td>
+</tr>
+<tr class="row-even"><td><p>201</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>202</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p>Par défaut, le tri est en ordre ascendant. On peut inverser
+l’ordre de tri d’un attribut avec le mot-clé <code class="docutils literal notranslate"><span class="pre">desc</span></code> .</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Appart</span>
+<span class="k">order</span> <span class="k">by</span> <span class="n">surface</span> <span class="k">desc</span><span class="p">,</span>  <span class="n">etage</span> <span class="k">desc</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>id_immeuble</p></th>
+<th class="head"><p>no</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>202</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>201</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>102</p></td>
+<td><p>200</p></td>
+<td><p>2</p></td>
+<td><p>1</p></td>
+<td><p>51</p></td>
+</tr>
+<tr class="row-odd"><td><p>100</p></td>
+<td><p>150</p></td>
+<td><p>14</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>101</p></td>
+<td><p>50</p></td>
+<td><p>15</p></td>
+<td><p>1</p></td>
+<td><p>34</p></td>
+</tr>
+<tr class="row-odd"><td><p>103</p></td>
+<td><p>50</p></td>
+<td><p>5</p></td>
+<td><p>1</p></td>
+<td><p>52</p></td>
+</tr>
+</tbody>
+</table>
+<p>Bien entendu, on peut trier sur des expressions
+au lieu de trier sur de simples noms d’attribut.</p>
+</div>
+</div>
+<div class="section" id="jointures">
+<h2>Jointures<a class="headerlink" href="#jointures" title="Lien permanent vers ce titre">¶</a></h2>
+<p>La jointure est une opération indisoensable dès que l’on souhaite
+combiner des données réparties dans plusieurs tables. À
+la base de la jointure, on trouve le produit
+cartésien qui consiste à trouver toutes les associations
+possibles d’une ligne de la première table avec
+une ligne de la seconde. La jointure consiste
+à restreindre le résultat du produit
+cartésien en ne conservant que les associations
+qui sont intéressantes pour la requête.</p>
+<p>Il existe beaucoup de manières différentes d’exprimer les jointures
+en SQL. Pour les débutants, il est recommandé de se limiter
+à la forme de base donnée ci-dessous qui est plus facile
+à interpréter et se généralise à un nombre de tables quelconques.</p>
+<div class="section" id="syntaxe-classique">
+<h3>Syntaxe classique<a class="headerlink" href="#syntaxe-classique" title="Lien permanent vers ce titre">¶</a></h3>
+<p>La méthode la plus courante consiste à effectuer un produit
+cartésien dans le <code class="docutils literal notranslate"><span class="pre">from</span></code> puis
+à éliminer les lignes inutiles avec le <code class="docutils literal notranslate"><span class="pre">where</span></code></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Attention, nous parlons ici de la manière dont on conçoit la requête
+pas de l’évaluation par le système qui essaiera en général
+d’éviter le calcul complet du produit cartésien.</p>
+</div>
+<p>Prenons l’exemple d’une requête cherchant la surface et l’étage
+de l’appartement de M. William Dupont. On doit
+associer deux tables. La première est une table calculée
+contenant les informations sur William Dupont. On
+l’obtient par la requête suivante.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Personne</span>
+<span class="k">where</span> <span class="n">prenom</span><span class="o">=</span><span class="s1">&#39;William&#39;</span>
+<span class="k">and</span> <span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Dupont&#39;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>prenom</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>profession</p></th>
+<th class="head"><p>id_appart</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>William</p></td>
+<td><p>Dupont</p></td>
+<td><p>Acteur</p></td>
+<td><p>102</p></td>
+</tr>
+</tbody>
+</table>
+<p>La seconde table est l’ensemble des appartements. L’association
+des deux tables par un produit cartésien consiste simplement
+à les placer toutes les deux dans le <code class="docutils literal notranslate"><span class="pre">from</span></code>.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span>  <span class="n">p</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">nom</span><span class="p">,</span> <span class="n">prenom</span><span class="p">,</span> <span class="n">id_appart</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span>
+<span class="k">from</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span>
+<span class="k">where</span> <span class="n">prenom</span><span class="o">=</span><span class="s1">&#39;William&#39;</span> <span class="k">and</span> <span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Dupont&#39;</span>
+</pre></div>
+</div>
+<p>Ce qui donne le résultat suivant:</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>prenom</p></th>
+<th class="head"><p>id_appart</p></th>
+<th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>Dupont</p></td>
+<td><p>William</p></td>
+<td><p>102</p></td>
+<td><p>100</p></td>
+<td><p>150</p></td>
+<td><p>14</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>Dupont</p></td>
+<td><p>William</p></td>
+<td><p>102</p></td>
+<td><p>101</p></td>
+<td><p>50</p></td>
+<td><p>15</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>Dupont</p></td>
+<td><p>William</p></td>
+<td><p>102</p></td>
+<td><p>102</p></td>
+<td><p>200</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>Dupont</p></td>
+<td><p>William</p></td>
+<td><p>102</p></td>
+<td><p>103</p></td>
+<td><p>50</p></td>
+<td><p>5</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>Dupont</p></td>
+<td><p>William</p></td>
+<td><p>102</p></td>
+<td><p>201</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>Dupont</p></td>
+<td><p>William</p></td>
+<td><p>102</p></td>
+<td><p>202</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p>Une première difficulté à résoudre quand on utilise plusieurs
+tables est la possibilité d’avoir des attributs de
+même nom dans l’union des schémas, ce qui soulève des ambiguités dans les clauses
+<code class="docutils literal notranslate"><span class="pre">where</span></code> et <code class="docutils literal notranslate"><span class="pre">select</span></code>. On résout cette ambiguité
+en préfixant les attributs par le nom des tables dont ils
+proviennent. Ici, on a même simplifié l’écriture en donnant
+des <em>alias</em> aux nom des tables avec le mot-clé <code class="docutils literal notranslate"><span class="pre">as</span></code>.
+La table <em>Personne</em> et la table <em>Appart</em>
+sont donc respectivement référencées par <code class="docutils literal notranslate"><span class="pre">p</span></code>
+et <code class="docutils literal notranslate"><span class="pre">a</span></code>.</p>
+<p>Notez que la levée de l’ambiguité
+en préfixant par le nom ou l’alias de la table
+n’est nécessaire que pour les attributs qui apparaissent
+en double soit ici <code class="docutils literal notranslate"><span class="pre">id</span></code> qui peut désigner
+l’identifiant de la personne ou celui de l’appartement.</p>
+<p>On n’a placé aucun critère de filtrage pour l’association
+des lignes provenant des deux tables.
+William Dupont est donc associé à toutes les lignes de la table
+<em>Appart</em>. La jointure consiste à ajouter
+une condition complémentaire dans le <code class="docutils literal notranslate"><span class="pre">where</span></code>
+exprimant le fait que l’appartement auquel on s’intéresse
+(désigné par sa clé <code class="docutils literal notranslate"><span class="pre">a.id</span></code>) est celui
+où habite William Dupont (désigné par la clé étrangère
+<code class="docutils literal notranslate"><span class="pre">id_appart</span></code>). Le résultat de la requête
+précédente montre bien que la seule ligne
+qui nous intéresse est celle où
+ces deux attributs ont la même valeur.
+D’où la requête donnant le
+bon résultat:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span>  <span class="n">p</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">prenom</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">surface</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">etage</span>
+<span class="k">from</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span>
+<span class="k">where</span> <span class="n">prenom</span><span class="o">=</span><span class="s1">&#39;William&#39;</span>
+<span class="k">and</span> <span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Dupont&#39;</span>
+<span class="k">and</span>   <span class="n">a</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">id_appart</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>prenom</p></th>
+<th class="head"><p>id_appart</p></th>
+<th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>Dupont</p></td>
+<td><p>William</p></td>
+<td><p>102</p></td>
+<td><p>102</p></td>
+<td><p>200</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p>Comme dans la très grande majorité des cas la jointure consiste
+à exprimer une égalité entre la clé primaire de l’une
+des tables et la clé étrangère correspondante de l’autre.
+Un peu de réflexion permet de réaliser que l’on recrée ainsi
+le lien défini au niveau du modèle entitéassociation.
+Mais SQL est plus puissant que cette reconstitution
+puisqu’on peut exprimer des conditions
+de jointure sur n’importe quel attribut et pas
+seulement sur ceux qui sont des clés.</p>
+<p>Imaginons que l’on veuille trouver les appartements
+d’un même immeuble qui ont la même surface. On veut
+associer une ligne de <em>Appart</em> à une
+autre ligne de <em>Appart</em> avec les conditions
+suivantes:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>elles sont dans le même immeuble (attribut <code class="docutils literal notranslate"><span class="pre">id_immeuble</span></code>);</p></li>
+<li><p>elles ont la même valeur pour l’attribut <code class="docutils literal notranslate"><span class="pre">surface</span></code>;</p></li>
+<li><p>elles correspondent à des appartements distincts (attributs <code class="docutils literal notranslate"><span class="pre">id</span></code>).</p></li>
+</ul>
+</div></blockquote>
+<p>La requête exprimant ces conditions est donc:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">a1</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">a1</span><span class="p">.</span><span class="n">surface</span><span class="p">,</span> <span class="n">a1</span><span class="p">.</span><span class="n">etage</span><span class="p">,</span> <span class="n">a2</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">a2</span><span class="p">.</span><span class="n">surface</span><span class="p">,</span> <span class="n">a2</span><span class="p">.</span><span class="n">etage</span>
+<span class="k">from</span> <span class="n">Appart</span> <span class="n">a1</span> <span class="n">Appart</span> <span class="n">a2</span>
+<span class="k">where</span> <span class="n">a1</span><span class="p">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">a2</span><span class="p">.</span><span class="n">id</span>
+<span class="k">and</span> <span class="n">a1</span><span class="p">.</span><span class="n">surface</span> <span class="o">=</span> <span class="n">a2</span><span class="p">.</span><span class="n">surface</span>
+<span class="k">and</span> <span class="n">a1</span><span class="p">.</span><span class="n">id_immeuble</span> <span class="o">=</span> <span class="n">a2</span><span class="p">.</span><span class="n">id_immeuble</span>
+</pre></div>
+</div>
+<p>Ce qui donne le résultat suivant:</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 17%" />
+<col style="width: 17%" />
+<col style="width: 17%" />
+<col style="width: 17%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>101</p></td>
+<td><p>50</p></td>
+<td><p>15</p></td>
+<td><p>103</p></td>
+<td><p>50</p></td>
+<td><p>5</p></td>
+</tr>
+<tr class="row-odd"><td><p>103</p></td>
+<td><p>50</p></td>
+<td><p>5</p></td>
+<td><p>101</p></td>
+<td><p>50</p></td>
+<td><p>15</p></td>
+</tr>
+<tr class="row-even"><td><p>201</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+<td><p>202</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>202</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+<td><p>201</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+<p>On peut noter que dans le résultat la même paire apparaît
+deux fois avec des ordres inversés. On peut éliminer
+cette redondance en remplaçant <code class="docutils literal notranslate"><span class="pre">a1.id</span> <span class="pre">!=</span> <span class="pre">a2.id</span></code>
+par <code class="docutils literal notranslate"><span class="pre">a1.id</span> <span class="pre">&lt;</span> <span class="pre">a2.id</span></code>.</p>
+<p>Les alias <code class="docutils literal notranslate"><span class="pre">a1</span></code> et <code class="docutils literal notranslate"><span class="pre">a2</span></code> jouent le rôle
+de « curseurs » qui référencent, à un moment
+donné, deux lignes de la table <em>Appart</em>. Ces
+deux lignes sont associées et incluses dans le
+résultat si la condition du <code class="docutils literal notranslate"><span class="pre">where</span></code> est satisfaite.</p>
+<p>Voici quelques exemples complémentaires de jointures
+impliquant parfois plus de deux tables exprimées
+par produit cartésien, puis restriction avec
+<code class="docutils literal notranslate"><span class="pre">where</span></code>.</p>
+<blockquote>
+<div><blockquote>
+<div><ul>
+<li><p>Qui habite un appartement de plus de 200 m2?</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span><span class="p">,</span> <span class="n">nom</span><span class="p">,</span> <span class="n">profession</span>
+<span class="k">from</span> <span class="n">Personne</span><span class="p">,</span> <span class="n">Appart</span>
+<span class="k">where</span> <span class="n">id_appart</span> <span class="o">=</span> <span class="n">Appart</span><span class="p">.</span><span class="n">id</span>
+<span class="k">and</span>  <span class="n">surface</span> <span class="o">&gt;=</span> <span class="mi">200</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<blockquote>
+<div><p>Attention à lever l’ambiguité sur les noms d’attributs
+quand ils peuvent provenir de deux tables (c’est le
+cas ici pour <code class="docutils literal notranslate"><span class="pre">id</span></code>).</p>
+</div></blockquote>
+<ul>
+<li><p>Qui habite le Barabas?</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">no</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span>
+<span class="k">from</span>   <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span><span class="p">,</span> <span class="n">Immeuble</span> <span class="k">as</span> <span class="n">i</span>
+<span class="k">where</span>  <span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span>
+<span class="k">and</span>    <span class="n">a</span><span class="p">.</span><span class="n">id_immeuble</span><span class="o">=</span><span class="n">i</span><span class="p">.</span><span class="n">id</span>
+<span class="k">and</span>    <span class="n">i</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Barabas&#39;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p>Qui habite un appartement qu’il possède et avec quelle quote-part?</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span><span class="p">,</span> <span class="n">nom</span><span class="p">,</span> <span class="n">quote_part</span>
+<span class="k">from</span>   <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span> <span class="n">Possede</span> <span class="k">as</span> <span class="n">p2</span><span class="p">,</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span>
+<span class="k">where</span>  <span class="n">p</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">p2</span><span class="p">.</span><span class="n">id_personne</span> <span class="cm">/* p est propriétaire */</span>
+<span class="k">and</span>    <span class="n">p2</span><span class="p">.</span><span class="n">id_appart</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span>   <span class="cm">/* de l&#39;appartement a */</span>
+<span class="k">and</span>    <span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span>   <span class="cm">/* et il y habite     */</span>
+</pre></div>
+</div>
+</li>
+<li><p>De quel(s) appartement(s) Alice Black
+est-elle propriétaire et dans quel immeuble?</p>
+<p>Voici la requête sur les quatre tables avec
+des commentaires inclus montrant les jointures.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span> <span class="k">select</span> <span class="n">i</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">no</span><span class="p">,</span> <span class="n">etage</span><span class="p">,</span> <span class="n">surface</span>
+<span class="k">from</span>  <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span><span class="p">,</span> <span class="n">Immeuble</span> <span class="k">as</span> <span class="n">i</span><span class="p">,</span> <span class="n">Possede</span> <span class="k">as</span> <span class="n">p2</span>
+<span class="k">where</span>  <span class="n">p</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">p2</span><span class="p">.</span><span class="n">id_personne</span> <span class="cm">/* Jointure PersonnePossede */</span>
+<span class="k">and</span>    <span class="n">p2</span><span class="p">.</span><span class="n">id_appart</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">id</span> <span class="cm">/* Jointure PossedeAppart */</span>
+<span class="k">and</span>    <span class="n">a</span><span class="p">.</span><span class="n">id_immeuble</span><span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">id</span> <span class="cm">/* Jointure AppartImmeuble */</span>
+<span class="k">and</span>    <span class="n">p</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Black&#39;</span> <span class="k">and</span> <span class="n">p</span><span class="p">.</span><span class="n">prenom</span><span class="o">=</span><span class="s1">&#39;Alice&#39;</span>
+</pre></div>
+</div>
+<p>Attention à lever l’ambiguité sur les noms d’attributs
+quand ils peuvent provenir de deux tables (c’est le
+cas ici pour <code class="docutils literal notranslate"><span class="pre">id</span></code>).</p>
+</li>
+</ul>
+</div></blockquote>
+<p>La jointure classique « à plat » où
+toutes les tables sont placées dans le <code class="docutils literal notranslate"><span class="pre">from</span></code>
+et associées par produit cartésien est une
+manière tout à fait recommandable de procéder
+surtout pour les débutants SQL. Elle permet
+de se ramener toujours à la même méthode
+d’interprétation et consolide la compréhension
+des principes d’interrogation d’une base relationnelle.</p>
+<p>Toutes ces jointures peuvent s’exprimer avec
+d’autres syntaxes: tables calculées dans le <code class="docutils literal notranslate"><span class="pre">from</span></code>
+opérateur de jointure dans le <code class="docutils literal notranslate"><span class="pre">from</span></code> ou
+(pas toujours) requêtes imbriquées. À l’exception
+notable des jointures externes et des requêtes
+imbriquées avec négation, elles n’apportent
+aucune expressivité supplémentaire. Toutes ces variantes
+constituent des moyens plus ou moins commodes
+d’exprimer différemment la jointure.</p>
+</div>
+<div class="section" id="tables-calculees-dans-le-from">
+<h3>Tables calculées dans le <code class="docutils literal notranslate"><span class="pre">from</span></code><a class="headerlink" href="#tables-calculees-dans-le-from" title="Lien permanent vers ce titre">¶</a></h3>
+<p>La possibilité de placer des requêtes dans le
+<code class="docutils literal notranslate"><span class="pre">from</span></code> est prise en compte depuis peu
+de temps par les SGBD relationnels. Cette option
+n’apporte rien en terme d’expressivité
+mais elle peut  (question de goût)  parfois
+être considérée comme plus claire ou
+plus proche du raisonnement intuitif. Elle
+ne sert que dans les cas où il existe un
+critère de sélection sur une table. En revanche
+les conditions de jointure restent dans le <code class="docutils literal notranslate"><span class="pre">where</span></code>.</p>
+<p>Nous reprenons quelques exemples
+de requêtes que nous avons déjà
+résolues avec des jointures « à plat ».</p>
+<blockquote>
+<div><ul>
+<li><p>Quel est l’appartement où habite M. William Dupont?</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">no</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span>
+<span class="k">from</span>  <span class="n">Appart</span><span class="p">,</span> <span class="p">(</span><span class="k">select</span> <span class="n">id_appart</span> <span class="k">from</span> <span class="n">Personne</span>
+               <span class="k">where</span> <span class="n">prenom</span><span class="o">=</span><span class="s1">&#39;William&#39;</span>
+               <span class="k">and</span> <span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Dupont&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">Dupont</span>
+<span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="n">id_appart</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>no</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>51</p></td>
+<td><p>200</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p>Un (léger) avantage est de supprimer dans la table
+calculée les attributs qui soulèvent des ambiguités
+(par exemple l’id de la personne qui ne sert
+à rien par la suite). Il faut <em>toujours</em>
+donner un alias avec le mot-clé <code class="docutils literal notranslate"><span class="pre">as</span></code>
+à la table calculée.</p>
+</li>
+<li><p>Qui habite un appartement de plus de 200 m2?</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span><span class="p">,</span> <span class="n">nom</span><span class="p">,</span> <span class="n">profession</span>
+<span class="k">from</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span>  <span class="p">(</span><span class="k">select</span> <span class="n">id</span> <span class="k">from</span> <span class="n">Appart</span> <span class="k">where</span> <span class="n">surface</span><span class="o">&gt;=</span><span class="mi">200</span><span class="p">)</span> <span class="k">as</span> <span class="n">a</span>
+<span class="k">where</span> <span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span>
+</pre></div>
+</div>
+</li>
+<li><p>Qui habite le Barabas?</p>
+<p>Dernier exemple montrant la possibilité d’effectuer
+une jointure pour obtenir la table calculée.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span><span class="p">,</span> <span class="n">nom</span><span class="p">,</span> <span class="k">no</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span>
+<span class="k">from</span>    <span class="n">Personne</span> <span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="k">select</span> <span class="n">Appart</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="k">no</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span>
+                    <span class="k">from</span> <span class="n">Appart</span><span class="p">,</span> <span class="n">Immeuble</span>
+                    <span class="k">where</span> <span class="n">id_immeuble</span><span class="o">=</span><span class="n">Immeuble</span><span class="p">.</span><span class="n">id</span>
+                    <span class="k">and</span> <span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Barabas&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">a</span>
+<span class="k">where</span>  <span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="operateurs-de-jointure">
+<h3>Opérateurs de jointure<a class="headerlink" href="#operateurs-de-jointure" title="Lien permanent vers ce titre">¶</a></h3>
+<p>La virgule séparant deux tables dans un <code class="docutils literal notranslate"><span class="pre">from</span></code>
+exprime un produit cartésien: toutes
+les combinaisons de lignes sont considérées
+puis soumises aux conditions du <code class="docutils literal notranslate"><span class="pre">where</span></code>.
+Comme nous l’avons vu il s’agit d’un moyen
+d’effectuer la jointure. Mais SQL propose également des opérateurs
+de jointure dans le <code class="docutils literal notranslate"><span class="pre">from</span></code>
+avec la syntaxe suivante: <code class="docutils literal notranslate"><span class="pre">table1</span> <span class="pre">opérateur</span> <span class="pre">table2</span> <span class="pre">[condition]</span></code></p>
+<p>Les opérateurs disponibles sont:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cross</span> <span class="pre">join</span></code> le produit cartésien             synonyme de la virgule;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">join</span></code> la jointure accompagnée de conditions;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">straight</span> <span class="pre">join</span></code> jointure forçant l’ordre   d’accès aux tables (déconseillé: mieux
+vaut laisser faire le système);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">left</span> <span class="pre">[outer]</span> <span class="pre">join</span></code> et <code class="docutils literal notranslate"><span class="pre">right</span> <span class="pre">[outer]</span> <span class="pre">join</span></code>:  jointures externes;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">natural</span> <span class="pre">[left,right</span> <span class="pre">[outer]]</span> <span class="pre">join</span></code>: jointure « naturelle ».</p></li>
+</ul>
+</div></blockquote>
+<p>Le seul opérateur qui n’est pas redondant avec des syntaxes présentées précédemment
+est la jointure externe (<code class="docutils literal notranslate"><span class="pre">outer</span></code>). On peut à bon droit considérer que cette
+multiplication de  variantes syntaxiques ne fait que compliquer le langage.
+Nous présentons dans ce qui suit les
+opérateurs <code class="docutils literal notranslate"><span class="pre">join</span></code> et <code class="docutils literal notranslate"><span class="pre">outer</span> <span class="pre">join</span></code>. La jointure naturelle est une variante possible
+quand la clé primaire et la clé étrangère
+ont le même nom.</p>
+<p>L’opérateur <code class="docutils literal notranslate"><span class="pre">join</span></code> permet d’exprimer directement dans le <code class="docutils literal notranslate"><span class="pre">from</span></code>
+les conditions de jointure. Il est très proche
+dans sa conception des jointures à plat
+étudiées précédemment. Quelques exemples
+reprenant des requêtes déjà exprimées
+suffiront pour comprendre le mécanisme.</p>
+<blockquote>
+<div><ul>
+<li><p>Quel est l’appartement où habite M. William Dupont?</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">no</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span>
+<span class="k">from</span> <span class="n">Personne</span> <span class="k">join</span> <span class="n">Appart</span> <span class="k">on</span> <span class="p">(</span><span class="n">Personne</span><span class="p">.</span><span class="n">id_appart</span><span class="o">=</span><span class="n">Appart</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
+<span class="k">where</span> <span class="n">prenom</span><span class="o">=</span><span class="s1">&#39;William&#39;</span> <span class="k">and</span> <span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Dupont&#39;</span>
+</pre></div>
+</div>
+<p>Il suffit de comparer avec la version combinant
+produit cartésien et <code class="docutils literal notranslate"><span class="pre">where</span></code> pour se rendre
+compte que la différence est minime. On peut
+tout à fait considérer que la version
+avec <code class="docutils literal notranslate"><span class="pre">join</span></code> est plus claire.</p>
+</li>
+<li><p>Qui habite un appartement de plus de 200 m2?</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span><span class="p">,</span> <span class="n">nom</span><span class="p">,</span> <span class="n">profession</span>
+<span class="k">from</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span> <span class="k">join</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span>
+        <span class="k">on</span> <span class="p">(</span><span class="n">id_appart</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span> <span class="k">and</span> <span class="n">surface</span><span class="o">&gt;=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Cet exemple illustre un « détournement » de la
+condition de jointure. On y a inclus une condition
+de sélection (la surface supérieure
+à 200).
+La requête est correcte mais
+il est possible que la méthode d’évaluation ne
+soit pas optimale.</p>
+<p>Il faut souligner (nous y reviendrons) que ces
+variantes alternatives représentent un défi
+pour le module chargé d’optimiser l’évaluation
+des requêtes. Un avantage potentiel des jointures
+à plat où tout est exprimé dans le <code class="docutils literal notranslate"><span class="pre">where</span></code>
+est qu’elles offrent une forme
+canonique à partir de laquelle un optimiseur
+peut travailler avec un maximum de liberté.</p>
+</li>
+<li><p>Qui habite le Barabas?</p>
+<p>On peut composer deux opérateurs de jointure
+comme le montre ce dernier exemple.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">no</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span>
+<span class="k">from</span>  <span class="n">Personne</span> <span class="n">p</span> <span class="k">join</span> <span class="p">(</span><span class="n">Appart</span> <span class="n">a</span> <span class="k">join</span> <span class="n">Immeuble</span> <span class="n">i</span>
+                        <span class="k">on</span> <span class="n">id_immeuble</span><span class="o">=</span><span class="n">i</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
+         <span class="k">on</span> <span class="p">(</span><span class="n">id_appart</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
+<span class="k">where</span> <span class="n">i</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Barabas&#39;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+<p>Contrairement aux jointures exprimées
+avec <code class="docutils literal notranslate"><span class="pre">join</span></code>, les jointures externes
+ne peuvent pas s’exprimer avec un <code class="docutils literal notranslate"><span class="pre">where</span></code>.
+Qu’est-ce qu’une jointure externe?
+Effectuons la requête qui affiche tous les
+appartements avec leur occupant.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">id_immeuble</span><span class="p">,</span> <span class="k">no</span><span class="p">,</span> <span class="n">etage</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">nom</span><span class="p">,</span> <span class="n">prenom</span>
+<span class="k">from</span>  <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span> <span class="k">join</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span> <span class="k">on</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Voici
+ce que l’on obtient:</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 28%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id_immeuble</p></th>
+<th class="head"><p>no</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>prenom</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>250</p></td>
+<td><p>Ross</p></td>
+<td><p>null</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>52</p></td>
+<td><p>5</p></td>
+<td><p>50</p></td>
+<td><p>Black</p></td>
+<td><p>Alice</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>14</p></td>
+<td><p>150</p></td>
+<td><p>Verte</p></td>
+<td><p>Rachel</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>51</p></td>
+<td><p>2</p></td>
+<td><p>200</p></td>
+<td><p>Dupont</p></td>
+<td><p>William</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>250</p></td>
+<td><p>Ramut</p></td>
+<td><p>Doug</p></td>
+</tr>
+</tbody>
+</table>
+<p>Il manque un appartement le 34 du Koudalou. En effet cet appartement n’a pas d’occupant. Il n’y
+a donc aucune possibilité que la condition de jointure soit satisfaite.</p>
+<p>La jointure externe permet d’éviter cette élimination
+parfois indésirable. On considère alors
+une hiérarchie entre les deux tables. La
+première table (en général celle de gauche)
+est dite « directrice » et toutes ses lignes,
+même celle qui ne trouvent pas
+de correspondant dans la table de droite,
+seront prises en compte. Les lignes de la table
+de droite sont en revanche  optionnelle.</p>
+<p>Si pour une ligne de la table de gauche on trouve une
+ligne satisfaisant le critère de jointure dans la table de droite,
+alors la jointure s’effectue normalement. Sinon, les attributs
+provenant de la table de droite sont affichés à <code class="docutils literal notranslate"><span class="pre">null</span></code>.
+Voici la jointure externe entre <em>Appart</em> et <em>Personne</em>.  Le mot-clé
+<code class="docutils literal notranslate"><span class="pre">outer</span></code> est optionnel.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">id_immeuble</span><span class="p">,</span> <span class="k">no</span> <span class="n">etage</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">nom</span><span class="p">,</span> <span class="n">prenom</span>
+<span class="k">from</span>  <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span> <span class="k">left</span> <span class="k">outer</span> <span class="k">join</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span> <span class="k">on</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 28%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id_immeuble</p></th>
+<th class="head"><p>no</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>prenom</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>14</p></td>
+<td><p>150</p></td>
+<td><p>Verte</p></td>
+<td><p>Rachel</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>34</p></td>
+<td><p>15</p></td>
+<td><p>50</p></td>
+<td><p>null</p></td>
+<td><p>null</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>51</p></td>
+<td><p>2</p></td>
+<td><p>200</p></td>
+<td><p>Dupont</p></td>
+<td><p>William</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>52</p></td>
+<td><p>5</p></td>
+<td><p>50</p></td>
+<td><p>Black</p></td>
+<td><p>Alice</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>250</p></td>
+<td><p>Ramut</p></td>
+<td><p>Doug</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>250</p></td>
+<td><p>Ross</p></td>
+<td><p>null</p></td>
+</tr>
+</tbody>
+</table>
+<p>Notez les deux attributs <code class="docutils literal notranslate"><span class="pre">prenom</span></code> et <code class="docutils literal notranslate"><span class="pre">nom</span></code>
+à <code class="docutils literal notranslate"><span class="pre">null</span></code> pour l’appartement 34.</p>
+<p>Il existe un <code class="docutils literal notranslate"><span class="pre">right</span> <span class="pre">outer</span> <span class="pre">join</span></code>
+qui prend la table de droite comme table directrice.
+On peut combiner la jointure externe avec
+des jointures normales des sélections des tris etc.
+Voici la requête qui affiche le nom
+de l’immeuble en plus des informations précédentes
+et trie par numéro d’immeuble et numéro
+d’appartement.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">i</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">no</span><span class="p">,</span> <span class="n">etage</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="n">prenom</span>
+<span class="k">from</span>  <span class="n">Immeuble</span>  <span class="k">as</span> <span class="n">i</span>
+       <span class="k">join</span>
+           <span class="p">(</span><span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span> <span class="k">left</span> <span class="k">outer</span> <span class="k">join</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span>
+                      <span class="k">on</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">))</span>
+        <span class="k">on</span> <span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id_immeuble</span><span class="p">)</span>
+<span class="k">order</span> <span class="k">by</span> <span class="n">i</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="k">no</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="operations-ensemblistes">
+<h3>Opérations ensemblistes<a class="headerlink" href="#operations-ensemblistes" title="Lien permanent vers ce titre">¶</a></h3>
+<p>La norme SQL ANSI comprend des opérations qui considèrent les
+tables comme des ensembles et effectuent des intersections des unions ou des
+différences avec les mots-clé <code class="docutils literal notranslate"><span class="pre">union</span></code>, <code class="docutils literal notranslate"><span class="pre">intersect</span></code> ou <code class="docutils literal notranslate"><span class="pre">except</span></code>.
+Chaque opérateur s’applique à deux tables de schéma identique (même nombre d’attributs mêmes
+noms mêmes types).</p>
+<p>L’union est un opérateur peu utilisé car il
+est difficile de trouver des cas où
+son application est justifiée. Voici un exemple
+montrant le calcul de l’union des noms
+d’immeuble et des noms de personne.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">nom</span> <span class="k">from</span> <span class="n">Immeuble</span>
+ <span class="k">union</span>
+<span class="k">select</span> <span class="n">nom</span> <span class="k">from</span> <span class="n">Personne</span>
+</pre></div>
+</div>
+<p>Le <code class="docutils literal notranslate"><span class="pre">except</span></code> exprime la différence entre deux ensembles.
+Il est avantageusement remplacé par l’utilisation
+des requêtes imbriquées et des <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">in</span></code>
+et <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">exists</span></code> présentés ci-dessous.</p>
+</div>
+<div class="section" id="requetes-imbriquees">
+<h3>Requêtes imbriquées<a class="headerlink" href="#requetes-imbriquees" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Les requêtes peuvent être imbriquées les unes dans les autres de deux manières:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dans la clause <code class="docutils literal notranslate"><span class="pre">from</span></code>: la requête est placée entre parenthèses et son résultat est vu comme une table;</p></li>
+<li><p>dans la clause <code class="docutils literal notranslate"><span class="pre">where</span></code> avec l’opérateur <code class="docutils literal notranslate"><span class="pre">in</span></code> qui permet de tester l’appartenance
+de la valeur d’un attribut à un ensemble calculé par une requête.</p></li>
+</ul>
+</div></blockquote>
+<p>Reprenons l’exemple de la requête trouvant
+la surface et l’étage de l’appartement de M. Dupont.
+On peut l’exprimer avec une requête imbriquée de deux manières:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span>
+<span class="k">from</span> <span class="n">Appart</span> <span class="p">(</span><span class="k">select</span> <span class="n">id_appart</span>
+             <span class="k">from</span> <span class="n">Personne</span>
+             <span class="k">where</span> <span class="n">prenom</span><span class="o">=</span><span class="s1">&#39;William&#39;</span> <span class="k">and</span> <span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Dupont&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ri</span>
+<span class="k">where</span> <span class="n">Appart</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">ri</span><span class="p">.</span><span class="n">id_appart</span>
+
+<span class="k">select</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span> <span class="k">from</span> <span class="n">Appart</span>
+<span class="k">where</span>  <span class="n">id</span>  <span class="k">in</span> <span class="p">(</span><span class="k">select</span> <span class="n">id_appart</span>
+               <span class="k">from</span> <span class="n">Personne</span>
+               <span class="k">where</span> <span class="n">prenom</span><span class="o">=</span><span class="s1">&#39;William&#39;</span> <span class="k">and</span> <span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Dupont&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Le mot-clé <code class="docutils literal notranslate"><span class="pre">in</span></code> exprime
+la condition d’appartenance de l’identifiant
+de l’appartement à l’ensemble d’identifiants constitué
+avec la requête imbriquée. Il doit y avoir correspondance
+entre le nombre et le type des attributs auxquels
+s’applique la comparaison par <code class="docutils literal notranslate"><span class="pre">in</span></code>. L’exemple
+suivant montre une comparaison entre des paires d’attributs
+(ici on cherche des informations sur les propriétaires).</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span><span class="p">,</span> <span class="n">nom</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span>
+<span class="k">from</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span> <span class="k">join</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span> <span class="k">on</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="p">)</span>
+<span class="k">where</span>  <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">id</span> <span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="p">)</span>
+          <span class="k">in</span> <span class="p">(</span><span class="k">select</span> <span class="n">id_personne</span> <span class="n">id_appart</span> <span class="k">from</span> <span class="n">Possede</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 36%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>prenom</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>null</p></td>
+<td><p>Ross</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>Alice</p></td>
+<td><p>Black</p></td>
+<td><p>50</p></td>
+<td><p>5</p></td>
+</tr>
+<tr class="row-even"><td><p>Doug</p></td>
+<td><p>Ramut</p></td>
+<td><p>250</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+<p>Il est bien entendu assez direct de réécrire la
+requête ci-dessus comme une jointure classique.
+Parfois l’expression avec requête imbriquée
+peut s’avérer plus naturelle. Supposons
+que l’on cherche les immeubles dans lesquels
+on trouve un appartement de 50 m2. Voici
+l’expression avec requête imbriquée.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Immeuble</span>
+<span class="k">where</span> <span class="n">id</span> <span class="k">in</span> <span class="p">(</span><span class="k">select</span> <span class="n">id_immeuble</span> <span class="k">from</span> <span class="n">Appart</span> <span class="k">where</span> <span class="n">surface</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 42%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>adresse</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+</tr>
+</tbody>
+</table>
+<p>La requête directement réécrite en jointure donne le résultat
+suivant:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">i</span><span class="p">.</span><span class="o">*</span> <span class="k">from</span> <span class="n">Immeuble</span> <span class="k">as</span> <span class="n">i</span> <span class="k">join</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span>
+                 <span class="k">on</span> <span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id_immeuble</span><span class="p">)</span>
+<span class="k">where</span> <span class="n">surface</span><span class="o">=</span><span class="mi">50</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 42%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>adresse</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+</tr>
+</tbody>
+</table>
+<p>On obtient deux fois le même immeuble puisqu’il peut
+être associé à deux appartements différents de 50 m2.
+Il suffit d’ajouter un <code class="docutils literal notranslate"><span class="pre">distinct</span></code> après le <code class="docutils literal notranslate"><span class="pre">select</span></code>
+pour régler le problème, mais on peut
+considérer que dans ce cas la requête imbriquée est
+plus appropriée. Attention cependant: il n’est pas possible
+d’obtenir dans le résultat des attributs appartenant
+aux tables des requêtes imbriquées.</p>
+<p>Le principe général des requêtes imbriquées
+est d’exprimer des conditions sur des tables calculées
+par des requêtes. Ces conditions sont les suivantes:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">exists</span> <span class="pre">R</span></code>: renvoie <code class="docutils literal notranslate"><span class="pre">true</span></code> si <em>R</em>
+n’est pas vide <code class="docutils literal notranslate"><span class="pre">false</span></code> sinon.</p></li>
+<li><p><em>t</em> <code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">R</span></code> où est une ligne dont le type (le nombre
+et le type des attributs)
+est celui de <em>R</em>: renvoie <code class="docutils literal notranslate"><span class="pre">true</span></code> si <em>t</em> appartient
+à <em>R</em> <code class="docutils literal notranslate"><span class="pre">false</span></code> sinon.</p></li>
+<li><p><em>v</em> <em>cmp</em> <code class="docutils literal notranslate"><span class="pre">any</span> <span class="pre">R</span></code> où <em>cmp</em> est un
+comparateur SQL (<em>&lt;</em> <em>&gt;</em> <em>=</em> etc.): renvoie
+<code class="docutils literal notranslate"><span class="pre">true</span></code> si la comparaison avec <em>au moins une</em>
+des lignes de la table <em>R</em> renvoie <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></li>
+<li><p><em>v</em> <em>cmp</em> <code class="docutils literal notranslate"><span class="pre">all</span> <span class="pre">R</span></code> où <em>cmp</em> est un
+comparateur SQL (<em>&lt;</em> <em>&gt;</em> <em>=</em> etc.): renvoie
+<code class="docutils literal notranslate"><span class="pre">true</span></code> si la comparaison avec <em>toutes</em>
+les lignes de la table <em>R</em> renvoie <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></li>
+</ul>
+</div></blockquote>
+<p>De plus toutes ces expressions peuvent être préfixées
+par <code class="docutils literal notranslate"><span class="pre">not</span></code> pour obtenir la négation. La richesse
+des expressions possibles permet d’effectuer une même
+interrogation en choisissant parmi plusieurs syntaxes
+possibles. En général, tout ce qui n’est pas
+basé sur une négation <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">in</span></code> ou <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">exists</span></code>
+peut s’exprimer <em>sans</em> requête imbriquée.</p>
+<p>Le cas du <code class="docutils literal notranslate"><span class="pre">all</span></code> correspond à une négation
+puisque si une propriété est <em>toujours</em> vraie
+il n’existe pas de cas où elle est fausse.
+La requête ci-dessous applique le <code class="docutils literal notranslate"><span class="pre">all</span></code>
+pour chercher l’étage le plus élevé de l’immeuble 1.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Appart</span>
+    <span class="k">where</span> <span class="n">id_immeuble</span><span class="o">=</span><span class="mi">1</span>
+    <span class="k">and</span>    <span class="n">etage</span> <span class="o">&gt;=</span> <span class="k">all</span> <span class="p">(</span><span class="k">select</span> <span class="n">etage</span> <span class="k">from</span> <span class="n">Appart</span> <span class="k">where</span> <span class="n">id_immeuble</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Le <code class="docutils literal notranslate"><span class="pre">all</span></code> exprime une comparaison qui vaut pour
+<em>toutes</em>  les lignes ramenées par la requête imbriquée.
+Attention aux valeurs à <code class="docutils literal notranslate"><span class="pre">null</span></code> dans ce genre
+de situation: toute comparaison avec
+une de ces valeurs renvoie <code class="docutils literal notranslate"><span class="pre">UNKNOWN</span></code>
+et cela peut entraîner l’échec du <code class="docutils literal notranslate"><span class="pre">all</span></code>.
+Il n’existe pas d’expression avec jointure qui puisse exprimer
+ce genre de condition.</p>
+</div>
+<div class="section" id="requetes-correlees">
+<h3>Requêtes correlées<a class="headerlink" href="#requetes-correlees" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Les exemples de requêtes imbriquées donnés
+précédemment pouvaient être évalués
+indépendamment de la requête principale, ce
+qui permet au système (s’il le juge nécessaire)
+d’exécuter la requête en deux phases.
+La clause <code class="docutils literal notranslate"><span class="pre">exists</span></code> fournit encore un nouveau moyen d’exprimer
+les requêtes vues précédemment en basant la sous-requête sur
+une ou plusieurs valeurs issues de
+la requête principale. On parle alors de
+requêtes <em>correlées</em>.</p>
+<p>Voici encore une fois la recherche de l’appartement de M. William Dupont
+exprimée avec <code class="docutils literal notranslate"><span class="pre">exists</span></code>:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Appart</span>
+<span class="k">where</span>  <span class="k">exists</span>  <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Personne</span>
+                <span class="k">where</span>  <span class="n">prenom</span><span class="o">=</span><span class="s1">&#39;William&#39;</span> <span class="k">and</span> <span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Dupont&#39;</span>
+                <span class="k">and</span>    <span class="n">Personne</span><span class="p">.</span><span class="n">id_appart</span><span class="o">=</span><span class="n">Appart</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>On obtient donc une nouvelle technique d’expression qui permet d’aborder le
+critère de recherche sous une troisième perspective: on conserve un
+appartement si, <em>pour cet appartement</em>, l’occupant s’appelle William
+Dupont. Il s’agit assez visiblement d’une jointure mais entre deux tables
+situées dans des requêtes (ou plutôt des « blocs ») distinctes.  La
+condition de jointure est appelée corrélation d’où le nom de ce type de
+technique.</p>
+<p>Toutes les jointures peuvent d’exprimer
+avec <code class="docutils literal notranslate"><span class="pre">exists</span></code> ou <code class="docutils literal notranslate"><span class="pre">in</span></code>. Voici quelques
+exemples reprenant des requêtes déjà vues
+précédemment.</p>
+<blockquote>
+<div><ul>
+<li><p>Qui habite un appartement de plus de 200 m2?</p>
+<p>Avec <code class="docutils literal notranslate"><span class="pre">in</span></code>:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span> <span class="n">nom</span> <span class="n">profession</span>
+<span class="k">from</span> <span class="n">Personne</span>
+<span class="k">where</span> <span class="n">id_appart</span> <span class="k">in</span> <span class="p">(</span><span class="k">select</span> <span class="n">id</span> <span class="k">from</span> <span class="n">Appart</span> <span class="k">where</span> <span class="n">surface</span> <span class="o">&gt;=</span> <span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Avec <code class="docutils literal notranslate"><span class="pre">exists</span></code>:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span> <span class="n">nom</span> <span class="n">profession</span>
+<span class="k">from</span> <span class="n">Personne</span>  <span class="n">p</span>
+<span class="k">where</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Appart</span> <span class="n">a</span>
+              <span class="k">where</span> <span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">p</span><span class="p">.</span><span class="n">id_appart</span>
+              <span class="k">and</span> <span class="n">surface</span> <span class="o">&gt;=</span> <span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Qui habite le Barabas?</p>
+<p>Avec <code class="docutils literal notranslate"><span class="pre">in</span></code>:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span> <span class="k">no</span> <span class="n">surface</span> <span class="n">etage</span>
+<span class="k">from</span>   <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span>
+<span class="k">where</span>  <span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span>
+<span class="k">and</span> <span class="n">a</span><span class="p">.</span><span class="n">id_immeuble</span> <span class="k">in</span>
+         <span class="p">(</span><span class="k">select</span> <span class="n">id</span> <span class="k">from</span> <span class="n">Immeuble</span>
+          <span class="k">where</span>  <span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Barabas&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Avec <code class="docutils literal notranslate"><span class="pre">exists</span></code>:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span> <span class="k">no</span> <span class="n">surface</span> <span class="n">etage</span>
+<span class="k">from</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span>
+<span class="k">where</span>  <span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span>
+<span class="k">and</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Immeuble</span> <span class="n">i</span>
+            <span class="k">where</span>  <span class="n">i</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id_immeuble</span>
+            <span class="k">and</span> <span class="n">i</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Barabas&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>dans une sous-requête associée à la clause <code class="docutils literal notranslate"><span class="pre">exists</span></code>
+peu importe les attributs du <code class="docutils literal notranslate"><span class="pre">select</span></code>
+puisque la condition se résume à: cette requête ramène-t-elle
+au moins une ligne ou non? On peut donc systématiquement
+utiliser <code class="docutils literal notranslate"><span class="pre">select</span> <span class="pre">*</span></code>.</p>
+</div>
+<p>Enfin rien n’empêche d’utiliser plusieurs niveaux d’imbrication au prix d’une forte
+dégradation de la lisibilité. Voici la requête « De quel(s) appartement(s) Alice Black
+est-elle propriétaire et dans quel immeuble? » écrite avec plusieurs niveaux.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">i</span><span class="p">.</span><span class="n">nom</span> <span class="k">no</span> <span class="n">etage</span> <span class="n">surface</span>
+<span class="k">from</span>  <span class="n">Immeuble</span> <span class="k">as</span> <span class="n">i</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span>
+<span class="k">where</span>  <span class="n">a</span><span class="p">.</span><span class="n">id_immeuble</span><span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">id</span>
+<span class="k">and</span>    <span class="n">a</span><span class="p">.</span><span class="n">id</span> <span class="k">in</span>
+             <span class="p">(</span><span class="k">select</span> <span class="n">id_appart</span> <span class="k">from</span> <span class="n">Possede</span>
+              <span class="k">where</span> <span class="n">id_personne</span> <span class="k">in</span>
+                       <span class="p">(</span><span class="k">select</span> <span class="n">id</span> <span class="k">from</span> <span class="n">Personne</span>
+                        <span class="k">where</span>  <span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Black&#39;</span>
+                        <span class="k">and</span> <span class="n">prenom</span><span class="o">=</span><span class="s1">&#39;Alice&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>En résumé une jointure entre les tables
+<em>R</em> et <em>S</em> de la forme:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">R</span><span class="p">.</span><span class="o">*</span>
+<span class="k">from</span> <span class="n">R</span> <span class="n">S</span>
+<span class="k">where</span> <span class="n">R</span><span class="p">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">S</span><span class="p">.</span><span class="n">b</span>
+</pre></div>
+</div>
+<p>peut s’écrire de manière équivalente avec
+une requête imbriquée:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="p">[</span><span class="k">distinct</span><span class="p">]</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">R</span>
+<span class="k">where</span> <span class="n">R</span><span class="p">.</span><span class="n">a</span> <span class="k">in</span> <span class="p">(</span><span class="k">select</span> <span class="n">S</span><span class="p">.</span><span class="n">b</span> <span class="k">from</span> <span class="n">S</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>ou bien encore sous forme de requête corrélée:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="p">[</span><span class="k">distinct</span><span class="p">]</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">R</span>
+<span class="k">where</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="n">S</span><span class="p">.</span><span class="n">b</span> <span class="k">from</span> <span class="n">S</span> <span class="k">where</span> <span class="n">S</span><span class="p">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">R</span><span class="p">.</span><span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Le choix de la forme est matière de goût ou de lisibilité,
+ces deux critères relevant de considérations
+essentiellement subjectives.</p>
+</div>
+<div class="section" id="requetes-avec-negation">
+<h3>Requêtes avec négation<a class="headerlink" href="#requetes-avec-negation" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Les requêtes imbriquées sont en revanche irremplaçables
+pour exprimer des négations. On utilise
+alors <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">in</span></code> ou (de manière équivalente)
+<code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">exists</span></code>. Voici un premier
+exemple avec la requête: <em>donner les
+appartements sans occupant</em>.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Appart</span>
+<span class="k">where</span>  <span class="n">id</span> <span class="k">not</span> <span class="k">in</span> <span class="p">(</span><span class="k">select</span> <span class="n">id_appart</span> <span class="k">from</span> <span class="n">Personne</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>id_immeuble</p></th>
+<th class="head"><p>no</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>101</p></td>
+<td><p>50</p></td>
+<td><p>15</p></td>
+<td><p>1</p></td>
+<td><p>34</p></td>
+</tr>
+</tbody>
+</table>
+<p>La négation est aussi un moyen d’exprimer  des requêtes courantes comme celle
+recherchant l’appartement le plus élevé de son immeuble.
+En SQL, on utilisera
+typiquement une sous-requête pour prendre l’étage
+maximal d’un immeuble, et on utilisera cet étage
+pour sélectionner un ou plusieurs appartements,
+le tout avec une requête correlée pour
+ne comparer que des appartements situés
+dans le même immeuble.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a1</span>
+<span class="k">where</span> <span class="n">etage</span> <span class="o">=</span>  <span class="p">(</span><span class="k">select</span> <span class="k">max</span><span class="p">(</span><span class="n">etage</span><span class="p">)</span> <span class="k">from</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a2</span>
+                <span class="k">where</span> <span class="n">a1</span><span class="p">.</span><span class="n">id_immeuble</span><span class="o">=</span><span class="n">a2</span><span class="p">.</span><span class="n">id_immeuble</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>id_immeuble</p></th>
+<th class="head"><p>no</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>101</p></td>
+<td><p>50</p></td>
+<td><p>15</p></td>
+<td><p>1</p></td>
+<td><p>34</p></td>
+</tr>
+<tr class="row-odd"><td><p>202</p></td>
+<td><p>250</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p>Il existe en fait beaucoup de manières d’exprimer la même chose. Tout d’abord cette requête peut en
+fait s’exprimer sans la fonction <em>max()</em> avec la négation: si
+<em>a</em> est l’appartement le plus élevé, c’est <em>qu’il n’existe
+pas</em> d’étage plus elevé  que <em>a</em>.  On utilise alors habituellement une
+requête dite « corrélée » dans laquelle la
+sous-requête est basée sur une ou plusieurs valeurs issues des
+tables de la requête principale.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a1</span>
+<span class="k">where</span> <span class="k">not</span> <span class="k">exists</span>  <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a2</span>
+                   <span class="k">where</span> <span class="n">a2</span><span class="p">.</span><span class="n">etage</span> <span class="o">&gt;</span> <span class="n">a1</span><span class="p">.</span><span class="n">etage</span>
+                   <span class="k">and</span> <span class="n">a1</span><span class="p">.</span><span class="n">id_immeuble</span> <span class="o">=</span> <span class="n">a2</span><span class="p">.</span><span class="n">id_immeuble</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Autre manière d’exprimer la
+même chose: si l’étage est le plus élevé, tous les autres
+sont situés à un étage inférieur.
+On peut utiliser le mot-clé <code class="docutils literal notranslate"><span class="pre">all</span></code> qui indique que la comparaison est
+vraie avec <em>tous</em> les éléments de l’ensemble constitué par la sous-requête.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a1</span>
+<span class="k">where</span> <span class="n">etage</span> <span class="o">&gt;=</span> <span class="k">all</span> <span class="p">(</span><span class="k">select</span> <span class="n">etage</span> <span class="k">from</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a2</span>
+                <span class="k">where</span> <span class="n">a1</span><span class="p">.</span><span class="n">id_immeuble</span><span class="o">=</span><span class="n">a2</span><span class="p">.</span><span class="n">id_immeuble</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Dernier exemple de négation: quels sont
+les personnes qui ne possèdent aucun appartement
+même partiellement? Les deux formulations ci-dessous sont équivalentes,
+l’une s’appuyant sur <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">in</span></code>, et l’autre sur
+<code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">exists</span></code>.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Personne</span>
+<span class="k">where</span> <span class="n">id</span> <span class="k">not</span> <span class="k">in</span> <span class="p">(</span><span class="k">select</span> <span class="n">id_personne</span> <span class="k">from</span> <span class="n">Possede</span><span class="p">)</span>
+
+<span class="k">select</span> <span class="o">*</span>
+<span class="k">from</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p1</span>
+<span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Possede</span> <span class="k">as</span> <span class="n">p2</span>
+                  <span class="k">where</span> <span class="n">p1</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">p2</span><span class="p">.</span><span class="n">id_personne</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="agregats">
+<h2>Agrégats<a class="headerlink" href="#agregats" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Les requêtes agrégat en SQL consistent à effectuer des regroupements de lignes
+en fonction des valeurs d’une ou plusieurs expressions.  Ce regroupement est
+spécifié par la clause <code class="docutils literal notranslate"><span class="pre">group</span> <span class="pre">by</span></code>.  On obtient une structure qui n’est
+pas une table relationnelle puisqu’il s’agit d’un ensemble de groupes de
+lignes. On doit ensuite ramener cette structure à une table en appliquant des
+<em>fonctions de groupes</em> qui déterminent des valeurs agrégées
+calculées pour chaque groupe.</p>
+<p>Enfin il est possible d’exprimer des conditions sur les valeurs agrégées pour
+ne conserver qu’un ou plusieurs des groupes constitués. Ces conditions portent
+sur des <em>groupes</em> de lignes et ne peuvent donc être obtenues avec
+<code class="docutils literal notranslate"><span class="pre">where</span></code>. On utilise alors la clause <code class="docutils literal notranslate"><span class="pre">having</span></code>.</p>
+<p>Les agrégats s’effectuent <em>toujours</em> sur le résultat d’une requête
+classique <code class="docutils literal notranslate"><span class="pre">select</span> <span class="pre">-</span> <span class="pre">from</span></code>. On peut donc les voir comme une extension de
+SQL consistant à partitionner un résultat en groupes selon certains critères,
+puis à
+exprimer des conditions sur ces groupes, et enfin à appliquer des fonctions
+d’agrégation.</p>
+<p>Il existe un groupe par défaut: c’est la table toute entière. Sans même
+utiliser <code class="docutils literal notranslate"><span class="pre">group</span> <span class="pre">by</span></code>, on peut appliquer  les fonctions d’agrégation au contenu
+entier de la table comme le montre
+l’exemple suivant.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">count</span><span class="p">(</span><span class="n">prenom</span><span class="p">),</span> <span class="k">count</span><span class="p">(</span><span class="n">nom</span><span class="p">)</span>
+<span class="k">from</span> <span class="n">Personne</span>
+</pre></div>
+</div>
+<p>Ce qui donne:</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>count(*)</p></th>
+<th class="head"><p>count(prenom)</p></th>
+<th class="head"><p>count(nom)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>4</p></td>
+<td><p>5</p></td>
+</tr>
+</tbody>
+</table>
+<p>On obtient 5 pour le nombre de lignes, 4 pour le nombre
+de prénoms, et 5 pour le nombre de noms.
+En effet, l’attribut <code class="docutils literal notranslate"><span class="pre">prenom</span></code> est
+à <code class="docutils literal notranslate"><span class="pre">null</span></code> pour la première personne  et
+n’est en conséquence pas pris en compte par la fonction d’agrégation.
+Pour compter toutes les lignes, on doit utiliser
+<code class="docutils literal notranslate"><span class="pre">count(*)</span></code> ou un attribut déclaré
+comme  <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">null</span></code>.
+On peut aussi compter le nombre de valeurs distinctes
+dans un groupe avec <code class="docutils literal notranslate"><span class="pre">count(distinct</span> <span class="pre">&lt;expression&gt;)</span></code>.</p>
+<div class="section" id="la-clause-group-by">
+<h3>La clause <code class="docutils literal notranslate"><span class="pre">group</span> <span class="pre">by</span></code><a class="headerlink" href="#la-clause-group-by" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Le rôle du <code class="docutils literal notranslate"><span class="pre">group</span> <span class="pre">by</span></code> est de partitionner
+une table (calculée ou basée) en fonction
+d’un critère (un attribut ou plus généralement
+une expression sur des attributs).
+Pour bien analyser ce qui se passe pendant une requête avec
+<code class="docutils literal notranslate"><span class="pre">group</span> <span class="pre">by</span></code>
+on peut  décomposer l’exécution d’une requête en deux étapes.
+Prenons l’exemple de celle  permettant
+de vérifier que la somme des quote-part des propriétaires
+est bien égale à 100 pour tous les appartements.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span>  <span class="n">id_appart</span> <span class="k">sum</span><span class="p">(</span><span class="n">quote_part</span><span class="p">)</span>
+<span class="k">from</span>    <span class="n">Possede</span>
+<span class="k">group</span> <span class="k">by</span> <span class="n">id_appart</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id_appart</p></th>
+<th class="head"><p>sum(quote_part)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-odd"><td><p>101</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-even"><td><p>102</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-odd"><td><p>103</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-even"><td><p>201</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-odd"><td><p>202</p></td>
+<td><p>100</p></td>
+</tr>
+</tbody>
+</table>
+<p>Dans une première étape le système va constituer les groupes.
+On peut les représenter avec un tableau comprenant,
+pour chaque ligne, d’une part la (ou les) valeur(s) du
+(ou des) attribut(s) de partitionnement (ici <code class="docutils literal notranslate"><span class="pre">id_appart</span></code>),
+d’autre part l’ensemble de lignes dans lesquelles
+on trouve cette valeur. Ces lignes « imbriquées » sont séparées
+par des points-virgule dans la représentation ci-dessous.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 56%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id_appart</p></th>
+<th class="head"><p>Groupe</p></th>
+<th class="head"><p>count</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>(id_personne=1 quote_part=33 ; id_personne=5 quote_part=67)</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>101</p></td>
+<td><p>(id_personne=1 quote_part=100)</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>102</p></td>
+<td><p>(id_personne=5 quote_part=100)</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>202</p></td>
+<td><p>(id_personne=1 quote_part=100)</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>201</p></td>
+<td><p>(id_personne=5 quote_part=100)</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>103</p></td>
+<td><p>(id_personne=2 quote_part=100)</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+<p>Le groupe associé à l’appartement 100 est constitué de deux
+copropriétaires. Le tableau ci-dessus
+n’est donc pas une table relationnelle dans laquelle
+chaque cellule ne peut contenir qu’une seule valeur.</p>
+<p>Pour se ramener à une table relationnelle, on transforme
+durant la deuxième étape chaque  groupe de lignes
+en une valeur par application d’une fonction d’agrégation.
+La fonction <code class="docutils literal notranslate"><span class="pre">count()</span></code> compte le nombre de lignes
+dans chaque groupe, <code class="docutils literal notranslate"><span class="pre">max()</span></code> donne la valeur maximale
+d’un attribut parmi l’ensemble des lignes du groupe, etc.
+La liste des fonctions d’agrégation est donnée ci-dessous:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">count(expression)</span></code>, Compte le nombre de lignes pour lesquelles <code class="docutils literal notranslate"><span class="pre">expression</span></code> est <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">null</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">avg(expression</span></code>), Calcule la moyenne de <code class="docutils literal notranslate"><span class="pre">expression</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min(expression</span></code>), Calcule la valeur minimale de <code class="docutils literal notranslate"><span class="pre">expression</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max(expression</span></code>), Calcule la valeur maximale de <code class="docutils literal notranslate"><span class="pre">expression</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sum(expression</span></code>), Calcule la somme de  <code class="docutils literal notranslate"><span class="pre">expression</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std(expression</span></code>), Calcule l’écart-type de <code class="docutils literal notranslate"><span class="pre">expression</span></code>.</p></li>
+</ul>
+</div></blockquote>
+<p>Dans la norme SQL  l’utilisation de fonctions d’agrégation
+pour les attributs qui n’apparaissent pas
+dans le  <code class="docutils literal notranslate"><span class="pre">group</span> <span class="pre">by</span></code> est <em>obligatoire</em>.
+Une requête comme:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span>  <span class="n">id</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="k">max</span><span class="p">(</span><span class="n">etage</span><span class="p">)</span>
+<span class="k">from</span>    <span class="n">Appart</span>
+<span class="k">group</span> <span class="k">by</span> <span class="n">surface</span>
+</pre></div>
+</div>
+<p>srea rejetée parce que le groupe associé à
+une même surface
+contient deux appartements  différents (et donc
+deux valeurs différentes pour <code class="docutils literal notranslate"><span class="pre">id</span></code>), et qu’il n’y a pas
+de raison d’afficher l’un plutôt que l’autre.</p>
+</div>
+<div class="section" id="la-clause-having">
+<h3>La clause having<a class="headerlink" href="#la-clause-having" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Finalement, on peut faire porter des conditions sur
+les groupes,  ou plus précisément sur le résultat de
+fonctions d’agrégation appliquées à des groupes
+avec la clause  <code class="docutils literal notranslate"><span class="pre">having</span></code>. La clause
+<code class="docutils literal notranslate"><span class="pre">where</span></code> ne peut exprimer des conditions
+que sur les lignes  prises une à une. Par exemple,
+on peut sélectionner les appartements pour lesquels on connaît
+au moins deux copropriétaires.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span>  <span class="n">id_appart</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="k">from</span>    <span class="n">Possede</span>
+<span class="k">group</span> <span class="k">by</span> <span class="n">id_appart</span>
+<span class="k">having</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>On voit que la condition porte ici sur une propriété
+de l”<em>ensemble</em> des lignes du groupe et pas de chaque
+ligne prise individuellement. La clause  <code class="docutils literal notranslate"><span class="pre">having</span></code>
+est donc toujours exprimée sur le résultat de
+fonctions d’agrégation.</p>
+<p>Pour conclure, voici une requête sélectionnant la
+surface possédée par chaque copropriétaire
+pour l’immeuble 1. La surface possédée est la somme
+des surfaces d’appartements possédés par un propriétaire,
+pondérées par leur quote-part. On regroupe par
+propriétaire et on trie sur la surface possédée.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prenom</span> <span class="n">nom</span><span class="p">,</span>
+       <span class="k">sum</span><span class="p">(</span><span class="n">quote_part</span> <span class="o">*</span> <span class="n">surface</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="k">as</span> <span class="s1">&#39;Surface possédée&#39;</span>
+<span class="k">from</span> <span class="p">(</span><span class="n">Personne</span> <span class="k">as</span> <span class="n">p1</span> <span class="k">join</span> <span class="n">Possede</span> <span class="k">as</span> <span class="n">p2</span> <span class="k">on</span> <span class="p">(</span><span class="n">p1</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">p2</span><span class="p">.</span><span class="n">id_personne</span><span class="p">)</span> <span class="p">)</span>
+          <span class="k">join</span>  <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span> <span class="k">on</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">p2</span><span class="p">.</span><span class="n">id_appart</span><span class="p">)</span>
+<span class="k">where</span> <span class="n">id_immeuble</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">group</span> <span class="k">by</span> <span class="n">p1</span><span class="p">.</span><span class="n">id</span>
+<span class="k">order</span> <span class="k">by</span> <span class="k">sum</span><span class="p">(</span><span class="n">quote_part</span> <span class="o">*</span> <span class="n">surface</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>On obtient le résultat suivant.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 42%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>prénom</p></th>
+<th class="head"><p>nom</p></th>
+<th class="head"><p>Surface possédée</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Alice</p></td>
+<td><p>Black</p></td>
+<td><p>50.00000</p></td>
+</tr>
+<tr class="row-odd"><td><p>null</p></td>
+<td><p>Ross</p></td>
+<td><p>125.00000</p></td>
+</tr>
+<tr class="row-even"><td><p>Doug</p></td>
+<td><p>Ramut</p></td>
+<td><p>275.00000</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="mises-a-jour">
+<h2>Mises à jour<a class="headerlink" href="#mises-a-jour" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Les commandes de mise à jour (insertion,
+destruction, modification) sont considérablement plus
+simples que les interrogations.</p>
+<div class="section" id="insertion">
+<h3>Insertion<a class="headerlink" href="#insertion" title="Lien permanent vers ce titre">¶</a></h3>
+<p>L’insertion s’effectue avec la commande
+<code class="docutils literal notranslate"><span class="pre">insert</span></code>,
+avec trois variantes. Dans la première on indique
+la liste des valeurs à insérer sans donner explicitement
+le nom des attributs. Le système suppose alors qu’il
+y a autant de valeurs que d’attributs, et que l’ordre
+des valeurs correspond à celui des attributs dans la table.
+On peut indiquer
+<code class="docutils literal notranslate"><span class="pre">null</span></code> pour les valeurs
+inconnues.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">insert</span> <span class="k">into</span> <span class="n">Immeuble</span>
+<span class="k">values</span> <span class="p">(</span><span class="mi">1</span> <span class="s1">&#39;Koudalou&#39;</span> <span class="s1">&#39;3 Rue Blanche&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Si on veut insérer dans une partie seulement des attributs,
+il faut donner la liste explicitement.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">insert</span> <span class="k">into</span> <span class="n">Immeuble</span> <span class="p">(</span><span class="n">id</span> <span class="n">nom</span> <span class="n">adresse</span><span class="p">)</span>
+<span class="k">values</span> <span class="p">(</span><span class="mi">1</span> <span class="s1">&#39;Koudalou&#39;</span> <span class="s1">&#39;3 Rue Blanche&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Il est d’ailleurs préférable de toujours donner la liste
+des attributs. La description d’une table peut changer
+par ajout d’attribut, et l’ordre  <code class="docutils literal notranslate"><span class="pre">insert</span></code>
+qui marchait un jour ne marchera plus le lendemain.</p>
+<p>Enfin avec la troisième forme de
+<code class="docutils literal notranslate"><span class="pre">insert</span></code> il est possible d’insérer dans une table
+le résultat d’une requête. Dans ce cas la
+partie
+<code class="docutils literal notranslate"><span class="pre">values</span></code> est remplacée par
+la requête elle-même. Voici un exemple
+avec une nouvelle table <em>Barabas</em> dans
+laquelle on insère uniquement les informations
+sur l’immeuble « Barabas ».</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">table</span> <span class="n">Barabas</span> <span class="p">(</span><span class="n">id</span> <span class="nb">int</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
+                     <span class="n">nom</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
+                     <span class="n">adresse</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span>
+                     <span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="k">insert</span> <span class="k">into</span> <span class="n">Barabas</span>
+<span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Immeuble</span> <span class="k">where</span> <span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Barabas&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="destruction">
+<h3>Destruction<a class="headerlink" href="#destruction" title="Lien permanent vers ce titre">¶</a></h3>
+<p>La destruction s’effectue avec la clause <code class="docutils literal notranslate"><span class="pre">delete</span></code>
+dont la syntaxe est:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">delete</span> <span class="k">from</span> <span class="k">table</span>
+<span class="k">where</span> <span class="n">condition</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">table</span></code> étant bien entendu le nom de la table, et <code class="docutils literal notranslate"><span class="pre">condition</span></code>
+toute condition ou liste de conditions
+valide pour une clause  <code class="docutils literal notranslate"><span class="pre">where</span></code>.
+En d’autres termes, si on effectue avant la destruction
+la requête</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">table</span>
+<span class="k">where</span> <span class="n">condition</span>
+</pre></div>
+</div>
+<p>on obtient l’ensemble des lignes qui seront détruites
+par
+<code class="docutils literal notranslate"><span class="pre">delete</span></code>. Procéder de cette manière est un des moyens de
+s’assurer que l’on va bien détruire ce que l’on souhaite.</p>
+</div>
+<div class="section" id="modification">
+<h3>Modification<a class="headerlink" href="#modification" title="Lien permanent vers ce titre">¶</a></h3>
+<p>La modification s’effectue avec la clause
+<code class="docutils literal notranslate"><span class="pre">update</span></code>. La
+syntaxe est proche de celle du
+<code class="docutils literal notranslate"><span class="pre">delete</span></code>:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">update</span> <span class="k">table</span> <span class="k">set</span> <span class="n">A1</span><span class="o">=</span><span class="n">v1</span><span class="p">,</span> <span class="n">A2</span><span class="o">=</span><span class="n">v2</span><span class="p">,</span> <span class="p">...</span> <span class="n">An</span><span class="o">=</span><span class="n">vn</span>
+<span class="k">where</span> <span class="n">condition</span>
+</pre></div>
+</div>
+<p>Comme précédemment <code class="docutils literal notranslate"><span class="pre">table</span></code>  est la table, les <code class="docutils literal notranslate"><span class="pre">Ai</span></code> sont les attributs
+les <code class="docutils literal notranslate"><span class="pre">vi</span></code> les nouvelles valeurs, et <code class="docutils literal notranslate"><span class="pre">condition</span></code>
+est toute condition valide pour la clause  <code class="docutils literal notranslate"><span class="pre">where</span></code>.</p>
+</div>
+</div>
+<div class="section" id="les-vues">
+<h2>Les vues<a class="headerlink" href="#les-vues" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Une requête SQL produit toujours une table. Cela suggère la possibilité
+d’ajouter au schéma des tables <em>calculées</em>,  qui ne sont rien d’autre que le résultat
+de requêtes stockées. De telles
+tables sont nommées des <em>vues</em> dans la
+terminologie relationnelle. On peut
+interroger des vues comme des tables stockées
+et, dans certaines limites, faire des mises à jour
+des tables stockées au travers de vues.</p>
+<p>Une vue n’induit aucun stockage puisqu’elle
+n’existe pas physiquement. Elle permet
+d’obtenir une représentation différente
+des tables sur lesquelles elle est basée
+avec deux grands avantages:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>on peut faciliter l’interrogation
+de la base en fournissant sous forme
+de vues des requêtes prédéfinies;</p></li>
+<li><p>on peut masquer certaines informations
+en créant des vues et en forçant
+par des droits d’accès l’utilisateur
+à passer par ces vues pour accéder à la base.</p></li>
+</ul>
+</div></blockquote>
+<p>Les <em>vues</em> constituent donc un moyen complémentaire de contribuer
+à la sécurité (par restriction d’accès)
+et à la facilité d’utilisation (en offrant
+une « schéma virtuel » simplifié).</p>
+<div class="section" id="creation-et-interrogation-d-une-vue">
+<h3>Création et interrogation d’une vue<a class="headerlink" href="#creation-et-interrogation-d-une-vue" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Une vue est en tout point comparable à une table: en
+particulier on peut l’interroger par SQL.
+La grande différence est qu’une vue est
+le résultat d’une requête avec la
+caractéristique essentielle que ce résultat
+est réévalué à chaque fois que l’on accède à la vue.
+En d’autres termes une vue est <em>dynamique</em>: elle donne
+une représentation fidèle de la base au moment
+de l’évaluation de la requête.</p>
+<p>Une vue est essentiellement une requête à laquelle
+on a donné un nom. La syntaxe de création d’une
+vue est très simple:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">view</span> <span class="n">nomvue</span> <span class="p">([</span><span class="n">listeattributs</span><span class="p">])</span>
+<span class="k">as</span>          <span class="n">requete</span>
+<span class="p">[</span><span class="k">with</span> <span class="k">check</span> <span class="k">option</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Nous avons déjà vu au début de ce chapitre vl’exemple d’une vue sur la
+table <em>Immeuble</em> montrant
+uniquement le Koudalou. En voici
+une nouvelle version plus complète
+avec le nombre d’appartements.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="n">Koudalou</span> <span class="k">as</span>
+     <span class="k">select</span> <span class="n">nom</span><span class="p">,</span> <span class="n">adresse</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">nb_apparts</span>
+     <span class="k">from</span> <span class="n">Immeuble</span> <span class="k">as</span> <span class="n">i</span> <span class="k">join</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span> <span class="k">on</span> <span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id_immeuble</span><span class="p">)</span>
+     <span class="k">where</span> <span class="n">i</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="mi">1</span>
+     <span class="k">group</span> <span class="k">by</span> <span class="n">i</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">nom</span><span class="p">,</span> <span class="n">adresse</span>
+</pre></div>
+</div>
+<p>La destruction d’une vue a évidemment beaucoup
+moins de conséquences que pour une table
+puisqu’on supprime uniquement la <em>définition</em>
+de la vue pas son <em>contenu</em>.</p>
+<p>On interroge
+la vue comme n’importe quelle table.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Koudalou</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 42%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>nom</p></th>
+<th class="head"><p>adresse</p></th>
+<th class="head"><p>nb_apparts</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>4</p></td>
+</tr>
+</tbody>
+</table>
+<p>La vue fait maintenant partie du schéma.
+On
+ne peut d’ailleurs évidemment pas créer
+une vue avec le même nom qu’une table (ou vue)
+existante. La définition d’une vue peut consister en un
+requête SQL aussi complexe que nécessaire,
+avec jointures, regroupements, tris.</p>
+<p>Allons un peu plus loin en définissant sous forme de vues
+un accès aux informations de notre base
+<em>Immeuble</em>, mais restreint uniquement
+à tout ce qui concerne l’immeuble Koudalou. On
+va en profiter pour offrir dans ces
+vues un accès plus facile à l’information.
+La vue sur les appartements, par exemple,
+va contenir contrairement
+à la table <em>Appart</em> le nom
+et l’adresse de l’immeuble et le nom de son occupant.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">or</span> <span class="k">replace</span> <span class="k">view</span> <span class="n">AppartKoudalou</span> <span class="k">as</span>
+   <span class="k">select</span> <span class="k">no</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span><span class="p">,</span> <span class="n">i</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">immeuble</span><span class="p">,</span> <span class="n">adresse</span><span class="p">,</span>
+          <span class="n">p</span><span class="p">.</span><span class="n">prenom</span> <span class="o">||</span>  <span class="n">p</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">occupant</span>
+   <span class="k">from</span> <span class="p">(</span><span class="n">Immeuble</span> <span class="k">as</span> <span class="n">i</span> <span class="k">join</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span> <span class="k">on</span> <span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id_immeuble</span><span class="p">))</span>
+             <span class="k">join</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span> <span class="k">on</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">p</span><span class="p">.</span><span class="n">id_appart</span><span class="p">)</span>
+   <span class="k">where</span> <span class="n">i</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>On voit bien sur cet exemple que l’un des intérêts des vues est de donner une représentation
+« dénormalisée » de la base en regroupant des
+informations par des jointures. Le contenu
+étant virtuel, il n’y a ici aucun inconvénient
+à « voir » la redondance du nom de l’immeuble
+et de son adresse. Le bénéfice, en revanche,
+est la possibilité d’obtenir très simplement
+toutes les informations utiles.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">AppartKoudalou</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 24%" />
+<col style="width: 24%" />
+<col style="width: 24%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>no</p></th>
+<th class="head"><p>surface</p></th>
+<th class="head"><p>etage</p></th>
+<th class="head"><p>immeuble</p></th>
+<th class="head"><p>adresse</p></th>
+<th class="head"><p>occupant</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>52</p></td>
+<td><p>50</p></td>
+<td><p>5</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>Alice Black</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>150</p></td>
+<td><p>14</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>Rachel Verte</p></td>
+</tr>
+<tr class="row-even"><td><p>51</p></td>
+<td><p>200</p></td>
+<td><p>2</p></td>
+<td><p>Koudalou</p></td>
+<td><p>3 Rue Blanche</p></td>
+<td><p>William Dupont</p></td>
+</tr>
+</tbody>
+</table>
+<p>Le nom des attributs de la vue est celui des
+expressions de la requête associée. On peut
+également donner ces noms après le <code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">view</span></code>
+à condition qu’il y ait correspondance univoque
+entre un nom et une expression du <code class="docutils literal notranslate"><span class="pre">select</span></code>.
+On peut ensuite donner des droits en lecture sur cette
+vue pour que cette information limitée soit
+disponible à tous.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">grant</span> <span class="k">select</span> <span class="k">on</span> <span class="n">Immeuble</span><span class="p">.</span><span class="n">Koudalou</span> <span class="n">Immeuble</span><span class="p">.</span><span class="n">AppartKoudalou</span> <span class="k">to</span> <span class="n">adminKoudalou</span>
+</pre></div>
+</div>
+<p>Pour peu que cet utilisateur n’ait aucun droit
+de lecture sur les tables de la base <em>Immeuble</em>,
+on obtient un moyen simple de masquer et
+restructurer l’information.</p>
+</div>
+<div class="section" id="mise-a-jour-d-une-vue">
+<h3>Mise à jour d’une vue<a class="headerlink" href="#mise-a-jour-d-une-vue" title="Lien permanent vers ce titre">¶</a></h3>
+<p>L’idée de modifier une vue peut sembler
+étrange puisqu’une vue n’a pas de contenu. En fait
+il s’agit bien entendu de modifier la table qui
+sert de support à la vue. Il existe de sévères
+restrictions sur les droits d’insérer ou de mettre à jour
+des tables au travers des vues. Un exemple suffit pour comprendre
+le problème. Imaginons que l’on souhaite insérer
+une ligne dans la vue <em>AppartKoudalou</em>.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">insert</span> <span class="k">into</span> <span class="n">AppartKoudalou</span> <span class="p">(</span><span class="k">no</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span><span class="p">,</span> <span class="n">immeuble</span><span class="p">,</span> <span class="n">adresse</span><span class="p">,</span> <span class="n">occupant</span><span class="p">)</span>
+<span class="k">values</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;Globe&#39;</span><span class="p">,</span> <span class="s1">&#39;2 Avenue Leclerc&#39;</span><span class="p">,</span> <span class="s1">&#39;Palamède&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Le système rejettera cette requête (par exemple, pour MySQL,  avec le message
+<code class="docutils literal notranslate"><span class="pre">Can</span> <span class="pre">not</span> <span class="pre">modify</span> <span class="pre">more</span> <span class="pre">than</span> <span class="pre">one</span> <span class="pre">base</span> <span class="pre">table</span>
+<span class="pre">through</span> <span class="pre">a</span> <span class="pre">join</span> <span class="pre">view</span> <span class="pre">'Immeuble.AppartKoudalou'</span></code>).
+Cet ordre s’adresse à une vue issue de trois tables. Il
+n’y a clairement pas assez d’information pour alimenter
+ces tables de manière cohérente et l’insertion
+n’est pas possible (de même que toute
+mise à jour). De telles vues sont dites
+<em>non modifiables</em>. Les règles définissant les vues modifiables
+sont assez strictes et difficiles à résumer
+simplement d’autant qu’elles varient
+selon l’opération (<code class="docutils literal notranslate"><span class="pre">update</span></code>,
+<code class="docutils literal notranslate"><span class="pre">delete</span></code>, ou <code class="docutils literal notranslate"><span class="pre">insert</span></code>). En première approximation
+on peut retenir les points suivants
+qui donnent lieu à quelques exceptions sur
+lesquelles nous reviendrons ensuite.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>la vue doit être basée sur une seule table;
+toute colonne non référencée
+dans la vue doit pouvoir être mise à
+<code class="docutils literal notranslate"><span class="pre">null</span></code> ou disposer d’une valeur par défaut;</p></li>
+<li><p>on ne peut pas mettre à jour un attribut
+qui résulte d’un calcul ou d’une opération.</p></li>
+</ul>
+</div></blockquote>
+<p>On ne peut donc pas insérer ou modifier la
+vue <em>Koudalou</em> à cause de la jointure et
+de l’attribut calculé. La requête suivante serait rejetée.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">insert</span> <span class="k">into</span> <span class="n">Koudalou</span> <span class="p">(</span><span class="n">nom</span><span class="p">,</span> <span class="n">adresse</span><span class="p">)</span>
+<span class="k">values</span> <span class="p">(</span><span class="s1">&#39;Globe&#39;</span><span class="p">,</span> <span class="s1">&#39;2 Avenue Leclerc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>En revanche une vue portant sur une seule table
+avec un <code class="docutils literal notranslate"><span class="pre">select</span> <span class="pre">*</span></code> est modifiable.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">view</span> <span class="n">PossedeAlice</span>
+   <span class="k">as</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Possede</span>
+  <span class="k">where</span> <span class="n">id_personne</span><span class="o">=</span><span class="mi">2</span>
+
+<span class="k">insert</span> <span class="k">into</span> <span class="n">PossedeAlice</span> <span class="k">values</span> <span class="p">(</span><span class="mi">2</span> <span class="mi">100</span> <span class="mi">20</span><span class="p">)</span>
+<span class="k">insert</span> <span class="k">into</span> <span class="n">PossedeAlice</span> <span class="k">values</span> <span class="p">(</span><span class="mi">3</span> <span class="mi">100</span> <span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Maintenant, si on fait:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">PossedeAlice</span>
+</pre></div>
+</div>
+<p>On obtient:</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>id_personne</p></th>
+<th class="head"><p>id_appart</p></th>
+<th class="head"><p>quote_part</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>100</p></td>
+<td><p>20</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>103</p></td>
+<td><p>100</p></td>
+</tr>
+</tbody>
+</table>
+<p>L’insertion précédente illustre une petite subtilité:
+on peut insérer dans une vue sans être en mesure
+de voir la ligne insérée au travers de la vue
+par la suite! On a en effet inséré
+dans la vue le propriétaire 3 qui
+est ensuite filtré quand on interroge la vue.</p>
+<p>SQL propose l’option  <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">check</span> <span class="pre">option</span></code> qui
+permet de garantir que toute ligne insérée
+dans la vue satisfait les critères de sélection
+de la vue.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">view</span> <span class="n">PossedeAlice</span>
+<span class="k">as</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Possede</span>
+<span class="k">where</span> <span class="n">id_personne</span><span class="o">=</span><span class="mi">2</span>
+<span class="k">with</span> <span class="k">check</span> <span class="k">option</span>
+</pre></div>
+</div>
+<p>SQL permet également la modification
+de vues définies par des jointures. Les restrictions
+sont essentielement les même que pour les vues
+mono-tabulaires: on ne peut insérer que
+dans une des tables (il faut donc
+préciser la liste des attributs) et
+tous les attributs <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">null</span></code> doivent
+avoir une valeur. Voici un exemple
+de vue modifiable basée sur une jointure.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">or</span> <span class="k">replace</span> <span class="k">view</span> <span class="n">ToutKoudalou</span>
+<span class="k">as</span> <span class="k">select</span> <span class="n">i</span><span class="p">.</span><span class="n">id</span> <span class="k">as</span> <span class="n">id_imm</span><span class="p">,</span> <span class="n">nom</span><span class="p">,</span> <span class="n">adresse</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="o">*</span>
+   <span class="k">from</span> <span class="n">Immeuble</span> <span class="k">as</span> <span class="n">i</span> <span class="k">join</span> <span class="n">Appart</span> <span class="k">as</span> <span class="n">a</span> <span class="k">on</span> <span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id_immeuble</span><span class="p">)</span>
+   <span class="k">where</span> <span class="n">i</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="mi">1</span>
+   <span class="k">with</span> <span class="k">check</span> <span class="k">option</span>
+</pre></div>
+</div>
+<p>Il est alors possible d’insérer à condition d’indiquer
+des attributs d’une seule des deux tables. La
+commande ci-dessous ajoute un nouvel appartement
+au <em>Koudalou</em>.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">insert</span> <span class="k">into</span> <span class="n">ToutKoudalou</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">etage</span><span class="p">,</span> <span class="n">id_immeuble</span><span class="p">,</span> <span class="k">no</span><span class="p">)</span>
+<span class="k">values</span> <span class="p">(</span><span class="mi">104</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">65</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>En conclusion, l’intérêt principal des vues
+est de permettre une restructuration du schéma
+en vue d’interroger et/ou de protéger des données.
+L’utilisation de vues pour des mises à jour
+devrait rester marginale.</p>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+            <div>        
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Licence Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">
+  Ce cours</span> de <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.bdpedia.fr" property="cc:attributionName" rel="cc:attributionURL">Philippe Rigaux</a> est mis à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">licence Creative Commons Attribution - Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 4.0 International</a>.
+</div>
+        <hr/>
+          <h3>Table Of Contents</h3>
+          <ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relationnel.html">Le modèle relationnel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calcul.html">SQL, langage déclaratif</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alg.html">SQL, langage algébrique</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sql.html">SQL, récapitulatif</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conception.html">Conception d’une base de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">Schémas relationnel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedures.html">Procédures et déclencheurs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transactions.html">Transactions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="etudecas.html">Une étude de cas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annales.html">Annales des examens</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Recherche</h3>
+          <form class="search" action="search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+      Saisissez un ou plusieurs mots-clés.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="genindex.html" title="Index général"
+             >index</a>
+        </div>
+
+        <div class="right">
+        <a href="index.html">SQL, ANCIENNE VERSION</a><br/>
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2002-2022, Philippe Rigaux.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

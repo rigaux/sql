@@ -74,7 +74,7 @@ def setup(app):
     app.add_config_value('transactions', '', True)
     app.add_config_value('correctionlabo', '', True)
 
-relationnel='private'
+relationnel='public'
 calcul='private'
 calculTP1='private'
 calculTP2='private'
