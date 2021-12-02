@@ -300,7 +300,7 @@ S2: clés, dépendances et normalisation
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: clés/dépendances <http://sql.bdpedia.fr/files/slcles.pdf>`_
-    * `Vidéo sur les clés/dépendances  <https://mdcvideos.cnam.fr/videos/?video=MEDIA180915114611494>`_ 
+    * `Vidéo sur les clés/dépendances  <https://mediaserver.cnam.fr/videos/cle-et-3fn/>`_ 
 
 
 Comme nous l'avons vu ci-dessus, le schéma d'une relation consiste -- pour l'essentiel -- en un

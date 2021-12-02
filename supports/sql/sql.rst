@@ -30,7 +30,7 @@ S1: le bloc ``select-from-where``
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: le bloc `select-from-where <http://sql.bdpedia.fr/files/slblocsql.pdf>`_
-    * `Vidéo sur le bloc ``select-from-where`` <https://mediaserver.cnam.fr/videos/le-bloc-select-from-where/>`_ 
+    * `Vidéo sur le bloc `select-from-where <https://mediaserver.cnam.fr/videos/le-bloc-select-from-where/>`_ 
 
 Dans cette session, nous étudions les compléments à la forme de base d'une requête SQL, 
 que nous appelons *bloc*, résumée
@@ -1445,7 +1445,7 @@ S3: Agrégats
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: agrégats <http://sql.bdpedia.fr/files/slagregats.pdf>`_
-    * `Vidéo sur les agrégats <https://mdcvideos.cnam.fr/videos/?video=MEDIA180917190840712>`_ 
+    * `Vidéo sur les agrégats <https://mediaserver.cnam.fr/videos/agregats/>`_ 
 
 
 Les requêtes d'agrégation en SQL consistent à effectuer des regroupements de nuplets

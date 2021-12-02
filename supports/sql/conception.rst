@@ -36,7 +36,7 @@ S1: La normalisation
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: la normalisation <http://sql.bdpedia.fr/files/slnorm.pdf>`_
-    * `Vidéo sur la normalisation <https://mdcvideos.cnam.fr/videos/?video=MEDIA180915113944573>`_ 
+    * `Vidéo sur la normalisation <https://mediaserver.cnam.fr/videos/la-normalisation/>`_ 
 
 Etant donné un schéma et ses dépendances fonctionnelles, nous savons
 déterminer s'il est normalisé. Peut-on aller plus loin et produire *automatiquement*
@@ -451,7 +451,7 @@ S2: Le modèle Entité-Association
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: le modèle entité / association <http://sql.bdpedia.fr/files/slea.pdf>`_
-    * `Vidéo sur le modèle entité / association <https://mdcvideos.cnam.fr/videos/?video=MEDIA180915114054654>`_ 
+    * `Vidéo sur le modèle entité / association <https://mediaserver.cnam.fr/videos/le-modele-entiteassociation/>`_ 
 
 
 Cette session présente une méthode complète
@@ -1120,7 +1120,7 @@ S3: Concepts avancés
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: concepts avancés de modélisation <http://sql.bdpedia.fr/files/slea-avance.pdf>`_
-    * `Vidéo sur les concepts avancés de modélisation / association <https://mdcvideos.cnam.fr/videos/?video=MEDIA180915114146979>`_ 
+    * `Vidéo sur les concepts avancés de modélisation / association <https://mediaserver.cnam.fr/videos/ea-avance/>`_ 
 
 Cette session présente quelques extensions courantes aux principes de base du modèle
 entité-association.
@@ -1422,7 +1422,7 @@ S4: Du schéma E/A au schéma relationnel
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: de la modélisation EA au schéma relationnel <http://sql.bdpedia.fr/files/slpassage.pdf>`_
-    * `Vidéo sur le passage de la modélisation EA au schéma relationnel / association <https://mdcvideos.cnam.fr/videos/?video=MEDIA180915114241378>`_ 
+    * `Vidéo sur le passage de la modélisation EA au schéma relationnel / association <https://mediaserver.cnam.fr/videos/regles-de-passage-et-normalisation/>`_ 
 
 
 La création d'un schéma de base de données est simple une fois que 
@@ -1921,7 +1921,7 @@ S5: Un peu de rétro-ingénierie
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: rétroingénierie <http://sql.bdpedia.fr/files/slretroing.pdf>`_
-    * `Vidéo sur la rétro ingénierie <https://mdcvideos.cnam.fr/videos/?video=MEDIA190905090639945>`_ 
+    * `Vidéo sur la rétro ingénierie <https://mediaserver.cnam.fr/videos/retroingenierie/>`_ 
 
 
 Pour bien comprendre le rapport entre un schéma entité-association et le schéma
