@@ -30,7 +30,7 @@ S1: le bloc ``select-from-where``
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: le bloc `select-from-where <http://sql.bdpedia.fr/files/slblocsql.pdf>`_
-    * `Vidéo sur le bloc ``select-from-where`` <https://mdcvideos.cnam.fr/videos/?video=MEDIA180917190541813>`_ 
+    * `Vidéo sur le bloc ``select-from-where`` <https://mediaserver.cnam.fr/videos/le-bloc-select-from-where/>`_ 
 
 Dans cette session, nous étudions les compléments à la forme de base d'une requête SQL, 
 que nous appelons *bloc*, résumée

@@ -56,7 +56,7 @@ S1. Procédures stockées
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: PL/SQL <http://sql.bdpedia.fr/files/slplsql.pdf>`_
-    * `Vidéo sur PL/SQL <http://podvideos.cnam.fr/video/3842-cours-bases-de-donnees-principe-de-programmation-et-plsql/>`_ 
+    * `Vidéo sur PL/SQL <https://mediaserver.cnam.fr/videos/principe-de-programmation-et-plsql/>`_ 
 
 
 Comme mentionné ci-dessus, les procédures stockées constituent 
@@ -920,7 +920,7 @@ S2. Les curseurs
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: les curseurs <http://sql.bdpedia.fr/files/slcurseurs.pdf>`_
-    * `Vidéo sur les curseurs <http://podvideos.cnam.fr/video/3845-les-curseurs/>`_ 
+    * `Vidéo sur les curseurs <https://mediaserver.cnam.fr/videos/les-curseurs/>`_ 
 
 
 Comme nous l'avons indiqué précédemment, les *curseurs*
@@ -1380,7 +1380,7 @@ S3. Les déclencheurs
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: les déclencheurs <http://sql.bdpedia.fr/files/sltriggers.pdf>`_
-    * `Vidéo sur les déclencheurs <http://podvideos.cnam.fr/video/3844-les-triggers/>`_ 
+    * `Vidéo sur les déclencheurs <https://mediaserver.cnam.fr/videos/les-triggers//>`_ 
 
 Le mécanisme de *triggers* (que l'on peut traduire par "déclencheur" ou "réflexe") 
 est implanté dans les SGBD depuis de nombreuses années, et a été normalisé

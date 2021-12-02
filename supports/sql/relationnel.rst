@@ -37,7 +37,7 @@ S1: relations et nuplets
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: modèle relationnel <http://sql.bdpedia.fr/files/slmodrel.pdf>`_
-    * `Vidéo sur le modèle relationnel <https://mdcvideos.cnam.fr/videos/?video=MEDIA180904073122820>`_ 
+    * `Vidéo sur le modèle relationnel <https://mediaserver.cnam.fr/videos/modele-relationnel/>`_ 
 
 
 L'expression  "modèle relationnel" a pour origine (surprise!)  la notion de relation, 
@@ -911,7 +911,7 @@ S3: deux exemples de schémas normalisés
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: deux schémas normalisés <http://sql.bdpedia.fr/files/slexemples.pdf>`_
-    * `Vidéo sur les schémas normalisés <https://mdcvideos.cnam.fr/videos/?video=MEDIA180904081955112>`_ 
+    * `Vidéo sur les schémas normalisés <https://mediaserver.cnam.fr/videos/exemple-de-deux-bases-normalisees/>`_ 
     * `Schéma de la base des voyageurs <http://sql.bdpedia.fr/files/SchemaVoyageurs.sql>`_ et 
       `base des voyageurs <http://sql.bdpedia.fr/files/BaseVoyageurs.sql>`_ (si vous souhaitez les installer dans
       votre environnement).

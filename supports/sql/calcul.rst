@@ -79,7 +79,7 @@ S1: Un peu de logique
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: notions de logique <http://sql.bdpedia.fr/files/slnotionslogique.pdf>`_
-    * `Vidéo sur les notions de logique <https://mdcvideos.cnam.fr/videos/?video=MEDIA180904082429650>`_ 
+    * `Vidéo sur les notions de logique <https://mediaserver.cnam.fr/videos/notions-de-logique/>`_ 
 
 La logique est l'art de raisonner, autrement dit de construire des argumentations rigoureuses
 permettant d'induire ou déduire de nouveaux faits à partir de faits existants (ou considérés
@@ -542,7 +542,7 @@ S2: SQL conjonctif
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: SQL conjonctif <http://sql.bdpedia.fr/files/slsqlconjonctif.pdf>`_
-    * `Vidéo sur la première partie de SQL <https://mdcvideos.cnam.fr/videos/?video=MEDIA180905163052438>`_ 
+    * `Vidéo sur la première partie de SQL <https://mediaserver.cnam.fr/videos/sql-conjonctif/>`_ 
 
 
 Cette session présente le langage SQL dans sa version déclarative, chaque requête s'interprétant
@@ -1064,7 +1064,7 @@ S3: Quantificateurs et négation
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: SQL: quantificateurs et négation <http://sql.bdpedia.fr/files/slnegation.pdf>`_
-    * `Vidéo sur les quantificateurs et la négation dans SQL <https://mdcvideos.cnam.fr/videos/?video=MEDIA180905163243997>`_ 
+    * `Vidéo sur les quantificateurs et la négation dans SQL <https://mediaserver.cnam.fr/videos/quantificateurs-et-negation/>`_ 
 
 
 Jusqu'à présent les seules variables que nous utilisons sont des variables libres de la formule,

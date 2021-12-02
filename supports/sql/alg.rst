@@ -37,7 +37,7 @@ S1: Les opérateurs de l'algèbre
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: les opérateurs de l'algèbre <http://sql.bdpedia.fr/files/slalgops.pdf>`_
-    * `Vidéo sur les opérateurs de l'algèbre <https://mdcvideos.cnam.fr/videos/?video=MEDIA180905163750567>`_ 
+    * `Vidéo sur les opérateurs de l'algèbre <https://mediaserver.cnam.fr/videos/operateurs-de-lalgebre/>`_ 
 
 
 L'algèbre se compose d'un ensemble d'opérateurs, parmi
@@ -592,7 +592,7 @@ S2: la jointure
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: la jointure algébrique <http://sql.bdpedia.fr/files/sljointure.pdf>`_
-    * `Vidéo sur la jointure algébrique <https://mdcvideos.cnam.fr/videos/?video=MEDIA180905163857374>`_ 
+    * `Vidéo sur la jointure algébrique <https://mediaserver.cnam.fr/videos/la-jointure-algebrique/>`_ 
 
 
 Toutes les requêtes exprimables avec l'algèbre relationnelle peuvent se construire avec les
@@ -1008,7 +1008,7 @@ S3: Expressions algébriques
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: expressions algébriques <http://sql.bdpedia.fr/files/slexpressions.pdf>`_
-    * `Vidéo sur les expressions algébriques <https://mdcvideos.cnam.fr/videos/?video=MEDIA180905163943904>`_ 
+    * `Vidéo sur les expressions algébriques <https://mediaserver.cnam.fr/videos/expressions-algebriques/>`_ 
 
 Cette section est consacrée à l'expression
 de requêtes algébriques complexes impliquant plusieurs
