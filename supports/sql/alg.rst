@@ -1803,7 +1803,7 @@ Voici le contenu de la table *Propriétaire*.
 
    .. math::
 
-      A51 := \rho_{id \to id51, surface} (Appart \Join_{idImmeuble=idI} K)
+      A51 := \pi_{id51,surface}(\rho_{id \to id51} (\sigma_{no=51} (Appart) \Join_{idImmeuble=idI} K))
 
    Il reste à joindre ``A51`` avec la table ``Personne``.
 
