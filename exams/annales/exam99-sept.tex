@@ -1,0 +1,120 @@
+\documentclass[french]{article}
+
+\usepackage{babel}
+\usepackage{times}
+\usepackage[latin1]{inputenc}
+\usepackage{comment}
+
+\newenvironment{solution}{\nopagebreak\par\vspace*{2mm}\underline{Solution~:}\em\par}{\par\vspace*{2mm}}
+
+
+\pagestyle{headings}
+\markright{28/6/1995 \hfill Conservatoire National des Arts et
+M\'etiers -- Paris \hfill\ } 
+
+\baselineskip 6pt
+\parskip 6pt
+\onecolumn
+\textwidth 16cm
+\textheight 24cm
+\hoffset=-2cm
+\voffset=-2.5cm
+\setlength{\parindent}{0.0cm}
+\unitlength 1cm
+%\input{psfig}
+\newtheorem{defin}{D\'efinition}[section]
+\newtheorem{exampl}{Exemple}[section]
+\def\picwidth{16cm}
+
+\excludecomment{solution}
+
+\begin{document}
+%\epsfig{figure=dept.epsi} 
+\begin{center}
+\Large\bf Processus d'Informatisation et Bases de Donn\'ees A \\ 
+    Examen Bases de Donn\'ees\\
+\vspace*{0.5cm}
+\end{center}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace*{2cm}
+
+Voici un schéma relationnel représentant 
+les documents empruntés par un adhérent dans
+un réseau de médiathèque. Un adhérent est inscrit
+à une médiathèque, mais peut emprunter n'importe où. 
+Notez bien que l'on peut emprunter
+des cassettes, mais aussi des livres ou des disques:
+l'attribut {\tt typeDoc} indique le type
+du document ('Livre', 'Disque' ou 'Cassette').
+ 
+{\tt
+\begin{enumerate}
+   \item MEDIATHEQUE (\underline{code}, ville)
+   \item DOCUMENT  (\underline{titre}, typeDoc, annéeAchat, codeMédia)
+   \item EMPRUNT  (\underline{titre, noAdhérent}, dateEmprunt)
+   \item ADHERENT (\underline{no}, nom, pr\'enom, ann\'eeNaissance,
+			codeMédia)
+\end{enumerate}
+}
+
+Les cl\'es primaires sont soulign\'ees, mais pas les cl\'es \'etrang\`eres.
+{\tt codeMédia} désigne bien sûr le code d'une des
+médiathèques du réseau.
+
+\section{Cr\'eation du sch\'ema}
+
+\begin{enumerate}
+  
+  \item ({\bf 4 pts})
+        Donnez les ordres {\tt CREATE TABLE} pour le sch\'ema,
+       en sp\'ecifiant soigneusement cl\'es primaires et \'etrang\`eres
+    (y compris la clause {\tt ON DELETE CASCADE})
+      avec la syntaxe SQL2. Le type des donn\'ees est secondaire:
+     choisissez ce qui vous semble logique.
+
+  \item ({\bf 1 pt}) Un même adhérent peut-il emprunter plusieurs fois le même
+     document\,? Si non, que faudrait-il faire pour autoriser
+      de tels emprunts multiples\,?
+
+   \item ({\bf 1 pt}) Donner la syntaxe des contraintes qui permettent
+     de s'assurer qu'on connaît toujours la médiathèque
+    à laquelle est inscrit un  adhérent, et que le type d'un 
+     document fait partie des catégories connues.
+
+   \item  ({\bf 2 pts}) Donnez le sch\'ema Entit\'e/Association,
+     en Merise ou en UML, correspondant au sch\'ema relationnel 
+     de l'\'enonc\'e.
+
+\end{enumerate}
+
+\section{Requ\^etes}
+
+Sur le sch\'ema {\bf propos\'e dans l'\'enonc\'e}, exprimez
+en alg\`ebre relationnelle {\bf ou} en SQL les requ\^etes suivantes:
+
+\begin{enumerate}
+  \item ({\bf 1 pt}) Code de la médiathèque où on trouve
+    le disque ``Harvest''.
+
+  \item  ({\bf 2 pts}) Titre des documents empruntés par Mr Young.
+
+  \item ({\bf 2 pts}) Dans quelle ville Mr Duchemin est-il inscrit
+    à une médiathèque.
+
+  \item ({\bf 2 pts}) Liste des cassettes empruntées par Mr Duchemin
+            dans la médiathèque où il est inscrit.
+
+   \item  ({\bf 1 pts}, SQL seulement) Donner le nombre de fois
+     où le disque ``Harvest'' a été emprunté.
+
+   \item  ({\bf 2 pt}, SQL seulement) Donner le nom
+        des adhérents de la médiathèque dont le code est 'B06' 
+        avec, pour chaque adhérent,
+       le nombre total de documents qu'il a empruntés.
+
+   \item  ({\bf 2 pts}, SQL seulement) Donner les codes des
+    médiathèques ayant plus de 1~000 {\bf disques}.
+\end{enumerate}
+
+\end{document}

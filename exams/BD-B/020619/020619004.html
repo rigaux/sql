@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+
+<link REL=stylesheet HREF="http://cedric.cnam.fr/vertigo/mystyle.css" TYPE="text/css">
+<TITLE>
+ Concurrence (6 points)
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="020619003.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>4&nbsp;&nbsp; Concurrence (6 points)</H2>
+Le programme suivant s'exécute dans un système de gestion de commandes pour
+les produits d'une entreprise. Il permet de commander une quantité donnée
+d'un produit qui se trouve en stock. Les paramètres du programme représentent
+respectivement la référence de la commande (<I>c</I>), la référence du produit (<I>p</I>)
+et la quantité commandée (<I>q</I>).<BR>
+<BR>
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=left NOWRAP><B>Commander</B> (<I>c</I>, <I>p</I>, <I>q</I>)</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP></TD>
+<TD ALIGN=left NOWRAP><EM>Start</EM></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP></TD>
+<TD ALIGN=left NOWRAP>Lecture prix produit <I>p</I></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP></TD>
+<TD ALIGN=left NOWRAP><U>si</U> <I>q</I> &gt; stock de <I>p</I> <U>alors</U> <EM>Abort</EM></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP></TD>
+<TD ALIGN=left NOWRAP><U>sinon</U></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP></TD>
+<TD ALIGN=left NOWRAP></TD>
+<TD ALIGN=left NOWRAP>Mise à jour stock de <I>p</I></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP></TD>
+<TD ALIGN=left NOWRAP></TD>
+<TD ALIGN=left NOWRAP>Enregistrement dans <I>c</I> du total de facturation</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP></TD>
+<TD ALIGN=left NOWRAP></TD>
+<TD ALIGN=left NOWRAP><EM>Commit</EM></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP></TD>
+<TD ALIGN=left NOWRAP><U>fin si</U>
+</TD>
+</TR></TABLE><BR>
+<B>N.B.</B> <I>p</I> et <I>c</I> ne sont pas des enregistrements, mais des identifiants 
+pour le produit et la commande. Ainsi, le prix et la quantité de produit en 
+stock sont gardés dans des enregistrements différents.<BR>
+<BR>
+<OL type=1>
+<LI>
+  (1 point) Lesquelles des transactions suivantes peuvent être
+obtenues par l'execution du programme ci-dessus? Justifiez votre réponse.<BR>
+<BR>
+<PRE>
+T: r[x] r[y] a
+T': r[x] a
+T'': r[x] w[y] w[z] c
+T''': r[x] r[y] w[y] w[z] c
+</PRE><BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+Les opérations sur la base de données dans </EM><EM><B>Commander</B></EM><EM> sont: lecture prix,
+lecture stock, écriture stock et écriture total facturation dans la commande.
+L'opération peut se terminer par </EM>Abort<EM> après la lecture du stock ou par
+</EM>Commit<EM> à la fin.<BR>
+<BR>
+Les seules transactions qui correspondent sont T et T'''. Dans T' et T'' il
+manque une lecture.
+</EM><BR>
+<BR>
+ 
+<LI> (1 point) Dans le système s'exécutent en même temps trois
+transactions: deux commandes d'un même produit et le changement du prix
+de ce même produit. Montrez que l'histoire ci-dessous est une exécution
+concurrente de ces trois transactions et expliquez la signification des
+enregistrements qui y interviennent.<BR>
+<BR>
+<B>H</B> : r<SUB><FONT SIZE=2>1</FONT></SUB>[x] r<SUB><FONT SIZE=2>1</FONT></SUB>[y] w<SUB><FONT SIZE=2>2</FONT></SUB>[x] w<SUB><FONT SIZE=2>1</FONT></SUB>[y] c<SUB><FONT SIZE=2>2</FONT></SUB> r<SUB><FONT SIZE=2>3</FONT></SUB>[x] r<SUB><FONT SIZE=2>3</FONT></SUB>[y] 
+w<SUB><FONT SIZE=2>1</FONT></SUB>[z] c<SUB><FONT SIZE=2>1</FONT></SUB> w<SUB><FONT SIZE=2>3</FONT></SUB>[y] w<SUB><FONT SIZE=2>3</FONT></SUB>[u] c<SUB><FONT SIZE=2>3</FONT></SUB><BR>
+<BR>
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+Les transactions de cette exécution sont:<BR></EM><EM><B>T</B></EM><SUB><EM><B><FONT SIZE=2>1</FONT></B></EM></SUB><EM> : r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y] w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y] w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[z] c</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM><BR></EM><EM><B>T</B></EM><SUB><EM><B><FONT SIZE=2>2</FONT></B></EM></SUB><EM> : w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x] c</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM><BR></EM><EM><B>T</B></EM><SUB><EM><B><FONT SIZE=2>3</FONT></B></EM></SUB><EM> : r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[x] r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[u] c</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><BR>
+<BR>
+<EM>T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> et T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> sont les deux commandes du même produit et T</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> le changement
+de prix. </EM><EM><I>x</I></EM><EM> est le prix du produit, </EM><EM><I>y</I></EM><EM> son stock, </EM><EM><I>z</I></EM><EM> et </EM><EM><I>u</I></EM><EM> les totaux
+de facturation des deux commandes.
+</EM><BR>
+<BR>
+ 
+<LI> (1 point) Vérifiez si <B>H</B> est sérialisable en identifiant
+les conflits et en construisant le graphe de sérialisation.<BR>
+<BR>
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+Les conflits sur </EM><EM><I>x</I></EM><EM>: r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x]-w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x], w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x]-r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[x].<BR>Les conflits sur </EM><EM><I>y</I></EM><EM>: r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y]-w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y], w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y]-r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y], w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y]-w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y].<BR>Sur </EM><EM><I>z</I></EM><EM> et sur </EM><EM><I>u</I></EM><EM> il n'y a pas de conflit.<BR>
+<BR>
+Le graphe de sérialisation contient les arcs T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> </EM><EM><FONT FACE=symbol>®</FONT></EM><EM> T</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>,
+T</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> </EM><EM><FONT FACE=symbol>®</FONT></EM><EM> T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> et T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> </EM><EM><FONT FACE=symbol>®</FONT></EM><EM> T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>. Il n'y a pas de cycle,
+donc </EM><EM><B>H</B></EM><EM> est sérialisable.
+</EM><BR>
+<BR>
+ 
+<LI> (1 point) L'exécution <B>H</B> est-elle stricte? Justifiez
+votre réponse.<BR>
+<BR>
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+Après w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y], on a r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] avant la fin de T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>, donc </EM><EM><B>H</B></EM><EM> n'évite pas
+les annulations en cascade, donc elle n'est pas stricte non plus.
+</EM><BR>
+<BR>
+ 
+<LI> (2 points) Quelle est l'exécution obtenue par verrouillage à
+deux phases à partir de <B>H</B>? Quel prix sera appliqué pour la seconde 
+commande, le même que pour la première ou le prix modifié?<BR>
+<BR>
+On considère que le relâchement des verrous d'une transaction se fait au 
+<EM>Commit</EM> et qu'à ce moment on exécute en priorité les opérations 
+bloquées en attente de verrou, dans l'ordre de leur blocage.<BR>
+<BR>
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+Le verrouillage à deux phases (1,5 points sur 2).<BR>
+<BR>
+r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x], r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y] s'exécutent<BR>w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x] est bloquée en attente de verrou sur </EM><EM><I>x</I></EM><EM><BR>w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y] s'exécute (r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y] ne le bloque pas, c'est la même transaction)<BR>c</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> est bloquée car T</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> est bloquée (à cause de w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x] bloquée)<BR>r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[x] s'exécute en partageant le verrou de lecture avec r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x]<BR>r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] est bloquée en attente de verrou sur </EM><EM><I>y</I></EM><EM>, à cause de w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y]<BR>w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[z] s'exécute<BR>c</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> s'exécute et relâche les verrous de T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM><BR></EM><EM><FONT FACE=symbol>®</FONT></EM><EM> w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x] ne peut pas être débloquée, car r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[x] possède le verrou<BR></EM><EM><FONT FACE=symbol>®</FONT></EM><EM> c</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> aussi reste bloquée à cause de w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x]<BR></EM><EM><FONT FACE=symbol>®</FONT></EM><EM> r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] est débloquée, donc T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> est aussi débloquée<BR>w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y], w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[u] s'exécutent<BR>c</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> s'exécute et relâche les verrous de T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM><BR></EM><EM><FONT FACE=symbol>®</FONT></EM><EM> w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x] et c</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> sont débloquées et s'exécutent.<BR>
+<BR>
+Résultat: r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y] w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y] r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[x] w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[z] c</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y]
+w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[u] c</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x] c</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>.<BR>
+<BR>
+Le changement de prix (w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x]) s'exécute tout à la fin, donc la seconde
+commande passe avec le même prix que la première (0,5 points sur 2).
+</EM></OL>
+<HR>
+<A HREF="020619003.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

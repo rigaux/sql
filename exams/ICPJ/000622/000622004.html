@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+
+<link REL=stylesheet HREF="/~amann/mystyle.css"
+TYPE="text/css">
+<TITLE>
+ Concurrence et reprise sur pannes (4 points)
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="000622003.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>4&nbsp;&nbsp; Concurrence et reprise sur pannes (4 points)</H2>Soit les histoires suivantes&nbsp;:<BR>
+<BR>
+<OL type=1>
+<LI>
+  <I>r</I><SUB><FONT SIZE=2>1</FONT></SUB>(<I>A</I>) <I>r</I><SUB><FONT SIZE=2>2</FONT></SUB>(<I>A</I>) <I>r</I><SUB><FONT SIZE=2>3</FONT></SUB>(<I>B</I>) <I>w</I><SUB><FONT SIZE=2>1</FONT></SUB> (<I>A</I>) <I>r</I><SUB><FONT SIZE=2>2</FONT></SUB>(<I>C</I>) <I>r</I><SUB><FONT SIZE=2>2</FONT></SUB>(<I>B</I>) <I>w</I><SUB><FONT SIZE=2>2</FONT></SUB>(<I>B</I>) <I>w</I><SUB><FONT SIZE=2>1</FONT></SUB>(<I>C</I>) <I>C</I><SUB><FONT SIZE=2>1</FONT></SUB> <I>C</I><SUB><FONT SIZE=2>2</FONT></SUB> 
+ 
+<LI> <I>r</I><SUB><FONT SIZE=2>1</FONT></SUB>(<I>A</I>) <I>w</I><SUB><FONT SIZE=2>1</FONT></SUB>(<I>B</I>) <I>r</I><SUB><FONT SIZE=2>2</FONT></SUB>(<I>B</I>) <I>C</I><SUB><FONT SIZE=2>1</FONT></SUB> <I>w</I><SUB><FONT SIZE=2>2</FONT></SUB>(<I>C</I>) <I>C</I><SUB><FONT SIZE=2>2</FONT></SUB> <I>r</I><SUB><FONT SIZE=2>3</FONT></SUB>(<I>C</I>) <I>w</I><SUB><FONT SIZE=2>3</FONT></SUB>(<I>A</I>) <I>C</I><SUB><FONT SIZE=2>3</FONT></SUB>
+ 
+<LI> <I>r</I><SUB><FONT SIZE=2>1</FONT></SUB>(<I>A</I>) <I>r</I><SUB><FONT SIZE=2>2</FONT></SUB>(<I>A</I>) <I>w</I><SUB><FONT SIZE=2>1</FONT></SUB>(<I>B</I>) <I>w</I><SUB><FONT SIZE=2>2</FONT></SUB>(<I>B</I>) <I>r</I><SUB><FONT SIZE=2>1</FONT></SUB>(<I>B</I>) <I>r</I><SUB><FONT SIZE=2>2</FONT></SUB>(<I>B</I>) <I>w</I><SUB><FONT SIZE=2>2</FONT></SUB>(<I>C</I>) <I>w</I><SUB><FONT SIZE=2>1</FONT></SUB>(<I>D</I>) <I>C</I><SUB><FONT SIZE=2>1</FONT></SUB> <I>C</I><SUB><FONT SIZE=2>2</FONT></SUB>
+</OL><UL>
+<LI>
+  Lesquelles sont sérialisables&nbsp; (donnez le graphe de sérialisabilité
+pour chacune).<BR>
+<BR>
+
+(1) Oui. <I>T</I>3  <I>T</I>2  <I>T</I>1<BR>(2) Oui. <I>T</I>1  <I>T</I>2; <I>T</I>2  <I>T</I>3; <I>T</I>1  <I>T</I>3<BR>(3) Non. <I>T</I>1  <I>T</I>2 ; <I>T</I>2  <I>T</I>1
+<BR>
+<BR>
+ 
+<LI> Appliquez un verrouillage à deux phases à celles
+ qui ne sont pas sérialisables et donnez l'histoire obtenue.</UL>
+<HR>
+<A HREF="000622003.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

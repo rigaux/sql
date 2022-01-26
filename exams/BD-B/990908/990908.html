@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD><TITLE></TITLE>
+<META http-equiv="Content-Type" content="text/html; charset= ISO-8859-1">
+
+<link REL=stylesheet HREF="/~amann/mystyle.css"
+TYPE="text/css">
+</HEAD>
+<BODY BGCOLOR=silver TEXT=black>
+<!--FRENCH-->
+<!--HTMLHEAD-->
+<!--ENDHTML-->
+<!--CUT DEF section 1 -->
+
+<BR>
+<BR>
+<DIV ALIGN=center>
+<FONT SIZE=5><B>Systèmes de Gestion de Bases de Données HTO et ICPJ B7<BR><BR>EXAMEN<BR><BR></B></FONT><B><FONT SIZE=4>Mercredi 8 Septembre 1999
+</FONT></B></DIV><BR>
+<!--TOC section Conception de schéma (4&nbsp;points)-->
+
+<H2>1&nbsp;&nbsp; Conception de schéma (4&nbsp;points)</H2>
+Soit <TT>R(A,B,C,D,E,F)</TT> une relation avec les dépendances
+fonctionnelles <FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>R</I></FONT></SUB>={<I>A</I> -&gt; <I>BCD</I>, <I>B</I> -&gt; <I>A</I>, <I>AE</I>
+-&gt; <I>F</I>}.<BR>
+<BR>
+Répondez aux questions suivantes et justifiez vos réponses&nbsp;:
+<OL>
+<LI>
+ 
+Quels sont les clés de la relation <TT>R</TT>? (1 point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+Clés: <TT>AE</TT> et <TT>BE</TT>
+<BR>
+<BR>
+
+<LI>Est-ce que <TT>R</TT> est en 3e Forme Normale? (1 point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+NON 
+<BR>
+<BR>
+
+<LI>Est-ce que la décomposition de <TT>R</TT> en deux relations <TT>S(AB)</TT> et <TT>T(BCDEF)</TT> est sans perte d'information? (1 point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+OUI&nbsp;: (<I>AB</I> inter <I>BCDEF</I>) -&gt; (<I>AB</I>-<I>BCDEF</I>) est vrai dans <FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>R</I></FONT></SUB>.
+<BR>
+<BR>
+
+<LI>Est-ce que la décomposition précédente préserve les
+ dépendances fonctionnelles de la relation <TT>R</TT>? (1 point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+OUI&nbsp;: 
+<OL>
+<LI>
+ 
+<FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>S</I></FONT></SUB>={<I>A</I> -&gt; <I>B</I>, <I>B</I> -&gt; <I>A</I>} 
+
+<LI><FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>T</I></FONT></SUB>={<I>B</I> -&gt; <I>CD</I>, <I>BE</I> -&gt; <I>F</I>}
+</OL>
+et on peut déduire toutes les dépendances dans <FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>R</I></FONT></SUB> à partir
+de <FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>S</I></FONT></SUB> union <FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>T</I></FONT></SUB>.
+</OL><!--TOC section Requêtes Relationnelles (10 points)-->
+
+<H2>2&nbsp;&nbsp; Requêtes Relationnelles (10 points)</H2>
+Le réseau de téléphones portables <EM>SmallPhone</EM> gère ses abonnements avec
+Oracle. Voici le schéma qui a été défini&nbsp;:<BR>
+<BR>
+<UL>
+<LI>
+<TT>Numéros(NoT, NomC, AdrC)</TT>&nbsp;: <TT>NoT</TT> est le numéro du
+ téléphone abonné par le client <TT>NomC</TT> qui habite à l'adresse
+ <TT>AdrC</TT>.
+
+<LI><TT>Appels(NoT, Zone, Date, Durée)</TT>&nbsp;: <TT>NoT</TT> est le numéro
+ de téléphone auquel s'est abonné le client, <TT>Zone</TT> est la zone
+ dans laquelle se trouve le numéro appelé à la date <TT>Date</TT> et
+ <TT>Durée</TT> est la durée de communication (en minutes).
+
+<LI><TT>Tarifs(Zone, Prix)</TT>&nbsp;: <TT>Prix</TT> est le prix de
+ communication par minute dans la zone <TT>Zone</TT><A NAME="text1"></A><A HREF="#note1"><SUP><FONT SIZE=2>1</FONT></SUP></A>.
+</UL>Écrire les requêtes suivantes en Algèbre relationnelle et en
+SQL&nbsp;:
+<OL>
+<LI>
+ 
+Les noms des personnes qui ont fait des appels dans la zone 5?
+ (1 point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<DIV ALIGN=center>pi<SUB><FONT SIZE=2><I>NomC</I></FONT></SUB>(<I>Numeros</I> |&gt;t<I>o</I> -.45<I>em</I>&lt; sigma<SUB><FONT SIZE=2><I>Zone</I> = 5</FONT></SUB>(<I>Appels</I>)) </DIV>
+<PRE>
+SELECT NomC
+  FROM Numéros, Appels
+ WHERE Numéros.NoT = Appels.NoT
+   AND Appels.Zone = 5
+</PRE>
+
+
+ 
+<LI>Les noms des personnes qui ont fait des appels qui ont duré plus
+ que 2 heures dans une zone où le prix de communication dépasse
+ 10FF/Minute? (2 points)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B><BR>
+<BR>
+<DIV ALIGN=center>pi<SUB><FONT SIZE=2><I>NomC</I></FONT></SUB>(<I>Numeros</I> |&gt;t<I>o</I> -.45<I>em</I>&lt; sigma<SUB><FONT SIZE=2><I>Duree</I> &gt; 120</FONT></SUB>(<I>Appels</I>) |&gt;t<I>o</I> -.45<I>em</I>&lt;
+sigma<SUB><FONT SIZE=2><I>Prix</I> &gt; 10</FONT></SUB>(<I>Tarifs</I>)) </DIV><BR>
+<PRE>
+SELECT NomC
+  FROM Numéros, Appels, Tarifs
+ WHERE Numéros.NoT = Appels.NoT
+   AND Appels.Zone = Tarifs.Zone
+   AND Appels.Duree &gt; 120
+   AND Tarifs.Prix &gt; 10
+</PRE>
+
+
+<LI>Exprimer la requête précédente en calcul domaine. (1.5&nbsp;point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B><BR>
+<BR>
+<DIV ALIGN=center>
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD  ALIGN=right NOWRAP>{<I>N</I> | il existe <I>C</I>,<I>A</I>,<I>Z</I>,<I>D</I>,<I>P</I>: (<I>Numeros</I>(<I>N</I>,<I>C</I>,<I>A</I>) /\ <I>Appels</I>(<I>N</I>,<I>Z</I>,<I>D</I>)
+ /\ <I>Tarifs</I>(<I>Z</I>,<I>P</I>) /\ <I>D</I> &gt; 120 /\ <I>P</I> &gt; 10) }</TD>
+</TR></TABLE></DIV><BR>
+
+<BR>
+<BR>
+
+<LI>Noms d'abonnés qui n'ont jamais fait des appels de plus de 3
+ minutes. (2 points)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<DIV ALIGN=center>pi<SUB><FONT SIZE=2><I>NomC</I></FONT></SUB><I>Numeros</I> - pi<SUB><FONT SIZE=2><I>N</I></FONT></SUB><I>omC</I>( <I>Numeros</I> |&gt;t<I>o</I> -.45<I>em</I>&lt; sigma<SUB><FONT SIZE=2><I>Duree</I> &gt; 3</FONT></SUB> <I>Appels</I>)</DIV> <BR>
+<PRE>
+SELECT NomC
+  FROM Numéros
+ WHERE NoT NOT IN (SELECT NoT
+                     FROM Appels
+                    WHERE Durée &gt; 3);
+</PRE>
+
+
+<LI>Exprimer la requête précédente dans le calcul nuplet. (1&nbsp;point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B><BR>
+<BR>
+<DIV ALIGN=center>
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD  ALIGN=right NOWRAP>{ <I>N</I>.<I>NomC</I> | <I>Numeros</I>(<I>N</I>) /\ ¬ il existe<I>A</I> (<I>Appels</I>(<I>A</I>) /\
+<I>A</I>.<I>Duree</I> &gt; 3 /\ <I>N</I>.<I>NoT</I> = <I>A</I>.<I>NoT</I>)}</TD>
+</TR></TABLE></DIV><BR>
+
+
+</OL>Écrire les requêtes suivantes seulement en SQL&nbsp;:
+<OL>
+<LI>
+ 
+Nombre d'appels et durée totale des appels par zone. (1.5 point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<PRE>
+SELECT Zone, COUNT(*), SUM(Durée)
+  FROM Appels
+GROUP BY Zone;
+</PRE>
+
+
+<LI>Numéros des personnes qui ont appelé dans la zone la plus chère
+ pendant plus que 3 heures au total (plus de 3 heures pour tous les
+ appels dans cette zone). (1 point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<PRE>
+SELECT A.NoT
+  FROM Numéros N, Appels A, Tarifs T
+ WHERE N.NoT = A.NoT
+   AND A.Zone = T.Zone
+   AND T.Prix &gt;= ALL (SELECT Prix FROM Tarifs)
+GROUP BY N.NoT
+HAVING SUM(A.Durée) &gt; 180;
+</PRE>
+
+</OL><!--TOC section Concurrence (6 points)-->
+
+<H2>3&nbsp;&nbsp; Concurrence (6 points)</H2>Un programme de réservation de billets de spectacle a la forme 
+simplifiée présentée ci-dessous. Il permet à un client dont on connait
+le compte bancaire de réserver un nombre de billets désiré. 
+Les identifiants <EM>compte</EM> et <EM>billets</EM> sont
+des enregistrements de la base de données, qui contiennent respectivement le
+solde du compte bancaire du client et le nombre de billets disponibles.<BR>
+<BR>
+<B>Réservation</B> (nombre_billets, <EM>compte</EM>)<BR>&nbsp; disponible := <TT>Read</TT> (<EM>billets</EM>)<BR>&nbsp; <TT>Write</TT> (<EM>billets</EM>, disponible - nombre_billets)<BR>&nbsp; solde := <TT>Read</TT> (<EM>compte</EM>)<BR>&nbsp; <TT>Write</TT> (<EM>compte</EM>, solde - prix * nombre_billets)<BR>fin <B>Réservation</B><BR>
+<BR>
+<OL>
+<LI>
+ 
+ (1,5 pt) Si deux clients différents veulent réserver des 
+billets en même temps, trouvez un entrelacement des opérations des deux 
+transactions qui produise un résultat erroné et justifiez-le par un 
+exemple numérique.<BR>
+<BR>
+ 
+<LI>(0,5 pt) Laquelle des trois histoires suivantes est une
+exécution concurrente de deux réservations de billets par
+des clients différents? Justifiez votre réponse.<BR><B>H</B>: r<SUB><FONT SIZE=2>1</FONT></SUB>[x] w<SUB><FONT SIZE=2>1</FONT></SUB>[x] r<SUB><FONT SIZE=2>2</FONT></SUB>[x] r<SUB><FONT SIZE=2>1</FONT></SUB>[y] w<SUB><FONT SIZE=2>2</FONT></SUB>[x] r<SUB><FONT SIZE=2>2</FONT></SUB>[z] 
+w<SUB><FONT SIZE=2>1</FONT></SUB>[y] c<SUB><FONT SIZE=2>1</FONT></SUB> w<SUB><FONT SIZE=2>2</FONT></SUB>[z] c<SUB><FONT SIZE=2>2</FONT></SUB><BR><B>H'</B>: r<SUB><FONT SIZE=2>1</FONT></SUB>[x] w<SUB><FONT SIZE=2>1</FONT></SUB>[x] r<SUB><FONT SIZE=2>2</FONT></SUB>[x] r<SUB><FONT SIZE=2>1</FONT></SUB>[y] w<SUB><FONT SIZE=2>2</FONT></SUB>[x] r<SUB><FONT SIZE=2>2</FONT></SUB>[y] 
+w<SUB><FONT SIZE=2>1</FONT></SUB>[y] c<SUB><FONT SIZE=2>1</FONT></SUB> w<SUB><FONT SIZE=2>2</FONT></SUB>[y] c<SUB><FONT SIZE=2>2</FONT></SUB><BR><B>H''</B>: r<SUB><FONT SIZE=2>1</FONT></SUB>[x] r<SUB><FONT SIZE=2>2</FONT></SUB>[x] r<SUB><FONT SIZE=2>1</FONT></SUB>[y] w<SUB><FONT SIZE=2>2</FONT></SUB>[x] w<SUB><FONT SIZE=2>1</FONT></SUB>[x] w<SUB><FONT SIZE=2>2</FONT></SUB>[z] 
+r<SUB><FONT SIZE=2>2</FONT></SUB>[z] w<SUB><FONT SIZE=2>1</FONT></SUB>[y] c<SUB><FONT SIZE=2>1</FONT></SUB> c<SUB><FONT SIZE=2>2</FONT></SUB><BR>
+<BR>
+ 
+<LI>(2 pt) Montrez que <B>H</B> est sérialisable. Montrez que 
+même si <B>H</B> est déjà sérialisable, le verrouillage à deux phases
+modifie l'ordre des opérations. Donnez le résultat du verrouillage à
+deux phases appliqué à <B>H</B>. On considère que le relâchement des 
+verrous d'une transaction se fait au Commit et qu'à ce moment on exécute en 
+priorité les opérations bloquées en attente de verrou. <BR>
+<BR>
+ 
+<LI>(1 pt) <B>H</B> est-elle recouvrable? Evite-t-elle les 
+annulations en cascade? Est-elle stricte?<BR>
+<BR>
+ 
+<LI>(1 pt) Considerons que <B>H</B> s'exécute telle quelle (sans
+réordonnancement) et qu'au début il y a 100 billets disponibles. Si chaque
+client réserve 2 billets et si une panne intervient juste après w<SUB><FONT SIZE=2>2</FONT></SUB>[z],
+combien de billets seront disponibles après la reprise, c'est-à-dire
+après que le système ait remis la base de données dans un état
+cohérent?
+</OL><!--BEGIN NOTES document-->
+<HR ALIGN=left WIDTH="50%"><DL>
+<DT><A NAME="note1"></A><A HREF="#text1"><FONT SIZE=5>1</FONT></A><DD> On
+ suppose qu'il n'y pas de prix de connexion.</DL>
+<!--END NOTES-->
+<!--HTMLFOOT-->
+<!--ENDHTML-->
+
+<!--FOOTER-->
+<HR  SIZE=2>
+<BLOCKQUOTE><EM>Ce document a été traduit de L<sup>A</sup>T<sub>E</sub>X par </EM><A HREF="http://para.inria.fr/~maranget/hevea/index.html"><EM>H</EM><EM><FONT SIZE=2><sup>E</sup></FONT></EM><EM>V</EM><EM><FONT SIZE=2><sup>E</sup></FONT></EM><EM>A</EM></A><EM>.
+</EM></BLOCKQUOTE></BODY>
+</HTML>
+

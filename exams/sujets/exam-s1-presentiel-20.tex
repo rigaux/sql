@@ -1,0 +1,300 @@
+\enteteExam{NFP 107 -- Systèmes de gestion de bases de données - Durée 2h30}%
+{Examen 4 juillet 2020}%
+{Effectué à distance}%
+
+On souhaite mettre en place un système de prévention des maladies infectieuses
+reposant sur le principe suivant\,: une application  
+enregistre toutes les rencontres effectuées par le propriétaire
+d'un smartphone avec d'autres personnes (équipées de la même application). 
+Quand une infection par une maladie (comme la COVID19, la  varicelle, la rougeole, etc.)
+est constatée chez une personne $P$, on doit pouvoir retrouver toutes  les
+personnes $P_1, P_2, \cdots, P_n$ rencontrées pendant une période récente pour pouvoir
+les informer.
+
+Voici le schéma proposé. Les clés primaires sont en gras, les clés étrangères ne sont pas indiquées.
+
+\begin{itemize}
+\item Personne(\textbf{idPersonne},  prénom, nom, email, ville)
+\item Rencontre (\textbf{idRencontre}, idPropriétaire, idPersonne, date)
+\item Virus(\textbf{idVirus}, nom, duréeInfection)
+\item Infection(\textbf{idPersonne}, \textbf{idVirus}, dateDébutInfection)
+\end{itemize}
+
+Dans la table \texttt{Rencontre}, \texttt{idPropriétaire} désigne le propriétaire
+du smartphone qui enregistre la rencontre, et  \texttt{idPersonne} désigne
+la personne rencontrée. Si, par exemple, Philippe (identifiant 11) est le,propriétaire
+d'un smartphone équipé et rencontre Béatrice
+(identifiant 56) à une date $d$, 
+l'application insère dans la table 
+\texttt{Rencontre} le nuplet 
+$(id_x, 11, 56, d)$.  
+
+\subsection*{Compréhension du schéma (6 pts)}
+
+\begin{enumerate}
+ \item Le schéma permet-il de représenter le fait qu'une personne a été infectée par plusieurs virus?
+
+ \item Si je trouve le nuplet $(id_x, 11, 56, d)$ dans la base, cela signifie-t-il 
+    que je vais trouver également un autre nuplet $(id_y, 56, 11, d)$\,? À votre avis
+    dans quelles circonstances cette propriété peut être vérifiée.
+  
+ \item Donnez les commandes SQL de création des tables de ce schéma, 
+
+  \item Quel est d'après vous le schéma entité-association 
+        correspondant à ce schéma relationnel\,?
+        
+   \item Peut-on savoir avec ce schéma qu'une personne a été infectée plusieurs
+      fois par le même virus\,? Expliquez, et proposez si nécessaire 
+      une évolution du schéma pour que ce soit possible.
+
+    \item Si je crée une table contenant l'union de tous les attributs des tables Virus et Infection,
+        quelle serait la clé\,? Est-celle en troisième forme normale (donnez un argument précis)\,?  
+\end{enumerate}
+
+   
+\begin{solution}
+ \begin{enumerate}
+    \item Oui, on peut avoir plusieurs fois la même
+       personne mais avec des virus différents.
+     \item Rien ne l'impose. Ce n'est vrai que si  
+        les deux personnes qui se recontrent ont toutes
+        les deux l'application.
+     \item Standard. Voici pour la table \texttt{Rencontre}:
+     
+\begin{minted}{sql}
+Create table Rencontre (idRencontre int not null, 
+    idPropriétaire int not null, 
+     idPersonne int not null, 
+     date not null,
+     primary key (idRencontre),
+     foreign key (idPropriétaire) references Personne (idPersonne),
+         foreign key (idPersonne) references Personne (idPersonne)
+     )
+\end{minted}
+     
+     \item 
+     
+     \item Non la clé interdit de stocker plusieurs
+       fois la même paire (idPersonne, idVirus).
+       Il vaut mieux réifier la table \texttt{Infection}
+       en lui attribuant un identifiant propre.
+     \item La clé est la paire (idPersonne, idVirus).
+     Elle n'est pas en 3FN puisque le nom du virus
+     ne dépend pas fonctionnellement de la clé 
+     mais seulement d'une partie de la clé (la dépendance
+     n'est donc pas minimale).
+ \end{enumerate}
+ 
+\end{solution}
+
+
+\subsection*{SQL (7 pts)}
+
+Sur le schéma obtenu précédemment, exprimez en SQL les requêtes suivantes\,:
+
+\begin{enumerate}
+  \item Donnez les nom et prénom des personnes infectées par le virus nommé  'varicelle'.
+
+  \item Donnez les villes où on trouve  deux personnes
+       infectées par le même virus (affichez la ville
+       et les noms des deux personnes)
+
+  \item Donnez la liste des personnes qui ont rencontré un propriétaire
+      infecté par un virus APRES la date de début de l'infection
+       (affichez le nom du propriétaire, le nom de la personne rencontrée
+        et la date de rencontre)
+   
+   \item Donnez la liste des personnes qui n'ont pas été atteintes par le virus 'SARS'
+  
+   \item Donnez les propriétaires habitant Ajaccio et les personnes 
+          qu'ils n'ont jamais rencontrées. Exemple: si Philippe habite Ajaccio
+          et n'a jamais rencontré Béatrice, affichez ('Philippe', 'Béatrice").
+
+   \item Affichez le nom de chaque virus avec le nombre de personnes
+      infectées par ce virus
+      
+   \item Donnez la requête affichant le nom des propriétaires ayant rencontré au moins 1000 autres personnes
+\end{enumerate}
+
+
+\begin{solution}
+
+
+\begin{enumerate}
+  \item 
+\begin{minted}{sql}
+select prénom, nom
+from  Personne as p, Infection as i, Virus as v
+where p.idPersonne = i.idPersonne
+and v.idVirus = i.idVirus
+and v.nom='varicelle'
+\end{minted}
+
+ \item Il faut donc deux personnes (différentes mais
+    dans la même ville),  deux infections pour le même virus.
+\begin{minted}{sql}
+select p1.ville,, p1.nom, p2.nom 
+from  Personne as p1, Personne as p2, 
+    Infection as i1, Infection as i2
+where p1.idPersonne = i1.idPersonne
+and p2.idPersonne = i2.idPersonne
+and i1.idVirus = i2.idVirus
+and p1.ville = p2.ville 
+and p1.idPersonne < p2.idPersonne
+\end{minted}
+
+\item 
+\begin{minted}{sql}
+select p1.nom as nomPriopriétaire, p1.nom as nomPersonne,
+     r.date
+from  Rencontre as r, Personne as p1, Personne as p2, 
+    Infection as i
+where p1.idPersonne = r.idPropriétaire
+and p2.idPersonne = r.idPersonne
+and i.idPersonne =   p1.idPersonne
+and r.date > i.dateDébutInfection
+\end{minted}
+
+
+\item 
+\begin{minted}{sql}
+select nom
+from  Personne as p
+where not exists (select * from Infection as i, Virus as v
+     where i.idPersonne = p .idPersonne
+     and i.idVirus = v.idVirus
+     and v.nom='SARS')
+\end{minted}
+
+
+\item 
+\begin{minted}{sql}
+select p1.nom as nomPropriétaire, p2.nom as jamaisRencontrée
+from  Personne as p1, Personne as p2
+where not exists (select * from Rencontre as r
+    where r.idPropriétaire = p1.idPersonne
+    and r.idPersonne = p2.idPersonne)
+and p1.ville='Ajaccio'
+\end{minted}
+
+\item 
+\begin{minted}{sql}
+select v.nom count(*) as nbInfections
+from  Virus as v, Infection as i
+where v.idVirus = i.idVirus
+group by v.idVirus, v.nom
+\end{minted}
+
+
+\item 
+\begin{minted}{sql}
+select p.nom, Count(*) as nbRencontres 
+from  Personne as p, Rencontre as r
+where p.idPersonne = r.idPropriétaire
+group p.idPersonne, p.nom
+having count(*) >= 1000
+\end{minted}
+\end{enumerate}
+\end{solution}
+
+
+\subsection*{Algèbre (3 pts)}
+
+On définit algébriquement les deux relations suivantes:
+
+\begin{itemize}
+  \item $P1 := \rho_{idPersonne \to id1, nom \to nom1, prenom \to prenom1, ville \to ville1} (Personne)$
+  \item $P2 := \rho_{idPersonne \to id2, nom \to nom2, prenom \to prenom2, ville \to ville2} (Personne)$
+\end{itemize}
+
+Voici une expression algébrique:
+$$\pi_{nom1, nom2} (\sigma_{ville1=ville2} (P1 \Join_{id1=idPropriétaire} Rencontre) \Join_{idPersonne=id2} P2)$$
+
+\begin{enumerate}
+  \item Expliquer en une phrase le but de cette requête
+    \item Donnez la requête SQL correspondante
+\end{enumerate}
+
+
+\begin{solution}
+
+\begin{enumerate}
+  \item Les propriétaires et les personnes rencontrées qui habitent la même ville
+  \begin{minted}{sql}
+select prop.nom as nompropriétaire, pers.nom as nomPersonneRencontrée 
+from  Personne as prop, Personne as pers, Rencontre as r
+where prop.idPersonne = r.idPropriétaire
+and pers.idPersonne = r.idPersonne
+and prop.ville = pers.ville
+\end{minted}
+\end{enumerate}
+
+\end{solution}
+
+\subsection*{Procédures (2 pts)}
+
+Quand un propriétaire $Prop$  a été infecté, on va rechercher toutes les personnes
+en contact avec $Prop$ et leur envoyer un message. Pour ne pas envoyer une
+notification deux fois, on ajoute un attribut ``notifié`` dans la table ``Rencontre``
+qui vaut ``true``si une notification a été envoyée, `false``sinon. 
+Voici la procédure appelée à chaque fois\,: elle prend comme paramètres le propriétaire
+(personne infectée)
+et la personne à notifier.
+
+\begin{small}
+\begin{minted}{sql}
+create procedure Notification (v_prop RECORD, v_pers RECORD)  as 
+begin
+  -- Vérifions si la notification a été faite 
+  select notifié into v_notifié from Rencontre as r
+  where r.idPropriétaire = v_prop.idPersonne and r.idPersonne=v_pers.idPersonne;
+  -- Pas de notification trouvée: on envoie un message et on mémorise l'envoi
+  if (v_notifié == false) then
+     update  Rencontre set notifié=true
+     where  r.idPropriétaire = v_prop.idPersonne and r.idPersonne=v_pers.idPersonne;
+     mail (v_pers.email, "Vous risquez d'avoir été infecté par " + v_prop.nom);
+     commit;
+   end ;
+end;
+\end{minted}
+\end{small}
+
+Expliquez pourquoi seul le mode ``serializable``garantit qu'on n'envoie pas une 
+notification deux fois.
+
+
+
+\begin{solution}
+Si on lance deux fois la procédure au même moment pour les mêmes paramètres, 
+chacune va conclure que la notification n'a pas eu lieu, et envoyer le message.
+
+En mode sérialisable, cela ne peut pas arriver par définition: le résultat est identique
+à celui obtenu par une exécution en série.
+\end{solution}
+\subsection*{Requêtes imbriquées(2 pts)}
+
+Voici une requête avec imbrication.
+\begin{small}
+\begin{minted}{sql}
+select distinct ville from Personne as p 
+where  p.idPersonne in (select i.idPersonne from Infection as i
+                        where i.idVirus in
+                           (select v.idVirus from Virus as v
+                            where v.nom = 'Peste'
+                           )
+                       )
+\end{minted}               
+\end{small}
+Donnez une requête équivalente sans aucune imbrication.
+
+\begin{solution}
+\begin{minted}{sql}
+select distinct ville 
+from Personne as p, Infection as i, Virus as v
+where  p.idPersonne = i.idPersonne 
+and  i.idVirus  v.idVirus 
+and  nom = 'Peste'
+\end{minted}
+\end{solution}
+\end{document}
+

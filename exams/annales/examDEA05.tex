@@ -1,0 +1,201 @@
+\documentclass[french]{article}
+
+\usepackage{../POLY/macros}
+\usepackage{babel}
+\usepackage{psfig}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{comment}
+\usepackage{moreverb}
+\usepackage{a4wide}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage[french]{minitoc}
+\usepackage{latexsym,color}
+
+\newenvironment{solution}{\nopagebreak\par\vspace*{2mm}\underline{Solution~:}\em\par}{\par\vspace*{2mm}}
+
+
+\excludecomment{solution}
+
+\begin{document}
+
+\begin{center}
+{\Large\bf Examen Master Recherche - 2005}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace*{0.5cm}
+
+On considère la base de données constituées des relations
+\tble{Film}, \tble{Role} et \tble{Artiste}, avec
+les schémas suivants\,:
+
+\begin{itemize}
+  \item $schema$(Films) = \{titre, année, id\_réalisateur, suite\_de\}
+
+  \item $schema$(Artiste) = \{id\_artiste, nom, prénom\}
+
+  \item $schema$(Rôle) = \{id\_film, id\_acteur\}
+\end{itemize}
+
+L'attribut \texttt{suite\_de} de la table \tble{Film}
+indique qu'un film est la suite d'un autre film dans une série
+(par exemple le film \textit{La revanche des Sith}
+est la suite de \textit{La guerre des clones} dans
+la série \textit{Star Wars}). Par convention, on
+met la valeur réservée \texttt{null} pour une film
+qui n'est pas la suite d'un autre. Un exemple d'instance
+est donné ci-dessous.
+
+\begin{center}
+\begin{tabular}{l|l|c|l|c}
+\cle{id\_film} & titre & année  & \fk{id\_réalisateur} & \fk{suite\_de}\\
+\hline
+1 & La guerre des clones & 2001 & 76 & null\\
+6 & La revanche des Sith & 2004 & 76 & 1\\
+20 & Impitoyable & 1992 &  100 & null \\
+21 & Ennemi d'état & 1998 &  102 & null\\
+35 & Un nouvel espoir & 1982 & 76 & 6\\
+\hline
+\end{tabular}
+
+\centerline{La table \tble{Film}}
+\end{center}
+
+\vspace*{0.3cm}
+
+\begin{center}
+\begin{tabular}{l|l|l}
+\cle{id\_artiste} &  nom & prénom  \\
+\hline
+76 & Georges & Lukas  \\
+100 & Eastwood & Clint   \\
+101 & Hackman & Gene   \\
+102 & Scott & Tony   \\
+103 & Smith  & Will   \\
+\hline
+\end{tabular}
+
+\centerline{La table \tble{Artiste}}
+
+\vspace*{0.3cm}
+\begin{tabular}{l|c}
+\cle{\fk{id\_film}} & \cle{\fk{id\_acteur}} \\
+\hline
+20  & 100  \\
+20 & 101  \\
+21 & 101  \\
+21 & 103  \\
+\hline
+\end{tabular}
+
+\centerline{La table \tble{Rôle}}
+
+\end{center}
+
+Attention, il ne s'agit que d'un exemple d'instance. Dans ce qui suit,
+on connaît le schéma mais pas le contenu de la base. D'où
+l'intérêt de pouvoir effectuer des requêtes.
+
+\section{Requêtes conjonctives (8 pts)}
+
+Pour chacune des requêtes suivantes, donnez son expression
+en algèbre relationnelle, et, au choix, en règles \textsc{Datalog} 
+ou en calcul relationnel.
+
+\begin{enumerate}
+  \item Titre des films parus en 2005
+  \item Titres des films réalisés par Clint Eastwood
+  \item Quel acteur (nom et prénom) a joué dans Impitoyable\,?
+  \item Quel artiste a joué dans un film dont il est réalisateur\,?
+\end{enumerate}
+
+\begin{solution}
+  \begin{enumerate}
+    \item $ans(x) \leftarrow Film (\_, x, \_, \_, \_)$ 
+
+    \item $ans(x) \leftarrow Film (\_, x, \_, y, \_), Artiste (y, 'Clint',
+    'Eastwood', \_)$ 
+
+    \item $ans(n, m) \leftarrow Film (x, 'Impitoyable', \_, \_, \_), Role (x, y), 
+      Artiste (y, n, m,  \_) $ 
+
+    \item $ans(n, m) \leftarrow Film (x, \_, \_, y, \_), Role (x, y), 
+      Artiste (y, n, m,  \_)$ 
+  \end{enumerate}
+\end{solution}
+
+\section{Requêtes avec négation, requêtes récursives (8 pts)}
+
+Exprimez les requêtes suivantes en algèbre et, au choix,
+ en programme
+\textsc{Datalog} et en calcul relationnel.
+
+\begin{enumerate}
+  \item Quels films ne sont pas réalisés par Clint Eastwood\,?
+
+  \item Quel acteur a joué dans un film  qui n'est pas réalisé par 
+          Clint Eastwood\,?
+
+%  \item Quel acteur n'a joué dans {\em aucun} film  réalisé par 
+%          Clint Eastwood\,?
+
+  \item Quel acteur a joué dans {\em tous} les films réalisés par 
+          Clint Eastwood\,?
+
+  \item (\textsc{Datalog} seulement) Donner les titres de tous les films
+          de la série \textit{Harry Potter}, sachant
+           que le premier s'intitule \textit{L'école des sorciers}.
+\end{enumerate}
+
+\begin{solution}
+  \begin{enumerate}
+    \item $Eastwood(x) \leftarrow Film (x, \_, \_, y, \_), Artiste (y, 'Clint',
+    'Eastwood', \_)$ \\
+         $ans(y) \leftarrow Film (x, y, \_, \_), \neg Eastwood (x)$
+
+    \item $ans(n, m) \leftarrow Artiste (x, n, m), Role (f, x, \_, \_), \neg Eastwood (f)$
+
+   \item $A (a, n, m) \leftarrow Artiste (a, n, m), Eastwood (x), \neg Role(x, a)$
+
+   \item $ans(n, m) \leftarrow Artiste (x, n, m), \neg A(x, n, m)$
+
+   \item $A(x) \leftarrow Film (x, 'Ecole\ des\ sorciers')$\\
+            $A(x) \leftarrow A(y), Film (x, \_, \_, \_, y)$
+
+  \end{enumerate}
+\end{solution}
+
+\section{Programmes \textsc{Datalog} (4 pts)}
+
+Soit un schéma avec deux relations $R$ et $Q$,
+et le programme \textsc{Datalog}\,:
+\begin{center}
+$S_1(x, z)  \leftarrow Q(x, y), R(y,z, w)$\\
+$ans(x, y, z)  \leftarrow S_1(x, w), R(w, y, v), S_1(v, z)$\\
+\end{center}
+
+\begin{enumerate}
+\item Donner une requête  équivalente sous forme d'une seule règle
+\textsc{Datalog}.
+
+\item En déduire que les programmes \textsc{Datalog} (plusieurs règles)
+ne sont pas plus expressifs que les règles dans le 
+cas des requêtes conjonctives. Expliquer l'algorithme de réécriture
+qui permettent de démontrer ce résultat.
+\end{enumerate}
+
+\bigskip
+
+Quel est à votre avis le résultat du programme suivant,
+pour un schéma comportant une seule relation
+d'arité 1\,?
+
+\begin{center}
+$T(a,x) \leftarrow R(x)$\\
+$S(x) \leftarrow T(b, x)$
+\end{center}
+
+\end{document}

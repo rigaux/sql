@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+
+<link REL=stylesheet HREF="/~amann/mystyle.css"
+TYPE="text/css">
+<TITLE>
+ Concurrence (5 points)
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="000906003.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>4&nbsp;&nbsp; Concurrence (5 points)</H2>
+Un SGBD reçoit la séquence d'opérations suivante, en provenance de
+trois transactions :<BR>
+<BR>
+<B>H</B>: r<SUB><FONT SIZE=2>1</FONT></SUB>[x] r<SUB><FONT SIZE=2>2</FONT></SUB>[x] w<SUB><FONT SIZE=2>2</FONT></SUB>[y] r<SUB><FONT SIZE=2>3</FONT></SUB>[y] w<SUB><FONT SIZE=2>3</FONT></SUB>[z] w<SUB><FONT SIZE=2>1</FONT></SUB>[z]
+w<SUB><FONT SIZE=2>2</FONT></SUB>[x] r<SUB><FONT SIZE=2>3</FONT></SUB>[x] c<SUB><FONT SIZE=2>2</FONT></SUB> c<SUB><FONT SIZE=2>1</FONT></SUB> w<SUB><FONT SIZE=2>3</FONT></SUB>[x] c<SUB><FONT SIZE=2>3</FONT></SUB> <BR>
+<BR>
+<DL COMPACT=compact>
+<DT>
+ <B>Question&nbsp;4.1&nbsp;:</B><DD> (1 pt) L'un des programmes qui s'exécute dans ce SGBD
+gère les connexions à un système informatique. Ce
+programme lit le mot de passe de l'utilisateur, le compare avec celui stocké
+sous forme cryptée dans la base de données, écrit les informations de
+connexion dans le journal de connexions et incrémente la valeur du nombre 
+d'accès réalisés par l'utilisateur dans le système. Le journal de
+connexions et le nombre d'accès des utilisateurs sont stockés dans la base
+de données.<BR><EM>Question</EM>: est-ce que l'une des transactions ci-dessus peut
+représenter l'exécution de ce programme de gestion des connexions?
+Justifiez votre réponse.<BR>
+<BR>
+ 
+<DT><B>Question&nbsp;4.2&nbsp;:</B><DD> (1 pt) On suppose que les opérations reçues sont
+exécutées dans ce même ordre par le SGBD. Montrez que cette exécution
+n'évite pas les annulations en cascade. Quelle transaction doit être
+annulée et quand pour que l'annulation en cascade se produise?<BR>
+<BR>
+ 
+<DT><B>Question&nbsp;4.3&nbsp;:</B><DD> (1 pt) Vérifiez si l'exécution est sérialisable, en
+trouvant les conflits et en construisant son graphe de sérialisation.<BR>
+<BR>
+ 
+<DT><B>Question&nbsp;4.4&nbsp;:</B><DD> (1,5 pt) Quelle est l'exécution obtenue par verrouillage à
+deux phases sur cette séquence d'opérations?
+On considère que le relâchement des verrous d'une transaction se fait au 
+<TT>Commit</TT> et qu'à ce moment on exécute en priorité les opérations 
+bloquées en attente de verrou.<BR>
+<BR>
+ 
+<DT><B>Question&nbsp;4.5&nbsp;:</B><DD> (0,5 pt) L'exécution obtenue par verrouillage à deux phases
+évite-t-elle les annulations en cascade?</DL>
+
+<HR>
+<A HREF="000906003.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

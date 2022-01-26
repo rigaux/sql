@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+
+<link REL=stylesheet HREF="http://cedric.cnam.fr/vertigo/mystyle.css" TYPE="text/css">
+<TITLE>
+ Concurrence (4 points)
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="010620002.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>3&nbsp;&nbsp; Concurrence (4 points)</H2>Soit l'exécution concurrente suivante de trois transactions dans un SGBD.<BR>
+<BR>
+<B>H</B>: r<SUB><FONT SIZE=2>1</FONT></SUB>[x] r<SUB><FONT SIZE=2>2</FONT></SUB>[x] r<SUB><FONT SIZE=2>3</FONT></SUB>[y] w<SUB><FONT SIZE=2>1</FONT></SUB>[x] w<SUB><FONT SIZE=2>1</FONT></SUB>[z]
+r<SUB><FONT SIZE=2>3</FONT></SUB>[z] c<SUB><FONT SIZE=2>1</FONT></SUB> w<SUB><FONT SIZE=2>2</FONT></SUB>[z] c<SUB><FONT SIZE=2>2</FONT></SUB> w<SUB><FONT SIZE=2>3</FONT></SUB>[y] c<SUB><FONT SIZE=2>3</FONT></SUB><BR>
+<BR>
+<OL type=1>
+<LI>
+  (1 pt) Vérifiez si <B>H</B> est sérialisable, en
+trouvant les conflits et en construisant son graphe de sérialisation.
+<BR>
+<BR>
+<B>Solution:</B><EM>
+Conflits :<BR>
+<BR>
+sur </EM><EM><I>x</I></EM><EM>: r</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x] - w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x]<BR>sur </EM><EM><I>y</I></EM><EM>: rien<BR>sur </EM><EM><I>z</I></EM><EM>: w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[z] - r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[z], w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[z] - w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[z], r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[z] - w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[z]<BR>
+<BR>
+Graphe de sérialisation: 
+T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> <FONT FACE=symbol>¾®</FONT></EM><EM> T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> <FONT FACE=symbol>¾®</FONT></EM><EM> T</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> </EM><EM><FONT FACE=symbol>¬¾</FONT></EM><EM> </EM><EM>T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><BR>
+<BR>
+<EM>Il y a deux cycles, donc </EM><EM><B>H</B></EM><EM> n'est pas sérialisable.
+</EM><BR>
+<BR>
+ 
+<LI> (1 pt) L'exécution <B>H</B> est-elle stricte? Sinon, est-il 
+possible de modifier juste l'emplacement des <TT>Commit</TT> afin que 
+<B>H</B> devienne stricte?
+<BR>
+<BR>
+<B>Solution:</B><EM>
+L'exécution n'est pas stricte, car elle n'évite pas les annulations en cascade
+(T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> lit </EM><EM><I>z</I></EM><EM> de T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> avant que T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> soit validée). Si on déplace
+c</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> juste après w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[z], alors les annulations en cascade sont
+évités et en plus l'écriture w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[z] se fait après la validation de T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>
+qui écrit aussi </EM><EM><I>z</I></EM><EM>. Donc, dans ce cas, </EM><EM><B>H</B></EM><EM> devient stricte.
+</EM><BR>
+<BR>
+ 
+<LI> (1,5 pt) Quelle est l'exécution obtenue par verrouillage à
+deux phases à partir de <B>H</B>?<BR>On considère que le relâchement des verrous d'une transaction se fait au 
+<TT>Commit</TT> et qu'à ce moment on exécute en priorité les opérations 
+bloquées en attente de verrou, dans l'ordre de leur blocage.
+<BR>
+<BR>
+<B>Solution:</B><EM>
+r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] s'exécute<BR>r</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x] s'exécute aussi, car on peut partager le verrou de lecture<BR>r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] s'exécute<BR>w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] est bloquée par r</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x]<BR>w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[z] est bloquée, car T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> est bloquée<BR>r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[z] s'exécute<BR>c</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> est bloquée, car T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> est bloquée<BR>w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[z] est bloquée par r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[z]<BR>c</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> est bloquée, car T</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> est bloquée<BR>w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] s'exécute<BR>c</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> s'exécute et relâche les verrous de T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> </EM><EM><FONT FACE=symbol>Þ</FONT></EM><EM> w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[z]
+peut s'exécuter et c</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> aussi, qui relâche les verrous de T</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> 
+</EM><EM><FONT FACE=symbol>Þ</FONT></EM><EM> w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x], w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[z] et c</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> s'exécutent<BR>
+<BR>
+Résultat: r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] r</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x] r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[z] w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] c</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> 
+w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[z] c</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[z] c</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>
+</EM><BR>
+<BR>
+ 
+<LI> (0,5 pt) L'exécution <B>H</B> produit-elle des annulations
+quand elle est traitée par un contrôleur intégré avec estampillage et
+la règle de Thomas? Justifiez votre réponse, mais sans produire tout
+le résultat donné par le contrôleur intégré.
+<BR>
+<BR>
+<B>Solution:</B><EM>
+Oui, </EM><EM><B>H</B></EM><EM> produit des annulations, car on retrouve r</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[x] suivi de 
+w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x], donc un conflit lecture-écriture avec arrivée en retard de
+w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] </EM><EM><FONT FACE=symbol>Þ</FONT></EM><EM> rejet de w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] même par un contrôleur intégré.
+</EM></OL>
+<HR>
+<A HREF="010620002.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

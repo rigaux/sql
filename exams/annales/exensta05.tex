@@ -1,0 +1,373 @@
+\documentclass[french]{article}
+
+\usepackage{babel}
+\usepackage{psfig}
+\usepackage{comment}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage[french]{minitoc}
+\usepackage[latin1]{inputenc}
+\usepackage{moreverb}
+\newenvironment{smallverbatim}%
+{\endgraf\small\verbatimtab}{\endverbatimtab}
+
+\newcommand{\fig}[2]
+{
+ \begin{figure*}[hbt]
+  \begin{center}
+   \centerline{\psfig{figure=#1.eps}}
+  \caption{\label{#1}  #2}
+  \end{center}
+ \end{figure*}
+}
+
+\newenvironment{solution}{\nopagebreak\par\vspace*{2mm}\underline{Solution~:}\em\par}{\par\vspace*{2mm}}
+
+
+\pagestyle{headings}
+\markright{18/02/2005 \hfill ESNTA -- Paris \hfill\ } 
+
+\baselineskip 6pt
+\parskip 6pt
+\onecolumn
+\textwidth 16cm
+\textheight 24cm
+\hoffset=-2cm
+\voffset=-2.5cm
+\setlength{\parindent}{0.0cm}
+\unitlength 1cm
+\newtheorem{defin}{Définition}[section]
+\newtheorem{exampl}{Exemple}[section]
+\def\picwidth{16cm}
+
+\excludecomment{solution}
+
+\begin{document}
+\begin{center}
+\Large\bf  Examen Bases de Données\\
+\large\bf Vendredi 18 février 2005
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace*{0.5cm}
+
+\hrule
+
+\textbf{Documents autorisés: notes de cours et polycopié}
+
+\smallskip
+
+\hrule
+
+Les informations auxquelles on s'intéresse sont les 
+droits d'accès à une base de données, tels qu'ils
+peuvent etre définis par la commande {\tt GRANT}
+de SQL2. On veut définir un modèle de représentation
+de ces droits d'accès, les stocker dans une base
+de données, et les interroger avec SQL.  
+Voici les principales notions de l'application.
+
+\begin{itemize}
+   \item {\bf Les tables}  sont des tables relationnelles,
+     avec quelques informations générales comme le nom
+    de la table, le nom de l'utilisateur qui a créé
+    la table, et leur attributs.
+
+   \item {\bf Les utilisateurs} sont caractérisés
+             par leur ID, leur nom et leur prénom.
+
+   \item {\bf Les privilèges} définissent les {\bf droits}
+      des {\bf utilisateurs} sur les {\bf tables}. 
+   {\bf Les droits} sont les types d'action
+    que l'on peut effectuer sur une table.
+
+\end{itemize}
+
+Voici le schéma de la base. Comme d'habitude, les clés étrangères 
+ne sont pas représentées\,:
+
+      \begin{itemize}
+        \item  Table (\textbf{nomTable}, idCreateur)
+        \item  Attribut  (\textbf{nomTable}, \textbf{nom}, type, longueur)
+         \item  Utilisateur (\textbf{id}, nom, prenom)
+         \item  Privilège (\textbf{id}, nomTable, idUtilisateur, droit)
+       \end{itemize}
+
+\section{Schéma (\textbf{6 pts})}
+
+\begin{enumerate}
+   \item ({\bf 2 pts})
+       Donnez le schéma E/A correspondant au schéma relationnel.
+
+   \item ({\bf 2 pts}) Donnez les commandes {\tt CREATE TABLE} décrivant
+         le schéma des relations ci-dessus. Indiquez soigneusement
+         les clés étrangères et les clés primaires.
+
+   \item ({\bf 1 pt}) Donnez la contrainte SQL2 qui force
+      l'attribut {\tt droit} à prendre ses valeurs
+      dans l'ensemble {\tt \{SELECT, INSERT, UPDATE, DELETE, ALL\}}.
+      De plus il faut {\bf toujours}, pour un privilège,
+         connaitre la valeur
+       de {\tt droit}, {\tt nomTable} et {\tt idUtilisateur}.
+       
+\begin{solution}
+Exemple pour la relation {\tt Privilege}\,:
+\begin{verbatim}
+CREATE TABLE Privilege 
+   (id NUMBER (10),
+    nomTable    VARCHAR (30),
+    idUtilisateur  NUMBER (10),
+    droit VARCHAR (10) CHECK (droit IN 
+    ('SELECT','INSERT','DELETE','UPDATE','ALL')),
+     PRIMARY KEY (id) NOT NULL,
+     FOREIGN KEY (nomTable) REFERENCES Table,
+     FOREIGN KEY (idUtilisateur) REFERENCES Utilisateur);
+\end{verbatim}
+
+\end{solution}
+
+
+   \item  ({\bf 1 pt}) On veut enregistrer les informations
+             sur les {\em sessions} utilisateur. Une session
+                     est caractérisée par son instant de début, son
+                instant de fin et l'utilisateur qui est connecté.
+              De plus, pendant une session, on lit ou on met à jour
+            certaines tables.   Indiquez
+      comment on représente cette information dans le schéma E/A,
+     puis dans le schéma relationnel. 
+
+\begin{solution}
+Il faut ajouter une association {\tt Acces} n-m entre {\tt Programme}
+et {\tt Table}, ce qui donne la table\,:
+\begin{verbatim}
+Acces (nomTable, idUtilisateur, nomProg, typeAccès)
+\end{verbatim}
+Les trois premiers champs constituent la clé.
+\end{solution}
+\end{enumerate}
+    
+\section{Requêtes ({\bf 6 pts})}
+
+Sur le schéma donné dans l'énoncé,
+exprimez en SQL les requêtes suivantes:
+
+\begin{enumerate}
+  \item Nom des tables pour lesquelles un utilisateur
+     a le privilège '\texttt{ALL}'
+\begin{solution}
+{\tt SELECT nomTable FROM Privilege WHERE droit = 'ALL'}
+\end{solution}
+
+
+  \item Quel utilisateur a créé une table avec un attribut de 
+    type \texttt{BLOB}\? Donnez le nom de l'utilisateur et le nom
+        de la table.
+
+
+  \item Paires d'utilisateurs (nom et prénom pour chacun)
+        qui ont tous deux un même droit sur une même table.
+
+  \item Donnez les tables (nom et id du créateur)
+         pour lesquelles le créateur
+     de la table n'a pas le droit \texttt{DELETE}.
+\begin{solution}
+{\tt SELECT nomTable FROM Table t
+WHERE idCreateur NOT IN (SELECT idUtilisateur 
+                         FROM   Privilege p
+                         WHERE  droit='DELETE'
+                         AND    p.nomTable=t.nomTable)
+}
+\end{solution}
+
+
+  \item Nom des utilisateurs qui ont créé une table 
+               sans attribut de type \texttt{VARCHAR}.  
+
+  \item Combien de tables ont été créées par l'utilisateur Rigaux\,?
+
+  \item Quelles sont les tables ayant au moins 4 attributs
+             de type \texttt{INT}\,?
+
+\begin{solution}
+{\tt SELECT nomTable FROM Privilege WHERE droit='ALL'
+     GROUP BY nomTable
+     HAVING COUNT(*) >= 4
+}
+\end{solution}
+
+  \end{enumerate}
+
+\section{Requêtes imbriquées ({\bf 2 pts})}
+
+Voici 3 ordres SQL.
+
+\begin{verbatim}
+SELECT nomTable FROM   Utilisateur u, privilege p
+WHERE  u.id = p.idUtilisateur
+AND    nom = 'Rigaux' AND    droit = 'ALL'
+\end{verbatim}
+
+\begin{verbatim}
+SELECT nomTable FROM  privilege p
+WHERE  p.idUtilisateur = (SELECT id FROM utilisateur
+                          WHERE nom = 'Rigaux')
+AND    NOT (droit != 'ALL')
+\end{verbatim}
+
+\begin{verbatim}
+SELECT nomTable FROM  privilege p
+WHERE  NOT EXISTS (SELECT 1 FROM privilege p2, utilisateur
+                    WHERE nom != 'Rigaux' 
+                    AND p2.idUtilisateur=id
+                    AND p.nomTable = p2.nomTable)
+AND    droit = 'ALL'
+\end{verbatim}
+
+\begin{enumerate}
+  \item Exprimez, en une phrase, ce que fait le premier ordre.
+  \item Parmi les 2 autres requêtes, lesquelles sont {\bf équivalentes}
+      (elles donnent le même résultat, quelle que soit l'instance) 
+      à la requête 1\,? 
+\end{enumerate}
+
+\begin{solution}
+   \begin{enumerate}
+      \item La requete sélectionne les tables sur lesquelles
+     Rigaux a le privilège 'ALL'
+
+       \item La première est équivalente à la deuxième.
+        La troisième séléctionne les tables
+         sur lesquelles (1) il y a un privilège 'ALL', 
+         (2) seul Rigaux a des privilèges. Ce n'est pas
+      la meme chose.
+    \end{enumerate}
+\end{solution}
+
+\section{Stockage et indexation (4 pts)}
+
+On veut stocker un fichier $F$ avec 100\,000 articles d'une taille fixe de 
+1 kilo-octet par article.
+
+Questions :
+\begin{enumerate}
+  \item (1 point) De combien de blocs a-t-on besoin au minimum pour
+           stocker tout
+      le fichier si la taille d'une bloc est 32KO?
+
+
+ %     Solution : 100000/32=3125 blocs
+
+  \item (1 point) 
+    On suppose maintenant que $F$ est indexé par un index non dense 
+    sur \texttt{A} et
+     un index dense sur un autre champ \texttt{B}. On peut
+   stocker 100 entrées dans un bloc d'index et
+       aucune place libre n'est laissée dans les blocs. 
+ Combien d'entrées y a-t-il dans les feuilles de l'index non dense\,? 
+dans les feuilles de l'index dense\,? 
+\begin{solution}
+Le fichier $F$ contient 3125 blocs et et trié sur \texttt{A}.
+ L'index non dense contient donc 3\,125
+ entrées, une par bloc. L'index dense contient 100\,000 entrées, une par
+article.
+\end{solution}
+
+  \item (1 point)
+     Supposons que l'index non dense a deux niveaux, racine comprise,
+    et que seule la racine est en mémoire. 
+   On se place dans le pire des cas où il faut
+   une E/S pour lire une feuille d'index et une E/S pour lire un bloc du
+  fichier. On cherche les enregistrements pour lesquels la valeur de l'attribut 
+   \texttt{A} est comprise entre  P123 et 
+  P345. On suppose qu'il y a moins de 100 enregistrements tels que \texttt{A} 
+   commençe par  P. Combien d E/S coûte la recherche par l'index
+    dans le pire des cas\,? 
+\begin{solution}
+La recherche utilise  l'index non dense. Celui-ci tient sur 32 blocs.
+La traversée de l'index part de la racine et arrive immédiatement à la
+feuille d'index dont la premiere entrée est inférieure ou égale à P123 et dont
+la dernière entrée est supérieure ou égale à P123. On recherche dans cette
+feuille l'entrée la plus grande inférieure ou égale à P123. Cette entrée
+contient l'adresse du bloc du fichier qui contient l'article de code  P123. 
+On accède au bloc. Les articles sont triés sur \texttt{A}. Soit tous les
+articles de code compris entre P123 et P345 sont dans ce bloc soit ils sont
+à cheval sur deux blocs adjacents (ils ne peuvent pas être sur plus de 2 blocs
+adjacents). Dans ce dernier cas, une lecture du bloc
+adjacent chainé est nécessaire. Donc la recherche coûte 2 ou 3 accès
+bloc.
+\end{solution}
+
+
+\item (1 point) Soit l'arbre B$^+$ d'ordre 2 de la figure~\ref{arbreExam}.
+Représenter l'arbre après l'insertion de la valeur 8. 
+
+\end{enumerate}
+
+\begin{comment}
+\section{Index}
+\begin{enumerate}
+\item Supposons une relation R(A,B,C,D) avec un index non-dense
+sur l'attribut C et un index dense sur l'attribut A
+qui est la clé primaire. On veut créer 
+un index sur l'attribut D.
+\begin{enumerate}
+\item Quel type d'index (dense/non-dense) proposez vous? justifiez
+votre réponse. (0,5 pts)
+\item Sachant que la relation R possède 32000 enregistrements,
+chacun occupant 4Ko (on considère que chacun des 4 attributs occupe
+1Ko) et qu'une bloc a une capacité de 32Ko, combien de blocs
+occupe l'index sur A?
+(pour rappel, on place dans l'index seulement les valeurs de
+l'attribut sur lequel on construit l'index). (1 pt) 
+\end{enumerate}
+\end{enumerate}
+\end{comment}
+
+\fig{arbreExam}{Un arbre B+}
+
+\section{Plans d'exécution (4 points)}
+
+On considère les deux relations suivantes:
+\begin{itemize}
+\item {\tt Etudiant(nom, age, univ)} représentant un étudiant
+dont on précise le nom, l'âge et l'université
+\item {\tt Sortie(invitant,jour,lieu,invitee)} représentant
+une sortie dont on précise le nom de l'étudiant garçon ayant proposé,
+la date et le lieu de la sortie, ainsi que le nom de l'étudiante
+fille invitée.
+\end{itemize}
+
+\begin{enumerate}
+ \item Soit la requête 
+\begin{smallverbatim}
+SELECT  * FROM Etudiant, Sortie
+WHERE  lieu=univ
+\end{smallverbatim}
+Il n'y a d'index ni sur \texttt{lieu} ni sur \texttt{univ}..
+\begin{enumerate}
+   \item Donner un plan d'exécution logique.
+   \item Donner un plan d'exécution physique 
+               sous forme arborescente.
+   \item Quels sont les algorithmes possibles\,?
+\end{enumerate}
+
+  \item Soit la requête 
+\begin{smallverbatim}
+SELECT  * FROM Etudiant, Sortie
+WHERE  lieu=univ
+AND nom='Toto'
+\end{smallverbatim}
+Il y a un index sur \texttt{nom}.
+\begin{enumerate}
+   \item Donner un plan d'exécution logique.
+   \item Donner un plan d'exécution physique 
+               sous forme arborescente. 
+
+   \item Que devient le 
+           plan d'exécution physique
+              si on ajoute un index sur \texttt{univ}\,?
+\end{enumerate}
+
+\end{enumerate}
+\end{document}

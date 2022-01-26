@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+ Optimisation des requêtes SQL (3 points)
+</TITLE>
+</HEAD>
+<BODY BGCOLOR=silver TEXT=black>
+<A HREF="980916001.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="980916003.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>2&nbsp;&nbsp;Optimisation des requêtes SQL (3 points)</H2>
+Étant donné le schéma de la Section&nbsp;<A HREF="980916001.html#sec:relationnel">1</A>,<BR>
+<BR>
+<UL>
+<LI>soit la requête suivante:
+<PRE>
+select NomC
+  from Clients, Voyages, Visites
+ where Prix &lt; 5000
+   and EndV = 'parc Kruger'
+   and Clients.NumV = Voyages.NumV
+   and Visites.NumV = Voyages.NumV;
+</PRE>Supposons que NumV est une clé primaire de la relation Voyages et qu'il
+ n'y a pas d'autres clés. Comment cette requête pourrait être
+ évaluée? Vous pouvez utiliser un plan d'exécution généré par l'outil
+ EXPLAIN d'Oracle pour donner les détails nécessaires à la
+ compréhension. (1 point)
+<BR>
+<BR>
+<B>Solution:</B><BR>
+<BR>
+<PRE>
+Plan d'execution
+--------------------------------------------------------------------------
+0 SELECT STATEMENT
+  1 MERGE JOIN
+    2 SORT JOIN
+      3 NESTED LOOPS
+        4 TABLE ACCESS FULL VISITES
+        5 TABLE ACCESS BY ROWID VOYAGES
+          6 INDEX UNIQUE SCAN SYS_C002640
+    7 SORT JOIN
+      8 TABLE ACCESS FULL CLIENTS
+</PRE> 
+ 
+
+<LI>soit la requête suivante:
+<PRE>
+select A.EndV
+  from Visites A, Visites B
+ where A.NumV &lt;&gt; B.NumV
+   and A.DatV = B.DatV
+   and A.EndV = B.EndV
+</PRE>L'outil EXPLAIN de Oracle fournit le plan d'exécution suivant:
+<PRE>
+Plan d'execution
+----------------------------------------------------------------------
+0 SELECT STATEMENT
+  1 NESTED LOOPS
+    2 TABLE ACCESS FULL VISITES
+    3 TABLE ACCESS BY ROWID VISITES
+      4 AND-EQUAL
+        5 INDEX RANGE SCAN IND1
+        6 INDEX RANGE SCAN IND2
+</PRE><OL>
+<LI>Sur quelle relation et quel attribut les index IND1 et IND2
+ sont-ils définis pour obtenir ce plan d'exécution? (1 point)
+<BR>
+<BR>
+<B>Solution:</B><BR>
+<BR>
+<EM>IND1 et IND2 sont définis sur les attributs DatV et EndV de la
+ relation Visites.
+</EM> 
+ 
+<LI>Comment est évaluée chacune des jointures? (1 point)
+ </OL>
+</UL><HR>
+<A HREF="980916001.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="980916003.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

@@ -1,0 +1,235 @@
+\documentclass[french]{article}
+
+\usepackage{babel}
+\usepackage{comment}
+ 
+\pagestyle{headings}
+\markright{28/6/1995 \hfill Conservatoire National des Arts et
+M\'etiers -- Paris \hfill\ } 
+
+\baselineskip 6pt
+\parskip 6pt
+\onecolumn
+\textwidth 16cm
+\textheight 24cm
+\hoffset=-2cm
+\voffset=-2.5cm
+\setlength{\parindent}{0.0cm}
+\unitlength 1cm
+\newtheorem{defin}{D\'efinition}[section]
+\newtheorem{exampl}{Exemple}[section]
+\def\picwidth{16cm}
+
+\newenvironment{solution}{\nopagebreak\par\vspace*{2mm}\underline{Solution~:}\em\par}{\par\vspace*{2mm}}
+
+%\excludecomment{solution}
+
+\begin{document}
+\begin{center}
+\Large\bf Processus d'Informatisation et Bases de Donn\'ees A \\ 
+    Examen Bases de Donn\'ees\\
+\large\bf Mercredi 23 juin 1999
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace*{2cm}
+
+
+Des \'editeurs se r\'eunissent pour cr\'eer une Base
+de Donn\'ees sur leurs publications scientifiques.
+Dans de telles publications, plusieurs auteurs se
+regroupent pour \'ecrire un livre en se r\'epartissant les chapitres
+\`a r\'ediger.
+Apr\`es discussion, voici le sch\'ema obtenu:
+ 
+{\tt
+\begin{enumerate}
+   \item LIVRE (\underline{titreLivre}, ann\'ee,
+                          \'editeur,  chiffreAffaire)
+   \item CHAPITRE (\underline{titreLivre, titreChapitre}, nbPages)
+   \item AUTEUR (\underline{nom}, pr\'enom, ann\'eeNaissance)
+   \item REDACTION (\underline{nomAuteur, titreLivre, titreChapitre})
+\end{enumerate}
+}
+
+Les cl\'es primaires sont soulign\'ees, mais pas les cl\'es \'etrang\`eres.
+
+\section{Cr\'eation du sch\'ema}
+
+\begin{enumerate}
+  \item ({\bf 4 pts})
+        Donnez les ordres {\tt CREATE TABLE} pour le sch\'ema,
+       en sp\'ecifiant soigneusement cl\'es primaires et \'etrang\`eres
+      avec la syntaxe SQL2. Le type des donn\'ees est secondaire:
+     choisissez ce qui vous semble logique.
+
+\begin{solution}
+
+\begin{verbatim}
+CREATE TABLE Livre (titreLivre VARCHAR2 (30),
+	            annéeParution    NUMBER (4),
+                    éditeur    VARCHAR2 (30),
+	            chiffreAffaire   NUMBER (12,2),
+	             PRIMARY KEY (titreLivre)
+                    );
+
+CREATE TABLE Chapitre (titreLivre   VARCHAR2 (30),
+                       titreChapitre  VARCHAR2 (30),,
+    	               nbPages   NUMBER (4),
+                       PRIMARY KEY (titreLivre, titreChapitre),
+                       FOREIGN KEY (titreLivre) REFERENCES Livre
+                         ON DELETE CASCADE
+                       );
+
+CREATE TABLE Auteur (nom VARCHAR2 (30),
+	             prénom   VARCHAR2 (30),
+                     annéeNaissance  NUMBER (4),
+	             PRIMARY KEY (nom)
+                    );
+
+CREATE TABLE Rédaction (nomAuteur VARCHAR2 (30),
+                     titreLivre   VARCHAR2 (30),
+                     titreChapitre  VARCHAR2 (30),,
+               PRIMARY KEY (nomAuteur,titreLivre, titreChapitre),
+               FOREIGN KEY (nomAuteur) REFERENCES Auteur
+                               ON DELETE CASCADE,
+               FOREIGN KEY (titreLivre,titreChapitre) REFERENCES Livre
+                               ON DELETE CASCADE
+                       );
+\end{verbatim}
+
+La table {\tt REDACTION} est un exemple standard d'association n-m.
+\end{solution}
+
+   \item ({\bf 1 pt}) Sur quelles cl\'es \'etrang\`eres devrait-on mettre
+          l'option {\tt ON DELETE CASCADE}\,?
+
+
+   \item  ({\bf 2 pts}) Donnez le sch\'ema Entit\'e/Association,
+     en Merise ou en UML, correspondant au sch\'ema relationnel 
+     de l'\'enonc\'e.
+\begin{solution}
+Association de composition entre {\tt Livre} et {\tt Chapitre}.
+Association {\tt n-n} entre chapitre et auteur.
+
+\end{solution}
+   \item ({\bf 2 pts}) Voici les d\'ependances fonctionnelles pour la table
+         {\tt LIVRE}\,: \{$titreLivre \to annee; titreLivre \to editeur;
+                            editeur \to chiffreAffaire$\}
+        Montrer que la table n'est pas en troisi\`eme forme normale et
+       proposez une bonne d\'ecomposition.
+
+\begin{solution}
+La DF  $editeur \to chiffreAffaire$ pose problème puisque 
+$editeur$ n'est pas une cl\'e, et $chiffreAffaire$ ne fait pas partie
+de la cl\'e. Donc il faut d\'ecomposer en 
+{\tt LIVRE (titreLivre, editeur, année)} et 
+{\tt EDITEUR (editeur, chiffreAffaire)}. {\tt éditeur} devient
+cl\'e \'etrangère dans la table {\tt Livre}.
+
+\end{solution}
+\end{enumerate}
+
+\end{document}
+
+\section{Requ\^etes}
+
+Sur le sch\'ema {\bf propos\'e dans l'\'enonc\'e}, exprimez
+en alg\`ebre relationnelle {\bf ou} en SQL les requ\^etes suivantes:
+
+\begin{enumerate}
+  \item ({\bf 1 pt}) Titre des livres \'edit\'es chez l'\'editeur 'Vulcain'.
+\begin{solution}
+SELECT titre FROM livre WHERE editeur='Vulcain'
+\end{solution}
+
+  \item  ({\bf 1 pt}) Quel(s) \'editeur(s) a (ou ont) \'edit\'e 
+       un livre dont un des chapitres
+        a pour titre 'SQL'\,?
+\begin{solution}
+SELECT editeur 
+FROM Livre l, Chapitre c
+WHERE l.titreLivre = c.titreLivre
+AND  titreChapitre = 'SQL'
+\end{solution}
+
+   \item  ({\bf 1 pts}) Nom des auteurs qui ont contribu\'e \`a un chapitre 
+      de plus de 50 pages.
+\begin{solution}
+SELECT nomAuteur
+FROM Redaction r, Chapitre c
+WHERE  r.titreLivre = c.titreLivre
+AND  r.titreChapitre = c.titreChapitre
+AND  nbPages > 50
+\end{solution}
+
+    \item  ({\bf 2 pts})
+      Nom des auteurs 
+         qui ont contribu\'e \`a un livre paru chez Vulcain
+\begin{solution}
+SELECT nomAuteur
+FROM  Redaction r, Livre v
+WHERE  r.titreLivre = l.titreLivre
+AND   editeur = 'Vulcain'
+\end{solution}
+
+   \item  ({\bf 2 pts})
+       Titre des livres chez Vulcain qui ne contiennent 
+              pas de chapitre sur SQL (titreChapitre='SQL')
+\begin{solution}
+SELECT titreLivre 
+FROM    Livre
+WHERE   editeur = 'Vulcain'
+AND     titreLivre NOT IN (SELECT titreLivre FROM chapitre
+                           WHERE titreChapitre='SQL')
+\end{solution}
+
+   \item  ({\bf 2 pts}, SQL seulement) Nom des auteurs
+      qui ont contribu\'e \`a un livre paru lors qu'ils
+      avaient moins de 25 ans.
+\begin{solution}
+SELECT nom
+FROM  Auteur a,Redaction r, Chapitre c, Livre v
+WHERE  r.titreLivre = c.titreLivre
+AND  r.titreChapitre = c.titreChapitre
+AND  l.titreLivre = c.titreLivre
+AND   a.nom = r.nomAuteur
+AND   anneeParution - anneeNaissance <= 25
+\end{solution}
+
+   \item  ({\bf 1 pt}, SQL seulement) Donner, pour chaque \'editeur, le nombre
+          de livres qu'il a publi\'e.
+
+\begin{solution}
+SELECT editeur, count(*)
+FROM Livre
+GROUP BY editeur
+\end{solution}
+
+   \item  ({\bf 2 pts}, SQL seulement) Donner les titres des livres ayant plus
+        de 7 chapitres.
+\begin{solution}
+SELECT titreLivre
+FROM Chapitre
+GROUP BY titreLivre
+HAVING count(*) >= 7
+\end{solution}
+
+   \item  ({\bf 1 pt}, SQL seulement) Donner l'ordre SQL ins\'erant
+       l'auteur Ben Duchemin, n\'e en 1963, puis
+            l'ordre SQL
+          modifiant l'ann\'ee de naissance de Duchemin qui
+          devient 1965.
+
+\begin{solution}
+INSERT INTO Auteur VALUES ('Duchemin', 'Ben', 1963)
+UPDATE Auteur SET anneeNaissance = 1965 WHERE nom = 'Duchemin'
+\end{solution}
+\end{enumerate}
+
+\begin{center}
+
+\framebox(10,2){{\bf Solution sur le WEB, et au secr\'etariat}}
+\end{center}
+\end{document}

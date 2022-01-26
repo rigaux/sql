@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+
+<link REL=stylesheet HREF="/~amann/mystyle.css"
+TYPE="text/css">
+<TITLE>
+ Langages de Requêtes (8 points)
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<A HREF="000621002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<HR>
+
+<H2>1&nbsp;&nbsp; Langages de Requêtes (8 points)</H2>
+Le fournisseur d'accès à Internet <EM>LibertyWorld</EM> utilise Oracle
+pour gérer les informations concernant les Internautes abonnés. Voici
+le schéma relationnel utilisé&nbsp;:<BR>
+<BR>
+<UL>
+<LI>
+ <B>Abonnés</B>(<FONT COLOR=purple>L</FONT>ogin, <FONT COLOR=purple>N</FONT>om, <FONT COLOR=purple>P</FONT>rénom, <FONT COLOR=purple>N</FONT>um<FONT COLOR=purple>T</FONT>él, <FONT COLOR=purple>V</FONT>ille)&nbsp;: <FONT COLOR=purple>Login</FONT> est un login unique
+ attribué par le fournisseur d'accès à chaque utilisateur. <FONT COLOR=purple>Nom</FONT>, <FONT COLOR=purple>Prénom</FONT>, <FONT COLOR=purple>NumTél</FONT> et <FONT COLOR=purple>Ville</FONT> correspondent au
+ nom, prénom, numéro de téléphone et à la résidence de l'abonné. 
+
+<LI> <B>Abonnements</B>(<FONT COLOR=purple>L</FONT>ogin, <FONT COLOR=purple>T</FONT>ype<FONT COLOR=purple>A</FONT>bonnement, <FONT COLOR=purple>E</FONT>space<FONT COLOR=purple>M</FONT>ax, <FONT COLOR=purple>A</FONT>dresses<FONT COLOR=purple>M</FONT>ax, <FONT COLOR=purple>E</FONT>space<FONT COLOR=purple>U</FONT>tilisé, <FONT COLOR=purple>A</FONT>dresses<FONT COLOR=purple>U</FONT>tilisées)&nbsp;: <FONT COLOR=purple>TypeAbonnement</FONT> est le type d'abonnement (<EM>Gratos</EM>, <EM>WeekEnd</EM>, <EM>DeLuxe</EM>, ...) choisi par le client. <FONT COLOR=purple>EspaceMax</FONT>
+ et <FONT COLOR=purple>AdressesMax</FONT> correspondent à l'espace maximale (en MO) et le
+ nombre d'adresses email maximal pour chaque type d'abonnement (e.g. 
+ <FONT COLOR=purple>TypeAbonnement = 'Gratos'</FONT>&nbsp;: <FONT COLOR=purple>EspaceMax = 5</FONT> et <FONT COLOR=purple>AdressesMax = 10</FONT>). <FONT COLOR=purple>EspaceUtilisé</FONT> et <FONT COLOR=purple>AdressesUtilisées</FONT>
+ correspondent à l'espace disque (en MO) et le nombre d'adresses
+ email utilisées par le client.
+
+<LI> <B>Connexions</B>(<FONT COLOR=purple>L</FONT>ogin, <FONT COLOR=purple>DA</FONT>te, <FONT COLOR=purple>H</FONT>eure, <FONT COLOR=purple>D</FONT>urée)&nbsp;: la table qui contient des informations sur les
+ connexions pour chaque login&nbsp;: <FONT COLOR=purple>Date</FONT>, <FONT COLOR=purple>Heure</FONT>, et <FONT COLOR=purple>Durée</FONT> correspondent à la date (format 'jj/mm/aaaa'), l'heure
+ (format 'hh:mm') et la durée (en minutes) de chaque connexion effectuée
+ par l'abonné. 
+</UL>Écrire les requêtes suivantes <B>en algèbre relationnelle et en SQL</B>&nbsp;:
+<DL COMPACT=compact>
+<DT>
+<B>Requête&nbsp;1.1&nbsp;:</B><DD> (1 point) Les noms des abonnés parisiens avec un abonnement <EM>Gratos</EM> &nbsp;?<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<DIV ALIGN=center><FONT FACE=symbol>p</FONT><SUB><FONT SIZE=2><I>Nom</I></FONT></SUB>(<FONT FACE=symbol>s</FONT><SUB><FONT SIZE=2><I>Ville</I> = '<I>Paris</I>'</FONT></SUB>(<I>Abonnes</I>) |&gt;&lt;| <FONT FACE=symbol>s</FONT><SUB><FONT SIZE=2><I>TypeAbonnement</I> = '<I>Gratos</I>'</FONT></SUB>(<I>Abonnes</I>))</DIV>
+<PRE>
+select Nom
+  from Abonnes, Abonnements
+ where Abonnes.Login = Abonnements.Login
+   and Ville = 'Paris'
+   and TypeAbonnement = 'Gratos';
+</PRE>
+<DT><B>Requête&nbsp;1.2&nbsp;:</B><DD> (2 points) Les noms des abonnés qui se sont connectés le 1er Mai
+ 2000 et qui utilisent plus d'espace disque qu'autorisé par le type de leur
+ abonnement&nbsp;?<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<DIV ALIGN=center><FONT FACE=symbol>p</FONT><SUB><FONT SIZE=2><I>Nom</I></FONT></SUB>(<I>Abonnes</I> |&gt;&lt;| <FONT FACE=symbol>s</FONT><SUB><FONT SIZE=2><I>Date</I> = 01/05/2000</FONT></SUB> <I>Connexions</I> |&gt;&lt;|
+<FONT FACE=symbol>s</FONT><SUB><FONT SIZE=2><I>EspaceUtilise</I> &gt; <I>EspaceMax</I></FONT></SUB> <I>Abonnements</I>)</DIV>
+<PRE>
+select Login
+  from Abonnes, Connexions, Abonnements
+ where Abonnes.Login = Connexions.Login
+   and Abonnes.Login = Abonnements.Login
+   and EspaceUtilise &gt; EspaceMax
+   and Date = '01/05/2000';
+</PRE>
+<DT><B>Requête&nbsp;1.3&nbsp;:</B><DD> (1 point) La requête précédente <B>en calcul relationnel
+ (domaine ou n-uplet)</B>.<BR>
+<BR>
+
+<B>Solution&nbsp;:</B><BR>
+<BR>
+<DIV ALIGN=center><TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD VALIGN=top ALIGN=center NOWRAP></TD>
+<TD ALIGN=right NOWRAP>{ <I>L</I></TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT FACE=symbol>$</FONT> <I>N</I>,<I>P</I>,<I>NT</I>,<I>V</I>,<I>TA</I>,<I>EM</I>,<I>AM</I>,<I>H</I>,<I>D</I>,<I>EU</I>,<I>AU</I> (<I>Abonnes</I>(<I>L</I>,<I>N</I>,<I>P</I>,<I>NT</I>,<I>V</I>) <FONT FACE=symbol>Ù</FONT></TD>
+<TD VALIGN=top ALIGN=center NOWRAP>&nbsp;&nbsp;&nbsp;&nbsp;(1)</TD>
+</TR>
+<TR><TD VALIGN=top ALIGN=center NOWRAP></TD>
+<TD ALIGN=right NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>&nbsp;</TD>
+<TD ALIGN=left NOWRAP><I>Abonnements</I>(<I>L</I>,<I>TA</I>,<I>EM</I>,<I>AM</I>,<I>EU</I>,<I>AU</I>) <FONT FACE=symbol>Ù</FONT></TD>
+<TD VALIGN=top ALIGN=center NOWRAP>&nbsp;&nbsp;&nbsp;&nbsp;(2)</TD>
+</TR>
+<TR><TD VALIGN=top ALIGN=center NOWRAP></TD>
+<TD ALIGN=right NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>&nbsp;</TD>
+<TD ALIGN=left NOWRAP><I>Connexions</I>(<I>L</I>,'01/05/2000',<I>H</I>,<I>D</I>) <FONT FACE=symbol>Ù</FONT> <I>EU</I> &gt; <I>EM</I>) }</TD>
+<TD VALIGN=top ALIGN=center NOWRAP>&nbsp;&nbsp;&nbsp;&nbsp;(3)</TD>
+</TR></TABLE></DIV><BR>
+
+<DT><B>Requête&nbsp;1.4&nbsp;:</B><DD> (2 points) Les logins des abonnés qui ne se sont pas connectés depuis le
+ 1er Mai 2000&nbsp;?<BR>
+<BR>
+
+<B>Solution&nbsp;:</B><BR>
+<BR>
+<DIV ALIGN=center><FONT FACE=symbol>p</FONT><SUB><FONT SIZE=2><I>Login</I></FONT></SUB>(<I>Abonnes</I>) - <FONT FACE=symbol>p</FONT><SUB><FONT SIZE=2><I>Login</I></FONT></SUB>(<FONT FACE=symbol>s</FONT><SUB><FONT SIZE=2><I>Date</I> &gt;= '01/05/2000'</FONT></SUB> <I>Connexions</I>)</DIV><BR>
+<PRE>
+select Login
+  from Abonnes
+ where Login not in (select Login
+                       from Connexions
+                      where Date &gt;= '01/05/2000');
+</PRE>
+</DL>Écrire les requêtes suivantes <B>uniquement en SQL</B>&nbsp;:
+<DL COMPACT=compact>
+<DT>
+
+<B>Requête&nbsp;1.5&nbsp;:</B><DD> (1 point) La durée totale des connexions depuis le 1er Mai 2000 <EM>par
+ type d'abonnement</EM>&nbsp;?<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<PRE>
+select TypeAbonnement, Sum(Durée)
+  from Abonnement, Connexions
+ where Date &gt;= '01/05/2000'
+   and Abonnement.Login = Connexions.Login
+ group by TypeAbonnement;
+</PRE>
+<DT><B>Requête&nbsp;1.6&nbsp;:</B><DD> (1 point) Le(s) login(s) avec le plus important temps <EM>total</EM> de connexion (temps total de connexion maximum)&nbsp;?<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<PRE>
+select Login
+  from Connexions
+ group by Login
+having Sum(Durée) = (select Max(Durée)
+                       from Connexions
+                      group by Login);
+</PRE></DL><HR>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<A HREF="000621002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+</BODY>
+</HTML>

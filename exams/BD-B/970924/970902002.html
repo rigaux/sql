@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+ Dépendances fonctionnelles et Décomposition (5 Points)
+</TITLE>
+</HEAD>
+<BODY BGCOLOR=silver TEXT=black>
+<A HREF="970902001.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>2&nbsp;&nbsp;Dépendances fonctionnelles et Décomposition (5 Points)</H2>
+Soit le schéma suivant:
+
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD  ALIGN=right NOWRAP><B>R</B></TD>
+<TD  ALIGN=left NOWRAP>(<I>A</I>,<I>B</I>,<I>C</I>,<I>D</I>,<I>E</I>)</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><FONT COLOR=red><I>F</I>=</FONT></TD>
+<TD  ALIGN=left NOWRAP><I>B</I> -&gt; <I>C</I>,</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP>&nbsp;</TD>
+<TD  ALIGN=left NOWRAP><I>C</I> -&gt; <I>B</I>,</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP>&nbsp;</TD>
+<TD  ALIGN=left NOWRAP><I>C</I> -&gt; <I>D</I>,</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP>&nbsp;</TD>
+<TD  ALIGN=left NOWRAP><I>B</I> -&gt; <I>E</I>}</TD>
+</TR></TABLE><BR>
+<OL>
+<LI>Quels sont les clés de ce schéma? (0.5 points)
+
+<LI>Quels sont les dépendances fonctionnelles qui violent la
+ condition de 3e Forme Normale? (1 point)
+
+<LI>Est-ce que vous pouvez donner une décomposition en 3e Forme
+ Normale qui préserve les dépendances fonctionnelles et qui est sans
+ perte d'information. (2 points)
+
+<LI>Si on ajoute les deux dépendances <I>AB</I> -&gt; <I>CDE</I> et <I>AC</I>
+ -&gt; <I>BDE</I>, qu'est-ce que vous observez quand vous appliquez
+ l'algorithme décomposition (sans perte d'information et qui préserve
+ les dépendances fonctionnelles)? Est-ce que vous pouvez donner une
+ explication? (1.5 points)
+
+<H5>Solution:</H5>
+ Les deux dépendances fonctionnelles ajoutées ne sont pas
+ élémentaires et l'ensemble de dépendances ne forme plus une
+ fermeture minimale, ce qui est une condition nécessaire pour
+ appliquer l'algorithme.
+</OL>
+<HR>
+<A HREF="970902001.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

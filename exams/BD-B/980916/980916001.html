@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+ Modèle Relationnel (11 points)
+</TITLE>
+</HEAD>
+<BODY BGCOLOR=silver TEXT=black>
+<A HREF="980916002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>1&nbsp;&nbsp;Modèle Relationnel (11 points)</H2>
+<A NAME="sec:relationnel"></A>
+L'agence de voyages <EM>MesAventures</EM> organise des voyages d'aventure
+avec des visites d'endroits
+touristiques. Un client (identifié par son nom) peut participer à
+différents voyages. On considère le schéma relationnel suivant&nbsp;:<BR>
+<BR>
+
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD  ALIGN=right NOWRAP><B>Voyages</B></TD>
+<TD  ALIGN=left NOWRAP><EM>(NumV, DatD, DatR, Prix)</EM></TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><B>Clients</B></TD>
+<TD  ALIGN=left NOWRAP><EM>(NumV, NomC, AddrC)</EM></TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><B>Visites</B></TD>
+<TD  ALIGN=left NOWRAP><EM>(NumV, DatV, EndV)</EM>
+</TD>
+</TR></TABLE><BR>
+Les attributs sont:<BR>
+<BR>
+
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=1>
+<TR><TD  ALIGN=right NOWRAP>
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD  ALIGN=right NOWRAP><EM>NumV:</EM></TD>
+<TD  ALIGN=left NOWRAP>numéro de voyage</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>DatD:</EM></TD>
+<TD  ALIGN=left NOWRAP>date de départ du voyage</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>DatR:</EM></TD>
+<TD  ALIGN=left NOWRAP>date de retour du voyage</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>Prix:</EM></TD>
+<TD  ALIGN=left NOWRAP>prix du voyage
+</TD>
+</TR></TABLE></TD>
+<TD  ALIGN=right NOWRAP>
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD  ALIGN=right NOWRAP><EM>NomC:</EM></TD>
+<TD  ALIGN=left NOWRAP>nom du client</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>AddrC:</EM></TD>
+<TD  ALIGN=left NOWRAP>addresse du client</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>DatV</EM></TD>
+<TD  ALIGN=left NOWRAP>date d'une visite</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>EndV</EM></TD>
+<TD  ALIGN=left NOWRAP>endroit visité 
+</TD>
+</TR></TABLE></TD>
+</TR></TABLE><BR>
+<A NAME="toc1"></A>
+<H3>1.1&nbsp;&nbsp;Algèbre et SQL (5 points)</H3>
+Écrivez les requêtes suivantes en algèbre relationnelle et en SQL&nbsp;:
+<OL>
+<LI>Les noms des clients qui visitent le parc Kruger au cours de
+ voyages à moins de 5000 francs? (1 point)<BR>
+<BR>
+<BR>
+<BR>
+<B>Solution:</B><BR>
+<BR>
+<EM>pi<SUB><FONT SIZE=2><I>NomC</I></FONT></SUB>(<I>Clients</I> <I>join</I> (sigma<SUB><FONT SIZE=2><I>Prix</I> &lt; 5000</FONT></SUB>(<I>Voyages</I>)) <I>join</I>
+ (sigma<SUB><FONT SIZE=2><I>EndV</I> = '<I>parc</I> <I>Kruger</I>'</FONT></SUB>(<I>Visites</I>))) </EM><EM>
+</EM><PRE>
+select NomC
+  from Clients, Voyages, Visites
+ where Prix &lt; 5000
+   and EndV = 'parc Kruger'
+   and Clients.NumV = Voyages.NumV
+   and Visites.NumV = Voyages.NumV;
+</PRE> 
+<LI>Les endroits visités le même jour par des clients de deux voyages
+ différents? (2 points)
+<BR>
+<BR>
+<B>Solution:</B><BR>
+<BR>
+<EM>pi<SUB><FONT SIZE=2><I>EndV</I></FONT></SUB>(sigma<SUB><FONT SIZE=2><I>NumV</I>2 &lt;&gt; <I>NumV</I></FONT></SUB>(rho<SUB><FONT SIZE=2><I>NumV</I>/<I>NumV</I>2</FONT></SUB>(<I>Visites</I>) <I>join</I>
+ <I>Visites</I>))</EM><EM>
+</EM><PRE>
+select A.EndV
+  from Visites A, Visites B
+ where A.NumV &lt;&gt; B.NumV
+   and A.DatV = B.DatV
+   and A.EndV = B.EndV;
+</PRE> 
+<LI>Les nombre de clients de l'agence qui vont visiter les chutes
+ Victoria le 13/10/98?<BR>
+<BR>
+<BR>
+<BR>
+<B>Solution:</B><BR>
+<BR>
+<EM>algèbre impossible
+</EM><PRE>
+select count(distinct NomC)
+  from Visites, Clients
+ where Visites.NumV = Clients.NumV
+   and Visites.EndV = 'chutes Victoria'
+   and Visites.DatV = '13/10/98';
+</PRE> 
+<LI>Les endroits les plus visités de l'agence
+ (chaque visite d'un client est comptabilisée)? (2 points)<BR>
+<BR>
+<BR>
+<BR>
+<B>Solution:</B><BR>
+<BR>
+<EM>algèbre impossible
+</EM><PRE>
+select EndV
+  from Visites, Clients
+ where Visites.NumV = Clients.NumV
+ group by EndV
+having (count(NomC)) = (select max(count(NomC))
+                          from Visites, Clients
+                         where Visites.NumV = Clients.NumV
+                         group by EndV);
+
+</PRE> 
+</OL><A NAME="toc2"></A>
+<H3>1.2&nbsp;&nbsp;Dépendances fonctionnelles (6 points)</H3>
+<OL>
+<LI>Soit l'ensemble de dépendances fonctionnelles <FONT COLOR=red><I>F</I></FONT>={<I>NomC</I>
+ -&gt; <I>AddrC</I>} de la relation <B>Clients</B>. Est-ce que la
+ relation <B>Clients</B> est en 3e Forme Normale? (1 point)
+
+<LI>Comment peut-on exprimer le fait qu'il ne peut y avoir deux
+ visites du même endroit pendant un voyage et à deux jours
+ différents? (1 point)
+<BR>
+<BR>
+<B>Solution:</B><BR>
+<BR>
+<EM><I>NumV</I>,<I>EndV</I> -&gt; <I>DatV</I></EM><EM>
+</EM> <BR>
+<BR>
+
+<LI>Soit la relation <I>R</I>(<I>A</I>,<I>B</I>,<I>C</I>) avec la dépendance fonctionnelle <I>A</I>
+ -&gt; <I>B</I>. Donnez une instance <I>r</I> de cette relation, telle que
+ la jointure naturelle des deux relations obtenues après une
+ projection (décomposition) sur (<I>A</I>,<I>B</I>) et (<I>B</I>,<I>C</I>) soit différente de
+ <I>r</I>:
+<DIV ALIGN=center><I>r</I> &lt;&gt; pi<SUB><FONT SIZE=2><I>A</I>,<I>B</I></FONT></SUB>(<I>r</I>) <I>join</I> pi<SUB><FONT SIZE=2><I>B</I>,<I>C</I></FONT></SUB>(<I>r</I>)</DIV> (1point)
+<BR>
+<BR>
+<B>Solution:</B><BR>
+<BR>
+ <BR>
+<BR>
+
+<LI>Soit la relation <I>R</I>(<I>A</I>,<I>B</I>,<I>C</I>,<I>D</I>,<I>E</I>). Soit <I>S</I>(<I>A</I>,<I>B</I>,<I>C</I>) une projection
+ de <I>R</I> sur les attributs <I>A</I>,<I>B</I> et <I>C</I>. Quelles dépendances
+ fonctionnelles sont satisfaites dans <I>S</I> si les dépendances
+ fonctionnelles pour <I>R</I> sont les suivantes (utilisez les axiomes
+ d'Armstrong) (3 points):
+ <OL>
+<LI><I>A</I> -&gt; <I>B</I>, <I>B</I> -&gt; <I>C</I>, <I>C</I> -&gt; <I>D</I>, <I>D</I>
+ -&gt; <I>E</I>, et <I>E</I> -&gt; <I>A</I>. (1 point)
+<BR>
+<BR>
+<B>Solution:</B><BR>
+<BR>
+<EM><I>A</I> -&gt; <I>B</I></EM><EM>, </EM><EM><I>A</I> -&gt; <I>C</I></EM><EM>, </EM><EM><I>B</I> -&gt; <I>C</I></EM><EM>, </EM><EM><I>B</I>
+ -&gt; <I>A</I></EM><EM>, </EM><EM><I>C</I> -&gt; <I>A</I></EM><EM>, </EM><EM><I>C</I> -&gt; <I>B</I></EM><EM>
+</EM> <BR>
+<BR>
+ 
+<LI><I>AB</I> -&gt; <I>DE</I>, <I>C</I> -&gt; <I>E</I>, <I>D</I> -&gt; <I>C</I> et
+ <I>E</I> -&gt; <I>A</I>. (1 point)
+<BR>
+<BR>
+<B>Solution:</B><BR>
+<BR>
+<EM><I>AB</I> -&gt; <I>C</I></EM><EM>
+</EM> <BR>
+<BR>
+ 
+<LI><I>A</I> -&gt; <I>D</I>, <I>BD</I> -&gt; <I>E</I>, <I>AC</I> -&gt; <I>E</I>, et
+ <I>DE</I> -&gt; <I>B</I>. (1 point)
+<BR>
+<BR>
+<B>Solution:</B><BR>
+<BR>
+<EM><I>AC</I> -&gt; <I>B</I></EM><EM>
+</EM> 
+ </OL></OL><HR>
+<A HREF="980916002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

@@ -1,0 +1,26 @@
+
+Solutions\,:
+\begin{enumerate}
+  \item 
+   \begin{verbatim}
+   SELECT nom 
+   FROM   artiste, film, joue
+   WHERE  artiste.ID-artiste = joue.ID-Artiste
+   AND    film.ID-film = joue.ID-film
+\end{verbatim}
+
+
+   \item $Artiste \join (Film \join Joue))$
+   \item
+    \begin{verbatim}
+    0 SELECT STATEMENT
+     1 NESTED LOOP
+      2 NESTED LOOP
+       3 TABLE ACCESS FULL Joue
+       4 TABLE ACCESS BY ROWID Film
+        5 INDEX UNIQUE SCAN Film-IDX
+      6 TABLE ACCESS BY ROWID Artiste
+       7 INDEX UNIQUE SCAN Artiste-IDX
+    \end{verbatim}
+\end{enumerate}
+

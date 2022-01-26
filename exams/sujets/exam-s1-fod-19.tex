@@ -1,0 +1,229 @@
+
+
+
+Le schéma de base de données suivant sera utilisé pour l'ensemble du
+sujet. Il permet de gérer une base sur le guide du Routard.
+
+\begin{tabular}{ll}
+{\sc Guide} &(\textbf{id}, titre, année)\\
+{\sc Ville} &(\textbf{id}, nomVille, \textit{idGuide}, pays)\\
+{\sc Site} &(\textbf{id}, nomSite, type, \textit{idVille}, GPS)\\
+{\sc Routard} &(\textbf{id}, nom, prénom, pays)\\
+{\sc Commentaire} &(\textbf{\textit{idSite}, \textit{idRoutard}, date}, note, commentaire)
+\end{tabular}\\
+
+Tous les attributs \textbf{en gras}
+sont des clés primaires, ceux \textit{en italiques} sont des clés étrangères. Notez
+qu'une clé étrangère peut faire partie d'un clé primaire.
+
+Le {\sc guide} est l'édition d'un ``Guide du Routard'' 
+à une année donnée. Un guide est consacré à un ensemble de villes contenant des sites.
+Le type de {\sc Site} peut être : Hôtel, Restaurant ou PdI (``Point d'Intérêt'').
+La table {\sc Commentaire} permet d'associer le commentaire d'un routard avec 
+un site à une date donnée. 
+
+\section{Conception (5 points)}
+
+\begin{enumerate}
+    \item Si je connais un site, est-ce que je sais dans quel guide il est décrit (penser dépendance fonctionnelle
+    et transitivité)\,? Expliquez.
+    \item Un routard peut-il commenter un même site plusieurs fois\,? Si oui à quelle condition\,?
+     \item Donnez le schéma entité-association correspondant aux relations \textsc{Guide}, \textsc{Ville},
+          \textsc{Site}.
+     \item Donnez la commande SQL de création de la table \textsc{Commentaire}.
+     \item Supposons que l'on  modifie le schéma pour identifier un site par la paire (\textbf{idVille, nomSite})
+     en supprimant l'attribut \textbf{id}..
+             Est-ce que cela correspond d'après vous à une modélisation par entité faible ou
+             par réification\,? Que faut-il modifier d'autre au schéma initial\,?
+\end{enumerate}
+
+\begin{solution}
+\begin{enumerate}
+  \item Oui, par transitivité.
+  \item Oui, à des dates différentes
+\end{enumerate}
+
+\end{solution}
+\section{SQL (8 points)}
+
+\begin{enumerate}
+
+\item Noms des routards ayant  écrit au moins un commentaire sur le Parthénon (qui
+est un nom de site).
+\begin{solution}
+\begin{minted}{sql}
+select nom
+from Routard as r, Commentaire as c, Site as s
+where s.nomSite='Parthénon'
+and c.idSite=s.id
+and c.idRoutard = r.id
+\end{minted}
+\end{solution}
+
+
+\item Indiquez ce que fait  la requête suivante et donnez une syntaxe équivalente, \emph{sans imbrication}.
+
+\begin{minted}{sql}
+select id, titre
+from Guide as g
+where id in (select idGuide from Ville as v where nomVille='Venise')
+\end{minted}
+
+
+\begin{solution}
+\begin{minted}{sql}
+select g.id, g.titre
+from Guide as g, Ville as v
+where g.id=v.idGuide
+and nomVille='Venise'
+\end{minted}
+\end{solution}
+
+
+\item Noms des routards ayant  écrit au moins un commentaire avec une note inférieure ou égale à 2 
+   sur un site de leur propre pays.
+
+\begin{solution}
+\begin{minted}{sql}
+select nom
+from Routard as r, Commentaire as c, Site as s, Ville as v
+where c.note < 3
+and c.idSite=s.id
+and v.id=s.idVille
+and v.pays=r.pays
+and c.idRoutard = r.id
+\end{minted}
+\end{solution}
+
+
+\item Quels sont les noms des sites sur lesquels aucun routard français n'a écrit de commentaire? 
+
+\begin{solution}
+\begin{minted}{sql}
+select nomSite
+from Site as s
+where not exists (select '' 
+            from Routard as r, Commentaire as c
+            where c.idRoutard = r.id
+            and r.pays='France'
+            and s.id=c.idSite)
+\end{minted}
+\end{solution}
+
+\item Quels sont les sites (donner le nom) qui ont une note moyenne strictement supérieure à 4?
+
+\begin{solution}
+\begin{minted}{sql}
+select nomSite
+from Site as s, Commentaire as c
+where s.id=c.idSite
+group by s.id
+having avg (note) >= 4
+\end{minted}
+\end{solution}
+
+
+\item Quelles paires de sites ont le même nom, mais dans des villes différentes. Donner le nom du site, et
+     les noms des deux villes, comme, par exemple, ('Panthéon, 'Rome', 'Paris')
+ 
+
+\begin{solution}
+\begin{minted}{sql}
+select s1.nomSite as 'nomSite', v1.nom as 'Ville1', v2.nom as 'Ville2'
+from Site as s1, Site as s2, Ville as v1, Ville as v2
+where s1.idVille=v1.id
+and s2.idVille=v2.id
+and not (v1.id = v2.id)
+and s1.nomSite = s2.nomSite
+\end{minted}
+\end{solution}
+
+\item  Quelle définition de la notion de vue parmi les suivantes vous semble correcte ?
+
+    \begin{enumerate}
+        \item  C’est un moyen de pré-calculer un résultat.
+       \item  C’est la création d'une seconde base dérivée de la première par exécution de requêtes SQL.
+       \item C’est un moyen de prédéfinir des requêtes en les nommant.
+\end{enumerate}
+
+
+\begin{solution}
+Réponse c. Les vues en SQL sont des tables intentionnelles, leur contenu n’est calculé qu’au moment où on les interroge. 
+\end{solution}
+
+\end{enumerate}
+
+\section{Algèbre (3 points)}
+
+\begin{enumerate}
+   \item L’évaluation d’une  de ces opérations algébriques demande l’élimination des doublons, laquelle :
+ \begin{enumerate}
+        \item  La projection
+       \item  Le renommage
+       \item La sélection
+\end{enumerate}
+
+
+\item Donnez l'expression algébrique pour, au choix,  une des 3 premières requêtes de la section précédente
+
+\item Comment interprétez-vous l'expression algébrique suivante\,? Quel résultat donne-t-elle\,?
+$$\pi_{id}(Guide) - \pi_{idGuide} (\sigma_{pays = '\rm{Italie}'}(Ville))$$
+\begin{solution}
+Les identifiants des guides qui ne parlent d'aucune ville en Italie.
+\end{solution}
+\end{enumerate}
+
+\section{Programmation et transactions (4 points)}
+
+\begin{enumerate}
+
+  \item Quel est l’intérêt d’associer un langage de programmation à SQL ?
+
+\begin{enumerate}
+  \item  SQL étant déclaratif, il faut bien à un moment introduire un langage pour programmer l’évaluation des requêtes
+
+  \item SQL ne permet pas d’effectuer des boucles ou des tests, un langage de programmation le complète donc
+  \item On dispose ainsi de deux moyens d’effectuer des requêtes, soit par SQL, soit avec un langage généraliste
+\end{enumerate}
+
+
+\begin{solution}
+Réponse 2. L’évaluation des requêtes est du ressort du système, 
+pas du développeur d’application. En ce qui concerne la troisième affirmation, il est infiniment plus facile d’interroger une base par SQL que d’écrire un programme pour chaque requête.
+\end{solution}
+
+\item Qu’est-ce qu’un curseur ?
+
+\begin{enumerate}
+  \item  Un tableau contenant le résultat d’une requête
+  \item Un mécanisme permettant de parcourir le résultat d’une requête
+  \item Une variable indiquant combien de nuplets on souhaite récupérer après exécution d’une requête
+\end{enumerate}
+
+\begin{solution}
+Réponse 2. un curseur n’est pas une structure contenant le résultat. Ce résultat peut d’ailleurs ne jamais exister intégralement, 
+mais être calculé, puis oublié au fur et à mesure.
+\end{solution}
+
+\item À quel moment doit-on effectuer un \texttt{commit}? (1 point)
+
+\begin{enumerate}
+  \item  Dès que la base est arrivée à un état cohérent
+  \item  Après chaque mise à jour
+  \item  À intervalles périodiques (par exemple toutes les 5 mns)
+\end{enumerate}
+
+
+\begin{solution}
+Réponse 1
+\end{solution}
+
+\item Quel est l'intérêt du mode \texttt{serializable} par rapport aux autres niveaux d'isolation? Citer au moins un inconvénient. (1 point)
+
+\begin{solution}
+Garantie de l'isolation totale et de la correction transactionnelle; mais risque de deadlock.
+\end{solution}
+
+
+
+\end{enumerate}

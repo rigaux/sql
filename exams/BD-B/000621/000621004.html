@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+
+<link REL=stylesheet HREF="/~amann/mystyle.css"
+TYPE="text/css">
+<TITLE>
+ Concurrence (5 points)
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="000621003.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>4&nbsp;&nbsp; Concurrence (5 points)</H2>Un système de gestion des commandes reçues par une entreprise
+gère un stock de produits et traite les commandes des clients. On
+considère qu'un client a un compte au niveau de l'entreprise, qu'il
+peut approvisionner. Pour pouvoir satisfaire une commande, il faut que
+la quantité commandée soit disponible en stock et que le compte du
+client soit suffisamment approvisionné. On considère les
+opérations suivantes:<BR>
+<BR>
+1) <TT>Commande</TT>: le traitement d'une commande pour une quantité <EM>n</EM> d'un
+article <B>A</B>, de prix <B>P</B>, par un client <B>C</B>.<BR>&nbsp;&nbsp;&nbsp; <U><TT>Commande</TT></U> (<B>A</B>, <EM>n</EM>, <B>P</B>, <B>C</B>)<BR>&nbsp;&nbsp;&nbsp;&nbsp; na := <TT>Read</TT>(<B>A</B>);<BR>&nbsp;&nbsp;&nbsp;&nbsp; <U>si</U> <EM>n</EM> <FONT FACE=symbol>£</FONT> na <U>alors</U><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pa := <TT>Read</TT>(<B>P</B>); ca := <TT>Read</TT>(<B>C</B>);<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <U>si</U> pa * <EM>n</EM> <FONT FACE=symbol>£</FONT> ca <U>alors</U><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <TT>Write</TT>(<B>A</B>, na - <EM>n</EM>); <TT>Write</TT>(<B>C</B>, ca - <EM>n</EM> * pa);<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <U>fin si</U>; <U>fin si</U>; <TT>Commit</TT>;<BR>
+<BR>
+2) <TT>Modif_prix</TT>: la modification du prix <B>P</B> d'un article, 
+à une valeur <EM>p</EM>.<BR>&nbsp;&nbsp;&nbsp; <U><TT>Modif_prix</TT></U> (<B>P</B>, <EM>p</EM>)<BR>&nbsp;&nbsp;&nbsp;&nbsp; <TT>Write</TT>(<B>P</B>, <EM>p</EM>); <TT>Commit</TT>;<BR>
+<BR>
+3) <TT>Crédit</TT>: l'approvisionnement du compte du client <B>C</B> avec un 
+montant <EM>m</EM>.<BR>&nbsp;&nbsp;&nbsp; <U><TT>Crédit</TT></U> (<B>C</B>, <EM>m</EM>)<BR>&nbsp;&nbsp;&nbsp;&nbsp; ca := <TT>Read</TT>(<B>C</B>); <TT>Write</TT>(<B>C</B>, ca + <EM>m</EM>); <TT>Commit</TT>;<BR>
+<BR>
+<B>A</B>, <B>C</B> et <B>P</B> sont des enregistrements de la base de donnés,
+contenant respectivement le nombre d'articles en stock (<B>A</B>), le solde du
+compte client (<B>C</B>) et le prix de l'article (<B>P</B>), tandis que <EM>n</EM>,
+<EM>p</EM> et <EM>m</EM> sont des paramètres des opérations.<BR>
+<BR>
+Trois transactions s'exécutent en même temps dans le système: une
+commande d'un article <B>a</B> de prix <B>p</B> par un client <B>c</B>, une
+modification du prix <B>p</B> et un approvisionnement du compte du client <B>c</B>. <BR>
+<BR>
+<DL COMPACT=compact>
+<DT>
+ <B>Question&nbsp;4.1&nbsp;:</B><DD> (1 point) Laquelle (lesquelles) des histoires suivantes est une
+exécution concurrente possible des trois transactions? 
+Justifiez votre réponse.<BR><B>H</B><SUB><B><FONT SIZE=2>1</FONT></B></SUB>: r<SUB><FONT SIZE=2>1</FONT></SUB>[a] r<SUB><FONT SIZE=2>3</FONT></SUB>[c] r<SUB><FONT SIZE=2>1</FONT></SUB>[c] w<SUB><FONT SIZE=2>3</FONT></SUB>[c] w<SUB><FONT SIZE=2>2</FONT></SUB>[p]
+w<SUB><FONT SIZE=2>1</FONT></SUB>[a] c<SUB><FONT SIZE=2>3</FONT></SUB> r<SUB><FONT SIZE=2>1</FONT></SUB>[p] c<SUB><FONT SIZE=2>2</FONT></SUB> w<SUB><FONT SIZE=2>1</FONT></SUB>[c] c<SUB><FONT SIZE=2>1</FONT></SUB><BR><B>H</B><SUB><B><FONT SIZE=2>2</FONT></B></SUB>: r<SUB><FONT SIZE=2>1</FONT></SUB>[a] w<SUB><FONT SIZE=2>2</FONT></SUB>[p] r<SUB><FONT SIZE=2>3</FONT></SUB>[c] r<SUB><FONT SIZE=2>1</FONT></SUB>[p] r<SUB><FONT SIZE=2>1</FONT></SUB>[c]
+w<SUB><FONT SIZE=2>3</FONT></SUB>[c] c<SUB><FONT SIZE=2>2</FONT></SUB> w<SUB><FONT SIZE=2>1</FONT></SUB>[a] w<SUB><FONT SIZE=2>1</FONT></SUB>[c] c<SUB><FONT SIZE=2>1</FONT></SUB> c<SUB><FONT SIZE=2>3</FONT></SUB><BR><B>H</B><SUB><B><FONT SIZE=2>3</FONT></B></SUB>: r<SUB><FONT SIZE=2>1</FONT></SUB>[a] r<SUB><FONT SIZE=2>3</FONT></SUB>[c] r<SUB><FONT SIZE=2>1</FONT></SUB>[p] w<SUB><FONT SIZE=2>2</FONT></SUB>[p] w<SUB><FONT SIZE=2>3</FONT></SUB>[c] c<SUB><FONT SIZE=2>2</FONT></SUB>
+c<SUB><FONT SIZE=2>3</FONT></SUB> r<SUB><FONT SIZE=2>1</FONT></SUB>[c] c<SUB><FONT SIZE=2>1</FONT></SUB><BR>
+<BR>
+
+<DT><B>Question&nbsp;4.2&nbsp;:</B><DD> (1 point) Expliquez pourquoi <B>H</B><SUB><B><FONT SIZE=2>2</FONT></B></SUB> produit en principe
+ un résultat incorrect, en vous aidant éventuellement d'un
+ exemple numérique. Le fait que <B>H</B><SUB><B><FONT SIZE=2>2</FONT></B></SUB> produit un
+ résultat incorrect est-il suffisant pour affirmer qu'elle n'est
+ pas sérialisable?<BR>
+<BR>
+
+<DT><B>Question&nbsp;4.3&nbsp;:</B><DD> (1 point) Vérifiez si <B>H</B><SUB><B><FONT SIZE=2>2</FONT></B></SUB> est sérialisable, en
+ trouvant les conflits et en construisant son graphe de
+ sérialisation.<BR>
+<BR>
+
+<DT><B>Question&nbsp;4.4&nbsp;:</B><DD> (1 point) Montrez que <B>H</B><SUB><B><FONT SIZE=2>2</FONT></B></SUB> n'évite pas les
+ annulations en cascade. Comment expliquez-vous qu'une exécution
+ sans annulations n'évite pas les annulations en cascade? Est-il
+ possible de modifier juste l'emplacement des <TT>Commit</TT> afin que
+ <B>H</B><SUB><B><FONT SIZE=2>2</FONT></B></SUB> devienne stricte?<BR>
+<BR>
+
+<DT><B>Question&nbsp;4.5&nbsp;:</B><DD> (1 point) Quelle est l'exécution obtenue par verrouillage à
+ deux phases à partir de <B>H</B><SUB><B><FONT SIZE=2>2</FONT></B></SUB>? On considère que le
+ relâchement des verrous d'une transaction se fait au <TT>Commit</TT>
+ et qu'à ce moment on exécute en priorité les opérations
+ bloquées en attente de verrou.
+</DL>
+
+<HR>
+<A HREF="000621003.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

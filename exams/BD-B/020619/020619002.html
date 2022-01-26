@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+
+<link REL=stylesheet HREF="http://cedric.cnam.fr/vertigo/mystyle.css" TYPE="text/css">
+<TITLE>
+ Langages de Requêtes (5 points)
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="020619001.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<A HREF="020619003.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<HR>
+
+<H2>2&nbsp;&nbsp; Langages de Requêtes (5 points)</H2>
+Écrivez les requêtes suivantes dans les langages indiqués (pour
+les requêtes en calcul relationnel vous pouvez choisir entre le calcul
+n-uplet et le calcul domaine)&nbsp;:<BR>
+<BR>
+
+<OL type=1>
+<LI>
+ Les codes des platines laser de Sony (en algèbre).
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+</EM><DIV ALIGN=center><TABLE CELLSPACING=0 CELLPADDING=0>
+<TR VALIGN=middle><TD NOWRAP><EM><FONT FACE=symbol>p</FONT></EM><SUB><EM><FONT SIZE=2><I>code</I></FONT></EM></SUB><EM>(<FONT FACE=symbol>s</FONT></EM></TD>
+<TD NOWRAP><TABLE CELLSPACING=0 CELLPADDING=0>
+<TR><TD><EM>&nbsp;</EM></TD>
+</TR>
+<TR><TD NOWRAP><EM><FONT SIZE=2><I>desig</I>='<I>platine</I>&nbsp;<I>laser</I>' <FONT FACE=symbol>Ù</FONT> <I>marque</I>='<I>Sony</I>'</FONT></EM></TD>
+</TR></TABLE></TD>
+<TD NOWRAP><EM> <I>Produits</I>)</EM></TD>
+</TR></TABLE></DIV><EM>
+</EM><BR>
+
+<LI> Toutes les marques distribuées par Darty (en SQL <B>et</B> en calcul).
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+</EM><PRE><EM>
+select marque
+  from Produits, PrixFour
+ where Produits.code=PrixFour.code
+   and four='Darty'
+</EM></PRE><DIV ALIGN=center><EM>{<I>M</I>| <FONT FACE=symbol>$</FONT> <I>C</I>, <I>D</I>, <I>E</I>, <I>P</I>&nbsp;: <I>Produits</I>(<I>C</I>,<I>M</I>,<I>D</I>, <I>E</I>) <FONT FACE=symbol>Ù</FONT> <I>PrixFour</I>(<I>C</I>,'<I>Darty</I>',<I>P</I>)}</EM></DIV><EM>
+</EM><BR>
+
+<LI> Toutes les marques qui n'ont pas de produits avec 10 points
+ (en SQL).
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+</EM><PRE><EM>
+select distinct marque
+  from Produits
+ where marque not in (select marque
+                        from Produits, NoteMag
+                       where Produits.code=NoteMag.code
+                         and note='10')
+</EM></PRE>
+<LI> Pour chaque appareil photo numérique (desig='appareil
+ photo numérique') son code et sa note moyenne (en SQL).<BR>
+<BR>
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+</EM><PRE><EM>
+select code, avg(note)
+  from Produits, NoteMag
+ where Produits.code=NoteMag.code
+   and desig='appareil photo numérique'
+ group by code
+</EM></PRE></OL>
+<HR>
+<A HREF="020619001.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<A HREF="020619003.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+</BODY>
+</HTML>

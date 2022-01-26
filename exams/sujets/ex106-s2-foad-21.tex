@@ -1,0 +1,199 @@
+
+\enteteExam{NFE106 -- Administration de bases de données}%
+{Examen 2 septembre 2021 -- session 2 -- 3h}%
+{\empty}%
+
+\section{Stockage et indexation (6 pts)}
+
+Soit l'extrait suivant de la base de données qui sert à la gestion d'une grande
+ bibliothèque\,:
+
+\begin{itemize}
+  \item Livre (id, titre, id\_auteur, date\_publication, catégorie, éditeur)
+  \item Emprunt (id\_personne, id\_livre, date\_début, date\_fin)
+  \item Personne  (id, nom, prénom, âge)
+\end{itemize}
+
+\begin{enumerate}
+
+\item Pour la table Livre, identifiez les clés primaires et étrangères.
+\begin{solution}
+Clé primaire: id\\
+Clés étrangères: id\_auteur $\rightarrow$ AUTEUR(id)
+\end{solution}
+
+\item Donnez la commande SQL pour créer la table Livre. 
+\begin{solution}
+\begin{verbatim}
+CREATE TABLE LIVRE(
+    id NUMBER(10),
+    titre VARCHAR2(50),
+    id_auteur NUMBER(10),
+    date_publication DATE,
+    catégorie VARCHAR2(20),
+    éditeur VARCHAR2(20),
+    CONSTRAINT pk_livre PRIMARY_KEY id,
+    CONSTRAINT fk_livre FOREIGN_KEY id_auteur REFERENCES AUTEUR(id)
+\end{verbatim}
+\end{solution}
+
+\item On 
+suppose que chaque enregistrement a une taille de 
+250 octets et que chaque bloc a un entête de 150 octets. 
+ Indiquez le nombre de blocs nécessaires si la table 
+       contient 3 millions de livres. La taille d'un bloc est de 4\,000 octets.
+
+\begin{solution}
+Il y a 3 850 octets utiles dans un bloc. On place $3850/250=15$ enregistrements par bloc.  
+Il faut 
+        $\lceil \frac{3\,000\,000}{15} \rceil = 200\,000$ blocs.
+\end{solution}
+
+ \item On décide de trier la table Livre sur la date de publication et de construire
+     un index non-dense à un niveau. Combien contient-t-il d'entrées, 
+     Sachant qu'une adresse et une date occupent chacun 8 octets, combien d'entrées met-on dans
+     un bloc et combien de blocs sont nécessaires\,?
+
+\begin{solution}
+Il y a 200 000 entrées de 16 octets chacune. . On place $4000/16=250$ entrées par bloc.  
+Il faut 
+        $\lceil \frac{200\,000}{250} \rceil = 800$ blocs.
+\end{solution}
+
+\end{enumerate}
+
+\section{Indexation (4 points)}
+
+
+On insère successivement les enregistrements suivants dans la table 
+\texttt{Personne}, selon cet ordre :
+
+\begin{center}
+\begin{small}
+\begin{tabular}{c|c|c|c}
+\textbf{id} & \textbf{nom} & \textbf{prénom} & \textbf{âge} \\
+\hline
+\hline
+1 & Martin & Georges & 30\\
+\hline
+2 & Dubois & Inna & 20 \\
+\hline
+3 & Thomas & Maxime & 14\\
+\hline
+4 & Richard & Boris & 45\\
+\hline
+5 & Petit & Gérald & 32\\
+\hline
+6 & Durand & Valérie & 43\\
+\hline
+7 & Leroy & Jacques & 34 \\
+\hline
+8 & Simon & Michel & 22 \\
+\hline
+9 & Laurent & Jean-Jacques & 63\\
+\hline
+10 & Moreau & Eddie & 12\\
+\hline
+11 & Morel & Philippe & 15\\
+\hline
+12 & Perrin & Gloria & 18 \\
+\hline
+13 & Clement & Bob & 19\\
+\hline
+14 & Dumont  &  Claire & 67\\
+\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+On met en place un index sur l'attribut \textbf{âge} de cette table. 
+
+\begin{enumerate}
+
+\item Construire l'arbre B d'ordre \textbf{2} (4 entrées par bloc)
+correspondant à cet ensemble d'articles, en respectant l'ordre d'arrivée. 
+Donner les étapes de construction intermédiaires importantes (celles qui produisent 
+un changement de la structure de l'arbre).
+
+
+\item On considère que cet arbre B  est stocké à raison d'un n{\oe}ud par bloc sur disque. On recherche les noms des personnes dont l'âge est entre 20 et 40 ans (inclus). 
+Combien de blocs disque doivent être chargées au minimum pour répondre à cette requête en utilisant l'arbre B ? Justifier. 
+
+
+\begin{solution}
+Il s'agit ici d'une requête par intervalle: on commence par chercher les enregistrements pour lesquels l'âge est égal à 20 (lecture de 5 enregistrements). Il suffit ensuite d'exploiter le chaînage des feuilles pour trouver les autres enregistrements, en parcourant ici encore 5 enregistrements dans l'arbre B). On charge donc 10 
+blocs d'index. Il faut ensuite récupérer les données pointées par l'index sur disque. Dans le meilleur cas (peu probable mais possible), toutes ces données sont stockées dans un même 
+bloc. Donc on charge au minimum 11 blocs. 
+\end{solution}
+
+\end{enumerate}
+
+
+\section{Optimisation (6 points)}
+
+\begin{enumerate}
+
+   \item Soit la requête suivante:
+\begin{minted}{sql}
+     select p.nom, p.prénom
+     from Livre as l,Personne as p
+     where l.titre = "Bilbo"
+     and l.id_auteur = p.id
+\end{minted}
+
+  Donnez le plan d'exécution classique des boucles imbriquées indexées, en supposant
+     que seules les clés primaires sont indexées.
+     
+    \item Que devient le plan si on ajoute un index sur le titre des livres 
+     
+\begin{minted}{sql}
+     select e.date_debut, e.date_fin 
+     from Livre as l, Emprunt as e
+     where  l.titre = "Bilbo"
+     and e.id_livre = l.id
+\end{minted}
+
+  
+  \item En supposant qu'il n'y a pas d'index sur la table Livre, quelle serait la condition
+   pour utiliser un index
+   dans l'algorithme de jointure\,? Quel
+   serait alors le plan d'exécution\,?  Quel plan serait possible sans index\,?
+
+\end{enumerate}
+
+\section{Concurrence (4 points)}
+
+Soit l'exécution concurrente suivante
+
+$$H = r_1[x] r_2[x] r_3[y] w_1[x] w_1[z] c_1 w_2[y] c_2 w_3[z] c_3$$
+
+\begin{enumerate}
+
+\item Donner la liste des conflits de H
+\begin{solution}
+    \begin{itemize}
+        \item[sur x : ] $r_2[x] w_1[x]$
+        \item[sur y : ] $r_3[y] w_2[y]$
+        \item[sur z : ] $w_1[z] w_3[z]$
+    \end{itemize}
+\end{solution}
+
+\item Donner le graphe de s\'erialisation de H. Que pouvez-vous déduire de ce
+graphe? 
+\begin{solution}
+    $T_2 \rightarrow T_1, T_3 \rightarrow T_2, T_1 \rightarrow T_3$. Il y a un cycle, dont H n'est pas \textit{s\'erialisable}.
+\end{solution}
+
+
+\item Donner l'histoire finale par application de l'algorithme de verrouillage \`a deux phases. 
+Donner le d\'etail du d\'eroulement de l'algorithme.
+ \texttt{(2 points)}
+
+\begin{solution}
+$T_1$  est mis en attente au moment où $w_1[x]$ est soumis ($x$ a un  verrou partagé avec $T_2$)
+$T_2$  est mis en attente au moment où $w_2[y]$ est soumis ($x$ a un  verrou partagé avec $T_3$). 
+$T_3$ finit alors de s'exécuter, $T_2$ est libérée et termine, puis $T_1$.
+\end{solution}
+
+
+\end{enumerate}

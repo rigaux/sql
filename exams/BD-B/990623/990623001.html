@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+ Modèle Relationnel (10 points)
+</TITLE>
+</HEAD>
+<BODY BGCOLOR=silver TEXT=black>
+<A HREF="990623002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>1&nbsp;&nbsp;Modèle Relationnel (10&nbsp;points)</H2>
+L'usine de production de poulets <FONT COLOR=red><I>LPH</I></FONT> (La Poule Heureuse) gère
+son stock d'aliments pour les poulets avec Oracle. Voici le
+schéma&nbsp;(dans chaque relation, excepté <TT>Fournisseur</TT>, les
+attributs formant une clé sont soulignés)&nbsp;:<BR>
+<BR>
+<UL>
+<LI><TT>Container(</TT><TT><U>IdC</U></TT><TT>, NomF, TypeA)</TT>&nbsp;: <TT>IdC</TT> est
+ l'identificateur du container, <TT>NomF</TT> est le nom du fournisseur
+ et <TT>TypeA</TT> est le type d'aliment ('farine de poisson', 'farine
+ animale', 'tourteau de soja') contenu dans le container.
+
+<LI><TT>Fournisseur(NomF, SiteF, TypeA, PrixA)</TT>&nbsp;: <TT>NomF</TT> est le
+ nom du fournisseur, <TT>SiteF</TT> est le site (la ville) de production
+ du fournisseur (un site par fournisseur), <TT>TypeA</TT> est le type
+ d'aliment fourni par le fournisseur et <TT>PrixA</TT> est le prix par
+ kilo de type d'aliment chez le fournisseur donné.
+
+<LI><TT>Consommation(</TT><TT><U>IdC</U></TT><TT>, </TT><TT><U>DateC</U></TT><TT>,
+ QuanC)</TT>&nbsp;: <TT>IdC</TT> est l'identificateur du container, <TT>DateC</TT>
+ est la date de consommation et <TT>QuanC</TT> est la quantité consommée
+ (en kilos) à cette date.
+
+<LI><TT>Livraison(</TT><TT><U>IdC</U></TT><TT>, DateL, QuanL)</TT>&nbsp;: <TT>IdC</TT> est
+ l'identificateur du container, <TT>DateL</TT> est la date de livraison
+ et <TT>QuanL</TT> est la quantité livrée (en kilos) dans le container.
+</UL><A NAME="toc1"></A>
+<H3>1.1&nbsp;&nbsp;Conception de schéma (3&nbsp;points)</H3>
+<OL>
+<LI>Est-ce qu'un container peut être livré plusieurs fois&nbsp;?
+ (1&nbsp;point) Justifiez votre réponse.
+
+<LI>Les dépendances fonctionnelles de la relation <TT>Fournisseur</TT>
+ sont <FONT COLOR=red><I>F</I></FONT><TT>={NomF </TT><TT>-&gt;</TT><TT> SiteF, (NomF, TypeA)
+ </TT><TT>-&gt;</TT><TT> PrixA}</TT>. Quelle hypothèse a été prise pour
+ justifier qu'on n'a pas la dépendance <TT>NomF </TT><TT>-&gt;</TT><TT>
+ (SiteF, TypeA)</TT> ? (0.5&nbsp;point). Montrez que cette relation n'est
+ pas en 3e Forme Normale et faites une décomposition en relations en
+ 3e Forme Normale, sans perte d'information (SPI) et qui préserve les
+ dépendances fonctionnelles (PDF). (1.5&nbsp;points)
+</OL><A NAME="toc2"></A>
+<H3>1.2&nbsp;&nbsp;Requêtes (7&nbsp;points)</H3>
+Écrire les requêtes suivantes en Algèbre relationnelle et en
+SQL. Utiliser le schéma initial (avant décomposition de la
+relation <TT>Fournisseur</TT>)&nbsp;:
+<OL>
+<LI>Dates de livraison de containers avec des farines animales
+ (<TT>TypeA = 'farine animale'</TT>). (1&nbsp;point)<BR>
+<BR>
+<B>Solution&nbsp;:</B>
+<DIV ALIGN=center>
+<TABLE CELLSPACING=0 CELLPADDING=0>
+<TR VALIGN=middle><TD NOWRAP>pi<SUB><FONT SIZE=2><I>DateL</I></FONT></SUB>(<I>Livraison</I> |>t<I>o</I> -.45<I>em</I>&lt;</TD>
+<TD NOWRAP> sigma</TD>
+<TD NOWRAP>
+<TABLE CELLSPACING=0 CELLPADDING=0>
+<TR><TD>&nbsp;</TD>
+</TR>
+<TR><TD NOWRAP><FONT SIZE=2><I>TypeA</I>='<I>farine</I>&nbsp;<I>animale</I>'</FONT></TD>
+</TR></TABLE></TD>
+<TD nowrap><I>Container</I>)</TD>
+</TR></TABLE></DIV><BR>
+<PRE>
+SELECT DateL
+  FROM Livraison, Container
+ WHERE TypeA='farine animale'
+   AND Livraison.IdC = Container.IdC
+</PRE>
+
+ 
+<LI>Noms de fournisseur et dates de livraison de (container avec
+ des) farines animales (<TT>TypeA = 'farine animale'</TT>) qui ont été
+ consommées après le 3 Juin 1999 (<TT>DateC &gt; '03/06/99'</TT>). (1&nbsp;point)<BR>
+<BR>
+<B>Solution&nbsp;:</B><BR>
+<BR>
+<DIV ALIGN=center>pi<SUB><FONT SIZE=2><I>NomF</I>,<I>DateL</I></FONT></SUB>(<I>Livraison</I> <I>join</I> (sigma<SUB><FONT SIZE=2><I>TypeA</I>='<I>farine</I>
+ <I>animale</I>'</FONT></SUB><I>Container</I>) |>t<I>o</I> -.45<I>em</I>&lt; sigma<SUB><FONT SIZE=2><I>DateC</I>&gt;'03/06/99'</FONT></SUB>
+ <I>Consommation</I>)</DIV><BR>
+<PRE>
+SELECT NomF, DateL
+  FROM Livraison, Container, Consommation
+ WHERE Livraison.IdC = Container.IdC
+   AND Container.IdC = Consommation.IdC
+   AND TypeA = 'farine animale'
+   AND DateC &gt; '03/06/99';
+</PRE>
+
+<LI>Exprimer la requête précédente en calcul domaine. (1&nbsp;point)<BR>
+<BR>
+<B>Solution&nbsp;:</B><BR>
+<BR>
+<DIV ALIGN=center>
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD  ALIGN=right NOWRAP>
+{<I>NF</I>, <I>DL</I></TD>
+<TD  ALIGN=center NOWRAP>|</TD>
+<TD  ALIGN=left NOWRAP>il existe <I>QL</I>, <I>I</I>, <I>DC</I>, <I>QC</I> (<I>Livraison</I>(<I>I</I>, <I>DL</I>, <I>QL</I>) /\</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP>&nbsp;</TD>
+<TD  ALIGN=center NOWRAP>&nbsp;</TD>
+<TD  ALIGN=left NOWRAP><I>Container</I>(<I>I</I>, <I>NF</I>, '<I>farine</I>&nbsp;<I>animale</I>') /\</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP>&nbsp;</TD>
+<TD  ALIGN=center NOWRAP>&nbsp;</TD>
+<TD  ALIGN=left NOWRAP><I>Consommation</I>(<I>I</I>, <I>DC</I>, <I>QC</I>) /\ <I>DC</I> &gt; '03/06/99')}</TD>
+</TR></TABLE></DIV><BR>
+
+<BR>
+<BR>
+
+<LI>Noms de fournisseur qui ne fournissent pas de farines animales.
+ (1&nbsp;point)<BR>
+<BR>
+<B>Solution&nbsp;:</B>
+<DIV ALIGN=center>
+<TABLE CELLSPACING=0 CELLPADDING=0>
+<TR VALIGN=middle><TD NOWRAP>pi<SUB><FONT SIZE=2><I>NomF</I></FONT></SUB> <I>Fournisseur</I> - pi<SUB><FONT SIZE=2><I>NomF</I></FONT></SUB>(sigma</TD>
+<TD NOWRAP>
+<TABLE CELLSPACING=0 CELLPADDING=0>
+<TR><TD>&nbsp;</TD>
+</TR>
+<TR><TD NOWRAP><FONT SIZE=2><I>TypeA</I>='<I>farine</I>&nbsp;<I>animale</I>'</FONT></TD>
+</TR></TABLE></TD>
+<TD nowrap> <I>Fournisseur</I>)</TD>
+</TR></TABLE></DIV> <BR>
+<PRE>
+SELECT NomF
+  FROM Fournisseur
+ WHERE NomF NOT IN (SELECT NomF
+                      FROM Fournisseur
+                     WHERE TypeA='farine animale');
+</PRE>
+
+<LI>Exprimer la requête précédente dans le calcul nuplet (1&nbsp;point).<BR>
+<BR>
+<B>Solution&nbsp;:</B><BR>
+<BR>
+<DIV ALIGN=center>
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD  ALIGN=right NOWRAP>
+{<I>f</I>1.<I>NomF</I></TD>
+<TD  ALIGN=center NOWRAP>|</TD>
+<TD  ALIGN=left NOWRAP><I>Fournisseur</I>(<I>f</I>1) /\</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP>&nbsp;</TD>
+<TD  ALIGN=center NOWRAP>&nbsp;</TD>
+<TD  ALIGN=left NOWRAP>¬il existe<I>f</I>2 (<I>Fournisseur</I>(<I>f</I>2) /\ <I>f</I>2.<I>TypeA</I>='<I>farine</I>&nbsp;<I>animale</I>'
+/\ <I>f</I>1.<I>NomF</I> = <I>f</I>2.<I>NomF</I>)}</TD>
+</TR></TABLE></DIV><BR>
+
+
+</OL>Écrire les requêtes suivantes seulement en SQL&nbsp;:
+<OL>
+<LI>Noms des fournisseurs, types d'aliment et total de la
+ quantité d'aliments livrés, classés par fournisseur et par type
+ d'aliment. (1&nbsp;point) <BR>
+<BR>
+<B>Solution&nbsp;:</B>
+<PRE>
+SELECT NomF, TypeA, SUM(QuanL)
+  FROM Livraison, Container
+ WHERE Livraison.IdC = Container.IdC
+GROUP BY NomF, TypeA;
+</PRE>
+
+<LI>Noms des fournisseurs qui ont livré plus que 5 tonnes de
+ farines animales après le 6 juin. (1&nbsp;point)<BR>
+<BR>
+<B>Solution&nbsp;:</B>
+<PRE>
+SELECT NomF
+  FROM Livraison, Container
+ WHERE Livraison.IdC = Container.IdC
+   AND DateL &gt; '6/6/99'
+   AND TypeA = 'farine animale'
+GROUP BY NomF
+HAVING SUM(QuanL) &gt; 5000;
+</PRE>
+</OL><HR>
+<A HREF="990623002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

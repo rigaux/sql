@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD><TITLE></TITLE></HEAD>
+<BODY BGCOLOR=silver TEXT=black>
+<!--FRENCH-->
+<!--HTMLHEAD-->
+<!--ENDHTML-->
+<!--CUT DEF section 1 -->
+<BR>
+<BR>
+<DIV ALIGN=center><FONT SIZE=5><B>Systèmes de Gestion de Bases de Données ICPJ B6/B7<BR> <BR><FONT SIZE=5><B>EXAMEN<BR> <BR></B></FONT></B></FONT><B><B><FONT SIZE=4><B>Jeudi 17 Juin 1999
+</B></FONT></B></B></DIV><BR>
+Un paparazzi utilise le SGBD Oracle pour organiser les informations
+concernant son stock de photos. Voici le schéma relationnel qu'il a
+défini (les attributs de la clé primaire sont soulignés)&nbsp;:<BR>
+<BR>
+<UL>
+<LI><B>Photos</B> (<U>NumPhoto</U>, <U>NumPell</U>, AdrPr,
+ DatePr, Titre): Les photos avec numéro de photo, numéro de
+ pellicule, adresse et date de prise. Le titre est celui du journal
+ auquel la photo a été vendue.
+ 
+
+<LI><B>Pellicules</B> (<U>NumPell</U>, Sensib, Format, Couleur,
+ DateDev): Les pellicules avec numéro, sensibilité, format, couleur
+ (Booléen: NB=false, couleur=true), et date de développement.
+ 
+
+<LI><B>Stars</B> (<U>Nom</U>, AdrDom, NumPhoto, NumPell,
+ Tarif)&nbsp;: Les noms des stars, leurs adresses de domicile, et leurs
+ photos (NumPhoto, NumPell). Le tarif correspond au prix estimé d'une
+ photo de la star. Attention: il peut-y-avoir plusieurs stars sur la
+ même photo!
+ 
+
+<LI><B>Journaux</B> (<U>Titre</U>, AdrJou, Crédit)&nbsp;: Les
+ journaux (titre, adresse, et montant dû par le journal au
+ paparazzi pour ses services).
+</UL><!--TOC section Conception de schéma (5&nbsp;points)-->
+
+<H2>1&nbsp;&nbsp;Conception de schéma (5&nbsp;points)</H2><OL>
+<LI>Définissez les dépendances fonctionnelles pour la relation
+ <B>Stars</B>. (1&nbsp;point)<BR>
+<BR>
+
+<LI>Montrez que la relation <B>Stars</B> n'est pas en 3e Forme Normale et
+ faites une décomposition en plusieurs relations en 3e Forme
+ Normale. (2&nbsp;points)
+ 
+
+<LI>Donnez les ordres <TT>CREATE TABLE</TT> pour les relations <B>Photos</B>, <B>Pellicules</B> et <B>Journaux</B>. Donnez les clauses
+ <TT>PRIMARY KEY</TT> et <TT>FOREIGN KEY</TT>. (2&nbsp;points)</OL><!--TOC section Requêtes (8&nbsp;points)-->
+
+<H2>2&nbsp;&nbsp;Requêtes (8&nbsp;points)</H2>Donnez les requêtes suivantes en algèbre et en SQL sur le schéma que
+vous obtenez après la décomposition de la relation <B>Stars</B>
+(section précédente)&nbsp;: 
+<OL>
+<LI>Les photos (NumPhoto, NumPell) en noir et blanc qui ont été
+ prises au festival de Cannes (AdrPr = 'Cannes'). (1&nbsp;point)
+
+<LI>Les noms de stars qui ont été photographiées à leur
+ domicile. (1.5&nbsp;points)
+
+<LI>Les photos de Sophie Marceau prises au festival de Cannes et
+ vendues à Paris Match. (2&nbsp;points)<BR>
+<BR>
+
+<LI>Titre des journaux qui n'ont pas publié
+ une photo de David Bombony (une star peu connue). (1&nbsp;point)</OL>
+Donnez les requêtes suivantes en SQL&nbsp;: 
+<OL>
+<LI>Les noms des stars avec le nombre de leurs photos. (1&nbsp;point)
+
+<LI>La star la plus photographiée. (1.5&nbsp;points)
+</OL><!--TOC section Concurrence (8&nbsp;points)-->
+
+<H2>3&nbsp;&nbsp;Concurrence (8&nbsp;points)</H2>Le paparazzi écrit le petit programme suivant pour
+gérer ses transactions commerciales avec les journaux.<BR>
+<BR>
+<PRE>
+Programme VentePhoto (NumPhot, NumPell, Titre)
+begin
+  // Lecture dans la BD
+  Lire la photo
+  Lire la star qui figure sur la photo
+  Lire le journal
+  // Mise à jour en mémoire centrale
+  journal.crédit = journal.crédit + photo.tarif
+  photo.titre = journal.titre
+  star.tarif = star.tarif x 1.1%
+  // Mise à jour dans la BD
+  Ecrire, dans l'ordre, la photo, la star et le journal modifiés
+end
+</PRE>Donc on cumule dans l'attribut <TT>crédit</TT> les tarifs des photos
+vendues au journal, et on augmente le tarif d'une star de 10%&nbsp;chaque
+fois que l'on vend une de ses photos.<BR>
+<BR>
+On suppose que le paparazzi utilise un système qui ne gère pas la
+concurrence d'accès. Le paparazzi vend deux photos (id==[1,2] et
+id=[15,21]) de Sophie Marceau (tarif 1000Euros), au journal 'Voila'.<BR>
+<BR>
+<OL>
+<LI>Quel est le crédit<A NAME="text1"></A><A HREF="#note1"><SUP><FONT SIZE=2>1</FONT></SUP></A>
+ 
+ du paparazzi auprès de 'Voila' 
+ si on exécute les deux programmes en série&nbsp;?
+ (Attention à l'augmentation de tarif!). (1 point)<BR>
+<BR>
+
+<H5>Solution&nbsp;:</H5>
+ 1000 + 1000 x 1.1 = 2100Euros
+<BR>
+<BR>
+ 
+<LI>Voici deux exécutions imbriqués de <TT>VentePhoto (1,2,
+ 'Voila')</TT> et <TT>VentePhoto (15,21, 'Voila')</TT>. <I>M</I>
+ représente Sophie Marceau, <I>V</I> le journal 'Voila'.<BR>
+<BR>
+ <OL>
+<LI><I>r</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[1,2] <I>r</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>M</I>] <I>r</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>V</I>]<I>r</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[15,21] <I>r</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>M</I>] <I>r</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>V</I>]
+ <I>w</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[1,2] <I>w</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>M</I>] <I>w</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>V</I>] <I>w</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[15,21] <I>w</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>M</I>] <I>w</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>V</I>]
+ 
+<LI><I>r</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[1,2] <I>r</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>M</I>] <I>r</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>V</I>] <I>w</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[1,2] <I>w</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>M</I>]<I>r</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[15,21]
+ <I>r</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>M</I>] <I>r</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>V</I>] <I>w</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>V</I>] <I>w</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[15,21] <I>w</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>M</I>] <I>w</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>V</I>]
+ </OL>
+ 
+ Donner le crédit du paparazzi auprès de 'Voila'
+ après chacune de ces deux exécutions&nbsp;? (2&nbsp;points)<BR>
+<BR>
+
+<H5>Solution&nbsp;:</H5>
+ a)Le crédit a augmenté de 1000Euros.
+ b) Le crédit a augmenté de 1100Euros.
+
+ 
+ 
+<LI>Montrer une exécution imbriquée de <TT>VentePhoto (1,2,
+ 'Voila')</TT> et <TT>VentePhoto (15,21, 'Voila')</TT> telle que le crédit
+ du paparazzi auprès de 'Voila' n'ait augmenté que de 2000Euros. (1&nbsp;point)<BR>
+<BR>
+
+<H5>Solution&nbsp;:</H5>
+ <DIV ALIGN=center><I>r</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[1,2] <I>r</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>M</I>] <I>r</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>V</I>] <I>w</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[1,2] <I>r</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[15,21] <I>r</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>M</I>]
+ <I>w</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>M</I>]<I>r</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[1,2] <I>w</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>V</I>] <I>r</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>V</I>] <I>w</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[15,21] <I>w</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>M</I>]
+ <I>w</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>V</I>]</DIV>
+<BR>
+
+<LI>Le paparazzi, peu scrupuleux (pléonasme!), vend la photo [1,1] à
+ deux journaux, 'Voila' et 'Golo'. Voici l'exécution concurrente des
+ deux programmes&nbsp;: les variables <I>V</I>, <I>G</I> et <I>M</I> désignent
+ respectivement 'Voila, 'Golo' et 'Marceau'.
+ 
+ <DIV ALIGN=center><I>r</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[1,2] <I>r</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[1,2] <I>r</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>M</I>] <I>r</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>V</I>] <I>r</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>M</I>] <I>w</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>M</I>] <I>r</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>G</I>]
+ <I>w</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[1,2] <I>w</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[1,2] <I>w</I><SUB><FONT SIZE=2><I>s</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>M</I>] <I>w</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[<I>G</I>] <I>w</I><SUB><FONT SIZE=2><I>j</I></FONT></SUB><SUP><FONT SIZE=2>1</FONT></SUP>[<I>V</I>]<I>C</I><SUB><FONT SIZE=2>1</FONT></SUB> <I>C</I><SUB><FONT SIZE=2>2</FONT></SUB></DIV>
+ 
+<BR>
+<OL>
+<LI>Montrer que l'exécution précédente n'est pas sérialisable. (1&nbsp;point)
+ 
+
+<LI>Quels sont les dangers en cas d'interruption du système
+ juste avant le commit de la transaction 1 (<I>C</I><SUB><FONT SIZE=2>1</FONT></SUB>).
+ L'exécution est-elle recouvrable&nbsp;? Préserve-t-elle les annulations en
+ cascade&nbsp;? Est-elle recouvrable stricte&nbsp;? (1&nbsp;point)<BR>
+<BR>
+Recouvrable, évite les annulations en cascade. Pas stricte
+(écriture sale)
+
+ 
+
+<LI>Appliquer un verrouillage à deux phases, et donner l'exécution
+ résultante. (2&nbsp;points)<BR>
+<BR>
+
+<H5>Solution&nbsp;:</H5>
+ Interblocage sur <I>w</I><SUB><FONT SIZE=2><I>p</I></FONT></SUB><SUP><FONT SIZE=2>2</FONT></SUP>[1,2]
+</OL></OL><!--BEGIN NOTES document-->
+<HR ALIGN=left WIDTH=50%>
+<DL>
+<DT><A NAME="note1"></A><A HREF="#text1"><FONT SIZE=5>1</FONT></A>
+<DD>On suppose
+que la valeur initiale de <TT>crédit</TT> est 0.
+</DL><!--END NOTES--><!--HTMLFOOT-->
+<!--ENDHTML-->
+
+<!--FOOTER-->
+<HR>
+
+<BLOCKQUOTE><EM>Ce document a été traduit de L<sup>A</sup>T<sub>E</sub>X par </EM><A HREF="http://para.inria.fr/~maranget/hevea/index.html"><EM>H</EM><EM><FONT SIZE=2><sup>E</sup></FONT></EM><EM>V</EM><EM><FONT SIZE=2><sup>E</sup></FONT></EM><EM>A</EM></A><EM>.
+</EM></BLOCKQUOTE></BODY>
+</HTML>
+

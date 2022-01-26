@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+
+<link REL=stylesheet HREF="/~amann/mystyle.css"
+TYPE="text/css">
+<TITLE>
+ Langages de Requêtes (6 points)
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<A HREF="000622002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<HR>
+
+<H2>1&nbsp;&nbsp; Langages de Requêtes (6 points)</H2>Un armateur utilise ORACLE pour gérer ses cargos&nbsp;:<BR>
+<BR>
+<UL>
+<LI>
+ <B>Cargos</B>(<FONT COLOR=purple>NomCar, TonnageMax, Age, Capitaine</FONT>)&nbsp;: le nom du
+ cargo (NomCar), le tonnage maximal (TonnageMax), l'âge (Age) et le
+ capitaine (Capitaine).
+
+<LI> <B>Transports</B>(<FONT COLOR=purple>NomCar, Produit, Tonnage, Volume, DateDep, DateArr,
+ PortDep, PortArr</FONT>)&nbsp;: le produit (Produit) et le volume (Tonnage)
+ transporté; la date (DateDep) et le port (PortDep) de départ et
+ d'arrivée (DateArr, PortArr).
+
+<LI> <B>Produits</B>(<FONT COLOR=purple>Produit, NiveauDanger</FONT>)&nbsp;: le niveau de
+ dangerosité (NiveauDanger) d'un produit.
+</UL>Écrire les requêtes suivantes <B>en algèbre relationnelle et en SQL</B>&nbsp;:
+<BR>
+<BR>
+<DL COMPACT=compact>
+<DT>
+<EM>Requête&nbsp;1.1&nbsp;:</EM><DD> (1 pt) Les produits transportés par le capitaine Haddock?<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<DIV ALIGN=center><FONT FACE=symbol>p</FONT><SUB><FONT SIZE=2><I>Produit</I></FONT></SUB>(<FONT FACE=symbol>s</FONT><SUB><FONT SIZE=2><I>Capitaine</I>='<I>Haddock</I>'</FONT></SUB> <I>Cargos</I> |&gt;&lt;| <I>Transports</I>)</DIV>
+<PRE>
+select Produit
+  from Cargos, Transports
+ where Cargos.NomCar = Transports.NomCar
+   and Cargos.Capitaine = 'Haddock';
+</PRE>
+<DT><EM>Requête&nbsp;1.2&nbsp;:</EM><DD> (1 pt) Les noms des cargos de plus de 20 ans qui partent le 22
+ Juin 2000 ('22/06/2000') de Marseille avec un produit très toxique
+ (NiveauDanger = 5) à bord;<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<DIV ALIGN=center><TABLE CELLSPACING=0 CELLPADDING=0>
+<TR VALIGN=middle><TD NOWRAP><FONT FACE=symbol>p</FONT><SUB><FONT SIZE=2><I>NomCar</I></FONT></SUB>(<FONT FACE=symbol>s</FONT><SUB><FONT SIZE=2><I>Age</I>&gt;20</FONT></SUB> <I>Cargos</I> |&gt;&lt;| <FONT FACE=symbol>s</FONT></TD>
+<TD NOWRAP><TABLE CELLSPACING=0 CELLPADDING=0>
+<TR><TD>&nbsp;</TD>
+</TR>
+<TR><TD NOWRAP><FONT SIZE=2><I>DateDep</I>='22/05/2000' <FONT FACE=symbol>Ù</FONT> <I>PortDep</I>='<I>Marseille</I>'</FONT></TD>
+</TR></TABLE></TD>
+<TD NOWRAP><I>Transports</I> |&gt;&lt;| <FONT FACE=symbol>s</FONT><SUB><FONT SIZE=2><I>NiveauDanger</I> = 5</FONT></SUB><I>Produits</I>)</TD>
+</TR></TABLE></DIV>
+<PRE>
+select Cargos.NomCar
+  from Cargos, Transports, Produits
+ where Cargos.NomCar = Transports.NomCar
+   and Produits.Produit = Transports.Produit
+   and Age &gt; 20
+   and DateDep='22/05/2000'
+   and NiveauDanger = 5
+   and PortDep = 'Marseille';
+</PRE>
+<DT><EM>Requête&nbsp;1.3&nbsp;:</EM><DD> (2 pt) Les noms des cargos qui n'ont jamais transporté un
+ produit très toxique.<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<DIV ALIGN=center><FONT FACE=symbol>p</FONT><SUB><FONT SIZE=2><I>NomCar</I></FONT></SUB><I>Cargos</I> - <FONT FACE=symbol>p</FONT><SUB><FONT SIZE=2><I>NomCar</I></FONT></SUB>(<I>Transports</I> |&gt;&lt;| <FONT FACE=symbol>s</FONT><SUB><FONT SIZE=2><I>NiveauDanger</I> = 5</FONT></SUB><I>Produits</I>)</DIV>
+<PRE>
+select NomCar
+  from Cargos
+ where NomCar not in (select NomCar
+                        from Transports, Produits
+                       where Transport.Produit = Produits.Produit
+                         and NiveauDanger = 5);
+</PRE>
+<DT><EM>Requête&nbsp;1.4&nbsp;:</EM><DD> (1 pt) La requête précédente en <B>calcul domaine ou n-uplet</B>.<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<DIV ALIGN=center><TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=right NOWRAP>{<I>C</I>.<I>NomCar</I></TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><I>Cargos</I>(<I>C</I>) <FONT FACE=symbol>Ù</FONT> ¬<FONT FACE=symbol>$</FONT> <I>T</I>, <I>P</I> (<I>Transports</I>(<I>T</I>) <FONT FACE=symbol>Ù</FONT></TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>&nbsp;</TD>
+<TD ALIGN=left NOWRAP><I>Produits</I>(<I>P</I>) <FONT FACE=symbol>Ù</FONT> <I>T</I>.<I>Produit</I> = <I>P</I>.<I>Produit</I> <FONT FACE=symbol>Ù</FONT> <I>P</I>.<I>NiveauDanger</I> = 5 <FONT FACE=symbol>Ù</FONT></TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>&nbsp;</TD>
+<TD ALIGN=left NOWRAP><I>T</I>.<I>NomCar</I> = <I>C</I>.<I>NomCar</I>) }</TD>
+</TR></TABLE></DIV>
+</DL>Écrire la requête suivante <B>uniquement en SQL</B>&nbsp;:
+<BR>
+<BR>
+<DL COMPACT=compact>
+<DT>
+
+<EM>Requête&nbsp;1.5&nbsp;:</EM><DD> (1 pt) Le nombre de transports dangereux (NiveauDanger &gt; 3) <EM>par port de départ</EM>.<BR>
+<BR>
+
+<B>Solution&nbsp;:</B><BR>
+<BR>
+<PRE>
+select PortDep, Count(*)
+  from Transports, Produits
+ where Transport.Produit = Produits.Produit
+   and NiveauDanger &gt; 3
+ group by PortDep;
+</PRE>
+</DL><HR>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<A HREF="000622002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+</BODY>
+</HTML>

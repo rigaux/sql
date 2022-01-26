@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+
+<link REL=stylesheet HREF="http://cedric.cnam.fr/vertigo/mystyle.css" TYPE="text/css">
+<TITLE>
+ Concurrence (6 points)
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="010621002.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>3&nbsp;&nbsp; Concurrence (6 points)</H2>Soit l'exécution concurrente suivante de trois transactions dans le SGBD
+d'un système bancaire.<BR>
+<BR>
+<B>H</B>: r<SUB><FONT SIZE=2>1</FONT></SUB>[x] r<SUB><FONT SIZE=2>2</FONT></SUB>[y] w<SUB><FONT SIZE=2>1</FONT></SUB>[y] r<SUB><FONT SIZE=2>3</FONT></SUB>[y] w<SUB><FONT SIZE=2>2</FONT></SUB>[z] w<SUB><FONT SIZE=2>1</FONT></SUB>[x]
+c<SUB><FONT SIZE=2>1</FONT></SUB> r<SUB><FONT SIZE=2>3</FONT></SUB>[x] c<SUB><FONT SIZE=2>2</FONT></SUB> w<SUB><FONT SIZE=2>3</FONT></SUB>[z] c<SUB><FONT SIZE=2>3</FONT></SUB><BR>
+<BR>
+<OL type=1>
+<LI>
+	 (1,5 pt) Parmi les opérations programmées dans le système, il y
+a les deux suivantes:<BR><B>O1</B>: calcul de la somme entre le solde du compte courant et celui du 
+CODEVI d'un client et enregistrement du résultat dans la base de données.<BR><B>O2</B>: crédit du compte d'un client et enregistrement de l'opération dans 
+la base de données.<BR>
+<BR>
+Montrez que parmi les transactions de <B>H</B>, il y en a qui peuvent 
+correspondre à <B>O1</B> et <B>O2</B>. Peut-on dire que dans <B>H</B> apparaît une
+exécution concurrente des deux opérations?
+<BR>
+<BR>
+<B>Solution:</B><EM>
+</EM><EM><B>O1</B></EM><EM>: lecture compte courant, lecture CODEVI, écriture somme<BR></EM><EM><B>O2</B></EM><EM>: lecture et écriture compte, écriture opération<BR>
+<BR>
+T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> : r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y] w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] c</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM><BR>T</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> : r</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[y] w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[z] c</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM><BR>T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> : r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[x] w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[z] c</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><BR>
+<BR>
+<EM>T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> est compatible avec </EM><EM><B>O2</B></EM><EM> et T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> avec </EM><EM><B>O1</B></EM><EM>. Par contre,
+on ne peut pas dire que </EM><EM><B>H</B></EM><EM> contient une exécution concurrente de </EM><EM><B>O1</B></EM><EM>
+et </EM><EM><B>O2</B></EM><EM>, car </EM><EM><I>y</I></EM><EM> dans T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> correspond à un enregistrement d'opération
+bancaire, tandis que dans T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> il est un compte client.
+</EM><BR>
+<BR>
+	
+<LI> (1 pt) Vérifiez si <B>H</B> est sérialisable, en
+trouvant les conflits et en construisant son graphe de sérialisation.
+<BR>
+<BR>
+<B>Solution:</B><EM>
+Conflits :<BR>
+<BR>
+sur </EM><EM><I>x</I></EM><EM>: w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] - r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[x]<BR>sur </EM><EM><I>y</I></EM><EM>: r</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[y] - w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y], w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y] - r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y]<BR>sur </EM><EM><I>z</I></EM><EM>: w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[z] - w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[z]<BR>
+<BR>
+Graphe de sérialisation: 
+T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> <FONT FACE=symbol>¾®</FONT></EM><EM> T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> <FONT FACE=symbol>¬¾</FONT></EM><EM> T</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> <FONT FACE=symbol>¾®</FONT> </EM><EM>T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><BR>
+<BR>
+<EM>Pas de cycle, donc </EM><EM><B>H</B></EM><EM> est sérialisable.
+</EM><BR>
+<BR>
+	
+<LI> (1 pt) L'exécution <B>H</B> évite-t-elle les annulations en 
+cascade? Sinon, est-il possible de modifier juste l'emplacement des 
+<TT>Commit</TT> afin que <B>H</B> évite les annulations en cascade?
+<BR>
+<BR>
+<B>Solution:</B><EM>
+</EM><EM><B>H</B></EM><EM> n'évite pas les annulations en cascade, car T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> lit </EM><EM><I>y</I></EM><EM> de T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>
+avant que T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> soit validée. L'autre lecture (T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> lit </EM><EM><I>x</I></EM><EM> de T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>)
+se fait après la validation de T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>.<BR>
+<BR>
+Il suffirrait, pour éviter les annulations en cascade, de placer le 
+</EM><EM><TT>Commit</TT></EM><EM> de T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> avant la lecture r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y]. Mais cela n'est pas
+possible, car T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> a d'autres opérations après r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y]. Donc, il 
+n'est pas possible de déplacer juste les </EM><EM><TT>Commit</TT></EM><EM> pour éviter les 
+annulations en cascade.
+</EM><BR>
+<BR>
+	
+<LI> (1 pt) On sait que la position des <TT>Commit</TT> dans une 
+exécution n'a pas d'influence sur sa sérialisabilité, car seuls les conflits 
+comptent dans ce cas. Est-ce que l'algorithme de verrouillage à deux phases 
+est-il également insensible à la position des <TT>Commit</TT> dans l'exécution?
+Justifiez votre réponse.
+<BR>
+<BR>
+<B>Solution:</B><EM>
+Non, l'algorithme de verrouillage à deux phases est sensible à la position des
+</EM><EM><TT>Commit</TT></EM><EM>, car le relâchement de verrous se fait à ce moment-là seulement.
+Donc trop retarder le </EM><EM><TT>Commit</TT></EM><EM> produira probablement des interblocages.
+</EM><BR>
+<BR>
+	
+<LI> (1,5 pt) Quelle est l'exécution obtenue par verrouillage à
+deux phases à partir de <B>H</B>?<BR>On considère que le relâchement des verrous d'une transaction se fait au 
+<TT>Commit</TT> et qu'à ce moment on exécute en priorité les opérations 
+bloquées en attente de verrou, dans l'ordre de leur blocage.
+<BR>
+<BR>
+<B>Solution:</B><EM>
+r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x], r</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[y] s'exécutent<BR>w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y] bloquée par r</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[y]<BR>r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] s'exécute, car le verrou de lecture sur </EM><EM><I>y</I></EM><EM> peut être partagé<BR>w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[z] s'exécute<BR>w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] bloquée, car T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> bloquée<BR>c</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> bloquée, car T</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> bloquée<BR>r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[x] s'exécute, car le verrou de lecture sur </EM><EM><I>x</I></EM><EM> peut être partagé<BR>c</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> s'exécute et les verrous de T</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM> sont relâchés. Par contre,
+ w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y] ne peut pas être débloquée, car le verrou de lecture sur </EM><EM><I>y</I></EM><EM> et
+ detenu par T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM><BR>w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[z] s'exécute, car le verrou sur </EM><EM><I>z</I></EM><EM> a été relâché par T</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM><BR>c</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> s'exécute et tous les verrous de T</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> sont relâchés </EM><EM><FONT FACE=symbol>®</FONT></EM><EM>
+ toutes les opérations bloquées peuvent s'exécuter<BR>w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y], w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x], c</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM> s'exécutent<BR>
+<BR>
+Résultat : r</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] r</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[y] r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[y] w</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>[z] r</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[x] c</EM><SUB><EM><FONT SIZE=2>2</FONT></EM></SUB><EM>
+w</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM>[z] c</EM><SUB><EM><FONT SIZE=2>3</FONT></EM></SUB><EM> w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[y] w</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>[x] c</EM><SUB><EM><FONT SIZE=2>1</FONT></EM></SUB><EM>
+</EM></OL>
+<HR>
+<A HREF="010621002.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

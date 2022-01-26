@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+ Modèle Relationnel (10 points)
+</TITLE>
+</HEAD>
+<BODY BGCOLOR=silver TEXT=black>
+<A HREF="980624002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>1&nbsp;&nbsp;Modèle Relationnel (10 points)</H2>
+<A NAME="sec:relationnel"></A>
+Les aéroports de Paris (ADP) gèrent leurs vols avec une base de
+données relationelle. On considère le schéma relationnel suivant&nbsp;:<BR>
+<BR>
+
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD  ALIGN=right NOWRAP><B>Vols</B></TD>
+<TD  ALIGN=left NOWRAP><EM>(NumVol, NumAv, Piste, AerDep, AerArr, DatDep, HeuDep,
+ HeuArr)</EM></TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><B>Clients</B></TD>
+<TD  ALIGN=left NOWRAP><EM>(NomCl, NumVol, Siège)</EM></TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><B>Avions</B></TD>
+<TD  ALIGN=left NOWRAP><EM>(NumAv, Comp, Places)</EM>
+</TD>
+</TR></TABLE><BR>
+Les attributs sont:<BR>
+<BR>
+
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD  ALIGN=right NOWRAP><EM>NumVol:</EM></TD>
+<TD  ALIGN=left NOWRAP>numéro de vol</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>Piste:</EM></TD>
+<TD  ALIGN=left NOWRAP>piste de départ</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>Comp:</EM></TD>
+<TD  ALIGN=left NOWRAP>compagnie de vols</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>AerDep</EM></TD>
+<TD  ALIGN=left NOWRAP>aéroport de départ</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>AerArr:</EM></TD>
+<TD  ALIGN=left NOWRAP>aéroport d'arrivée</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>DatDep:</EM></TD>
+<TD  ALIGN=left NOWRAP>date de départ</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>HeuDep</EM></TD>
+<TD  ALIGN=left NOWRAP>heure de départ</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>HeuArr:</EM></TD>
+<TD  ALIGN=left NOWRAP>heure d'arrivée</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>NomCl:</EM></TD>
+<TD  ALIGN=left NOWRAP>nom du client</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>Siège:</EM></TD>
+<TD  ALIGN=left NOWRAP>siège réservé</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>NumAv:</EM></TD>
+<TD  ALIGN=left NOWRAP>numéro d'avion</TD>
+</TR>
+<TR><TD  ALIGN=right NOWRAP><EM>Places:</EM></TD>
+<TD  ALIGN=left NOWRAP>nombre de places disponibles
+</TD>
+</TR></TABLE><BR>
+<A NAME="toc1"></A>
+<H3>1.1&nbsp;&nbsp;Algèbre et SQL (8 points)</H3>
+Écrivez les requêtes suivantes en algèbre relationnelle et en SQL&nbsp;:
+<OL>
+<LI>Les aéroports avec des départs de vols Air France? (2 points)<BR>
+<BR>
+
+<H5>Solutions:</H5>
+ pi<SUB><FONT SIZE=2><I>AerDep</I></FONT></SUB>(<I>Vols</I> <I>join</I> sigma<SUB><FONT SIZE=2><I>Comp</I>='<I>Air</I> <I>France</I>'</FONT></SUB>(<I>Avions</I>)) 
+<PRE>
+select AerDep
+  from Vols, Avions
+ where Comp = 'Air France'
+   and Vols.NumAv = Avions.NumAv;
+</PRE>
+<LI>Les noms des clients qui prennent des vols Air France? (2 points)<BR>
+<BR>
+
+<H5>Solutions:</H5>
+ pi<SUB><FONT SIZE=2><I>NomCl</I></FONT></SUB>(sigma<SUB><FONT SIZE=2><I>Comp</I>='<I>Air</I> <I>France</I>'</FONT></SUB>(<I>Avions</I>) <I>join</I> <I>Vols</I> <I>join</I> <I>Clients</I>)
+<PRE>
+select NomCl
+  from Vols, Clients, Avions
+ where Comp = 'Air France'
+   and Vols.NumVol = Clients.NumVol
+   and Vols.NumAv = Avions.NumAv;
+</PRE>
+<LI>Les numéros de vols avec la même date de départ, le même
+ aéroport de départ et d'arrivée que le vol ayant pour numéro AF169?
+ (2 points)
+
+<H5>Solutions:</H5>
+ pi<SUB><FONT SIZE=2><I>NumVol</I></FONT></SUB>(<I>Vols</I> <I>join</I>
+ pi<SUB><FONT SIZE=2><I>DatDep</I>,<I>AerDep</I>,<I>AerArr</I></FONT></SUB>(sigma<SUB><FONT SIZE=2><I>NumVol</I>='<I>AF</I>169'</FONT></SUB>(<I>Vols</I>)))
+<PRE>
+select A.NumVol
+  from Vols A, Vols B
+ where B.NumVol = 'AF169'
+   and A.DatDep = B.DatDep
+   and A.AerDep = B.AerDep
+   and A.AerArr = B.AerArr;
+</PRE>
+<LI>Les noms des compagnies avec le nombre de leurs clients? (2 points)<BR>
+<BR>
+
+<H5>Solutions:</H5>
+ <I>algebre</I>&nbsp;<I>pas</I>&nbsp;<I>possible</I>
+<PRE>
+select Comp, count(distinct NomCl)
+  from Clients, Avions, Vols
+ where Clients.NumVol = Vols.NumVol
+   and Vols.NumAv = Avions.NumAv
+ group by Comp;
+</PRE>
+<LI>Les numéros de vols qui ne sont pas d'Air France avec une date
+ de départ le 14/7/98 et avec des places libres? (2 points bonus)<BR>
+<BR>
+
+<H5>Solutions:</H5>
+ <I>algebre</I>&nbsp;<I>pas</I>&nbsp;<I>possible</I>
+<PRE>
+select NumVol
+  from Vols, Avions
+ where DatDep = '14/7/98'
+   and Comp &lt;&gt; 'Air France'
+   and Vols.NumAv = Avions.NumAv
+   and Places &gt; (select count(distinct Siège)
+                   from Clients
+                  where Clients.NumVol = Vols.NumVol);
+</PRE>
+</OL><A NAME="toc2"></A>
+<H3>1.2&nbsp;&nbsp;Dépendances fonctionnelles (2 points)</H3>
+<OL>
+<LI>Comment peut-on exprimer le fait qu'il ne peut y avoir deux
+ départs sur une même piste (dans un aéroport) en même temps? (1
+ point)<BR>
+<BR>
+
+<H5>Solutions:</H5>
+ <I>Piste</I>&nbsp;<I>AerDep</I>&nbsp;<I>DatDep</I>&nbsp;<I>HeuDep</I> -&gt; <I>NumVol</I>
+
+ 
+
+<LI>Donnez l'ensemble des dépendances fonctionnelles définies pour
+ la relation <B>Clients</B>. Donnez les clés de cette relation? Est-ce
+ qu'elle est en 3e Forme Normale? (1 point)<BR>
+<BR>
+
+<H5>Solution:</H5>
+ <FONT COLOR=red><I>F</I></FONT>={<I>Siege</I>&nbsp;<I>NumVol</I>-&gt; <I>NomCl</I>}. La clé est
+ <I>Siege</I>&nbsp;<I>NumVol</I>. La relation est en 3e Forme Normale.
+
+</OL><HR>
+<A HREF="980624002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

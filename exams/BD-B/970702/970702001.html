@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+ Modèle Relationnel (10 points)
+</TITLE>
+</HEAD>
+<BODY BGCOLOR=silver TEXT=black>
+<A HREF="970702002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>1&nbsp;&nbsp;Modèle Relationnel (10 points)</H2>
+On considère les deux tables&nbsp;:
+
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=1>
+<TR><TD  ALIGN=left NOWRAP><B>R</B></TD>
+<TD  ALIGN=center NOWRAP>A</TD>
+<TD  ALIGN=center NOWRAP>B</TD>
+</TR>
+<TR><TD  ALIGN=left NOWRAP>&nbsp;</TD>
+<TD  ALIGN=center NOWRAP>a</TD>
+<TD  ALIGN=center NOWRAP>b</TD>
+</TR>
+<TR><TD  ALIGN=left NOWRAP>&nbsp;</TD>
+<TD  ALIGN=center NOWRAP>b</TD>
+<TD  ALIGN=center NOWRAP>d</TD>
+</TR>
+<TR><TD  ALIGN=left NOWRAP>&nbsp;</TD>
+<TD  ALIGN=center NOWRAP>a</TD>
+<TD  ALIGN=center NOWRAP>e</TD>
+</TR></TABLE>
+&nbsp;&nbsp;&nbsp;
+
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=1>
+<TR><TD  ALIGN=left NOWRAP><B>S</B></TD>
+<TD  ALIGN=center NOWRAP>B</TD>
+<TD  ALIGN=center NOWRAP>C</TD>
+</TR>
+<TR><TD  ALIGN=left NOWRAP>&nbsp;</TD>
+<TD  ALIGN=center NOWRAP>e</TD>
+<TD  ALIGN=center NOWRAP>a</TD>
+</TR>
+<TR><TD  ALIGN=left NOWRAP>&nbsp;</TD>
+<TD  ALIGN=center NOWRAP>e</TD>
+<TD  ALIGN=center NOWRAP>d</TD>
+</TR>
+<TR><TD  ALIGN=left NOWRAP>&nbsp;</TD>
+<TD  ALIGN=center NOWRAP>b</TD>
+<TD  ALIGN=center NOWRAP>d</TD>
+</TR></TABLE><BR>
+<A NAME="toc1"></A>
+<H3>1.1&nbsp;&nbsp;Algèbre et Calcul Relationnel (8 Points)</H3>
+<OL>
+<LI>On appelle <EM>jointure naturelle</EM>, l'opération qui s'exprime par
+ l'expression de l'algèbre relationnelle suivante&nbsp;:
+ <DIV ALIGN=center>
+<TABLE CELLSPACING=0 CELLPADDING=0>
+<TR VALIGN=middle><TD NOWRAP><I>R</I> <I>join</I> <I>S</I> = pi<SUB><FONT SIZE=2><I>A</I>,<I>B</I>,<I>C</I></FONT></SUB>(sigma<SUB><FONT SIZE=2><I>B</I>=<I>B</I>'</FONT></SUB>(<I>R</I> × rho</TD>
+<TD NOWRAP>
+<TABLE CELLSPACING=0 CELLPADDING=0>
+<TR><TD>&nbsp;</TD>
+</TR>
+<TR><TD NOWRAP><FONT SIZE=2><I>B</I>-&gt;
+ <I>B</I>'</FONT></TD>
+</TR></TABLE></TD>
+<TD nowrap>(<I>S</I>)))</TD>
+</TR></TABLE></DIV>
+ 
+ On appelle <EM>semi-jointure</EM>, l'opération qui s'exprime par l'expression
+ de l'algèbre relationnelle suivante&nbsp;: <DIV ALIGN=center><I>R</I> |>t<I>o</I> -.45<I>em</I>&lt; <I>S</I> = pi<SUB><FONT SIZE=2><I>A</I>,<I>B</I></FONT></SUB>(<I>R</I>
+ <I>join</I> <I>S</I>)</DIV>
+ 
+ On connaît les règles de réécriture suivantes&nbsp;:
+ <UL>
+<LI>pi<SUB><FONT SIZE=2><I>X</I></FONT></SUB>(pi<SUB><FONT SIZE=2><I>Y</I></FONT></SUB>(<I>R</I>)) = pi<SUB><FONT SIZE=2><I>X</I></FONT></SUB>(<I>R</I>) si <I>X</I>inclus dans ou égal à <I>Y</I>
+ 
+<LI>pi<SUB><FONT SIZE=2><I>X</I></FONT></SUB>(<I>R</I> × <I>S</I>) = pi<SUB><FONT SIZE=2><I>X</I> inter </FONT></SUB><SUB><FONT SIZE=2><FONT COLOR=red><I>R</I></FONT></FONT></SUB>(<I>R</I>) × pi<SUB><FONT SIZE=2><I>X</I>
+ inter </FONT></SUB><SUB><FONT SIZE=2><FONT COLOR=red><I>S</I></FONT></FONT></SUB>(<I>S</I>) où <FONT COLOR=red><I>R</I></FONT> et <FONT COLOR=red><I>S</I></FONT> sont les
+ attributs de <I>R</I> et <I>S</I>.
+ 
+<LI>pi<SUB><FONT SIZE=2><I>X</I></FONT></SUB>(sigma<SUB><FONT SIZE=2><I>A</I>=<I>B</I></FONT></SUB>(<I>R</I>)) = sigma<SUB><FONT SIZE=2><I>A</I>=<I>B</I></FONT></SUB>(pi<SUB><FONT SIZE=2><I>X</I></FONT></SUB>(<I>R</I>)) si <I>A</I> appartient à <I>X</I>
+ et <I>B</I> appartient à <I>X</I>.
+ </UL>
+ <BR>
+ Montrer rigoureusement par réécriture des expressions algébriques
+ que la semi-jointure peut également être calculée par l'expression
+ suivante&nbsp;: (2 points) <DIV ALIGN=center><I>R</I> |>t<I>o</I> -.45<I>em</I>&lt; <I>S</I> = <I>R</I> <I>join</I> pi<SUB><FONT SIZE=2><I>B</I></FONT></SUB>(<I>S</I>)</DIV> 
+ 
+
+<LI>Exprimer la jointure naturelle entre <I>R</I> et <I>S</I> dans le calcul
+ relationnel? (2 points)
+
+<LI>Calculer&nbsp;:
+ <OL>
+<LI><I>R</I> <I>join</I> <I>S</I> (1 point)
+ 
+<LI><I>R</I> U rho<SUB><FONT SIZE=2><I>B</I> -&gt; <I>A</I>,<I>C</I> -&gt; <I>B</I></FONT></SUB>(<I>S</I>) (1 point)
+ 
+<LI><I>R</I> - rho<SUB><FONT SIZE=2><I>B</I> -&gt; <I>A</I>,<I>C</I> -&gt; <I>B</I></FONT></SUB>(<I>S</I>) (1 point)
+ 
+<LI>pi<SUB><FONT SIZE=2><I>A</I></FONT></SUB>(<I>R</I>) - pi<SUB><FONT SIZE=2><I>A</I></FONT></SUB>((pi<SUB><FONT SIZE=2><I>A</I></FONT></SUB>(<I>R</I>) × pi<SUB><FONT SIZE=2><I>B</I></FONT></SUB>(<I>S</I>))-<I>R</I>) (1 point)
+ </OL>
+</OL><A NAME="toc2"></A>
+<H3>1.2&nbsp;&nbsp;Axiomes d'Armstrong (2 Points)</H3>
+Montrer que l'union (1 point) et la pseudo-transitivité (1 point)
+peuvent s'exprimer en fonction de la réflexivité, de l'augmentation et
+de la transitivité. 
+<BR>
+<BR>
+<HR>
+<A HREF="970702002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

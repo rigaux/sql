@@ -1,0 +1,298 @@
+\documentclass[11pt,a4paper]{article}
+%\usepackage{french,psfig,comment}
+\usepackage{psfig}
+\usepackage{fullpage}
+\pagestyle{myheadings}
+\usepackage{comment,latexsym}
+\usepackage[T1]{fontenc}
+\markboth{22/6/2000 \hfill Conservatoire National des Arts et
+Métiers -- Paris \hfill\ }{22/6/2000 \hfill Conservatoire National
+des Arts et Métiers -- Paris \hfill\ }
+% \baselineskip 6pt
+% \parskip 6pt
+% \onecolumn
+% \textwidth 18cm
+% \textheight 25cm
+% \hoffset=-3cm
+% \voffset=-2.5cm
+% \setlength{\parindent}{0.0cm}
+% \unitlength 1cm
+\newtheorem{defin}{Définition}[section]
+\newtheorem{exampl}{Exemple}[section]
+\def\Semijoin{\mathbin{\triangleright\hbox to -.45em{}<}}
+\def\picwidth{16cm}
+
+\newcounter{querycounter}
+\setcounter{querycounter}{0}
+\newenvironment{querylist}{\begin{list}{\bf Requ\^ete~\arabic{section}.\arabic{querycounter}~:}{\usecounter{querycounter}\setlength{\rightmargin}{\leftmargin}}}{\end{list}}
+
+\newcounter{questioncounter}
+\setcounter{questioncounter}{0}
+\newenvironment{questionlist}{\begin{list}{\bf Question~\arabic{section}.\arabic{questioncounter}~:}{\usecounter{questioncounter}\setlength{\rightmargin}{\leftmargin}}}{\end{list}}
+
+\includecomment{solution}
+
+\begin{document}
+%\psfig{figure=dept.epsi} 
+
+\begin{center}
+\Large\bf Systèmes de Gestion de Bases de Données B7 - ICPJ\\ \ \\
+\Large\bf EXAMEN\\ \ \\
+\large\bf Jeudi 22 Juin 2000
+\end{center}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Langages de Requêtes (6 points)}
+
+Un armateur utilise ORACLE pour gérer ses cargos\,:
+
+\begin{itemize}
+\item {\bf Cargos}({\sf NomCar, TonnageMax, Age, Capitaine})~: le nom du
+  cargo (NomCar), le tonnage maximal (TonnageMax), l'âge (Age) et le
+  capitaine (Capitaine) du Cargo.
+\item {\bf Transport}({\sf NomCar, Produit, Tonnage, Volume, DateDep, DateArr,
+    PortDep, PortArr})~: le produit (Produit) et le volume (Tonnage)
+  transporté; la date (DateDep) et le port (PortDep) de départ et
+  d'arrivée (DateArr, PortArr).
+\item {\bf Produits}({\sf Produit, NiveauDanger})~: le niveau de
+  danger (NiveauDanger) d'un produit.
+\end{itemize}
+
+Écrire les requêtes suivantes {\bf en algèbre relationnelle et en SQL}~:
+\begin{querylist}
+\item (xxx point) Les cargos avec un âge supérieur à 20 ans.
+
+\begin{solution}
+{\bf Solution~:}
+
+\end{solution}
+
+\item (xxx point) Les cargos de plus de 20 ans qui partent le 22 Juin
+  de Marseille en transportant un produit très toxique (niveau de danger
+  = 5);
+
+\begin{solution}
+{\bf Solution~:}
+
+\end{solution}
+
+\item (xxx point) Les bateaux qui n'ont jamais transporté un produit
+  très toxique.
+
+\begin{solution}
+{\bf Solution~:}
+
+\end{solution}
+
+\item (xxx point) La dernière requête en {\bf calcul domaine ou n-uplet}.
+
+\begin{solution}
+{\bf Solution~:}
+
+\end{solution}
+
+\end{querylist}
+
+Écrire la requête suivante {\bf uniquement en SQL}~:
+\begin{querylist}
+\setcounter{querycounter}{4}
+\item (xxx point) Le(s) port(s) d'où sont partis 
+le plus de bateaux transportant un produit 
+dangereux (NiveauDanger > 3).
+
+\begin{solution}
+{\bf Solution~:}
+
+\end{solution}
+\end{querylist}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Dépendances fonctionnelles (4 points)}
+
+Soit un schéma relationnel avec les dépendances fonctionnelles
+suivantes\,:
+
+\begin{tabular}[htbp]{ll}
+{\bf R(A, B, C)}& ${\cal F}_{R}=\{A \rightarrow B\}$\\
+{\bf S(C, D, E, F)}& ${\cal F}_{S}=\{C \rightarrow D;\;C \rightarrow E;\;DE \rightarrow F;\;F \rightarrow C;\;F \rightarrow D;\;D \rightarrow F \}$\\
+\end{tabular}
+\begin{questionlist}
+\item Calculez les clés des relations {\bf R} et {\bf S}.
+
+\begin{solution}
+{\bf Solution~:}
+\begin{itemize}
+\item la clé de R: (AC)
+\item les trois clés de S: C, F et D
+\end{itemize}
+\end{solution}
+
+\item Est-ce que $S$ est en 3e forme normale?
+
+\begin{solution}
+{\bf Solution~:} OUI
+\end{solution}
+
+\item Soit un sous-ensemble de dépendances fonctionnelles ${\cal
+    G} \subset {\cal F}_S$~:
+\begin{eqnarray*}
+C \rightarrow D\\
+C \rightarrow E\\
+F \rightarrow C\\
+D \rightarrow F
+\end{eqnarray*}
+
+Est-il possible d'obtenir toutes les dépendances
+fonctionnelles dans ${\cal F}_S$ à partir de ${\cal G}$ en appliquant
+les axiomes d'Armstrong\,? Justifiez votre réponse.
+
+\begin{solution}
+{\bf Solution~:} OUI. On obtient 
+\begin{enumerate}
+\item $DE \rightarrow F$ par exension de $D \rightarrow F$ en $DE
+  \rightarrow FE$ et décomposition.
+\item $F \rightarrow D$ par transitivité ($F \rightarrow C$ et $C
+  \rightarrow D$)
+\end{enumerate}
+\end{solution}
+
+\item Est-ce que $F$ est une couverture minimale\,? Justifiez votre
+  réponse.
+
+\begin{solution}
+  {\bf Solution~:} NON, car ${\cal G}^+ ={\cal F}_S^+$ et ${\cal G}
+  \subset {\cal F}_S$.
+\end{solution}
+
+\end{questionlist}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Indexation (6 points)}
+
+
+\subsection*{Opérations sur arbre B+ (2 pts)}
+
+Soit l'arbre B+ de la figure~\ref{icpj}. Expliquez
+les opérations suivantes, et donnez le nombre
+d'accès  nécessaire {\em aux pages de l'arbre B+} (ne tenez pas compte
+de l'accès au fichier).
+
+\begin{enumerate}
+  \item Recherche de l'article 41.
+  \item Recherche des articles 20 à 30.
+  \item Insertion des articles 1 et 4.
+  \item Destruction de l'article 23.
+\end{enumerate}
+
+\begin{figure}
+    \centerline{\psfig{figure=icpj.eps}}  
+    \caption{Un arbre B+}  
+    \label{icpj}  
+\end{figure}
+
+\subsection*{Index dense et non-dense (2 pts)}
+
+Soit un fichier tel que 
+chaque page peut contenir 10 articles. On indexe
+ce fichier avec un niveau d'index (un seul), et on suppose
+qu'une page d'index contient 100 paires (clé, pointeur).
+Si $n$ est le nombre
+d'articles, donnez la fonction de $n$
+permettant d'obtenir  le nombre minimum de pages pour
+les structures suivantes\,: 
+\begin{enumerate}
+  \item Fichier séquentiel non ordonné avec un index dense.
+  \item Fichier trié sur la clé avec un index non-dense.
+\end{enumerate}
+
+\begin{solution}
+(1) $n/10$ et $n/100$, soit $\frac{11 \times n}{100}$ pages.
+(2) Il faut seulement $n/10$ paires (clé, pointeur) dans l'index,
+donc $n/1000$ pages, pour un total  de $\frac{101\times  n}{1000}$ pages.
+
+\end{solution}
+
+
+\subsection*{Arbre-B (2 pts + 2 bonus}
+
+On reprend les hypothèses précédentes, et on indexe
+maintenant le fichier avec un arbre B+. Les feuilles de l'arbre 
+contiennent donc des pointeurs vers le fichier, et les noeuds internes
+des pointeurs vers d'autres noeuds (voir figure~\ref{icpj}). 
+On suppose qu'une page
+d'arbre B+ est pleine à 70\,\% (69 clés, 70 pointeurs). 
+
+\begin{enumerate}
+  \item Le fichier est trié sur la clé, et indexé
+     par un arbre-B+  dense.  Donnez (1) le nombre
+de niveaux de l'arbre pour un fichier de 1~000~000 articles, (2) le nombre de
+pages utilisées (y compris l'index), et (3) le nombre 
+d'accès disque pour rechercher un article par sa clé.
+
+
+\begin{solution}
+Il y a 100~000 pages de données. Un million
+d'articles, donc $\frac{1M}{70} = 14~286$ pages pour le dernier
+niveau de l'arbre B+. On divise encore par 70\,:
+204 pages au niveau $l-1$, 3 pages au niveau supérieur, et 1 page
+ pour la racine.
+
+Il faut donc lire 4+1 pages pour accéder à un article
+par sa clé.
+\end{solution}
+%  \item Idem que précédemment, mais le fichier n'est pas trié.
+
+
+  \item On effectue maintenant une recherche par intervalle
+      ramenant 1~000 articles.  Décrivez
+    la recherche et donnez le nombre d'accès
+      disque dans le pire des cas.
+
+
+\begin{solution}
+Recherche sur le plus petit élément (4 pages), puis lecture de 
+$\frac{1000}{70} = 14$ pages
+en suivant le niveau des feuilles de l'arbre B+. Pour chaque pointeur 
+vers un objet il faut lire une page dans le pire des cas, soit
+1~000 pages. Total\,: 1018 pages.
+\end{solution}
+
+%  \item Mêmes questions que (1), mais l'arbre-B+ est non dense.
+
+%\begin{solution}
+%Il faut indexer 100~000 pages. Donc 1429 pages au dernier niveau, 
+%puis 20, puis 1. On économise un niveau.
+%\end{solution}
+
+\end{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Concurrence et reprise sur pannes (4 points)}
+
+Soit les histoires suivantes\,:
+
+\begin{enumerate}
+  \item $r_1(A) r_2(A) r_3(B) w_1 (A) r_2(C) r_2(B) w_2(B) w_1(C) C_1 C_2$ 
+  \item $r_1(A) w_1(B) r_2(B) C_1 w_2(C) C_2 r_3(C) w_3(A) C_3$
+  \item $r_1(A) r_2(A) w_1(B) w_2(B) r_1(B) r_2(B) w_2(C) w_1(D) C_1 C_2$
+\end{enumerate}
+
+\begin{itemize}
+  \item Lesquelles sont sérialisables\, (donnez le graphe de sérialisabilité
+pour chacune).
+
+\begin{solution}
+(1) Oui. $T3 \to T2 \to T1$\\
+(2) Oui.  $T1 \to T2;  T2 \to T3; T1 \to T3$\\
+(3) Non. $T1 \to T2 ; T2 \to T1$
+\end{solution}
+
+  \item Appliquez un verrouillage à deux phases à celles
+   qui ne sont pas sérialisables et donnez l'histoire obtenue.
+
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,113 @@
+\documentclass[french]{article}
+
+\usepackage{babel}
+\usepackage{comment}
+\usepackage{psfig}
+\newenvironment{solution}{\nopagebreak\par\vspace*{2mm}\underline{Solution~:}\em\par}{\par\vspace*{2mm}}
+\usepackage{times}
+\usepackage[latin1]{inputenc}
+
+
+\pagestyle{headings}
+\markright{28/6/1995 \hfill Conservatoire National des Arts et
+M\'etiers -- Paris \hfill\ } 
+
+\baselineskip 6pt
+\parskip 6pt
+\onecolumn
+\textwidth 16cm
+\textheight 24cm
+\hoffset=-2cm
+\voffset=-2.5cm
+\setlength{\parindent}{0.0cm}
+\unitlength 1cm
+%\input{psfig}
+\newtheorem{defin}{D\'efinition}[section]
+\newtheorem{exampl}{Exemple}[section]
+\def\picwidth{16cm}
+
+%\excludecomment{solution}
+
+\begin{document}
+\begin{center}
+\Large\bf Processus d'Informatisation et Bases de Donn\'ees A \\ 
+    Examen Processus d'Informatisation\\
+\large\bf Samedi 16 septembre 2000
+\end{center}
+
+
+
+On s'intéresse à l'informatisation d'un zoo. Ce zoo gère
+un parc d'animaux, ces animaux occupent des emplacements
+et les employés du zoo ont en charge l'entretien 
+des emplacements et du zoo. On vous demande 
+de d\'ecrire \`a l'aide des outils vus en cours et en TD 
+les principaux composants de cette application.
+
+
+\begin{enumerate}
+   \item Le zoo est constitué d'un ensemble d'emplacements où
+	sont enfermés les animaux. Chaque emplacement est pris
+	en charge par un ou plusieurs employés, et un employé
+	peut s'occuper de plusieurs emplacements.
+
+	\begin{figure}[htb]
+	\centerline{\psfig{figure=../PI/exPI97-sept1.eps}}
+	\caption{Le zoo}
+	\label{exPI97-sept1}
+	\end{figure}
+
+       Compl\'etez le mod\`ele de la figure~\ref{exPI97-sept1},
+	en ajoutant les cardinalit\'es. ({\bf 2 pts}).
+
+   \item Chaque employé s'occupe d'un emplacement à un
+	horaire donné. Où placer cette information {\it horaire}
+	 dans le schéma précédent\,? {\bf (2 pts)}
+
+   \item On veut maintenant r\'ef\'erencer le type d'entretient
+	  effectué par un employé sur un emplacement.
+
+
+	\begin{figure}[htb]
+	\centerline{\psfig{figure=../PI/exPI97-sept2.eps}}	
+	\caption{Entretien des emplacements}
+	\label{exPI97-sept2}
+	\end{figure}
+
+        Voici (figure~\ref{exPI97-sept2}) une proposition
+	pour introduire le type d'entretien. Vous para\^{\i}t-elle
+	correcte\,? Si oui, quelles sont les cardinalit\'es.
+	({\bf 2 pts}).
+
+     \item Transformez l'association ``Entretient'' dans la 
+	figure~\ref{exPI97-sept2} en entit\'e. Donnez le
+	nouveau mod\`ele, sans oublier les cardinalit\'es. 
+	({\bf 2 pts}). 
+
+     \item Introduisez maintenant les informations suivantes
+	   dans le modèle de données\,: {\bf (4 pts)} 
+	 \begin{itemize}
+	   \item Un des employés
+	   dirige le zoo (un seul directeur, qui dirige un seul zoo).
+	    \item Sur chaque emplacement, il y a un ou plusieurs
+	      animaux (un animal est sur un seul emplacement\,!).
+            \item Chaque animal appartient à une espèce (les ours, 
+		     les tigres, ...)
+         \end{itemize}
+    
+     \item Maintenant on s'intéresse aux relations de descendance
+	    entre animaux\,: on souhaite savoir qu'un animal
+	    est l'enfant d'un couple d'animaux. Comment
+	    représenter cette information\,? {\bf (2 pts)}
+
+   \item Donner le schéma relationnel (nom des tables,
+     des attributs, clés primaires soulignées) obtenu en rassemblant
+	   les figures~\ref{exPI97-sept1} et \ref{exPI97-sept2}. 
+	   Expliquer  la démarche suivie.
+
+\end{enumerate}
+ 
+
+
+    
+\end{document}

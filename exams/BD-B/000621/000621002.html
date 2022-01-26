@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+
+<link REL=stylesheet HREF="/~amann/mystyle.css"
+TYPE="text/css">
+<TITLE>
+ Dépendances fonctionnelles (3 points)
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="000621001.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<A HREF="000621003.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<HR>
+
+<H2>2&nbsp;&nbsp; Dépendances fonctionnelles (3 points)</H2>Pour chaque relation de la section précédente on a défini un ensemble
+de dépendances fonctionnelles (on a remplacé le nom des attributs par
+leur initiale)&nbsp;:<BR>
+<BR>
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=left NOWRAP><B>Abonnés</B>(L, N, P, NT, V)</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>Abonnes</I></FONT></SUB>={<I>L</I>
+ <FONT FACE=symbol>®</FONT> (<I>N</I>, <I>P</I>, <I>NT</I>, <I>V</I>);&nbsp;<I>NT</I> <FONT FACE=symbol>®</FONT> <I>L</I>}</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><B>Abonnements</B>(L, T, EM, AM, EU, AU)</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>Abonnements</I></FONT></SUB>={<I>T</I>
+ <FONT FACE=symbol>®</FONT> (<I>EM</I>, <I>AM</I>);&nbsp;(<I>L</I>, <I>T</I>) <FONT FACE=symbol>®</FONT> (<I>EU</I>, <I>AU</I>) }</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><B>Connexions</B>(L, DA, H, D)</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>Connexions</I></FONT></SUB>={(<I>L</I>, <I>DA</I>, <I>H</I>) <FONT FACE=symbol>®</FONT> <I>D</I> }</TD>
+</TR></TABLE>
+<DL COMPACT=compact>
+<DT>
+<B>Question&nbsp;2.1&nbsp;:</B><DD> (1 point) Quelles sont les clés de la relation <B>Abonnés</B> et de la
+ relation <B>Abonnements</B>&nbsp;? <BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<UL>
+<LI>
+ <B>Abonnés</B>&nbsp;: deux clés <FONT COLOR=purple>L</FONT> et <FONT COLOR=purple>NT</FONT>
+
+<LI> <B>Abonnements</B>&nbsp;: une clé <FONT COLOR=purple>(L,T)</FONT>
+</UL>
+<BR>
+
+<DT><B>Question&nbsp;2.2&nbsp;:</B><DD> (2 points) Montrez que la relation <B>Abonnements</B> n'est pas
+ en 3e Forme Normale et faites un décomposition.<BR>
+<BR>
+
+ <B>Solution&nbsp;:</B> Par exemple, dans dépendance fonctionnelle <I>T</I>
+ <FONT FACE=symbol>®</FONT> <I>EM</I> (après décomposition de la première dépendance) <FONT COLOR=purple>T</FONT> n'est pas une superclé et <FONT COLOR=purple>EM</FONT> ne fait pas partie d'une
+ clé. Décomposition&nbsp;:
+<UL>
+<LI>
+ <B>Abonnements</B>(T, EM, AM)
+
+<LI> <B>Utilisation</B>(L, T, EU, AU)
+</UL>
+
+</DL>
+<HR>
+<A HREF="000621001.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<A HREF="000621003.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+</BODY>
+</HTML>

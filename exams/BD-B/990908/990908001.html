@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset= ISO-8859-1">
+
+<link REL=stylesheet HREF="/~amann/mystyle.css"
+TYPE="text/css">
+<TITLE>
+ Conception de schéma (4 points)
+</TITLE>
+</HEAD>
+<BODY BGCOLOR=silver TEXT=black>
+<A HREF="990908002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<HR>
+
+<H2>1&nbsp;&nbsp; Conception de schéma (4&nbsp;points)</H2>
+Soit <TT>R(A,B,C,D,E,F)</TT> une relation avec les dépendances
+fonctionnelles <FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>R</I></FONT></SUB>={<I>A</I> -&gt; <I>BCD</I>, <I>B</I> -&gt; <I>A</I>, <I>AE</I>
+-&gt; <I>F</I>}.<BR>
+<BR>
+Répondez aux questions suivantes et justifiez vos réponses&nbsp;:
+<OL>
+<LI>
+ 
+Quels sont les clés de la relation <TT>R</TT>? (1 point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+Clés: <TT>AE</TT> et <TT>BE</TT>
+<BR>
+<BR>
+
+<LI>Est-ce que <TT>R</TT> est en 3e Forme Normale? (1 point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+NON 
+<BR>
+<BR>
+
+<LI>Est-ce que la décomposition de <TT>R</TT> en deux relations <TT>S(AB)</TT> et <TT>T(BCDEF)</TT> est sans perte d'information? (1 point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+OUI&nbsp;: (<I>AB</I> inter <I>BCDEF</I>) -&gt; (<I>AB</I>-<I>BCDEF</I>) est vrai dans <FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>R</I></FONT></SUB>.
+<BR>
+<BR>
+
+<LI>Est-ce que la décomposition précédente préserve les
+ dépendances fonctionnelles de la relation <TT>R</TT>? (1 point)<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+OUI&nbsp;: 
+<OL>
+<LI>
+ 
+<FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>S</I></FONT></SUB>={<I>A</I> -&gt; <I>B</I>, <I>B</I> -&gt; <I>A</I>} 
+
+<LI><FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>T</I></FONT></SUB>={<I>B</I> -&gt; <I>CD</I>, <I>BE</I> -&gt; <I>F</I>}
+</OL>
+et on peut déduire toutes les dépendances dans <FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>R</I></FONT></SUB> à partir
+de <FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>S</I></FONT></SUB> union <FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>T</I></FONT></SUB>.
+</OL><HR>
+<A HREF="990908002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+</BODY>
+</HTML>

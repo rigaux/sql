@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+
+<link REL=stylesheet HREF="http://cedric.cnam.fr/vertigo/mystyle.css" TYPE="text/css">
+<TITLE>
+ Modèle relationnel (7,5 points)
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<A HREF="030920002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<HR>
+
+<H2>1&nbsp;&nbsp; Modèle relationnel (7,5 points)</H2>
+
+Le camping ``Le Chassezac'' gère l'occupation de ses places de camping
+avec un SGBD contenant les trois tables relationnelles <I>Places</I>,
+<I>Categories</I> et <I>Clients</I>&nbsp;:
+<DIV ALIGN=center><TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD VALIGN=top ALIGN=center NOWRAP></TD>
+<TD ALIGN=right NOWRAP><I>Places</I>(<I>noPl</I>, <I>noCat</I>, <I>surface</I>, <I>distance</I>)</TD>
+</TR>
+<TR><TD VALIGN=top ALIGN=center NOWRAP></TD>
+<TD ALIGN=right NOWRAP><I>Categories</I>(<I>noCat</I>, <I>prixAd</I>, <I>prixEnf</I>)</TD>
+</TR>
+<TR><TD VALIGN=top ALIGN=center NOWRAP></TD>
+<TD ALIGN=right NOWRAP><I>Clients</I>(<I>noPl</I>, <I>nomCl</I>)</TD>
+</TR></TABLE></DIV>
+Toutes les places de camping sont stockées dans la table
+<EM>Places</EM>. Chaque place est identifiée par un numéro (noPl) et
+appartient à une catégorie de prix (noCat) qui dépend de la surface de
+la place (en <I>m</I><SUP><FONT SIZE=2>2</FONT></SUP>) et de la distance de la plage (en <I>m</I>).<BR>
+<BR>
+ Les différentes catégories de prix sont stockées dans la
+table <EM>Categories</EM>. Chaque catégorie est identifiée par un
+numéro (noCat) et définit le prix journalier par adulte (prixAd) et par
+enfant (prixEnf) en euros.<BR>
+<BR>
+La table <EM>Clients</EM> stocke pour chaque client son nom (nomCl) et la
+(les) place(s) qu'il occupe. Les places non-occupées n'apparaissent pas
+dans cette table.<BR>
+<BR>
+Questions&nbsp;:
+<OL type=1>
+<LI>
+ (1,5 points) Conception&nbsp;: Dessinez un schéma Entité-Association du
+schéma relationnel précédent. Indiquez également les cardinalités des
+associations.<BR>
+<BR>
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+
+</EM><BLOCKQUOTE><DIV ALIGN=center><DIV ALIGN=center><HR WIDTH="80%" SIZE=2></DIV><EM>
+</EM><IMG SRC="030920001.gif"><EM>
+ <BR>
+<BR>
+</EM><DIV ALIGN=center><EM>Figure 1&nbsp;: Schéma entités-associations</EM></DIV><BR>
+<EM>
+ </EM><A NAME="fig:ea"></A><EM>
+</EM><DIV ALIGN=center><HR WIDTH="80%" SIZE=2></DIV></DIV></BLOCKQUOTE><EM> 
+</EM>
+<LI> (6 points) Requêtes&nbsp;: 
+<OL type=a>
+<LI>
+ (1 point) Les numéros des places avec une surface supérieure à 20<I>m</I><SUP><FONT SIZE=2>2</FONT></SUP> et
+ une distance inférieure à 100 mètres de la plage (algèbre relationnelle).
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+</EM><DIV ALIGN=center><TABLE CELLSPACING=0 CELLPADDING=0>
+<TR VALIGN=middle><TD NOWRAP><EM><FONT FACE=symbol>p</FONT></EM><SUB><EM><FONT SIZE=2><I>noPl</I></FONT></EM></SUB><EM>(<FONT FACE=symbol>s</FONT></EM></TD>
+<TD NOWRAP><TABLE CELLSPACING=0 CELLPADDING=0>
+<TR><TD><EM>&nbsp;</EM></TD>
+</TR>
+<TR><TD NOWRAP><EM><FONT SIZE=2><I>surface</I> &gt; 20 <FONT FACE=symbol>Ù</FONT> <I>distance</I> &lt; 100</FONT></EM></TD>
+</TR></TABLE></TD>
+<TD NOWRAP><EM><I>Places</I>)</EM></TD>
+</TR></TABLE></DIV><EM>
+</EM><BR>
+
+<LI> (2 points) Les numéros et la surface des places dont le prix est de
+ 20 euros pour un adulte et qui se trouvent à moins de 100 mètres de
+ la plage (SQL, calcul domaine).
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><BR>
+<BR>
+<PRE><EM>
+  select noPl, surface 
+  from Places, Categories 
+  where distance &lt; 100 and
+        prixAd = 20 and 
+        Places.noCat = Categories.noCat
+</EM></PRE><DIV ALIGN=center><EM>{<I>P</I>,<I>S</I>| <FONT FACE=symbol>$</FONT> <I>C</I>,<I>D</I>,<I>E</I> <I>Places</I>(<I>P</I>,<I>C</I>,<I>S</I>,<I>D</I>) <FONT FACE=symbol>Ù</FONT> <I>Categories</I>(<I>C</I>,20,<I>E</I>) <FONT FACE=symbol>Ù</FONT> <I>D</I> &lt; 100 }</EM></DIV><EM>
+</EM><BR>
+
+<LI> (1 point) Le numéro de la place qui est la plus près des la plage (SQL).
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+</EM><PRE><EM>
+  select noPl 
+  from Places A 
+  where not exists (select * 
+                    from Places B
+                    where B.distance &lt; A.distance)
+</EM></PRE><EM>ou
+</EM><PRE><EM>
+  select noPl 
+  from Places 
+  where distance =  (select min(distance)
+                     from Places)
+</EM></PRE>
+<LI> (1 point) La surface totale des places non-occupées du camping (SQL).
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+</EM><PRE><EM>
+select sum(surface)
+from Place
+where noPl not in select noPl from Clients
+</EM></PRE>
+<LI> (1 point) Le prix moyen par adulte pour une place de 20<I>m</I><SUP><FONT SIZE=2>2</FONT></SUP> (SQL).
+<BR>
+<BR>
+<B>Solution&nbsp;:</B><EM>
+</EM><PRE><EM>
+select avg(prixAd)
+from Place, Categorie
+where Place.noCat = Categorie.noCat
+and surface = 20
+</EM></PRE>
+</OL>
+</OL>
+<HR>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<A HREF="030920002.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+</BODY>
+</HTML>

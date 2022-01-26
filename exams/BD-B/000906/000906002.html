@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+
+<link REL=stylesheet HREF="/~amann/mystyle.css"
+TYPE="text/css">
+<TITLE>
+ Dépendances fonctionnelles (3 points)
+</TITLE>
+</HEAD>
+<BODY >
+<A HREF="000906001.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<A HREF="000906003.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+<HR>
+
+<H2>2&nbsp;&nbsp; Dépendances fonctionnelles (3 points)</H2>Pour chaque relation de la section précédente on a défini un ensemble
+de dépendances fonctionnelles (on a remplacé les noms d'attributs par
+leurs initiales)&nbsp;:<BR>
+<BR>
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=left NOWRAP><B>Personnes</B>(PN, PV, PD, PT)</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>Personnes</I></FONT></SUB>={<I>PN</I>
+ <FONT FACE=symbol>®</FONT> (<I>PV</I>, <I>PD</I>, <I>PT</I>);&nbsp;<I>PT</I> <FONT FACE=symbol>®</FONT> <I>PN</I>}</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><B>Hôtels</B>(HN, HV, HD, HT, C, P)</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>Hotels</I></FONT></SUB>={<I>HN</I>
+ <FONT FACE=symbol>®</FONT> (<I>HV</I>, <I>HD</I>, <I>HT</I>, <I>C</I>)}</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><B>Réservations</B>(PN, HN, D, F)</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR=red> <I>F</I></FONT><SUB><FONT SIZE=2><I>Reservations</I></FONT></SUB>={}</TD>
+</TR></TABLE>
+<DL COMPACT=compact>
+<DT>
+<B>Question&nbsp;2.1&nbsp;:</B><DD> (1 point) Quelles sont les clés des trois relations?<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+<OL type=1>
+<LI>
+ Personnes: deux clés: PN et PT
+
+<LI> Hôtels: une clé: (HN, P)
+
+<LI> Réservations: une clé: (PN, HN, D, F)
+</OL>
+<BR>
+
+<DT><B>Question&nbsp;2.2&nbsp;:</B><DD> (0,5 points) En regardant les dépendances fonctionnelles, est-ce
+ que chaque hôtel ne peut avoir qu'un propriétaire?<BR>
+<BR>
+
+<B>Solution&nbsp;:</B>
+NON
+<BR>
+<BR>
+
+<DT><B>Question&nbsp;2.3&nbsp;:</B><DD> (1,5 points) Est-ce que la relation <B>Hôtels</B> est en 3e Forme
+ Normale? Justifiez votre réponse.<BR>
+<BR>
+
+ <B>Solution&nbsp;:</B> NON; par exemple, dans la DF <I>HN</I> <FONT FACE=symbol>®</FONT> <I>HV</I>
+ (après la décomposition), <I>HN</I> n'est pas une super-clé et <I>HV</I>
+ n'appartient pas à une clé.
+
+</DL><HR>
+<A HREF="000906001.html"><IMG SRC ="previous_motif.gif" ALT="Précédent"></A>
+<A HREF="index.html"><IMG SRC ="contents_motif.gif" ALT="Index"></A>
+<A HREF="000906003.html"><IMG SRC ="next_motif.gif" ALT="Suivant"></A>
+</BODY>
+</HTML>

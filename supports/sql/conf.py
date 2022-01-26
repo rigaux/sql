@@ -81,10 +81,10 @@ calculTP2='public'
 algebre='public'
 algTP1='public'
 algTP2='public'
-concexos='private'
-schemas='private'
-transactions='private'
-correctionlabo='private'
+concexos='public'
+schemas='public'
+transactions='public'
+correctionlabo='public'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

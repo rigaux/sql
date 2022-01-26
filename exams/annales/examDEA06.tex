@@ -1,0 +1,147 @@
+\documentclass[french]{article}
+
+\usepackage{../POLY/macros}
+\usepackage{babel}
+\usepackage{psfig}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{comment}
+\usepackage{moreverb}
+\usepackage{a4wide}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage[french]{minitoc}
+\usepackage{latexsym,color}
+
+\newenvironment{solution}{\nopagebreak\par\vspace*{2mm}\underline{Solution~:}\em\par}{\par\vspace*{2mm}}
+
+
+\excludecomment{solution}
+
+\begin{document}
+
+\begin{center}
+{\Large\bf Examen Master Recherche - mars 2006}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace*{0.5cm}
+
+On prend comme exemple la base de
+données d'un organisme de voyage. Cet organisme propose des
+séjours (sportifs, culturels, etc) se déroulant dans des stations
+de vacances. Chaque station propose un ensemble d'activtés (ski,
+voile, tourisme). Enfin on maintient une liste des clients (avec le
+solde de leur compte\,!)  et des séjours auxquels ils ont
+participé avec leurs dates de début et de fin.
+
+\begin{itemize}
+  \item Station (\cle{nomStation}, capacité, lieu, région, tarif) 
+  \item Activite (\cle{\fk{nomStation}}, \cle{libellé}, prix)
+  \item Client (\cle{id}, nom, prénom, ville, région, solde)
+  \item Séjour (\cle{\fk{idClient}}, \cle{station},
+                        \cle{début}, nbPlaces)
+\end{itemize}
+
+Un exemple d'instance est donné ci-dessous.
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+nomStation & capacité & lieu & région & tarif \\ \hline
+Venusa & 350 & Guadeloupe & Antilles & 1200 \\
+Farniente & 200 & Seychelles & Océan Indien & 1500\\
+Santalba & 150 & Martinique & Antilles & 2000 \\
+Passac & 400 & Alpes & Europe & 1000 \\ \hline
+\end{tabular}
+
+La table \tble{Station}
+\end{center}
+ 
+\begin{center}
+\begin{tabular}{c|c|c}
+NomStation & Libellé & Prix \\ \hline
+Venusa & Voile & 150 \\
+Venusa & Plongée & 120 \\
+Farniente & Plongée & 130 \\
+Passac & Ski  & 200 \\
+Passac & Piscine  & 20 \\
+Santalba & Kayac  & 50 \\ \hline
+\end{tabular}
+
+La table \tble{Activité}
+\end{center}
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c}
+id & nom & prénom & ville & région & solde \\ \hline
+10 & Fogg & Phileas & Londres & Europe & 12465\\
+20 & Pascal & Blaise & Paris & Europe & 6763\\
+30 & Kerouac & Jack  & New York & Amérique & 9812\\ \hline
+\end{tabular}
+
+La table \tble{Client}
+\end{center}
+
+\begin{center}
+\begin{tabular}{c|c|c|c}
+idClient & station & début  & nbPlaces\\ \hline
+10 & Passac & 1998-07-01 &  2 \\
+30 & Santalba &  1996-08-14 &    5 \\
+20 & Santalba & 1998-08-03  & 4 \\
+30 & Passac &  1998-08-15 &    3 \\
+30 & Venusa &  1998-08-03 &    3 \\
+20 & Venusa & 1998-08-03  & 6 \\
+30 & Farniente &  1999-06-24 &    5 \\
+10 & Farniente & 1998-09-05 &  3 \\ \hline
+\end{tabular}
+
+La table \tble{Séjour}
+\end{center}
+
+Attention, il ne s'agit que d'un exemple d'instance. Dans ce qui suit,
+on connaît le schéma mais pas le contenu de la base. D'où
+l'intérêt de pouvoir effectuer des requêtes.
+
+\section{Requêtes conjonctives (8 pts)}
+
+Pour chacune des requêtes suivantes, donnez son expression
+en algèbre relationnelle, et, au choix, en règles \textsc{Datalog} 
+ou en calcul relationnel.
+
+\begin{enumerate}
+  \item Nom des stations aux Antilles
+  \item Dans quelle région peut-on faire de la plongée?
+  \item Quel client (nom et prénom) a séjourné dans une station des Alpes?
+  \item Quelles activités peut-on pratiquer dans les stations
+             visitées par M. Kerouac?
+\end{enumerate}
+
+\section{Requêtes avec négation, requêtes récursives (8 pts)}
+
+Exprimez les requêtes suivantes en algèbre et, au choix,
+ en programme
+\textsc{Datalog} et en calcul relationnel.
+
+\begin{enumerate}
+  \item Quelles stations (nom de la station) 
+      ne proposent pas de plongée?
+
+  \item Quel client (nom et prénom) n'est jamais allé à Passac?
+
+  \item Quel client (nom et prénom) n'est allé dans aucune station?
+
+  \item Quel client (nom et prénom) est allé dans toutes les stations?
+
+\end{enumerate}
+
+
+\section{Un peu de formalisme... (4 pts)}
+
+On prend comme langage le calcul relationnel et on s'intéresse
+à la classe des requêtes qui interrogent au moins
+une fois la relation \textit{Station}. Définir
+formellement cette classe (aide: procéder par induction
+sur la forme des formules).
+
+\end{document}

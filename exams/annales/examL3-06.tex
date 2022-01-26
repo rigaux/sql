@@ -1,0 +1,127 @@
+\documentclass[french,11pt]{article}
+
+\usepackage{babel}
+%\usepackage{fullpage}
+\usepackage{psfig}
+\usepackage{comment}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage[french]{minitoc}
+\usepackage[latin1]{inputenc}
+
+
+\newenvironment{solution}{\nopagebreak\par\vspace*{2mm}\underline{Solution~:}\em\par}{\par\vspace*{2mm}}
+
+
+\pagestyle{headings}
+\markright{5/01/2006 \hfill Université Paris-Dauphine -- Paris \hfill\ } 
+
+\baselineskip 6pt
+\parskip 6pt
+\onecolumn
+\textwidth 16cm
+\textheight 24cm
+\hoffset=-2cm
+\voffset=-2.5cm
+\setlength{\parindent}{0.0cm}
+\unitlength 1cm
+\newtheorem{defin}{Définition}[section]
+\newtheorem{exampl}{Exemple}[section]
+\def\picwidth{16cm}
+
+\excludecomment{solution}
+
+\begin{document}
+\vspace*{0.5cm}
+
+\begin{center}
+\textbf{\Large Examen Bases de données L3,  Jeudi 5 janvier 2006}\\
+            Documents autorisées
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace*{0.5cm}
+
+Un guide de voyage  décide de créer un site web proposant tous les restaurants
+parisiens. Le site est construit sur une base de données
+contenant les restaurants, les plats proposés et les menus.
+Voici les tables.  Comme d'habitude, les clés étrangères 
+ne sont pas indiquées\,:
+      \begin{itemize}
+        \item {\tt Restaurant (\textbf{nom\_restau}, arrondissement, 
+                    nom\_chef)}
+         \item {\tt Plat (\textbf{id\_plat}, description, 
+                          type\_plat)}
+         \item {\tt Menu (\textbf{nom\_restau, no\_menu}, nom, prix)}
+         \item {\tt DétailMenu (\textbf{nom\_restau, no\_menu, id\_plat})} 
+       \end{itemize}
+
+L'attribut {\tt arrondissement} contient le numéro de l'arrondissement du
+restaurant.  La table {\tt Plat} donne l'ensemble des plats, tous
+restaurants confondus. 
+ Les types de plat sont (par exemple) {\tt Entrée}, {\tt Plat
+principal},  {\tt Dessert}, etc.  La table {\tt DétailMenu} donne les plats
+composant un menu\,: un ensemble d'entrées, de plats principaux et de dessert.
+
+\smallskip
+{\bf Schéma (10 pts)}
+
+\begin{enumerate}
+  \item ({\bf 3 pts}) Vous décidez d'ouvrir à Dauphine  un restaurant
+        nommé ``Le Gratin''. Il propose 5 plats: carottes rapées et
+        huitres (entrées), steak (plat principal), fruit et gâteau
+        (dessert) et deux menus (``standard'' et ``gastro'') à 6 et 10 Euros.
+        Le menu standard comprend  carottes rapées, steak
+                et  fruit. Le menu gastro comprend  huitres,
+           steak et gâteau. Donnez le contenu des tables de 
+           la base de données pour représenter ce restaurant et ses menus.
+
+   \item ({\bf 3 pts}) Donnez les commandes {\tt CREATE TABLE} 
+         pour ce schéma. Indiquez 
+         les cl\'es \'etrang\`eres et les cl\'es primaires.
+
+   \item ({\bf 2 pts})
+       Donner le schéma entité/association correspondant à ce schéma.
+
+   \item  ({\bf 2 pts}) On s'aperçoit qu'on a oublié d'indiquer le
+     choix de boissons proposé par un restaurant. Chaque boisson est
+     caractérisée
+        par son type (``vin blanc'', ``eau''), son nom (``Jurançon'',
+        ``Vittel'')   et son prix. Proposez une extension du schéma
+        E/A et
+          de la base pour associer une liste de boissons à chaque restaurant.
+\end{enumerate}
+
+\smallskip
+{\bf Requêtes ({\bf 10 pts})}
+
+La base contient tous les restaurants de Paris. Exprimez en SQL les requêtes suivantes:
+
+\begin{enumerate}
+  \item  ({\bf 1 pt}) Nom des restaurants du douzième arrondissement.
+
+  \item  ({\bf 1 pt}) Nom des restaurants proposant un plat
+         dont la description contient le mot ``sauterelle''
+
+  \item  ({\bf 2 pts})  Quels 
+               chefs 
+                 proposent des menus à 20 Euros (ne donner qu'une fois 
+               chaque nom de chef)\,?
+  
+  \item  ({\bf 2 pts}) Donnez la liste des {\em entrées} du menu 
+   <<\,Dégustation\,>> du restaurant ``Le gratin''.
+
+  \item  ({\bf 2 pts}) Quels restaurants (nom du restaurant, nom du chef) ne
+    proposent pas de menu à moins de 20 Euros\,?
+
+  \item  ({\bf 2 pts}) Quels menus du restaurant 
+  ``Le gratin'' ont au moins un plat en commun (donner 
+       les paires de noms de menus).
+
+  \item  ({\bf 2 pts}) Donnez le nombre d'entrées du menu
+              ``Versailles'' du restaurant ``Boboche''.
+
+  \end{enumerate}
+  
+\end{document}

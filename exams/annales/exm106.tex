@@ -1,0 +1,346 @@
+\documentclass[french]{article}
+
+\usepackage{babel}
+\usepackage{psfig}
+\usepackage{comment}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage[french]{minitoc}
+\usepackage[latin1]{inputenc}
+\usepackage{moreverb}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\newenvironment{smallverbatim}%
+{\endgraf\small\verbatimtab}{\endverbatimtab}
+
+\newcommand{\fig}[2]
+{
+ \begin{figure*}[hbt]
+  \begin{center}
+   \centerline{\psfig{figure=#1.eps}}
+  \caption{\label{#1}  #2}
+  \end{center}
+ \end{figure*}
+}
+
+\newenvironment{solution}{\nopagebreak\par\vspace*{2mm}\underline{Solution~:}\em\par}{\par\vspace*{2mm}}
+
+
+\pagestyle{headings}
+\markright{06/03/2006 \hfill Dauphine - M1 apprentissage \hfill\ } 
+
+\baselineskip 6pt
+\parskip 6pt
+\onecolumn
+\textwidth 16cm
+\textheight 24cm
+\hoffset=-2cm
+\voffset=-2.5cm
+\setlength{\parindent}{0.0cm}
+\unitlength 1cm
+\newtheorem{defin}{Définition}[section]
+\newtheorem{exampl}{Exemple}[section]
+\def\picwidth{16cm}
+
+\excludecomment{solution}
+
+\begin{document}
+\begin{center}
+\Large\bf  Examen Bases de Données\\
+\large\bf Lundi 6 mars 2006
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace*{0.5cm}
+
+\hrule
+
+\textbf{Documents autorisés: notes de cours et polycopié}
+
+\smallskip
+
+\hrule
+
+\section{Stockage et indexation (3 pts)}
+
+On veut stocker un fichier $F$ avec 120\,000 articles d'une taille fixe de 
+100 octets par article.
+
+Questions :
+\begin{enumerate}
+  \item (1 point) De combien de blocs a-t-on besoin au minimum pour
+           stocker tout
+      le fichier si la taille d'un bloc est 8\,192 octets, sachant
+          que chaque bloc contient un entête de 150 octets
+          et qu'un enregistrement ne peut pas chevaucher 2 blocs\,?
+
+
+ %     Solution : 1 500 blocs
+
+  \item (1 point) 
+    On suppose maintenant que $F$ est indexé par un index non dense 
+    sur \texttt{A} et
+     un index dense sur un autre champ \texttt{B}. On peut
+   stocker 100 entrées dans un bloc d'index et
+       aucune place libre n'est laissée dans les blocs. 
+ Combien d'entrées y a-t-il dans les feuilles de l'index non dense\,? 
+dans les feuilles de l'index dense\,? 
+\begin{solution}
+Le fichier $F$ contient 1\,500 blocs et et trié sur \texttt{A}.
+ L'index non dense contient donc 1\,500
+ entrées, une par bloc. L'index dense contient 120\,000 entrées, une par
+article.
+\end{solution}
+
+  \item (1 point) Supposons que l'index non dense a deux niveaux, racine
+     comprise, et que seule la racine est en mémoire.  On se place dans le pire
+     des cas où il faut une E/S pour lire une feuille d'index et une E/S pour
+     lire un bloc du fichier. On cherche les enregistrements pour lesquels la
+     valeur de l'attribut \texttt{A} est comprise entre P1A3 et P3G5. On
+     suppose qu'il y a moins de 100 enregistrements tels que \texttt{A}
+     commençe par P. Combien d E/S coûte la recherche par l'index dans le pire
+     des cas\,?
+
+\begin{solution}
+La recherche utilise  l'index non dense. Celui-ci tient sur 32 blocs.
+La traversée de l'index part de la racine et arrive immédiatement à la
+feuille d'index dont la premiere entrée est inférieure ou égale à P123 et dont
+la dernière entrée est supérieure ou égale à P1A3. On recherche dans cette
+feuille l'entrée la plus grande inférieure ou égale à P1A3. Cette entrée
+contient l'adresse du bloc du fichier qui contient l'article de code  P1A3. 
+On accède au bloc. Les articles sont triés sur \texttt{A}. Soit tous les
+articles de code compris entre P1A3 et P3G5 sont dans ce bloc soit ils sont
+à cheval sur deux blocs adjacents (ils ne peuvent pas être sur plus de 2 blocs
+adjacents). Dans ce dernier cas, une lecture du bloc
+adjacent chainé est nécessaire. Donc la recherche coûte 2 ou 3 accès
+bloc.
+\end{solution}
+
+ \item Même question avec l'index dense, pour une recherche sur l'attribut
+        \texttt{B}, avec les mêmes hypothèses de sélectivité.
+\end{enumerate}
+
+\section{Index et optimisation (6 points)}
+
+Soit les tables relationnelles suivantes (les attributs qui forment 
+une clé sont en gras):
+
+\begin{itemize}
+  \item Produits  (\textbf{code}, marque, desig, descr)\\
+     (code : identifiant du produit, marque : marque du produit,
+         desig : désignation du produit, descr : description)
+
+  \item PrixFour (\textbf{code}, \textbf{nom}, prix)\\
+   (code : code du produit, nom : nom du fournisseur)
+
+  \item NoteMag    (\textbf{code}, \textbf{titre}, note)
+     (code : code du produit,  titre : titre du magazine,
+        note : note entre 1 et 10 du produit dans le magazine)
+\end{itemize}
+
+Voici une instance de la table NoteMag.
+
+\begin{center}
+\begin{tabular}{l|c|l}
+code & titre & note\\
+\hline
+'A345' 	& 'HIFI' &	8\\
+'P123' & 'Audio Expert' & 6\\
+'X254' & 'HIFI' & 7\\
+'K783' & 'Son \& Audio'&	3\\
+'P345' & 'HIFI' & 6\\
+'P512' & 'Audio Expert' & 8\\
+'L830' & 'Audio Expert' & 8\\
+'M240' & ''HIFI'' & 6\\
+\hline
+\end{tabular}
+\end{center}
+
+
+La table occupe plusieurs pages disque dont chacune peut contenir au maximum 3
+n-uplets.
+
+\begin{enumerate}
+  \item Construire un arbre B+ sur l'attribut \texttt{code}, 
+       avec 4 entrées par page au maximum.
+
+   \item On veut indexer l'attribut \texttt{titre}. Quel est le bon
+        index à utiliser\,? Décrivez-le.
+   \item Soit la requête suivante :
+
+\begin{verbatim}
+select *
+from NoteMag
+where code between 'A000' and 'X000';
+\end{verbatim}
+
+ Pour évaluer cette requête, on suppose que le tampon de lecture ne peut
+ contenir qu'une seule page et l' index tient en mémoire. Dans ce cas, est-ce
+ qu'il est préférable d'utiliser l'index ou de parcourir la table
+ séquentiellement ? Pourquoi ?
+
+\begin{solution}
+ Solution : Une lecture séquentielle est préférable : la sélectivité de l'index
+ est très basse, et comme il s'agit d'un index dense, on risque de lire la même
+ page plusieurs fois.
+\end{solution}
+
+\end{enumerate}
+
+
+On donne ci-dessous une requête SQL et le plan d'exécution fourni par Oracle :
+
+\begin{smallverbatim}
+select desig, marque, prix
+  from Produits, PrixFour, NoteMag
+ where Produits.code=PrixFour.code
+   and Produits.code=NoteMag.code
+   and note > 8;
+\end{smallverbatim}
+
+Plan d'exécution :
+\begin{smallverbatim}
+0 SELECT STATEMENT
+  1 MERGE JOIN
+    2 SORT JOIN
+      3 NESTED LOOPS
+        4 TABLE ACCESS FULL NOTEMAG
+        5 TABLE ACCESS BY INDEX ROWID PRODUITS
+          6 INDEX UNIQUE SCAN A34561
+    7 SORT JOIN
+      8 TABLE ACCESS FULL PRIXFOUR
+\end{smallverbatim}
+
+\begin{enumerate}
+ \item Existe-t-il un index ? sur quel(s) attribut(s) de quel(s) table(s) ?
+\begin{solution}
+      Solution : Il existe un index sur l'attribut code de la table Produits.
+\end{solution}
+  \item Algorithme de jointure : Expliquer en détail le plan d'exécution (accès
+  aux tables, sélections, jointure, projections) 
+
+  \item Ajout d'index : On crée un
+  index sur l'attribut \texttt{note} de la table 
+     \textit{NoteMag}. Expliquez les améliorations en
+  terme de plan d'exécution apportées par la création de cet index.
+\begin{solution}
+Solution :
+
+Après création d'index le plan est :
+
+\begin{smallverbatim}
+Plan d'execution
+--------------------------------------------------------------------------------
+0 SELECT STATEMENT
+  1 NESTED LOOPS
+    2 NESTED LOOPS
+      3 TABLE ACCESS FULL PRIXFOUR
+      4 TABLE ACCESS BY INDEX ROWID PRODUITS
+        5 INDEX UNIQUE SCAN PRODUITS_CODE
+    6 TABLE ACCESS BY INDEX ROWID NOTEMAG
+      7 INDEX RANGE SCAN NOTE_MAG
+\end{smallverbatim}
+\end{solution}
+\end{enumerate}
+
+
+
+\section{Concurrence (6 points)}
+
+L'exécution suivante est reçue par un SGBD utilisé pour des applications de commerce éléctronique.
+
+$$H : r_1[x] r_2[y] w_1[x] r_2[z] r_3[z] r_3[x] w_2[z] r_1[z] c_2 w_1[x] c_1 w_3[x] c_3$$
+
+\begin{enumerate}
+  \item (1 point) L'une des opérations dans l'application de commerce
+  électronique est la modification du prix d'un produit suite à une réduction
+  de prix d'un pourcentage donné. Il faut donc lire le taux de réduction,
+      le prix, et mettre à jour ce dernier. 
+ Y a-t-il une ou plusieurs transactions
+  de $H$ qui puissent provenir de l'exécution de cette opération? Justifiez votre
+  réponse.
+
+\begin{solution}
+      Solution : Les transactions de l'exécution H sont :
+      T1: r1[x] w1[x] r1[z] w1[x] c1
+      T2: r2[y] r2[z] w2[z] c2
+      T3: r3[z] r3[x] w3[x] c3
+
+      La réduction du prix nécessite la lecture du taux de réduction et ensuite
+      la mise-à-jour (lecture+écriture) du prix. Les transactions T2 et T3
+      correspondent à cette suite d'actions. Mais les deux ne peuvent pas être
+      en même temps des réductions de prix, car z ne peut pas être à la fois
+      prix (pour T2) et taux de réduction (pour T3). Donc la réponse correcte
+      est oui, soit T2, soit T3, mais pas les deux ensemble.
+\end{solution}
+  \item  (1 point) Vérifiez si $H$ est sérialisable en identifiant les conflits et en construisant le graphe de sérialisation.
+\begin{solution}
+      Solution : Les conflits :
+      sur x : r1[x]-w3[x], w1[x]-r3[x], w1[x]-w3[x], r3[x]-w1[x]
+      sur y : pas de conflit
+      sur z : r3[z]-w2[z], w2[z]-r1[z]
+
+      Le graphe de sérialisation contient un cycle T1 T3 T2 et un autre cycle T1 T3, donc H n'est pas sérialisable.
+\end{solution}
+
+  \item (1 points) Montrez que l'exécution $H$ n'évite pas les annulations en
+cascade. Est-elle recouvrable? Est-il possible, en modifiant seulement la
+position des Commit d'éviter les annulations en cascade?
+\begin{solution}
+      Solution : Après w1[x], on a plus tard r3[x] avant la fin de T1, donc H
+      n'évite pas les annulations en cascade. Pareil pour w2[z] suivi de
+      r1[z]. Par contre H est recouvrable, car dans les deux cas la transaction
+      qui écrit est validée avant celle qui lit.
+
+      Pour éviter les annulations en cascade, il faudrait déplacer c1 avant
+      r3[x], respectivement c2 avant r1[z]. Le second déplacement est possible,
+      par contre le premier est impossible, car r1[z] et w1[x] resteraient
+      après c1. Donc la réponse est non.
+\end{solution}
+
+\item (1,5 points) Quelle est l'exécution obtenue par verrouillage à 
+       deux phases à partir de H?
+
+      On considère qu'il existe deux verrous pour chaque enregistrement, un de
+      lecture et un d'écriture. Le relâchement des verrous d'une transaction se
+      fait au Commit et à ce moment on exécute en priorité les opérations
+      bloquées en attente de verrou, dans l'ordre de leur blocage.
+\begin{solution}
+      Solution : H : r1[x] r2[y] w1[x] r2[z] r3[z] r3[x] w2[z] r1[z] c2 w1[x] c1 w3[x] c3
+
+      r1[x], r2[y] s'exécutent, en prenant les verrous de lecture
+      w1[x] s'exécute, pas de conflit avec r1[x] (même transaction)
+      r2[z] prend le verrou de lecture sur z et s'exécute
+      r3[z] partage le verrou de lecture sur z avec r2[z] et s'exécute
+      r3[x] bloquée par w1[x], donc T3 bloquée
+      w2[z] bloquée par r3[z], donc T2 bloquée
+      r1[z] partage le verrou de lecture sur z avec r2[z] et r3[z] et s'exécute
+      c2 bloquée car T2 bloquée
+      w1[x] a déjà le verrou et peut s'exécuter
+      c1 s'exécute et relâche les verrous de T1 Þ r3[x] peut obtenir le verrou sur x et s'exécuter, par contre T2 reste bloquée
+      w3[x] prend le verrou d'écriture sur x et s'exécute
+      c3 s'exécute et relâche les verrous de T3 Þ toutes les opérations de T2 sont débloquées, donc w2[z] et c2 s'exécutent
+
+      Le résultat final est donc H' : r1[x] r2[y] w1[x] r2[z] r3[z] r1[z] w1[x]
+      c1 r3[x] w3[x] c3 w2[z] c2
+\end{solution}
+
+\item (1,5 points) Quelle est l'exécution obtenue par l'algorithme
+       de contrôle de concurrence avec versionnement\,? Indiquez
+         la (ou les)  transaction(s) rejettée(s) et expliquez
+          pourquoi. Quel danger a-t-on évité?
+
+         On suppose que chaque transaction débute
+         au moment de sa première opération.
+
+\begin{solution}
+Une transaction $T$ est rejettée si elle cherche à mettre à
+jour une donnée qui a été modifiée depuis le début de $T$.
+C'est le cas ici pour $T_3$ qui cherche à écrire $x$.
+\end{solution}
+\end{enumerate}
+
+\section{Reprise sur panne (4 points)}
+
+\end{document}

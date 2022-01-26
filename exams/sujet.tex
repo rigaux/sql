@@ -1,0 +1,89 @@
+\documentclass[10pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[rigidchapters]{titlesec}
+\usepackage{comment,fullpage}
+\usepackage{hyperref}
+\usepackage{comment,times,fancyvrb,amsmath,amsthm,amssymb,latexsym,xspace}
+\usepackage{graphicx}
+\usepackage{palatino}
+
+\usepackage{minted}
+
+\graphicspath{./Fig}
+
+% Palatino for rm and math | Helvetica for ss | Courier for tt
+\usepackage{mathpazo} % math & rm
+\linespread{1.05}        % Palatino needs more leading (space between lines)
+\usepackage[scaled]{helvet} % ss
+\usepackage{courier} % tt
+\normalfont
+
+\usepackage[T1]{fontenc}
+\usepackage{color}
+\usepackage{lastpage}
+%\usepackage{verbatim}
+%\usepackage{enumitem}
+%\usepackage{moreverb}
+ 
+\newenvironment{solution}{~\linebreak {\color{red}\rule{\textwidth}{0.7pt}}\linebreak%
+\textcolor{red}{\textbf{Correction}}\linebreak\medskip%
+}{\hfill}
+
+%\excludecomment{solution}
+
+%\setenumerate[0]{font=\itshape, label*=\thesection.\arabic*}
+
+
+% Paramètres indiquant le titre de l'exam, et le fichier 
+\providecommand{\inputFile}{}% fallback definition
+
+\newcommand{\guill}[1]{<<\,#1\,>>}
+
+%
+% #1: UE
+% #2: date et nature exam
+% #3: consignes spécifiaues
+
+\newcommand{\enteteExam}[3]{%
+
+\titlepage 
+\medskip
+
+\begin{center}
+{\Large #1}\\\vspace{1ex}
+{\Large #2 \ (\pageref{LastPage}  pages)}\\
+\end{center}
+
+\vspace{1ex}
+\hrule
+\vspace{1ex}
+%\textbf{Consignes :}
+%\begin{itemize}   
+%  \item #3
+%  \item Les téléphones mobiles et autres équipements communicants (exemple: PC, tablette, etc.)  doivent être éteints et rangés dans les sacs pendant toute la durée de l'épreuve.
+%  \item Pensez à reporter votre numéro d'anonymat sur toutes les feuilles.
+% \item Merci de soigner votre écriture et de ne pas rédiger au crayon papier sur votre copie.
+%\end{itemize}
+
+\textbf{Consignes :} cet examen est exceptionnellement organisé à distance. 
+Vous devez rendre votre copie numérisée à 21h00 au plus tard. 
+Aucune copie ne sera acceptée après cette heure limite. 
+Les seuls formats acceptés sont le PDF et le JPEG, ceci afin d'éviter tout problème de lecture.  
+Prenez vos dispositions pour être en mesure de fournir le bon format le moment venu. Une activité 
+de discussion en direct (\guill{\textit{chat}}) est ouverte dans l'espace Moodle pour d'éventuelles questions.
+\vspace{1ex}
+\hrule
+\vspace{1ex}
+
+\vspace*{0.3cm}
+
+}
+
+\begin{document}
+
+
+\input{\inputFile}
+
+\end{document}

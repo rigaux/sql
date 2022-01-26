@@ -1,0 +1,223 @@
+\documentclass[french]{article}
+
+\usepackage{babel}
+\usepackage{times}
+\usepackage[latin1]{inputenc}
+\usepackage{comment}
+
+\newenvironment{solution}{\nopagebreak\par\vspace*{2mm}\underline{Solution~:}\em\par}{\par\vspace*{2mm}}
+
+
+\pagestyle{headings}
+\markright{28/6/1995 \hfill Conservatoire National des Arts et
+M\'etiers -- Paris \hfill\ } 
+
+\baselineskip 6pt
+\parskip 6pt
+\onecolumn
+\textwidth 16cm
+\textheight 24cm
+\hoffset=-2cm
+\voffset=-2.5cm
+\setlength{\parindent}{0.0cm}
+\unitlength 1cm
+%\input{psfig}
+\newtheorem{defin}{D\'efinition}[section]
+\newtheorem{exampl}{Exemple}[section]
+\def\picwidth{16cm}
+
+\excludecomment{solution}
+
+\begin{document}
+%\epsfig{figure=dept.epsi} 
+\begin{center}
+\Large\bf Processus d'Informatisation et Bases de Donn\'ees A \\ 
+    Examen Bases de Donn\'ees\\
+\vspace*{0.5cm}
+\large\bf Mercredi 31 janvier 2001\\
+{\bf Solution sur le WEB, et au secr\'etariat}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace*{0.5cm}
+
+\hrule
+
+La note finale sera la moyenne de la note
+obtenue au partiel et de la note de l'examen
+<<\,Processus d'Informatisation\,>> qui aura lieu en juin.
+\smallskip
+
+\hrule
+
+On veut gérer de manière centralisée un agenda de réunions impliquant
+des personnes venant de plusieurs sociétés. Pour cela
+on crée une base de données avec les tables suivantes
+Comme d'habitude, les clés étrangères ne sont pas représentées\,:
+      \begin{itemize}
+        \item {\tt Reunion (\underline{id}, jour, mois, duree, 
+                    typeReunion)}
+         \item {\tt Personne (\underline{id}, nom, prenom, idSociete)}
+         \item {\tt Participe (\underline{idReunion, idPersonne})}
+         \item {\tt Societe  (\underline{id}, nom)}
+       \end{itemize}
+ 
+Dans la table {\tt Reunion}, l'attribut {\tt mois}
+est le nom du mois, et {\tt jour} est le nuémro du jour
+dans le mois.
+
+\smallskip
+{\bf Sch\'ema (7 pts)}
+
+\begin{enumerate}
+   \item ({\bf 1 pts}) Une personne peut-elle participer à 
+            plusieurs réunions\,?
+
+   \item  ({\bf 1 pts}) Le nombre de personnes participant à une réunion
+        est-il limité\,? Si oui quelle est cette limite\,?
+\begin{solution}
+Oui une  personne peut participer à 
+plusieurs réunions, et il n'y a pas de limite au
+nombre de personnes participant à une réunion.
+\end{solution}
+
+   \item ({\bf 2 pts}) Donnez les commandes {\tt CREATE TABLE} décrivant
+         le schéma des relations ci-dessus. Indiquez soigneusement
+         les clés étrangères et les clés primaires.
+
+   \item ({\bf 1 pts}) Donnez la contrainte SQL2 qui force
+      l'attribut {\tt typeReunion} à prendre ses valeurs
+      dans l'ensemble {\tt \{Formation, Séminaire, Etude\}}.
+       
+\begin{solution}
+Exemple pour la relation {\tt Participe}\,:
+\begin{verbatim}
+CREATE TABLE Participe
+   (idReunion INTEGER,
+    idPersonne INTEGER,
+     PRIMARY KEY (idReunion, idPersonne),
+     FOREIGN KEY (idPersonne) REFERENCES Personne,
+     FOREIGN KEY (idReunion) REFERENCES Reunion);
+\end{verbatim}
+
+\end{solution}
+
+   \item ({\bf 2 pts})
+       Donnez le schéma E/A correspondant au schéma relationnel.
+\end{enumerate}
+    
+
+
+\smallskip
+{\bf Requêtes (8 pts)}
+
+Sur le sch\'ema donné dans l'énoncé,
+exprimez en SQL les requêtes suivantes:
+
+\begin{enumerate}
+  \item Liste des réunions du 21 avril.
+
+\begin{solution}
+{\tt SELECT * FROM Reunion WHERE mois='Avril' AND jour=21}
+\end{solution}
+
+  \item Donnez les jours du mois d'avril pour lesquels
+    il y a une formation ou un séminaire.
+
+\begin{solution}
+{\tt SELECT jour FROM Reunion
+     WHERE mois='Avril'  AND (typeReunion='Seminaire'
+                  OR typeReunion='Formation')}
+\end{solution}
+
+  \item Nom et prénom des utilisateurs qui peuvent détruire
+     dans la table 'Film'.
+\begin{solution}
+{\tt SELECT nom, prenom FROM Utilisateur u, Privilege p
+WHERE nomTable='Film' AND droit='DELETE' 
+AND  u.id = p.idUtilisateur}
+\end{solution}
+  
+  \item Nom des tables sur lesquelles l'utilisateur 20 a un droit
+de mise-à-jour. Rappel: mise-à-jour signifie INSERT ou UPDATE
+    ou DELETE ou ALL.
+
+\begin{solution}
+{\tt SELECT nomTable FROM Privilege 
+WHERE idUtilisateur=20
+AND droit IN ('ALL', 'INSERT', 'DELETE', 'UPDATE')
+}
+\end{solution}
+
+  \item Donnez les tables pour lesquelles le créateur
+     de la table n'a pas le droit 'DELETE'.
+\begin{solution}
+{\tt SELECT nomTable FROM Table t
+WHERE idCreateur NOT IN (SELECT idUtilisateur 
+                         FROM   Privilege p
+                         WHERE  droit='DELETE'
+                         AND    p.nomTable=t.nomTable)
+}
+\end{solution}
+
+  \item Quelles sont les tables sur lesquelles au
+      moins  4 utilisateurs
+    ont le droit 'ALL'\,?
+\begin{solution}
+{\tt SELECT nomTable FROM Privilege WHERE droit='ALL'
+     GROUP BY nomTable
+     HAVING COUNT(*) >= 4
+}
+\end{solution}
+  \end{enumerate}
+
+\smallskip
+{\bf Requetes imbriquées ({\bf 4 pts})}
+
+Voici 3 ordres SQL.
+
+\begin{verbatim}
+SELECT nomTable FROM   Utilisateur u, privilege p
+WHERE  u.id = p.idUtilisateur
+AND    nom = 'Rigaux' AND    droit = 'ALL'
+\end{verbatim}
+
+\begin{verbatim}
+SELECT nomTable FROM  privilege p
+WHERE  p.idUtilisateur = (SELECT id FROM utilisateur
+                          WHERE nom = 'Rigaux')
+AND    NOT (droit != 'ALL')
+\end{verbatim}
+
+\begin{verbatim}
+SELECT nomTable FROM  privilege p
+WHERE  NOT EXISTS (SELECT 1 FROM utilisateur
+                    WHERE nom != 'Rigaux' 
+                    AND p.idUtilisateur=id)
+AND    droit = 'ALL'
+\end{verbatim}
+
+
+\begin{enumerate}
+  \item Exprimez, en une phrase, ce que fait le premier ordre.
+  \item Parmi les 2 autres requetes, lesquelles sont {\bf équivalentes}
+      (elles donnent le meme résultat) à la requete 1\,? 
+       Exprimez, en une phrase, ce que font celles qui
+   ne sont pas équivalentes.
+\end{enumerate}
+
+\begin{solution}
+   \begin{enumerate}
+      \item La requete sélectionne les tables sur lesquelles
+     Rigaux a le privilège 'ALL'
+
+       \item La première est équivalente à la deuxième.
+        La troisième séléctionne les tables
+         sur lesquelles (1) il y a un privilège 'ALL', 
+         (2) seul Rigaux a des privilèges. Ce n'est pas
+      la meme chose.
+    \end{enumerate}
+\end{solution}
+
+\end{document}

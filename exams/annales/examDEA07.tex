@@ -1,0 +1,234 @@
+\documentclass[french]{article}
+
+\usepackage{../POLY/macros}
+\usepackage{babel}
+\usepackage{psfig}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{comment}
+\usepackage{moreverb}
+\usepackage{a4wide}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage[french]{minitoc}
+\usepackage{latexsym,color}
+
+%\newenvironment{solution}{\nopagebreak\par\vspace*{2mm}\underline{Solution~:}\em\par}{\par\vspace*{2mm}}
+
+
+%\excludecomment{solution}
+
+\begin{document}
+
+\begin{center}
+{\Large\bf Examen Master Recherche - 2006}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace*{0.5cm}
+
+\section{Requêtes  relationnelles (8 pts)}
+
+On prend comme exemple la base de
+données d'un organisme de voyage. Cet organisme propose des
+séjours (sportifs, culturels, etc) se déroulant dans des stations
+de vacances. Chaque station propose un ensemble d'activtés (ski,
+voile, tourisme). Enfin on maintient une liste des clients (avec le
+solde de leur compte\,!)  et des séjours auxquels ils ont
+participé avec leurs dates de début et de fin.
+
+\begin{itemize}
+  \item Station (\cle{nomStation}, capacité, lieu, région, tarif) 
+  \item Activite (\cle{\fk{nomStation}}, \cle{libellé}, prix)
+  \item Client (\cle{id}, nom, prénom, ville, région, solde)
+  \item Séjour (\cle{\fk{idClient}}, \cle{station},
+                        \cle{début}, nbPlaces)
+\end{itemize}
+
+Un exemple d'instance est donné ci-dessous.
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+nomStation & capacité & lieu & région & tarif \\ \hline
+Venusa & 350 & Guadeloupe & Antilles & 1200 \\
+Farniente & 200 & Seychelles & Océan Indien & 1500\\
+Santalba & 150 & Martinique & Antilles & 2000 \\
+Passac & 400 & Alpes & Europe & 1000 \\ \hline
+\end{tabular}
+
+La table \tble{Station}
+\end{center}
+ 
+\begin{center}
+\begin{tabular}{c|c|c}
+NomStation & Libellé & Prix \\ \hline
+Venusa & Voile & 150 \\
+Venusa & Plongée & 120 \\
+Farniente & Plongée & 130 \\
+Passac & Ski  & 200 \\
+Passac & Piscine  & 20 \\
+Santalba & Kayac  & 50 \\ \hline
+\end{tabular}
+
+La table \tble{Activité}
+\end{center}
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c}
+id & nom & prénom & ville & région & solde \\ \hline
+10 & Fogg & Phileas & Londres & Europe & 12465\\
+20 & Pascal & Blaise & Paris & Europe & 6763\\
+30 & Kerouac & Jack  & New York & Amérique & 9812\\ \hline
+\end{tabular}
+
+La table \tble{Client}
+\end{center}
+
+\begin{center}
+\begin{tabular}{c|c|c|c}
+idClient & station & début  & nbPlaces\\ \hline
+10 & Passac & 1998-07-01 &  2 \\
+30 & Santalba &  1996-08-14 &    5 \\
+20 & Santalba & 1998-08-03  & 4 \\
+30 & Passac &  1998-08-15 &    3 \\
+30 & Venusa &  1998-08-03 &    3 \\
+20 & Venusa & 1998-08-03  & 6 \\
+30 & Farniente &  1999-06-24 &    5 \\
+10 & Farniente & 1998-09-05 &  3 \\ \hline
+\end{tabular}
+
+La table \tble{Séjour}
+\end{center}
+
+Attention, il ne s'agit que d'un exemple d'instance. 
+Pour chacune des requêtes suivantes, donnez son expression
+en algèbre relationnelle, et, au choix, en règles \textsc{Datalog} 
+ou en calcul relationnel.
+
+\begin{enumerate}
+  \item Donnez les régions dans lesquelles on peut
+    pratiquer soit la plongée, soit le ski.
+
+  \item Donnez les paires de nom de client ayant 
+ séjourné dans la même station des Alpes.
+
+  \item Quelles activités peut-on pratiquer dans les stations
+             visitées par M. Kerouac\,?
+
+  \item Quelles stations (nom de la station) 
+      ne proposent pas de plongée?
+
+  \item Quel client (nom et prénom) n'est jamais allé à Passac?
+
+  \item Quel client (nom et prénom) n'est allé dans aucune station?
+
+  \item Quel client (nom et prénom) est allé dans toutes les stations?
+
+  \item Quelles stations proposent toutes les activités connues\,?
+\end{enumerate}
+
+\begin{solution}
+
+\begin{enumerate}
+  \item (division 1) 
+    \begin{itemize}
+      \item    $\pi_{id} (Client) - \pi_{id} ( (\pi_{id}(Client) \times \pi_{nomStation}(Station)
+                                  - \pi_{idClient, station} (Sejour)))$ 
+
+  
+    \item   $S_2(x) \leftarrow Client(x, ...), Station (y, ...), \neg Sejour (x, y, ...)$\\
+  $ans(x) \leftarrow Client (x, \_, \_, \_, \_), \neg S_2(x)$
+   \item $\{x | Client (x, ...) \land \neg \exists y (Station (y, ...) \land
+                     \neg Sejour (x, y))\}$
+\end{itemize}
+
+  \item (division 2) 
+    \begin{itemize}
+      \item    $\pi_{nomStation} (Station) - \pi_{nomStation} ( (\pi_{nom}(Station) \times \pi_{libelle}(Activite) - Activite))$ 
+
+  
+    \item   $S_2(x) \leftarrow Station(x, ...), Activite (\_, y), \neg Activite (x, y, \_)$\\
+  $ans(x) \leftarrow Station (x, \_, \_, \_, \_), \neg S_2(x)$
+
+   \item $\{x | Station (x, ...) \land \neg \exists y (Activite (\_, y, \_) 
+                     \land \neg Activite (x, y))\}$
+\end{itemize}
+\end{enumerate}
+\end{solution}
+
+\section{Question de cours (2 pts)}
+
+Donnez la syntaxe et la sémantique de l'algèbre relationnelle.
+
+\section{\'Enoncé de définitions (2 pts)}
+
+On prend comme langage le calcul relationnel et on s'intéresse
+à la classe des requêtes qui interrogent au moins
+une fois la relation \textit{Station}. Définir
+formellement cette classe (aide\,: procéder par induction
+sur la forme des formules).
+
+
+\section{Datalog (8 pts)}
+
+Un jeu se déroule sur un damier constitué de cases
+référencées par leurs numéros de ligne et
+de colonne, $\{(i,j) \in N \times N | i,j \geq O\}$.
+Chaque case est soit blanche (B) soit noire (N).
+On décrit l'état du damier à un moment de la partie par une table 
+$P(i,j,C)$ qui indique que la case 
+$(i,j)$ est de couleur $C$ ($C$ vaut $B$ ou $N$). On se déplace
+sur le damier en passant d'une case $(i,j)$ 
+à une case adjacente $(i', j')$ telle que\,:
+\begin{enumerate}
+  \item soit $i = i'$ et $|j - j'| = 1$,
+  \item soit $j = j'$ et $|i - i'| = 1$
+\end{enumerate}
+
+En d'autres termes, on ne peut pas se déplacer en diagonale.
+On dit qu'il existe un {\em chemin} de la case 
+$P_0 = (x_0,y_0)$ à la case  $P_n = (x_n,y_n)$ s'il existe
+une suite de cases $P_1 = (x_1,y_1),...,P_{n-1} = (x_{n-1},y_{n-1})$ 
+tel que pour tout $k$ compris entre 0 et
+$n-1$ on peut se déplacer de
+$P_k = (x_k,y_k)$ à $P_{k+1} = (x_{k+1}, y_{k+1})$. 
+La longueur d'un tel chemin est $n > 1$ (une case unique
+ne constitue pas un chemin).
+
+Enfin on suppose connu le prédicat $abs(i,j)$ qui est
+vrai si $|i - j| = 1$, et faux sinon.
+Formuler en datalog les requêtes suivantes:
+
+\begin{enumerate}
+  \item Donner les paires de cases noires adjacentes.
+
+  \item On considère la case $(a, b)$. Donner toutes
+       les cases situées sur la même ligne et ayant la même couleur.
+
+  \item Donner les paires de cases entre lesquelles il existe
+     un chemin dont toutes les cases sont de couleur noire.
+
+  \item Donner les paires de cases entre lesquelles il 
+     existe un chemin constitué d'une alternance de cases
+        blanches et noires.
+
+  \item Parmi les requêtes précédentes, lesquelles peuvent
+          s'exprimer en algèbre\,? Donner l'expression correspondante. 
+\end{enumerate}
+
+\begin{solution}
+\begin{enumerate}
+  \item $black (i, j, i, j') \leftarrow P(i, j, B), P(i, j', B),
+                        abs(j,j')$
+
+     $black (i, j, i', j) \leftarrow P(i, j, B), P(i', j, B),
+                        abs(i,i')$
+    
+    $black (i, j, i', j') \leftarrow black (i, j, i'', j''),
+                                  P(i'', j'', i', j', B)$
+
+\end{enumerate}
+\end{solution}
+
+\end{document}

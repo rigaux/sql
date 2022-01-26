@@ -1,0 +1,80 @@
+\documentclass[french]{article}
+
+\usepackage{babel}
+\usepackage{psfig}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{comment}
+\usepackage{moreverb}
+\usepackage{a4wide}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage[french]{minitoc}
+\usepackage{latexsym,color}
+
+\newenvironment{solution}{\nopagebreak\par\vspace*{2mm}\underline{Solution~:}\em\par}{\par\vspace*{2mm}}
+
+
+\newtheorem{defin}{D\'efinition}[section]
+\newtheorem{exampl}{Exemple}[section]
+\def\picwidth{16cm}
+
+%\excludecomment{solution}
+
+\begin{document}
+
+\vspace*{3cm}
+
+\begin{center}
+\Large\bf Contrôle INSTA - Mardi 20 février 2001
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace*{2cm}
+
+\subsection{Exercices indexation}
+
+Soit un fichier tel que 
+chaque page peut contenir 10 articles. On indexe
+ce fichier avec un arbre-B,  et on suppose
+qu'une page d'index contient 70 paires (clé, pointeur).
+ Les feuilles de l'arbre 
+contiennent donc des pointeurs vers le fichier, et les noeuds internes
+des pointeurs vers d'autres noeuds. 
+
+\begin{enumerate}
+  \item  Donnez (1) le nombre
+   de niveaux de l'arbre pour un fichier de 1~000~000 articles, 
+   (2) le nombre de
+  pages utilisées (y compris l'index), et (3) le nombre 
+d'accès disque pour rechercher un article par sa clé. On suppose que
+   toutes les pages sont pleines.
+
+
+\begin{solution}
+Il y a 100~000 pages de données. Un million
+d'articles, donc $\frac{1M}{70} = 14~286$ pages pour le dernier
+niveau de l'arbre B+. On divise encore par 70\,:
+204 pages au niveau $l-1$, 3 pages au niveau supérieur, et 1 page
+ pour la racine.
+
+Il faut donc lire 4+1 pages pour accéder à un article
+par sa clé.
+\end{solution}
+
+  \item On effectue maintenant une recherche par intervalle
+      ramenant 1~000 articles.  Décrivez
+    la recherche et donnez le nombre d'accès
+      disque dans le pire des cas.
+\begin{solution}
+Recherche sur le plus petit élément (4 pages), puis lecture de 
+$\frac{1000}{70} = 14$ pages
+en suivant le niveau des feuilles de l'arbre B+. Pour chaque pointeur 
+vers un objet il faut lire une page dans le pire des cas, soit
+1~000 pages. Total\,: 1018 pages.
+\end{solution}
+
+
+\end{enumerate}
+\end{document}

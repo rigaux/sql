@@ -1,0 +1,249 @@
+\enteteExam{NFP 107 -- Systèmes de gestion de bases de données - Durée 2h30}%
+{Première session  -- 3 février 2021}%
+{Effectué à distance}%
+
+
+On veut implanter une application de réservation de places en crèche. Voici le schéma proposé\,:
+
+\begin{itemize}
+  \item Crèche (\textbf{idCrèche}, nom, ville, capacité)
+   \item Personne (\textbf{idPersonne}, prénom, nom, néEn, ville, idPère, idMère)
+  \item Demande (\textbf{idDemande}, idEnfant, idCrèche, année)
+  \item Inscription (\textbf{idEnfant, année}, idCrèche, idPuéricultrice)
+   
+\end{itemize}
+
+\section{Modélisation (8 points)}
+
+
+\begin{enumerate}
+  \item Etudiez soigneusement le schéma et identifiez toutes les clés étrangères
+      qui font référence à la table \texttt{Personne} (1 pt)
+     
+     
+\begin{solution}
+Il y en a beaucoup\,: idPère, idMère, idEnfant et idPuericultrice.
+\end{solution}
+ 
+  \item Donnez les commandes SQL de création des tables suivantes\,: 
+  Crèche, Personne et Inscription. Note\,: on peut ne pas connaître
+  le père ou la mère d'un enfant. (2 pts)
+  
+  
+\begin{solution}
+Crèche\: trivial.
+
+\smallskip
+
+\begin{small}
+\begin{minted}{sql}
+create table Personne 
+   (idPersonne int not null,
+    prénom varchar not null,
+    nom varchar not null,
+    néEn int not null,
+    ville varchar not null,
+    idPère int ,
+    idMère int ,
+    primary key (idPersonne),
+    foreign key (idPère) reference Personne(idPersonne),
+    foreign key (idMère) reference Personne(idPersonne)
+   )
+
+create table Inscription 
+   (idEnfant int not null,
+    année int not null,
+    idCrèche int not null,
+    idPuericultrice int not null,
+    primary key (idEnfant, année),
+    foreign key (idEnfant) reference Personne(idPersonne),
+    foreign key (idCrèche) reference Crèche(idCrèche),
+    foreign key (idPuericultrice) reference Personne(idPersonne)
+   )
+\end{minted}
+\
+\end{small}
+\end{solution}
+  
+  \item Voyez-vous une table résultant d'une réification\,? Une table résultant d'une entité faible\,? 
+     Lesquelles\,? (1 pt)
+     
+  \item Donnez le schéma Entité/association correspondant à ce schéma relationnel (2 pts)
+  
+  \item Un enfant peut-il être inscrit à plusieurs crèches la même année\,; un enfant peut-il demander
+      à s'inscrire dans plusieurs crèches la même année\,? (1 pt)
+      
+\begin{solution}
+    Non, pas d'inscription d'un enfant la même année car la clé est constituée de ces deux attributs.
+\end{solution}
+
+
+    \item Si on ajoutait la dépendance fonctionnelle \texttt{idPuéricultrice $\to$ idCrèche},
+        comment faudrait-il modifier le schéma pour qu'il reste en 3FN\,? (1 pts)
+      
+  
+\end{enumerate}
+
+\section{Requêtes SQL (8 points)}
+
+Les requêtes sont à exprimer en SQL. 
+
+\begin{enumerate}
+
+  
+  \item Quels sont les enfants inscrits dans une crèche à Paris (donnez le nom de l'enfant
+      et le nom de la crèche)\,?
+
+\begin{solution}
+\begin{small}
+\begin{minted}{sql}
+select p.nom as 'nomEnfant', c.nom as 'nomCrèche'
+from Crèche as c, Inscription as i, Personne as p
+where c.idCrèche = i.idCrèche
+and i.idEnfant=p.idPersonne
+and c.ville='Paris'
+\end{minted}
+\end{small}
+\end{solution}
+  \item Quels sont les enfants demandant une crèche dans la ville où ils habitent
+  (donner le nom, prénom et la ville)\,?
+  
+\begin{solution}
+\begin{small}
+\begin{minted}{sql}
+select p.prénom, p.nom, p.ville
+from Crèche as c, Demande as d, Personne as p
+where c.idCrèche = d.idCrèche
+and d.idEnfant=p.idPersonne
+and c.ville=p.ville
+\end{minted}
+\end{small}
+\end{solution}
+
+  \item Pour chaque enfant donnez le prénom de l'enfant, le nom de son père, de sa mère
+  et de sa puéricultrice.
+
+\begin{solution}
+\begin{small}
+\begin{minted}{sql}
+select enfant.nom as 'nomEnfant', père.nom as 'nomPère',
+       mère.nom as 'nomMère', puericultrice.nom as 'nomPuericultrice'
+from Inscription as i, Personne as enfant, Personne as père, 
+        Personne as mère, Personne as puericultrice
+where i.idEnfant = enfant.idPersonne
+and   enfant.idPère = père.idPersonne
+and   enfant.idMère = mère.idPersonne
+and i.idPuericultrice = puericultrice.idPersonne
+\end{minted}
+\end{small}
+\end{solution}
+
+ \item Je veux donner la liste de tous les enfants nés en 2019, avec le nom
+     de leur puericultrice s'ils sont inscrits à une crèche, et \texttt{null}
+     sinon. Donnez la requête SQL.
+     
+\begin{solution}
+ \begin{small}
+\begin{minted}{sql}
+select e.nom as 'nomEnfant',  p.nom as 'nomPuericultrice'
+from  Personne as e left join 
+        (Inscription as i join Personne as p on i.idPuericultrice=p.idPersonne)
+       on  i.idEnfant = e.idPersonne
+where néEn=2019
+\end{minted}
+\end{small}
+\end{solution}
+ 
+  \item Indiquez les demandes en cours\,: celles pour lesquelles il existe une 
+  demande de l'enfant à une crèche, mais pas d'inscription. Donnez simplement
+  l'identifiant de l'enfant et l'identifiant de la crèche.
+ 
+\begin{solution}
+ \begin{small}
+\begin{minted}{sql}
+select d.idEnfant, c.idCrèche
+from  Demande as d
+where not exists (select * from Inscription as i
+                  where d.idEnfant = i.idEnfant
+                  and d.idCrèche = i.idCrèche)
+\end{minted}
+\end{small}
+\end{solution}
+ 
+  \item Donnez la liste des enfants née en 2018 et les crèches de leur ville
+     qu'ils n'ont pas demandées (nom de l'enfant, nom de la crèche).
+
+\begin{solution}
+\begin{small}
+\begin{minted}{sql}
+select p.nom as 'nomEnfant', c.nom as 'nomCrèche'
+from  Personne as p, Crèche as c
+where not exists (select * from Demande as d
+                  where d.idEnfant = i.idEnfant
+                  and d.idCrèche = i.idCrèche)
+\end{minted}
+\end{small}
+\end{solution}
+ 
+  \item Quelles sont les crèches n'ayant pas rempli toutes leurs places
+  (autrement dit  le nombre d'inscriptions est inférieur à la capacité)?
+
+\begin{solution}
+\begin{small}
+\begin{minted}{sql}
+select c.*
+from  Crèche as c, Inscription as i
+where c.idCrèche = i.idCrèche
+group by c.idCrèche
+having count(*) < c.capacité
+\end{minted}
+\end{small}
+\end{solution}
+   Aide\,: faites une première requête affichant le nombre d'inscriptions
+      et  la capacité. Puis ajoutez la clause indiquant que le premier doit
+      être inférieur au second.
+\end{enumerate}
+ 
+
+\section{Algèbre (2 points)}
+
+Donnez l'expression algébrique pour la requête 5 de la section précédente.
+
+
+\begin{solution}
+$$\pi_{idEnfant,idCreche} (Demande) - \pi_{idEnfant,idCreche} (Cr\acute{e}che)$$
+\end{solution}
+
+\section{Transactions (4 points)}
+
+On implante une procédure d'inscription qui effectue les étapes suivantes\,:
+
+\begin{enumerate}
+  \item On parcourt les demandes des enfants qui ne sont pas encore inscrits
+  \item Pour chaque demande on vérifie qu'il reste de la place dans la crèche demandée
+  \item Si oui, on crée le nuplet dans la table \texttt{Inscription}
+\end{enumerate}
+
+\begin{minted}{bash}
+Procédure inscription()
+begin
+  demandes_en_cours = (résultat requête 5)
+  for each demande in demandes_en_cours do
+    places_restantes = (résultat requête 6)
+    si (places_restantes > 0)
+      Insérer inscription
+    # Emplacement 1
+  end for
+  # Emplacement 2
+end
+\end{minted}
+\paragraph{Questions}
+
+\begin{enumerate}
+  \item Où faut-il placer un \texttt{commit} dans la procédure\,? Emplacement 1 ou 2. Expliquez
+votre choix.
+  \item Est-ce que l'insertion d'une inscription change le contenu du curseur sur les demandes
+      en cours\,?  Justifiez votre réponse.
+\end{enumerate}
+\end{document}
+

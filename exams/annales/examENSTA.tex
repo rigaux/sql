@@ -1,0 +1,132 @@
+\documentclass[french]{article}
+
+
+\usepackage{babel}
+\usepackage{psfig}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{comment}
+\usepackage{moreverb}
+\usepackage{a4wide}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage[french]{minitoc}
+\usepackage{latexsym,color}
+
+\newenvironment{solution}{\nopagebreak\par\vspace*{2mm}\underline{Solution~:}\em\par}{\par\vspace*{2mm}}
+
+
+%\excludecomment{solution}
+
+\begin{document}
+
+\begin{center}
+{\Large\bf Examen ENSTA}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace*{0.5cm}
+
+
+\section{Indexation}
+
+Soit un fichier de 1~000~000 enregistrements répartis
+        en pages de 4\,000 octets. Chaque enregistrement
+        fait 45 octets. Répondez aux questions suivantes en justifiant
+    vos réponses (on suppose que les pages sont pleines)\,?
+  \begin{enumerate}
+   \item Quelle est la taille du fichier\,? Combien faut-il de pages\,? 
+\begin{solution}
+\begin{enumerate}
+  \item 45 Mo!
+  \item $\frac{45000000}{4000}=11250$
+\end{enumerate}
+\end{solution}
+   \item Quelle est la taille d'un index de type arbre-B
+        si la clé fait 32 octets
+           et un pointeur 8 octets\,?
+\begin{solution}
+Une entrée d'index fait 40 octets. Donc on en met
+$\frac{4000}{40}=100$ par page. Il faut indexer 1\,000\,000
+enregistrements pour le dernier niveau de l'index, soit
+$\frac{1000000}{100}=10000$ pages. Ensuite il
+faut indexer chacune des 1000 pages, soit $\frac{1000}{100}=10$
+pages supplémentaires, que pour finir on indexe avec la racine.
+
+Donc il faut 10000 + 10 + 1 pages dans l'index.
+\end{solution}
+ 
+   \item  Si on suppose qu'un E/S coûte 10 ms, quel est le coût moyen
+    d'une recherche
+     d'un enregistrement par clé unique,
+   avec index et sans index\,?
+
+ \begin{solution}
+Recherche avec index\,: trois lectures dans l'index, 
+puis une lecture dans le fichier. Soit 40 ms.
+
+Sans index, en moyenne il faut lire la moitié du fichier,
+soit 5625 pages, soit plus de 50 secondes.
+\end{solution}
+\end{enumerate}
+
+\section{Concurrence}
+
+Le programme suivant s'exécute dans un système de gestion de commandes pour
+les produits d'une entreprise. Il permet de commander une quantité donnée
+d'un produit qui se trouve en stock. Les paramètres du programme représentent
+respectivement la référence de la commande ($c$), la référence du produit ($p$)
+et la quantité commandée ($q$).
+
+\begin{tabbing}
+tab \= tab \= \kill
+{\bf Commander} ($c$, $p$, $q$)\\
+\>  {\em Start}\\
+\>  Lecture prix produit $p$\\
+\>  \underline{si} $q$ > stock de $p$ \underline{alors} {\em Abort}\\
+\>  \underline{sinon}\\
+\> \>    Mise à jour stock de $p$\\
+\> \>    Enregistrement dans $c$ du total de facturation\\
+\> \>    {\em Commit}\\
+\>  \underline{fin si}
+\end{tabbing}
+
+{\bf N.B.}\,: le prix et la quantité de produit en 
+stock sont gardés dans des enregistrements différents.
+
+\begin{enumerate}
+	\item Lesquelles des transactions suivantes peuvent être
+obtenues par l'execution du programme ci-dessus? Justifiez votre réponse.
+
+{\small
+\begin{verbatim}
+T: r[x] r[y] a
+T': r[x] a
+T'': r[x] w[y] w[z] c
+T''': r[x] r[y] w[y] w[z] c
+\end{verbatim}
+}
+
+	\item Dans le système s'exécutent en même temps trois
+transactions: deux commandes d'un même produit et le changement du prix
+de ce même produit. Montrez que l'histoire ci-dessous est une exécution
+concurrente de ces trois transactions et expliquez la signification des
+enregistrements qui y interviennent.
+
+{\bf H} : r$_1$[x] r$_1$[y] w$_2$[x] w$_1$[y] c$_2$ r$_3$[x] r$_3$[y] 
+w$_1$[z] c$_1$ w$_3$[y] w$_3$[u] c$_3$
+
+	\item Vérifiez si {\bf H} est sérialisable en identifiant
+les conflits et en construisant le graphe de sérialisation.
+
+	\item Quelle est l'exécution obtenue par verrouillage à
+deux phases à partir de {\bf H}? Quel prix sera appliqué pour la seconde 
+commande, le même que pour la première ou le prix modifié?
+
+On consid\`ere que le rel\^achement des verrous d'une transaction se fait au 
+{\em Commit} et qu'\`a ce moment on ex\'ecute en priorit\'e les op\'erations 
+bloqu\'ees en attente de verrou, dans l'ordre de leur blocage.
+\end{enumerate}
+
+\end{document}

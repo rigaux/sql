@@ -1,0 +1,252 @@
+
+
+
+Soit la base de données suivante permettant de gérer un championnat de football.
+\begin{itemize}
+\item Stade(\textbf{id}, ville, nom, nbPlaces, prixBillet)
+\item Equipe(\textbf{id}, pays, siteWeb, entraîneur)
+\item Joueur(\textbf{id}, \textit{idEquipe}, nom, prénom, âge)
+\item Match(\textbf{id}, \textit{idStade}, dateMatch, \textit{idEquipe1}, \textit{idEquipe2}, 
+      scoreEquipe1, scoreEquipe2, nbBilletsVendus)
+\item But(\textbf{\textit{idJoueur}, \textit{idMatch}, minute}, penalty)
+
+\end{itemize}
+
+
+Tous les attributs \textbf{en gras}
+sont des clés primaires, ceux \textit{en italiques} sont des clés étrangères. Notez
+qu'une clé étrangère peut faire partie d'une clé primaire.
+
+Chaque pays a une seule équipe en compétition. Une ville peut avoir plusieurs stades. L'attribut But(penalty) vaut VRAI si le but a été marqué suite a un penalty (coup de pied de réparation) ou FAUX dans le cas contraire. Le nom de l'entraîneur d'une équipe est donné par l'attribut Equipe(entraîneur). 
+
+\section{Conception (6 points)}
+
+Etudions la conception de cette base en répondant aux questions suivantes.
+
+\begin{enumerate}
+%   \item Avec ce schéma, une équipe peut-elle jouer contre elle-même\,? Expliquez.
+    
+    \item Avec ce schéma, un joueur peut-il marquer un but dans un match auquel
+    son équipe ne participe pas\,? Expliquez.
+
+    \item Est-il possible de savoir dans quelle ville a été marqué chaque but\,? Expliquez.
+    
+     \item Donnez le schéma entité-association correspondant aux relations \textsc{Match}, \textsc{Equipe},
+          \textsc{Stade}.
+          
+     \item Donnez la commande SQL de création de la table \textsc{Match}.
+     
+     \item Citer au moins une clé \emph{candidate} autre que la clé primaire 
+     parmi les attributs des tables (bien lire l'énoncé). 
+       Quel serait l'impact si on la choisissait comme clé primaire\,?
+       
+     \item Un de vos collègues propose de modéliser un but comme une association plusieurs-plusieurs
+     entre un joueur et un match. Cela vous semble-t-il une bonne idée\,? Cela correspond-il 
+     au schéma relationnel de notre base\,?
+\end{enumerate}
+
+\begin{solution}
+\begin{enumerate}
+  \item Oui, la base permet de représenter un but marqué dans un match opposant deux équipes
+       dont aucune n'est celle du joueur.
+  \item Oui, par transitivité But $\to$ Match, Match $\to$ Stade  et Stade $\to$ Ville.
+  \item Schéma
+  \item 
+
+\begin{minted}{sql}
+CREATE TABLE Match(
+    id NUMBER(10), 
+    idStade NUMBER(10), 
+    dateMatch DATE, 
+    idEquipe1 NUMBER(10), 
+    idEquipe2 NUMBER(10), 
+    scoreEquipe1 NUMBER(10), 
+    scoreEquipe2 NUMBER(10),
+    PRIMARY KEY (id),
+    FOREIGN KEY (idStade) REFERENCES Stade(id),
+    FOREIGN KEY (idEquipe1) REFERENCES Equipe(id),
+    FOREIGN KEY (idEquipe2) REFERENCES Equipe(id)
+);
+\end{minted}
+  
+  \item Le pays est clé candidate pour l'équipe. Il faudrait alors l'utiliser comme clé étrangère 
+     partout.
+     
+\end{enumerate}
+
+\end{solution}
+
+\section{SQL (8 points)}
+
+Exprimez les requêtes suivantes en SQL.
+
+\begin{enumerate}
+
+\item Noms des joueurs âgés de plus de 30 ans qui ont 
+     marqué un but dans la première minute de jeu. 
+
+\begin{solution}
+\begin{minted}{sql}
+select nom 
+from Joueur as j, But as b
+where j.id = b.idJoueur and j.âge > 30 and b.minute = 1;
+\end{minted}
+\end{solution}
+
+\item Noms des joueurs français qui n'ont marqué aucun but
+
+\begin{solution}
+\begin{minted}{sql}
+select nom 
+from Joueur as j, Equipe as e
+where j.idEquipe = e.id 
+and e.pays = 'France' 
+and j.id NOT IN (select idJoueur from But)
+\end{minted}
+\end{solution}
+
+\item Le prix du billet le plus cher
+
+\begin{solution}
+
+\begin{minted}{sql}
+select prixBillet 
+from Stade as s1
+where not exists (select ''
+                from Stade as s2
+                where s2.prixBillet >= s1.prixBillet)
+\end{minted}
+\end{solution}
+
+
+\item Donnez le nom des entraineurs avec le nombre de buts marqués par leur équipe
+
+\begin{solution}
+\begin{minted}{sql}
+select entraineur, count(*)
+from Equipe as e, Joueur as j, But as b
+where e.id=j.idEquipe
+and b.idJoueur = j.id
+group by e.id, e.entraineur
+\end{minted}
+\end{solution}
+
+
+
+\item Donnez le nom des joueurs ayant marqué un but dans un match auquel leur équipe
+    ne participe pas.  
+
+\begin{solution}
+\begin{minted}{sql}
+select prénom, nom
+from Match as m, Joueur as j, But as b
+where e.id=j.idEquipe
+and b.idJoueur = j.id
+and m.id = b.idMatch
+and e.id != m.idEquipe1
+and e.id != e.idEquipe2
+\end{minted}
+\end{solution}
+
+
+\item Les noms des joueurs français qui ont marqué un but lors d'un match entre la France et la Suisse 
+    joué à Lille. Attention\,:  dans la table \textsc{Match}
+    la France peut être l'équipe 1 ou l'équipe 2. Il faut
+      construire la requête qui correspond aux deux cas.
+     
+\begin{solution}
+Il faut soit Match.equipe1='France', soit  Match.equipe2='France'. 
+\begin{minted}{sql}
+select j.nom
+from Match m, Equipe e1, Equipe e2, Joueur j, Stade s, But b
+where m.idEquipe1 = e1.id 
+and m.idEquipe2 = e2
+and ((e1.pays = 'France' id and e2.pays='Suisse' and e1.id = j.idEquipe)
+         or
+     (e2.pays = 'France' id and e1.pays='Suisse' and e2.id = j.idEquipe))
+and m.idStade = s.id 
+and s.ville = 'Lille' 
+and b.idJoueur = j.id 
+and b.idMatch = m.id )
+\end{minted}
+\end{solution}
+
+
+\end{enumerate}
+
+\section{Algèbre (3 points)}
+
+
+
+\begin{enumerate}
+   \item Donnez l'expression algébrique de la première requête SQL (section précédente)
+
+\begin{solution}
+$\pi_{nom}(\sigma_{age > 30} (Joueur) \underset{id=idJoueur}{\bowtie} \sigma_{minute = 1}(But) )$
+\end{solution}
+
+\item Donnez l'expression algébrique pour la seconde requête (les joueurs français qui ne marquent pas)
+
+\begin{solution}
+Joueurs français:
+$$A = \sigma_{pays='France'}(Joueur\;j) \underset{j.idEquipe = e.id}{\bowtie} Equipe\;e)$$
+Joueurs français qui ont marqué au moins un but :
+$$B = \sigma_{pays='France'}(But\;b \underset{b.idJoueur = j.id}{\bowtie} Joueur\;j) \underset{j.idEquipe = e.id}{\bowtie} Equipe\;e)$$
+
+Résultat:\\
+$$Resultat := A - B$$
+\end{solution}
+
+\item Donnez la requête SQL correspondant à l'expression algébrique suivante et expliquez le sens de cette requête
+
+$$\pi_{idMatch}(But \Join_{idMatch=id} \sigma_{scoreEquipe1=0 \land scoreEquipe2=0}(Match))$$
+\begin{solution}
+Les matchs nuls 0-0 pour lequel il existe quand même un but.
+\begin{minted}{sql}
+select idMatch
+from But as b, Match as m
+where b.idMatch=m.id
+and m.scoreEquipe1=0 
+and m.scoreEquipe2=0
+\end{minted}
+\end{solution}
+\end{enumerate}
+
+\section{Programmation et transactions (3 points)}
+
+\begin{enumerate}
+
+\item   Parmi les phrases suivantes, lesquelles vous semblent exprimer une contrainte de \emph{cohérence} correcte sur la base de données?
+
+\begin{enumerate}
+  \item Pour chaque match nul, je dois trouver autant de lignes associées au match dans la table \texttt{But} pour l'équipe 1 et pour l'équipe 2.
+  \item Quand j'insère une ligne dans la table \texttt{But} pour l'équipe 1, je dois effectuer également une insertion pour l'équipe 2 dans la table \texttt{But}.
+  \item Si je trouve une ligne dans la table \texttt{Match} avec \texttt{id=x}, \texttt{scoreEquipe1=y} et \texttt{scoreEquipe2=z}, alors je dois trouver \texttt{y+z} lignes dans la table \texttt{But} avec \texttt{idMatch=x}.
+ \end{enumerate}
+ 
+ \item Voici un programme en pseudo-code simplifié à exécuter chaque fois qu'un but est marqué dans un match, par un joueur et au bénéfice de la première équipe. Les '\#' marquent des commentaires.
+        
+\begin{verbatim}
+function marquer_but_eq1 (imatch, ijoueur, min, peno)
+     startTransaction
+     # A
+     select scoreEquipe1 into :scoreE where idMatch = :imatch
+     #B
+     update Match set scoreEquipe1 = :scoreE + 1 where idMatch = :imatch
+     # C
+     insert into But (idMatch, idJoueur, minute, penalty)
+     values (:idMatch, :ijoueur, :min, :peno)
+     # D
+\end{verbatim}
+ 
+ Où faut-il selon-vous ajouter un ordre \texttt{commit}?
+ \begin{enumerate}
+   \item Juste après \texttt{B} et \texttt{C}
+   \item Juste après \texttt{A}
+   \item Juste après \texttt{D}
+ \end{enumerate}
+  Justifiez votre réponse.
+  
+  \item Supposons que je lance deux exécutions de  \texttt{marquer\_but\_eq1} en même temps.
+  Dans quel scénario l'exécution imbriquée amène-t-elle une incohérence\,?
+\end{enumerate}
