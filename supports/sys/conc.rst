@@ -36,7 +36,7 @@ S1: isolation par versionnement
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: isolation par versionnement <http://sys.bdpedia.fr/files/slconc-isolmultiversions.pdf>`_
-    * `Vidéo sur l'isolation par versionnement <http://mdcvideos.cnam.fr/videos/?video=MEDIA170828115543574>`_ 
+    * `Vidéo sur l'isolation par versionnement <https://mediaserver.cnam.fr/permalink/v1263e27154a0dzu5zi1/>`_ 
 
 
 Nous avons déjà évoqué à plusieurs reprises le fait qu'un SGBD gère, à certains moments,
@@ -284,7 +284,7 @@ S2: la sérialisabilité
 .. admonition::  Supports complémentaires:
 
    * `Diapositives: la sérialisabilité <http://sys.bdpedia.fr/files/slserialisabilite.pdf>`_
-   * `Vidéo sur la sérialisabilité <http://mdcvideos.cnam.fr/videos/?video=MEDIA170828120339422>`_ 
+   * `Vidéo sur la sérialisabilité <https://mediaserver.cnam.fr/permalink/v1263e271538f2ilau7r/>`_ 
 
 Nous en arrivons maintenant à l'isolation complète des transactions, garantie par le
 niveau *serializable*. La sérialisabilité est le critère utime de correction pour l'exécution
@@ -522,7 +522,7 @@ S3: Contrôle de concurrence multi-versions
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: contrôle de concurrence multiversions <http://sys.bdpedia.fr/files/slccmultiversions.pdf>`_
-    * `Vidéo sur le contrôle de concurrence multiversions <http://mdcvideos.cnam.fr/videos/?video=MEDIA170828121416362>`_ 
+    * `Vidéo sur le contrôle de concurrence multiversions <https://mediaserver.cnam.fr/permalink/v1263dc99deb557xunjm/>`_ 
 
 
 
@@ -701,7 +701,7 @@ S4: le verrouillage à deux phases
 .. admonition::  Supports complémentaires:
 
    * `Diapositives: verrouillage à deux phases <http://sys.bdpedia.fr/files/sl2pl.pdf>`_
-   * `Vidéo sur le verrouillage à deux phases <http://mdcvideos.cnam.fr/videos/?video=MEDIA170828124029818>`_ 
+   * `Vidéo sur le verrouillage à deux phases <https://mediaserver.cnam.fr/permalink/v1263dc98fc44cwb33xc/>`_ 
 
 
 L'algorithme de verrouillage à deux phases (que nous simplifierons en 2PL pour *2 phases locking*)

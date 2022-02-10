@@ -125,7 +125,7 @@ S1: Transactions
 
     * `Diapositives: la notion de transaction <http://sys.bdpedia.fr/files/sltransactions.pdf>`_
     * `Fichier de commandes pour tester les transactions sous MySQL <http://sys.bdpedia.fr/files/commandes-transactions.sql>`_    
-    * `Vidéo sur la notion de transaction <https://mdcvideos.cnam.fr/videos/?video=MEDIA170823211032158>`_ 
+    * `Vidéo sur la notion de transaction <https://mediaserver.cnam.fr/permalink/v125f594787839i1vv7k//>`_ 
     
 Une *transaction* est une séquence d'opérations de lecture ou de mise
 à jour sur une base de données, se terminant par
@@ -684,7 +684,7 @@ S2: Pratique des transactions
 .. admonition::  Supports complémentaires:
 
     * `Lien vers l'application de travaux pratiques en ligne  <http://deptfod.cnam.fr/bd/tp/transactions/>`_
-    * `Vidéo expliquant le fonctionnement de l'application "transactions",  <https://mdcvideos.cnam.fr/videos/?video=MEDIA170117152906957>`_ 
+    * `Vidéo expliquant le fonctionnement de l'application "transactions",  <https://mediaserver.cnam.fr/permalink/v125f5947108eug0fjgs//>`_ 
     * `Fichier de commandes pour tester les transactions sous un SGBD (MySQL, Oracle) <http://sys.bdpedia.fr/files/commandes-transactions.sql>`_    
 
 Pour cette session, nous vous proposons une mise en pratique consistant à constater directement les notions de base
@@ -1178,7 +1178,7 @@ S3: effets indésirables des transactions concurrentes
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: anomalies transactionnelles <http://sys.bdpedia.fr/files/sltransanomalies.pdf>`_
-    * `Vidéo sur les anomalies transactionnelles <https://mdcvideos.cnam.fr/videos/?video=MEDIA170823211335921>`_ 
+    * `Vidéo sur les anomalies transactionnelles <https://mediaserver.cnam.fr/permalink/v125f5947877fb68lef1//>`_ 
 
 Pour illustrer les problèmes potentiels en cas
 d'absence de contrôle de concurrence, ou de techniques
@@ -1720,7 +1720,7 @@ S4: choisir un niveau d'isolation
 .. admonition::  Supports complémentaires:
 
    * `Diapositives: niveaux d'isolation <http://sys.bdpedia.fr/files/slisolation.pdf>`_
-   * `Vidéo sur les niveaux d'isolation <https://mdcvideos.cnam.fr/videos/?video=MEDIA170823211637573>`_ 
+   * `Vidéo sur les niveaux d'isolation <https://mediaserver.cnam.fr/permalink/v125f5947877f703ivj8//>`_ 
      
 Du point du programmeur d'application, l'objectif du contrôle de concurrence
 est de garantir la cohérence des données et d'assurer la recouvrabilité des

@@ -36,7 +36,7 @@ S1: le hachage statique
 .. admonition::  Supports complémentaires:
 
    * `Diapositives du hachage statique:  <http://sys.bdpedia.fr/files/slhachage.pdf>`_
-   * `Vidéo d'introduction au hachage <https://mdcvideos.cnam.fr/videos/?video=MEDIA190905064818136>`_ 
+   * `Vidéo d'introduction au hachage <https://mediaserver.cnam.fr/permalink/v1263e2715e5e8g3jpn3/>`_ 
     
 
 Nous commençons
@@ -344,7 +344,7 @@ S2: Hachage extensible
 .. admonition::  Supports complémentaires:
 
    * `Diapositives du hachage extensible:  <http://sys.bdpedia.fr/files/slhachageext.pdf>`_
-   * `Vidéo sur le hachage extensible <https://mdcvideos.cnam.fr/videos/?video=MEDIA190905064912416>`_
+   * `Vidéo sur le hachage extensible <https://mediaserver.cnam.fr/permalink/v1263e2715ecdnjn7ag1/>`_
 
 
 Nous présentons tout d'abord le hachage extensible sur
@@ -509,7 +509,7 @@ S3: hachage linéaire
 .. admonition::  Supports complémentaires:
 
    * `Diapositives du hachage linéaire:  <http://sys.bdpedia.fr/files/slhachagelin.pdf>`_
-   * `Vidéo de présentation <https://mdcvideos.cnam.fr/videos/?video=MEDIA190905065007334>`_
+   * `Vidéo de présentation <https://mediaserver.cnam.fr/permalink/v1263e2715f35sf4x509/>`_
 
 Le but du hachage linéaire est de maintenir une structure de hachage efficace
 quand le jeu de données est très dynamique, et en particulier quand il croît

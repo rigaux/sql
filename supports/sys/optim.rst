@@ -47,7 +47,7 @@ S1: Introduction à l'optimisation et à l'évaluation
 .. admonition::  Supports complémentaires:
 
     * `Diapositives:  <http://sys.bdpedia.fr/files/slintroeval.pdf>`_
-    * `Vidéo d'introduction à l'optimisation <https://cnam-my.sharepoint.com/:v:/g/personal/philippe_rigaux_lecnam_net/EUAUN2T9oJ1Pg5L3dY4-7K8BqBTrzacj7f8fTzg8v5nXBA?e=JGbAIx>`_
+    * `Vidéo d'introduction à l'optimisation <https://mediaserver.cnam.fr/permalink/v125f35a421a3nizowc0/>`_
 
 Commençons par situer le problème. Nous avons une requête, exprimée en SQL, soumise au système. Comme vous le savez, 
 SQL permet de déclarer un besoin, mais ne dit pas comment calculer le résultat. 
@@ -432,8 +432,9 @@ S3: optimisation de la requête
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: l'optimisation d'une requête <http://sys.bdpedia.fr/files/sloptim.pdf>`_
-    * `Vidéo sur l'optimisation algébrique <https://cnam-my.sharepoint.com/:v:/g/personal/philippe_rigaux_lecnam_net/EVEc0SY4GXdOrerajEaWODsBRodgN64zPWVhhW2khTmfFA?e=sJuxu6>`_    
-    * `Vidéo sur les plans d'exécution  <https://cnam-my.sharepoint.com/:v:/g/personal/philippe_rigaux_lecnam_net/EXZofavOfqJGtmdFUlPdYGgBubo5NrjZFE0OEnN1jA0YIw?e=YV3smv>`_    
+    * `Vidéo sur l'optimisation algébrique <https://mediaserver.cnam.fr/permalink/v125f35a4224c6w3cp17/>`_    
+    * `Vidéo sur les plans d'exécution (1)  <https://mediaserver.cnam.fr/permalink/v125f35a42376acjqp1g/>`_    
+    * `Vidéo sur les plans d'exécution (2)  <https://mediaserver.cnam.fr/permalink/v125f35a423cagaw4i9b//>`_    
     
 La réécriture
 =============

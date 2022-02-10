@@ -132,7 +132,7 @@ S1: rappels
 .. admonition::  Supports complémentaires:
 
    * `Diapositives: rappels <http://sys.bdpedia.fr/files/slrappels.pdf>`_
-   * `Vidéo <http://mdcvideos.cnam.fr/videos/?video=MEDIA190905064457958>`_ 
+   * `Vidéo <https://mediaserver.cnam.fr/permalink/v1263e2715ccdbytryla/>`_ 
 
 Nous commençons par un court rappel des notions de base que vous *devez* maîtriser avant d'aborder
 la suite de ce cours. Tout ce qui suit est détaillé dans le support 

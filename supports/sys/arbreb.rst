@@ -93,7 +93,7 @@ S1: Indexation de fichiers
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: structures d'index  <http://sys.bdpedia.fr/files/slindex.pdf>`_
-    * `Vidéo sur les structures d'index <https://mdcvideos.cnam.fr/videos/?video=MEDIA170120133455769>`_ 
+    * `Vidéo sur les structures d'index <https://mediaserver.cnam.fr/permalink/v1263dc99df9cyuazxyh/>`_ 
   
   
 Structure et contenu des index
@@ -702,7 +702,7 @@ S2: L'arbre-B
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: arbre B  <http://sys.bdpedia.fr/files/slarbreb.pdf>`_
-    * `Vidéo consacrée à l'arbre B <https://mdcvideos.cnam.fr/videos/?video=MEDIA170120133532592>`_ 
+    * `Vidéo consacrée à l'arbre B <https://mediaserver.cnam.fr/permalink/v1263dc98fb0ejmjm6ld/>`_ 
 
 L'arbre-B est une structure très proche des index
 présentés ci-dessus. La principale différence est que 
