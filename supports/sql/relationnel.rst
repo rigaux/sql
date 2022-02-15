@@ -143,7 +143,7 @@ On peut donc *décrire* une relation par
   #. Un nom (distinct) pour chaque dimension, dit *nom d'attribut*, noté :math:`A_i`.
   #. Le domaine de valeur (type) de chaque dimension, noté :math:`D_i`.
 
-Cette description s'écrit de manière concise :math:`R (A_1: D_1, D_2: T_2, \cdots, A_n: D_n)`,
+Cette description s'écrit de manière concise :math:`R (A_1: D_1, A_2: D_2, \cdots, A_n: D_n)`,
 et on l'appelle le *schéma* de la relation. Tous les :math:`A_i` sont distincts, 
 mais on peut bien entendu utiliser plusieurs fois le même type. Le schéma de notre table
 des départements est donc ``Département (nom: string, code: string)``. Le domaine
