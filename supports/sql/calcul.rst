@@ -1636,7 +1636,7 @@ Quiz
     
     A) :eqt:`I` Les acteurs qui ont tourné avec Tarantino, soit dans un film de 1992, soit dans un film de 1994 
     #) :eqt:`C` Les acteurs qui ont tourné deux fois avec Tarantino, une fois en 1992 et une autre en 1994
-    #) :eqt:`C` Les paires d'acteurs qui ont tourné avec Tarantino, le premier en 1992, le second en 1994
+    #) :eqt:`I` Les paires d'acteurs qui ont tourné avec Tarantino, le premier en 1992, le second en 1994
 
 
 .. eqt:: constrSQL2
