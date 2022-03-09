@@ -1389,12 +1389,12 @@ Quiz
 
 .. eqt:: alg3-2
    
-    Parmi les expressions algébriques suivantes, lesquelles
-    peuvent se réécrire avec une simple sélection dans laquelle on autorise le 'ou' logique?
+    Parmi les expressions algébriques suivantes, laquelle
+    peut se réécrire avec une simple sélection dans laquelle on autorise le 'ou' logique?
  
-    A)  :eqt:`C` :math:`\sigma_{X=3}(R)  \cup \sigma_{Y=2} (R) )`
-    #)  :eqt:`I` :math:`\sigma_{X=3}(R)  \cup \sigma_{Y=2} (S) )`
-    #)  :eqt:`I` :math:`\sigma_{X=3}(R)  \cup \sigma_{X=3} (S) )`
+    A)  :eqt:`C` :math:`\sigma_{X=3}(R)  \cup \sigma_{Y=2} (R)`
+    #)  :eqt:`I` :math:`\sigma_{X=3}(R)  \cup \sigma_{Y=2} (S)`
+    #)  :eqt:`I` :math:`\sigma_{X=3}(R)  \cup \sigma_{X=3} (S)`
 
 .. eqt:: alg3-3
    

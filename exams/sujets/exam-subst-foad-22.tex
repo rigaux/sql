@@ -1,0 +1,242 @@
+\enteteExam{NFP 107 -- Systèmes de gestion de bases de données - Durée 2h30}%
+{Examen de substitution -- 9 mars 2022}%
+{Effectué à distance}%
+
+
+Voici une partie de la base de données utilisée pour gérer des {\oe}uvres
+dans un musée:
+
+\begin{itemize}
+  \item Oeuvre(\textbf{idOeuvre}, nom, idPropriétaire, idAuteur)
+  \item Personne(\textbf{idPersonne}, nom, prénom)
+  \item Expertise(\textbf{idExpertise}, idOeuvre, idExpert,  valeur)
+\end{itemize}
+
+Les auteurs, les propriétaires et les experts sont des personnes bien entendu. Les clés primaires sont en gras,
+les clés primaires ne sont pas explicitement indiquées.
+
+
+\section{Schéma relationnel (7 points)}
+
+\begin{enumerate}
+
+\item Pour chaque table, donner les dépendances fonctionnelles liant les clés primaires et clés étrangères (1 point)
+
+\item En déduire les associations de type  ``plusieurs à 1'' du schéma Entité/Association correspondant à ce schéma
+    relationnel (1 point)
+
+\item Donner ce schéma Entité/Association complet (1 point)
+
+
+\item Donner des commandes SQL permettant de créer les tables
+\texttt{\textbf{Oeuvre}} et \texttt{\textbf{Personne}}. (1 point)
+
+ \item J'ajoute la contrainte ``Un expert ne peut évaluer une {\oe}uvre qu'une
+    seule fois''. Quelle est la dépendance fonctionnelle correspondante
+     et quel changement du schéma relationnel proposez-vous\,?  (2 points)
+
+    \item Ce schéma permet-il de représenter le fait qu'une personne peut être à la fois  propriétaire et auteur d'une
+    même  {\oe}uvre\,? Argumentez votre réponse.
+     (1 point)
+
+
+\end{enumerate}
+\begin{solution}
+
+
+\begin{itemize}
+\item Dépendances entre clés primaires et clés étrangères :
+   \begin{enumerate}
+      \item Dans \texttt{Oeuvre}: $idOeuvre \to idAuteur$ et $idOeuvre \to idProprietaire$
+       \item Dans \texttt{Expertise}: $idExpertise \to idOeuvre$ et $idExpertise \to idExpert$
+  \end{enumerate}
+   \item Chaque DF correspond à une association plusieurs à 1 (cf l'algorithme de normalisation).
+       On a donc ce type d'association entre Oeuvre et Personne, avec la sémantique "Auteur",
+       entre Oeuvre et Personne une seconde fois mais avec la sémantique "Propriétaire",
+         entre Expertise et Oeuvre et entre Expertise et Personne.
+        \item Le schéma EA se déduit immédiatement de ce qui précède. Il n'y a pas d'association
+        plusieurs à plusieurs.
+
+ \item
+  \begin{minted}{sql}
+  CREATE TABLE Personne (
+  idPersonne INTEGER NOT NULL,
+  nom VARCHAR NOT NULL,
+  prénom VARCHAR NOT NULL,
+    PRIMARY KEY (idPersonne)
+     );
+
+  CREATE TABLE Oeuvre (
+  idOeuvre INTEGER NOT NULL,
+  nom VARCHAR,
+  idAuteur INTEGER NOT NULL,
+  idPropriétaire INTEGER NOT NULL,
+   PRIMARY KEY (idOeuvre),
+   FOREIGN KEY (idAuteur) REFERENCES Personne (idPersonne)
+   FOREIGN KEY (idPropriétaire) REFERENCES Personne (idPersonne)
+   );
+  \end{minted}
+
+  \item On a donc la nouvelle dépendance $idExpert \to idOeuvre$. Du coup la table Expertise
+      n'est plus en 3FN. Un changement possible est que $idExpert$ devienne la clé
+      de Expertise.
+      \item Oui, rien n'empêche  idAuteur et idPropriétaire d'être égaux dans la table Oeuvre
+\end{itemize}
+\end{solution}
+
+
+\section{SQL (7 points)}
+
+\begin{enumerate}
+  \item Donnez le nom du propriétaire et le nom de l'auteur pour l'{\oe}uvre dont l'identifiant est 'fg65'.
+
+  \item Donnez les noms des {\oe}uvres expertisées par  leur propriétaire
+
+\item Donner les noms et prénoms des propriétaires d'une {\oe}uvre qui n'ont jamais effectué d'expertise.
+
+\item Donnez les {\oe}uvres et le nom des personnes qui n'en sont ni propriétaire, ni auteur.
+
+\item Donner les noms et prénoms des personnes qui sont à la fois auteur, propriétaire et expert (mais pas forcément
+     de la même {\oe}uvre).
+
+\item Pour chaque {\oe}uvre donnez la moyenne des valeurs estimées par les experts.
+
+\item Donnez le nombre d'expertises pour les {\oe}uvres dont la valeur maximale estimée est de 10\,000 Euros
+
+
+\end{enumerate}
+
+\begin{solution}
+\begin{enumerate}
+  \item \begin{minted}{sql}
+     select p1.nom as nomAuteur, p2.nom as nomPropriétaire
+     from Oeuvre as o, Personne as p1, Personne as p2
+     where idOeuvre='fg65'
+     and p.idAuteur=p1.idPersonne
+     and p.idPropriétaire = p2.idPersonne
+  \end{minted}
+
+  \item
+  \begin{minted}{sql}
+     select p1.nom as nomAuteur, p2.nom as nomPropriétaire
+     from Oeuvre as o, Expertise as e
+     where o.idOeuvre=e.idOeuvre
+     and o.idPropriétaire = e.idPersonne
+  \end{minted}
+
+   \item \begin{minted}{sql}
+     select  p.nom, p.prénom
+     from Oeuvre as o, Personne as p
+     where p.idPropriétaire = p.idPersonne
+     and p.idPersonne not in (select idExpert from Expertise)
+  \end{minted}
+
+     \item \begin{minted}{sql}
+     select  o.nom as nomOeuvre, p.nom as nomPersonne
+     from Oeuvre as o, Personne as p
+     where o.idPropriétaire != p.idPersonne
+     and   o.idAuteur != p.idPersonne
+  \end{minted}
+
+     \item \begin{minted}{sql}
+     select  distinct p.nom
+     from  Personne as p, Oeuvre as o1, Oeuvre as o2, Expertise as e
+     where o1.idPropriétaire = p.idPersonne
+     and    o2.idAuteur = p.idPersonne
+     and   e.idExpert = p.idPersonne
+  \end{minted}
+
+       \item \begin{minted}{sql}
+     select  o.nom, avg(valeur)
+     from  Oeuvre as o, Expertise as e
+     where o.idOeuvre = e.idOeuvre
+     group by o.idOeuvre, o.nom
+  \end{minted}
+
+        \item \begin{minted}{sql}
+     select  o.nom, count(*)
+     from  Oeuvre as o, Expertise as e
+     where o.idOeuvre = e.idOeuvre
+     group by o.idOeuvre, o.nom
+     having max(valeur) <= 10000
+  \end{minted}
+\end{enumerate}
+
+\end{solution}
+
+\section{Un peu de logique (4 points)}
+
+On dispose de deux prédicats $Auteur(x)$ et $Prop(x)$ qui sont vrais si,
+respectivement, $x$ est auteur ou $x$ est propriétaire.
+
+\begin{enumerate}
+  \item Quelle formule exprime la condition ``Soit $x$  est propriétaire, soit $x$ est auteur mais pas les deux''
+
+  \item Quelle est la négation de l'énoncé\,: ``Soit $x$ est propriétaire, soit $x$ est auteur''
+
+  \item Comment exprimer l'énoncé suivant sans implication\,: ``Si $x$ est auteur, alors $x$ n'est pas propriétaire''
+     (utiliser uniquement les connecteurs de SQL: and, or et not).
+
+\end{enumerate}
+
+\begin{solution}
+
+\begin{enumerate}
+  \item $Auteur(x) \lor Prop(x) \land \neg (Auteur(x) \land Prop(x))$
+
+  \item $\neg Auteur(x) \land \neg Prop(x)$
+
+  \item L'implication $p \to q$ est équivalente à $\neg p \lor q$.
+       Donc en SQL on écrirait cette formule : $not(Auteur(x)) \lor Prop(x)$
+
+\end{enumerate}
+
+
+\end{solution}
+
+
+\section{Algèbre (2 points)}
+On dispose de deux tables $T_1(A,B,C)$ et $T_2(D,E,F)$. Donnez une  expression algébrique équivalente
+à la suivante, avec les contraintes suivantes\,: on peut utiliser  la jointure mais pas le  produit cartésien, et
+une sélection doit s'apppliquer directement à une table.
+
+$$\sigma_{A=C \land C > B \land E =F} (T_1 \times T_2)$$
+
+\begin{solution}
+$$\sigma_{A=C \land C > B} (T_1) \Join \sigma_{A=C \land E > F}(T_2)$$
+\end{solution}
+
+\begin{comment}
+\section{Transactions (2 points)}
+
+On dispose d'une table $T (id, valeur)$. Initialement toutes les valeurs sont différentes.
+Voici une procédure qui échange les valeurs de 2 nuplets.
+
+\begin{minted}{sql}
+ create or replace procedure Echange (id1 INT, id2 INT) AS
+  -- Déclaration des variables
+  val1, val2 integer;
+  begin
+    -- On recherche la valeur de id1 et de id2
+    select valeur INTO val1 FROM T WHERE id = id1
+    select valeur INTO val2 FROM T WHERE id = id2
+
+    -- On échange les valeurs
+    UPDATE T SET valeur = val1 WHERE id = id2
+    UPDATE T SET valeur = val2 WHERE id = id1
+
+ end;
+\end{minted}
+
+On est en mode \texttt{Autocommit}\,: un \texttt{commit} a lieu après chaque requête SQL. Expliquez
+dans quel scénario l'exécution concurrente de deux procédures d'échange peut aboutir
+à ce que deux nuplets aient la même valeur.
+
+\end{comment}
+\begin{solution}
+La première procédure s'exécute jusqu'à la fin du premier UPDATE. Un \texttt{commit} automatique
+a lieu: les deux nuplets sont alors égaux. Si la seconde procédure commence alors, elle trouvera
+une base avec deux nuplets égaux, ce qui ne devrait jamais arriver avec nos hypothèses en mode sérialisable.
+\end{solution}
+
+\end{document}
