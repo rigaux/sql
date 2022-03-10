@@ -73,6 +73,7 @@ def setup(app):
     app.add_config_value('schemas', '', True)
     app.add_config_value('transactions', '', True)
     app.add_config_value('correctionlabo', '', True)
+    app.add_config_value('correctionoeuvre', '', True)
 
 relationnel='private'
 calcul='private'
@@ -85,6 +86,7 @@ concexos='private'
 schemas='private'
 transactions='private'
 correctionlabo='private'
+correctionoeuvre='private'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

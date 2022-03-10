@@ -736,3 +736,219 @@ en isolation complète.
       .. admonition:: Correction
 
           Seule la première affirmation est vraie
+
+
+
+********************************************
+Examen session 2, présentiel, septembre 2020
+********************************************
+
+
+Voici une partie de la base de données utilisée pour gérer des œuvres
+dans un musée:
+ 
+  - Oeuvre(**idOeuvre**, nom, idPropriétaire, idAuteur)
+  - Personne(**idPersonne**, nom, prénom)
+  - Expertise(**idExpertise**, idOeuvre, idExpert,  valeur)
+
+
+Les auteurs, les propriétaires et les experts sont des personnes bien entendu. 
+Les clés primaires sont en gras,
+les clés primaires ne sont pas explicitement indiquées.
+
+Schéma relationnel (6 points)
+=============================
+
+  - Pour chaque table, donner les dépendances fonctionnelles liant les clés 
+    primaires et clés étrangères (1 point)
+  - En déduire les associations de type  
+    *plusieurs à 1* du schéma Entité/Association correspondant à ce schéma 
+    relationnel (1 point)
+  - Donner ce schéma Entité/Association complet (1 point)
+  - Donner des commandes SQL permettant de créer les tables
+    ``Oeuvre``  et ``Personne``  (1 point) 
+  - J'ajoute la contrainte *Un expert ne peut évaluer une œuvre qu'une 
+    seule fois*. Quelle est la dépendance fonctionnelle correspondante
+    et quel changement du schéma relationnel proposez-vous?  (1 point) 
+  - Ce schéma permet-il de représenter le fait qu'une personne peut être à la fois  
+    propriétaire et auteur d'une
+    même  œuvre? Argumentez votre réponse. (1 point) 
+
+
+.. ifconfig:: correctionoeuvre in ('public')
+
+     .. admonition:: Correction
+
+        #. Dépendances entre clés primaires et clés étrangères :
+    
+          - Dans ``Oeuvre``: :math:`idOeuvre \to idAuteur` et :math:`idOeuvre \to idProprietaire`
+          - Dans ``Expertise``: :math:`idExpertise \to idOeuvre` et :math:`idExpertise \to idExpert`
+
+        #. Chaque DF correspond à une association plusieurs à 1 (cf l'algorithme de normalisation). 
+           On a donc ce type d'association entre Oeuvre et Personne, avec la sémantique ``Auteur`` ,
+           entre Oeuvre et Personne une seconde fois mais avec la sémantique `Propriétaire``,
+           entre Expertise et Oeuvre et entre Expertise et Personne.
+        #. Le schéma EA se déduit immédiatement de ce qui précède. Il n'y a pas d'association
+           plusieurs à plusieurs.
+        #. 
+          .. code-block:: sql
+
+              CREATE TABLE Personne (
+                 idPersonne INTEGER NOT NULL,
+               nom VARCHAR NOT NULL,
+                prénom VARCHAR NOT NULL,
+                PRIMARY KEY (idPersonne)
+                );
+   
+            CREATE TABLE Oeuvre (
+                idOeuvre INTEGER NOT NULL,
+                nom VARCHAR,
+                idAuteur INTEGER NOT NULL,
+                idPropriétaire INTEGER NOT NULL,
+                PRIMARY KEY (idOeuvre),
+                FOREIGN KEY (idAuteur) REFERENCES Personne (idPersonne) 
+                FOREIGN KEY (idPropriétaire) REFERENCES Personne (idPersonne) 
+                );
+        #. On a donc la nouvelle dépendance :math:`idExpert \to idOeuvre`. 
+           Du coup la table Expertise
+           n'est plus en 3FN. Un changement possible est que ``idExpert`` devienne la clé
+           de Expertise. 
+        #. Oui, rien n'empêche  idAuteur et idPropriétaire d'être égaux dans la table Oeuvre
+
+SQL (7 points)
+==============
+
+  - Donner le nom du propriétaire et le nom de l'auteur pour l'{\oe}uvre dont l'identifiant est 'fg65'.
+  - Donner les noms des {\oe}uvres expertisées par  leur propriétaire
+  -  Donner les noms et prénoms des propriétaires d'une {\oe}uvre qui n'ont jamais effectué d'expertise.
+  - Donner les {\oe}uvres et le nom des personnes qui n'en sont ni propriétaire, ni auteur.
+  - Donner les noms et prénoms des personnes qui sont à la fois auteur, propriétaire et expert (mais pas forcément
+    de la même {\oe}uvre). 
+  - Pour chaque {\oe}uvre donnez la moyenne des valeurs estimées par les experts.
+  - Donnez le nombre d'expertises pour les {\oe}uvres dont la valeur maximale estimée est de 10\,000 Euros
+
+
+.. ifconfig:: correctionoeuvre in ('public')
+
+     .. admonition:: Correction
+
+        .. code-block:: sql
+
+             select p1.nom as nomAuteur, p2.nom as nomPropriétaire
+             from Oeuvre as o, Personne as p1, Personne as p2
+            where idOeuvre='fg65'
+            and p.idAuteur=p1.idPersonne
+            and p.idPropriétaire = p2.idPersonne;
+
+         select p1.nom as nomAuteur, p2.nom as nomPropriétaire
+         from Oeuvre as o, Expertise as e
+         where o.idOeuvre=e.idOeuvre
+         and o.idPropriétaire = e.idPersonne
+
+         select  p.nom, p.prénom
+         from Oeuvre as o, Personne as p
+         where p.idPropriétaire = p.idPersonne
+         and p.idPersonne not in (select idExpert from Expertise)
+
+         select  o.nom as nomOeuvre, p.nom as nomPersonne
+         from Oeuvre as o, Personne as p
+         where o.idPropriétaire != p.idPersonne
+         and   o.idAuteur != p.idPersonne
+
+         select  distinct p.nom
+         from  Personne as p, Oeuvre as o1, Oeuvre as o2, Expertise as e
+         where o1.idPropriétaire = p.idPersonne
+         and    o2.idAuteur = p.idPersonne
+         and   e.idExpert = p.idPersonne 
+
+         select  o.nom, avg(valeur)
+         from  Oeuvre as o, Expertise as e
+         where o.idOeuvre = e.idOeuvre
+         group by o.idOeuvre, o.nom
+
+         select  o.nom, count(*)
+         from  Oeuvre as o, Expertise as e
+         where o.idOeuvre = e.idOeuvre
+         group by o.idOeuvre, o.nom
+         having max(valeur) <= 10000
+
+Un peu de logique (3 points)
+============================
+
+On dispose de deux prédicats :math:`$Auteur(x)` et :math:`Prop(x)` qui sont vrais si,
+respectivement, :math:`x` est auteur ou :math:`x` est propriétaire.
+
+  - Quelle formule exprime la condition "Soit :math:`x`  est propriétaire, soit :math:`x` est auteur mais pas les deux"
+  - Quelle est la négation de l'énoncé\,: "Soit :math:`x` est propriétaire, soit :math:`x` est auteur"
+  - Comment exprimer l'énoncé suivant sans implication: "Si :math:`x` est auteur, alors :math:`x` n'est pas propriétaire"
+    (utiliser uniquement les connecteurs de SQL: and, or et not).
+
+
+.. ifconfig:: correctionoeuvre in ('public')
+
+     .. admonition:: Correction
+  
+         - :math:`Auteur(x) \lor Prop(x) \land \neg (Auteur(x) \land Prop(x))`
+         - :math:`\neg Auteur(x) \land \neg Prop(x)`
+         - :math:`L'implication :math:`p \to q` est équivalente à :math:`\neg p \lor q`.
+           Donc en SQL on écrirait cette formule : :math:`not(Auteur(x)) \lor Prop(x)`
+
+Algèbre (2 points)
+==================
+
+On dispose de deux tables :math:`T_1(A,B,C)` et 
+:math:`T_2(D,E,F)`. Donnez une  expression algébrique équivalente 
+à la suivante, avec les contraintes suivantes: on peut utiliser  la jointure mais 
+pas le  produit cartésien, et 
+une sélection doit s'apppliquer directement à une table. 
+
+.. math::
+
+     \sigma_{A=C \land C > B \land E =F} (T_1 \times T_2)
+
+
+.. ifconfig:: correctionoeuvre in ('public')
+
+     .. admonition:: Correction
+    
+        .. math::
+        
+             \sigma_{A=C \land C > B} (T_1) \Join \sigma_{A=C \land E > F}(T_2)$$
+
+Transactions (2 points)
+=======================
+
+On dispose d'une table :math:`T (id, valeur)`. 
+Initialement toutes les valeurs sont différentes. 
+Voici une procédure qui échange les valeurs de 2 nuplets.
+
+.. code-block:: sql
+
+     create or replace procedure Echange (id1 INT, id2 INT) AS
+        -- Déclaration des variables
+            val1, val2 integer;
+        begin
+            -- On recherche la valeur de id1 et de id2
+            select valeur into val1 from T where id = id1
+            select valeur into val2 from T where id = id2
+
+            -- On échange les valeurs
+            update T SET valeur = val1 where id = id2
+            update T SET valeur = val2 where id = id1
+
+         end;
+
+On est en mode ``Autocommit``: un ``commit`` a lieu après chaque requête SQL. Expliquez
+dans quel scénario l'exécution concurrente de deux procédures d'échange peut aboutir
+à ce que deux nuplets aient la même valeur.
+
+
+.. ifconfig:: correctionoeuvre in ('public')
+
+     .. admonition:: Correction
+ 
+        La première procédure s'exécute jusqu'à la fin du premier UPDATE. Un ``commit`` automatique
+        a lieu: les deux nuplets sont alors égaux. Si la seconde procédure commence alors, elle trouvera
+        une base avec deux nuplets égaux, ce qui ne devrait jamais arriver avec nos hypothèses en mode sérialisable.
+
+
