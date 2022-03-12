@@ -1,6 +1,5 @@
 .. _chap-annales:
 
-
 ###################
 Annales des examens
 ###################
@@ -160,7 +159,7 @@ Correction de l'examen
 Conception
 ----------
 
-Le schéma E/A est donné dans la :numref:`examen-blanc-2019`. Notez que l'on ne représente pas
+Le schéma E/A est donné dans la :numref:`examen_blanc_2019`. Notez que l'on ne représente pas
 les clés étrangères comme attributs des entités: les clés étrangères sont le mécanisme *du modèle 
 relationnel* pour représenter les liens entre entités. Dans le *modele EA*, ces liens sont
 des associations, et il serait donc redondant de faire figure également les clés étrangères 
@@ -168,7 +167,7 @@ des associations, et il serait donc redondant de faire figure également les cl�
 Le nommage des assocations et des attributs est libre, l'important est de privilégier la clarté
 et la précision, notamment pour les associations.
 
-.. _examen-blanc-2019:
+.. _examen_blanc_2019:
 .. figure:: ./figures-sql/exam-blanc-19.png
       :width: 80%
       :align: center
@@ -825,7 +824,7 @@ SQL (7 points)
   - Donner les noms et prénoms des personnes qui sont à la fois auteur, propriétaire et expert (mais pas forcément
     de la même {\oe}uvre). 
   - Pour chaque {\oe}uvre donnez la moyenne des valeurs estimées par les experts.
-  - Donnez le nombre d'expertises pour les {\oe}uvres dont la valeur maximale estimée est de 10\,000 Euros
+  - Donnez le nombre d'expertises pour les {\oe}uvres dont la valeur maximale estimée est de 10 000 Euros
 
 
 .. ifconfig:: correctionoeuvre in ('public')
@@ -875,11 +874,11 @@ SQL (7 points)
 Un peu de logique (3 points)
 ============================
 
-On dispose de deux prédicats :math:`$Auteur(x)` et :math:`Prop(x)` qui sont vrais si,
+On dispose de deux prédicats :math:`Auteur(x)` et :math:`Prop(x)` qui sont vrais si,
 respectivement, :math:`x` est auteur ou :math:`x` est propriétaire.
 
   - Quelle formule exprime la condition "Soit :math:`x`  est propriétaire, soit :math:`x` est auteur mais pas les deux"
-  - Quelle est la négation de l'énoncé\,: "Soit :math:`x` est propriétaire, soit :math:`x` est auteur"
+  - Quelle est la négation de l'énoncé : "Soit :math:`x` est propriétaire, soit :math:`x` est auteur"
   - Comment exprimer l'énoncé suivant sans implication: "Si :math:`x` est auteur, alors :math:`x` n'est pas propriétaire"
     (utiliser uniquement les connecteurs de SQL: and, or et not).
 
@@ -951,4 +950,279 @@ dans quel scénario l'exécution concurrente de deux procédures d'échange peut
         a lieu: les deux nuplets sont alors égaux. Si la seconde procédure commence alors, elle trouvera
         une base avec deux nuplets égaux, ce qui ne devrait jamais arriver avec nos hypothèses en mode sérialisable.
 
+
+************************************
+Examen session 1, FOAD, janvier 2022
+************************************
+
+
+Le schéma de base de données suivant sera utilisé pour l'ensemble du
+sujet. Il permet de gérer les souscriptions pour un ensemble
+d'opérateurs de téléphonie mobile. Ce schéma sera nommé **schéma final**
+par la suite.
+
+ - Opérateur (**id**, nom)
+ - Forfait (**id**, nom, idOpérateur, prix)
+ - Client(**id**, nom, prénom, ville)
+ - Souscription(**idClient, idForfait**, durée, numéro)
+ - Résiliation (id, dateResiliation, portabilité, idNouvelleSouscription)
+
+L'attribut *durée* est un entier positif exprimant le nombre de mois d'engagement.
+les clés étrangères ne sont pas indiquées.
+
+Conception (8 points)
+=====================
+
+La :numref:`forfait_telephone` montre une modélisation initiale de la
+base par un schéma entité association.
+
+
+.. _forfait_telephone:
+.. figure:: ../../figures/forfait_telephone.png
+      :width: 80%
+      :align: center
+   
+      Modélisation initiale de la base
+
+Questions: 
+
+ - Donnez la liste des dépendances fonctionnelles définies par ce schéma initial (1 pt)
+ - Donnez le schéma relationnel correspondant à la :numref:`forfait_telephone`,
+   sous forme simplifiée (Nom de table, liste des attributs 
+   en encadrant les clés primaires et en soulignant les clés étrangères) (1 pt)
+ - Quelles sont les différences entre le schéma initial et le schéma final ? À quelle(s)
+   évolution(s) des choix de modélisation ce changement correspond-t-il (2 pts) ?
+ - Dessinez le schéma final sous forme entité-association. Quelles dépendances fonctionnelles ont changé
+   par rapport au schéma initial ? (1 pt)
+ - Dans le schéma final, une réification serait-elle possible? Quels changements impliquerait-elle ? (1 pt)?
+ - Donnez les commandes ``create table`` pour le schéma final (2 pts)
+
+
+
+.. ifconfig:: soloperateur in ('public')
+
+     .. admonition:: Correction
+
+
+		.. _forfait_telephone_final:
+		.. figure:: ../../figures/forfait_telephone_final.png
+			:width: 80%
+			:align: center
+		
+			Modélisation finale de la base
+
+
+		- Chaque entité définit une DF de la clé vers les attributs, et chaque association plusieurs-un
+		  définit une DF entre les clées. Donc : :math:`idOpérateur \to nom` ; 
+		  :math:`idForfait \to nom, prix, idOpérateur` ; 
+		  :math:`idClient \to  nom, prénom, ville, numéro, durée, idForfait`
+		- Schéma relationnel :
+
+			- Opérateur (**id**, nom)
+			- Forfait (**id**, nom, *idOpérateur*, prix)
+			- Client(**id**, nom, prénom, ville, durée, numéro, *idForfait*)
+
+		- Dans le schéma initial, un client peut prendre un seul forfait, d'où
+		  la DF :math:`idClient \to idForfait`. Dans le schéma final un client peut prendre
+		  plusieurs forfaits (mais pas plusieurs fois le même), avec donc plusieurs numéros.
+		- Voir :numref:`forfait_telephone_final`. Une nouvelle  clé est définie par
+		  l'association plusieurs-plusieurs, avec la DF :math:`idClient, idForfait \to durée, numéro`
+		- En réifiant l'association  plusieurs-plusieurs, on attribuerait un identifiant propre
+		  à la souscription, et un même client pourrait prendre plusieurs fois le même forfait,
+		  ce qui n'est pas possible dans le schéma final. Dans une "vraie" base, ce serait sans
+		  doute souhaitable.
+		- Classique. La table ``Souscription` est typique d'une association plusieurs-plusieurs.
+
+		.. code-block:: sql 
+
+			create table Souscription
+ 			  (idClient integer not null,
+			    idForfait varchar not null,
+			    durée integer not null,
+			    numéro integer not null,
+			     primary key(idClient, idForfait),
+			     foreign key (idClient) references Client (id),
+			     foreign key (idForfait) references Forfait (id));
+
+SQL (7 points)
+==============
+
+Exprimez en SQL les requêtes suivantes **sur le schéma final, 
+donné dans l'énoncé de l'examen.**
+ 
+ - Nom et prénom des clients qui ont souscrit un forfait avec engagement de plus de 24 mois.
+
+.. ifconfig:: soloperateur in ('public')
+
+     .. admonition:: Correction
+
+		.. code-block:: sql
+		
+			select c.nom, c.prenom
+			from Client as c, Souscription as s
+			where s.idClient = c.id and s.duree > 24;
+
+
+  - Existe-t-il deux clients qui auraient le même numéro de téléphone pour le même forfait ?
+	Donnez leurs noms et prénoms (des .clients)
+
+.. ifconfig:: soloperateur in ('public')
+
+     .. admonition:: Correction
+
+		.. code-block:: sql
+
+			select nom, c.prenom
+			from Client as c1, Souscription as s1,
+			      Client as c2, Souscription as s2
+			where c1.id = s1.idClient,
+			and c2.id = s2.idClient
+			and s1.idForfait = s2.idForfait
+			and c1.numéro = c2.numéro
+
+ - Noms des clients qui ont un forfait nommé 
+   ``Audace`` et un autre nommé ``Privilège`
+
+.. ifconfig:: soloperateur in ('public')
+
+     .. admonition:: Correction
+
+		.. code-block:: sql
+		
+			select nom, c.prenom
+			from Client as c, Souscription as s1, Souscription as s2,
+			       Forfait as f1, Forfait as f2
+			where c.id = s1.idClient,
+			and c.id = s2.idClient
+			and s1.idForfait = f1.idForfait
+			and s2.idForfait = f2.idForfait
+			and f1.nom='Audace' and f2.nom='Privilège'
+
+ - Quels clients n'ont pas souscrit de forfait ?
+ 
+.. ifconfig:: soloperateur in ('public')
+
+     .. admonition:: Correction
+     
+		.. code-block:: sql
+
+			select c.nom, c.prenom
+			from Client as c
+			where not exists
+			    (select * from Souscription as s
+			         where c.id = s.idClient)
+
+ - Quels opérateurs n'ont pas de client à Lyon ?
+
+.. ifconfig:: soloperateur in ('public')
+
+     .. admonition:: Correction
+     
+		.. code-block:: sql
+
+			select o.nom
+			from Opérateur as o
+			where not exists
+			    (select * from Forfait as f, Souscription as s, Client as c
+			         where o.id=f.idOpérateur
+			         and   f.id=s.idForfait
+			         and   s.idClient=c.id
+			         and  c.ville='Lyon')
+
+ - Donnez le nombre de souscriptions pour chaque forfait de l'opérateur ``Violet``.
+
+.. ifconfig:: soloperateur in ('public')
+
+     .. admonition:: Correction
+     
+		.. code-block:: sql
+
+			select f.nom, count(*) as nbSouscriptions
+			from Opérateur as o, Forfait as f, Souscription as s
+			where o.id=f.idOpérateur
+			and   f.id=s.idForfait
+			and   o.nom='Violet'
+			group by f.id, f.nom
+
+ - Quels clients ont deux souscriptions  ou plus ? Donnez le nombre de souscriptions.
+
+.. ifconfig:: soloperateur in ('public')
+
+     .. admonition:: Correction
+     
+		.. code-block:: sql
+
+			select c.nom, c.prénom, count(*) as nbSouscriptions
+			from Client as c, Souscription as s
+			where c.id=s.idClient
+			group by c.id, c.nom
+			having count(*) > 1
+
+
+Algèbre relationnelle (3 pts)
+=============================
+
+ -  Expliquez ce que fait la requête algébrique suivante, et donnez une expression 
+    SQL équivalente
+    
+    .. math:: 
+
+   	    \pi_{nom, prenom}(\sigma_{ville='Paris'}(Client) \underset{id=idClient}{\bowtie} (\sigma_{duree > 24}(Souscription) \underset{idForfait=id}{\bowtie} \sigma_{nom='\rm{Audace}'} (Forfait))
+
+ - Même question pour l'expression suivante
+ 
+   .. math:: 
+   
+	  \pi_{c.id, c.nom, c.prenom} (Client) - \pi_{c.id, c.nom, c.prenom} (Client \underset{c.id=s.idClient}{\bowtie} \sigma_{duree \geq 48} (Souscription))
+
+.. ifconfig:: soloperateur in ('public')
+
+     .. admonition:: Correction
+ 
+ 			Les clients qui n'ont pas de souscription supérieure à 48 mois.
+
+ - Voici une expression SQL ``algébrique''
+ 
+   .. code-block:: sql 
+
+		select c.nom, c.prénom
+		from (Client as c join Souscription as s on c.id=s.idClient)
+	        join (select * from Forfait as f where nom= 'Audace')
+                 on s.idForfait = f.id
+                 
+   Donnez une expression SQL "déclarative" équivalente, et sans requête imbriquée.
+
+.. ifconfig:: soloperateur in ('public')
+
+     .. admonition:: Correction
+ 
+    	.. code-block:: sql 
+
+		select c.nom, c.prénom
+		from Client as, Souscription as s, Forfait as f
+		where c.id=s.idClient
+		and f.nom= 'Audace'
+		and s.idForfait = f.id
+           
+
+Jointure externe (2 pts)
+========================
+
+Que renvoie la requête suivante ?
+
+.. code-block:: sql 
+
+	select c.nom, c.prénom, f.nom
+	from (Client as c outer join (Souscription as s join Forfait as f
+                                     on s.idForfait=f.id)
+            on c.id = s.idClient
+	where ville= 'Nantes'
+
+
+.. ifconfig:: soloperateur in ('public')
+
+     .. admonition:: Correction
+
+		On obtient tous les clients de Nantes, et leurs forfaits. Si un client n'a aucun forfait, une ligne
+		est produite quand même, avec le nom du forfait à ``null``.
 

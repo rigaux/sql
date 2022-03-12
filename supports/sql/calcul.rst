@@ -170,7 +170,7 @@ selon la syntaxe.
       (p \land q) \lor r
 
 La valeur de vérité de la formule obtenue s'obtient par application récursive des règles
-du :numref:`truth-values`. Si, par exemple, :math:`p, q, r`  ont respectivement
+de la table. Si, par exemple, :math:`p, q, r`  ont respectivement
 pour valeurs V, V et F, la formule ci-dessus s'interprète ainsi:
 
    - :math:`(p \land q)` vaut :math:`(V \land V)`, donc V
