@@ -784,8 +784,8 @@ Schéma relationnel (6 points)
           - Dans ``Expertise``: :math:`idExpertise \to idOeuvre` et :math:`idExpertise \to idExpert`
 
         #. Chaque DF correspond à une association plusieurs à 1 (cf l'algorithme de normalisation). 
-           On a donc ce type d'association entre Oeuvre et Personne, avec la sémantique ``Auteur`` ,
-           entre Oeuvre et Personne une seconde fois mais avec la sémantique `Propriétaire``,
+           On a donc ce type d'association entre Oeuvre et Personne, avec la sémantique "Auteur",
+           entre Oeuvre et Personne une seconde fois mais avec la sémantique "Propriétaire",
            entre Expertise et Oeuvre et entre Expertise et Personne.
         #. Le schéma EA se déduit immédiatement de ce qui précède. Il n'y a pas d'association
            plusieurs à plusieurs.
@@ -808,23 +808,23 @@ Schéma relationnel (6 points)
                 FOREIGN KEY (idAuteur) REFERENCES Personne (idPersonne) 
                 FOREIGN KEY (idPropriétaire) REFERENCES Personne (idPersonne) 
                 );
-        #. On a donc la nouvelle dépendance :math:`idExpert \to idOeuvre`. 
+        #. On a donc la nouvelle dépendance :math:`(idExpert, idOeuvre) \to valeur`. 
            Du coup la table Expertise
-           n'est plus en 3FN. Un changement possible est que ``idExpert`` devienne la clé
+           n'est plus en 3FN. Un changement possible est que ``(idExpert, idOeuvre)`` devienne la clé
            de Expertise. 
         #. Oui, rien n'empêche  idAuteur et idPropriétaire d'être égaux dans la table Oeuvre
 
 SQL (7 points)
 ==============
 
-  - Donner le nom du propriétaire et le nom de l'auteur pour l'{\oe}uvre dont l'identifiant est 'fg65'.
-  - Donner les noms des {\oe}uvres expertisées par  leur propriétaire
-  -  Donner les noms et prénoms des propriétaires d'une {\oe}uvre qui n'ont jamais effectué d'expertise.
-  - Donner les {\oe}uvres et le nom des personnes qui n'en sont ni propriétaire, ni auteur.
+  - Donner le nom du propriétaire et le nom de l'auteur pour l'œuvre dont l'identifiant est 'fg65'.
+  - Donner les noms des œuvres expertisées par  leur propriétaire
+  -  Donner les noms et prénoms des propriétaires d'une œuvre qui n'ont jamais effectué d'expertise.
+  - Donner les œuvres et le nom des personnes qui n'en sont ni propriétaire, ni auteur.
   - Donner les noms et prénoms des personnes qui sont à la fois auteur, propriétaire et expert (mais pas forcément
-    de la même {\oe}uvre). 
-  - Pour chaque {\oe}uvre donnez la moyenne des valeurs estimées par les experts.
-  - Donnez le nombre d'expertises pour les {\oe}uvres dont la valeur maximale estimée est de 10 000 Euros
+    de la même œuvre). 
+  - Pour chaque œuvre donnez la moyenne des valeurs estimées par les experts.
+  - Donnez le nombre d'expertises pour les œuvres dont la valeur maximale estimée est de 10 000 Euros
 
 
 .. ifconfig:: correctionoeuvre in ('public')
