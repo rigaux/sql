@@ -1049,12 +1049,21 @@ Quiz
 
 .. eqt:: conjonctif6
 
-    À quoi sert le ``as``?
+    À quoi sert le ``as`` dans le ``from``?
     
-    A) :eqt:`C` À définir des synonymes
-    #) :eqt:`C` À éviter d'avoir des noms d'attributs en doubles 
-    #) :eqt:`I` À affecter une valeur à une variable
+    A) :eqt:`I` À renommer la table
+    #) :eqt:`I` À renommer des attributs pour éviter les doublons
+    #) :eqt:`C` À définir une variable nuplet dont la portée est la table
+    #) :eqt:`I` À copier une table dans une autre
 
+.. eqt:: conjonctif7
+
+    À quoi sert le ``as`` dans le ``select``?
+    
+    A) :eqt:`I` À renommer la table
+    #) :eqt:`C` À renommer des attributs pour éviter les doublons
+    #) :eqt:`I` À définir une variable nuplet dont la portée est la table
+    #) :eqt:`I` À copier une table dans une autre
 
 *******************************
 S3: Quantificateurs et négation
@@ -1314,7 +1323,8 @@ Quiz
     
     A) :eqt:`I` Elles peuvent donner le même résultat
     #) :eqt:`C` Elles donnent toujours le même résultat
-
+    #) :eqt:`I`  Elles sont exactement écrites de la même manière
+	# ) :eqt:`I` Le temps d'exécution est le même
 
 .. eqt:: negation4
 
