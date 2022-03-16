@@ -1029,6 +1029,15 @@ Quiz
     A) :eqt:`I` Oui
     #) :eqt:`C` Non
 
+.. eqt:: conjonctif3bis
+
+    Si :math:'x' et :math:'y' sont deux variables, alors toute égalité 
+    :math:`x.a=y.b`dans la clause ``where`` doit se faire sur des clés primaires et étrangères
+
+    A) :eqt:`I` Oui
+    #) :eqt:`C` Non
+
+
 .. eqt:: conjonctif4
 
     Que représente le nombre de variables dans une requête?
@@ -1338,9 +1347,25 @@ Quiz
     A) :eqt:`I` Oui
     #) :eqt:`C` Non
 
+.. eqt:: negation5
+
+    Interprétons la requête
+    
+    .. code-block:: sql
+    
+         select * from Logement as l 
+         where not exists (select * from Activité as a 
+                           where a.activité='Ski')"
+    
+    A) :eqt:`I` Les logements où on fait du ski
+    #) :eqt:`C` Tous les logements, s'il en existe un où on fait du ski
+    #) :eqt:`I` Les logements où on ne fait pas de ski
+    #) :eqt:`I` Les logements tels qu'il en existe un autre où on fait du ski
+
+
     Vous pouvez exprimer la requête SQL pour chacune.
 
-.. eqt:: negation5
+.. eqt:: negation6
 
     La requête "Les régions qui proposent tous les types de logement"
     
