@@ -1457,8 +1457,9 @@ Exercices
 .. _ex-arbreb2:
 .. admonition:: Exercice `ex-arbreb2`_: hauteur et efficacité d'un arbre B 
 
-    On reprend les hypothèses précédentes, et on indexe maintenant le fichier avec un arbre-B. 
-    Les feuilles de l'arbre contiennent donc des entrées référençant
+    On reprend les hypothèses précédentes, et on indexe maintenant le fichier 
+    avec un arbre-B dont chaque bloc peut contenir au maximum 100 entrées. 
+    Les feuilles de l'arbre contiennent  des entrées référençant
     des enregistrements dans   le fichier, et les nœuds internes
     contiennent des entrées référençant d'autres nœuds. 
     
