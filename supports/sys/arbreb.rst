@@ -1436,15 +1436,15 @@ Exercices
             de l'arbre est donc 51.
             
             Il faut indexer 1 000 000 enregistrements pour le  niveau des feuilles, soit
-            :math:`\frac{1\,000\,000}{102} \simeq 9\,803` blocs. Ensuite il
-            faut indexer chacun des 9\,803 blocs, soit :math:`\frac{9\,803}{102}=96`
+            :math:`\lfloor  \frac{1\,000\,000}{102} \rfoor = 9\,803` blocs. Ensuite il
+            faut indexer chacun des 9\,803 blocs, soit :math:`\lfloor  \frac{9\,803}{102} \rfloor =96`
             blocs supplémentaires, que pour finir on indexe avec un seul bloc, la racine.
             
             Donc il faut 9\,803 + 96 + 1 blocs pour constituer  l'index.
           - Si la clé n'occupe que 4 octets, une entrée occupe 4+8=12 octets. On met
             :math:`\lfloor \frac{4096}{12} \rfloor =341` entrées par bloc. Le niveau
-            des feuilles contient :math:`\frac{1\,000\,000}{341} = 2\,932` blocs,
-            le niveau suivant :math:`\frac{2\,932}{341}=8` blocs, et on les indexe avec la racine.
+            des feuilles contient :math:`\lfloor \frac{1\,000\,000}{341} \rfloor = 2\,932` blocs,
+            le niveau suivant :math:`\lfloor \frac{2\,932}{341} \rfloor =8` blocs, et on les indexe avec la racine.
             On a beaucoup gagné!
             
           - Recherche avec index: trois lectures dans l'index,  
@@ -1485,7 +1485,7 @@ Exercices
             on trouve une hauteur théorique de 4. 
 
           - Le niveau des feuilles de l'arbre B 
-            indexe un million d'enregistrements, il est donc stocké sur :math:`\frac{10^6}{70} = 14 286` 
+            indexe un million d'enregistrements, il est donc stocké sur :math:`\lceil  \frac{10^6}{70} \rceil  = 14 286` 
             blocs. Le niveau indexant les feuilles est non dense et contient
             donc 14 286 entrées qui sont stockées (toujours à 70 entrées par nœud) dans 204
             blocs. Il faut encore 3 blocs au niveau supérieur, et 1 bloc pour la racine.

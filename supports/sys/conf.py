@@ -75,9 +75,9 @@ def setup(app):
     app.add_config_value('annales_2020_2', '', True)
     
 latex = 'private'
-stock='private'
-index='private'
-hachage='private'
+stock='public'
+index='public'
+hachage='public'
 opalgo='private'
 optim='private'
 transactions='private'
@@ -252,7 +252,7 @@ latex_elements = {
 'pointsize': '11pt',
 
 # Additional stuff for the LaTeX preamble.
-'preamble': '\usepackage{amsmath,amsthm,amssymb}',
+#'preamble': '\usepackage{amsmath,amsthm,amssymb}',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples

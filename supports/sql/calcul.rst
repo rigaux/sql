@@ -184,7 +184,7 @@ quelconques, on a:
   - :math:`\neg (\neg F)` est équivalente à :math:`F` 
   - :math:`F_1 \land F_2` est équivalente à :math:`F_2 \land F_1` (commutativité)
   - :math:`F_1 \lor F_2` est équivalente à :math:`F_2 \lor F_1` (commutativité)
-  - :math:`F \land (F_1 \land F_2)` est équivalente à :math:`(F\land F_2) \land F_1` (associativité)
+  - :math:`F \land (F_1 \land F_2)` est équivalente à :math:`(F\land F_1) \land F_2` (associativité)
   - :math:`F \lor (F_1 \lor F_2)` est équivalente à :math:`(F\lor F_1) \lor F_2` (associativité)
   - :math:`F \lor (F_1 \land F_2)` est équivalente à :math:`(F\lor F_1) \land (F \lor F_2)` (distribution)
   - :math:`F \land (F_1 \lor F_2)` est équivalente à :math:`(F\land F_1) \lor (F \land F_2)` (distribution)
@@ -811,7 +811,7 @@ Leur forme est
 
 .. math::
 
-     \{ t_1.a^1_1, \cdots, t_1.a^1_n, t_2.a^2_1, \cdots, t_2.a^2_m | T_1(t_1) \land T_2(t_2) \land F_{cond}(t_1, t_2) \}
+     \{ t_1.a_1, \cdots, t_1.a_n, t_2.b_1, \cdots, t_2.b_m | T_1(t_1) \land T_2(t_2) \land F_{cond}(t_1, t_2) \}
 
 On retrouve dans la formule les deux parties: la portée indique les relations respectives
 qui servent de domaine d'affectation pour :math:`t_1` et :math:`t_2`; la condition
@@ -822,7 +822,7 @@ La transcription en SQL est presque littérale.
 
 .. code-block:: sql
 
-     select [distinct] t1.a1, ..., t1.an, t2.a1, ..., t2.am
+     select [distinct] t1.a1, ..., t1.an, t2.b1, ..., t2.bm
      from T1 as t1, T2 as t2
      where <condition>
 

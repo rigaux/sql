@@ -323,18 +323,18 @@ Quiz
  
    .. eqt:: hach1-3
 
-         A) :eqt:`I`  Ils sont dans le même fragment, ou au pire dans deux fragments ajacents.
+         A) :eqt:`I`  Ils sont dans le même fragment, ou au pire dans deux fragments adjacents.
          #) :eqt:`I` Ils sont forcément dans deux fragments distincts
          #) :eqt:`C` Les emplacements des enregistrements sont complètement indépendants.
 
- * Quelle est, dans le pire des cas, le coût d'une recherche par clé dans une structure de hachage statique?
+ * Quel est, dans le pire des cas, le coût d'une recherche par clé dans une structure de hachage statique?
 
    .. eqt:: hach1-4
 
          A) :eqt:`I`  Dans tous les cas une lecture séquentielle suffit.
          #) :eqt:`C` Dans le pire des cas tous les fragments sont chaînés et 
             le coût est identique au parcours du fichier
-         #) :eqt:`I` Au pire il faut deux lectures séquentielle, une pour le
+         #) :eqt:`I` Au pire il faut deux lectures séquentielles, une pour le
             fragment principal, l'autre pour le fragment chaîné.
 
 **********************
@@ -476,6 +476,7 @@ Quiz
          A) :eqt:`I` Les fragments sont de taille variable
          #) :eqt:`C` Le répertoire est de taille variable
          #) :eqt:`I` La fonction  de hachage change régulièrement
+         #) :eqt:`I` On ajoute des fonctions quand la collection grandit
 
  * Quelle est la taille maximale du répertoire
  
@@ -483,18 +484,19 @@ Quiz
 
          A) :eqt:`I` :math:`2^4`
          #) :eqt:`I` :math:`2 \times 4`
-         #) :eqt:`C` :math:`2^32`
+         #) :eqt:`C` :math:`2^{32}`
          #) :eqt:`I` :math:`2 \times 32`
 
- * Combien ajoute-t-on de fragments au moment quand l'un deux déborde
+ * Combien ajoute-t-on de fragments quand l'un deux déborde
  
    .. eqt:: hach2-3
 
          A) :eqt:`C`  un seul
          #) :eqt:`I`  Deux
          #) :eqt:`I` :math:`p` où *p* est le nombre d'entrée courant dans le répertoire.
+         #) :eqt:`I` Autant que d'enregistrements en trop
 
- * Combien d'entrées du répertoire peuvent référence le même fragment?
+ * Combien d'entrées du répertoire peuvent référencer le même fragment?
  
    .. eqt:: hach2-4
 
