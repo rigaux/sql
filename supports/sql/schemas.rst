@@ -454,7 +454,7 @@ qui s'impose.
 .. code-block:: sql
 
      create table Salle  (idCinéma integer not null, 
-                          no    integer not null,
+                          noSalle    integer not null,
                           capacité    integer not null,
                           primary key (idCinéma, noSalle),
                           foreign key (idCinéma) references Cinéma(idCinéma)

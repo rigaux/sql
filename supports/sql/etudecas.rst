@@ -644,8 +644,7 @@ Quiz
     
         select  m1.idMessage, m2.idMessage 
         from Message as m1, Message as m2
-        where m1.idMessage = m2.idMessage
-        and m2.dateEnvoi = m2.dateEnvoi
+        where m1.dateEnvoi = m2.dateEnvoi
 
     A) :eqt:`I` Non car la date d'envoi peut être à  ``null`` et le résultat dans ce cas est indéfini
     #) :eqt:`I` Non car la jointure doit se faire sur les clés

@@ -235,11 +235,9 @@ On obtient le résultat suivant.
    2  , Barabas  , 2 allée du Grand Turc , 201 , 250     , 1     , 2           , 1  
    2  , Barabas  , 2 allée du Grand Turc , 202 , 250     , 2     , 2           , 2
 
-L'obligation d'encadrer les expressions algébriques quand on on en combine
-plusieurs (par exemple jointure entre trois tables ou plus) les rend difficilement
-lisibles. C'est une des raisons qui poussent à s'en tenir à la version déclarative de SQL.
 
-Dernière précision au sujet du ``from``: l'ordre dans lequel on énumère les  tables n'a aucune importance.
+Dernière précision au sujet du ``from``: l'ordre dans 
+lequel on énumère les  tables n'a aucune importance.
 
 La clause ``where``
 ===================
@@ -416,8 +414,8 @@ on affecte une valeur aux trois constantes logiques:
 
 Les connecteurs booléens s'interprètent alors ainsi:
 
-  - ``val1 and val2`` = max(val1 val2)
-  - ``val1 or val2`` = min(val1 val2)
+  - ``val1 and val2``, = min(val1 val2)
+  - ``val1 or val2`` = max(val1, val2)
   - ``not val1`` =  1 - val1.
 
 On peut vérifier notamment que ``not unknown``
@@ -1196,6 +1194,17 @@ avec ``any`` s'écrit:
  select * from Appart
      where idImmeuble=1
      and   not (niveau < any (select niveau from Appart where idImmeuble=1))
+
+Rien de nouveau du point de vue expressif: on peut prendre les étages tels
+*qu'il n'existe pas* un niveau supérieur.
+
+.. code-block:: sql
+
+ select * from Appart as a1
+     where a1.idImmeuble=1
+     and    not exists (select * 
+                     from Appart as a2 
+                     where a1.idImmeuble=1 and a1.niveau < a2.niveau)
 
 Attention aux valeurs à ``null`` dans ce genre
 de situation: toute comparaison avec

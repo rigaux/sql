@@ -186,7 +186,7 @@ qui le référencent.
                fontsize=\small,
                framesep=2mm]{sql}
 create table Salle  (idCinéma integer not null, 
-                     no    integer not null,
+                     noSalle    integer not null,
                      capacité    integer not null,
                      primary key (idCinéma, noSalle),
                      foreign key (idCinéma) 
