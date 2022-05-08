@@ -1084,15 +1084,16 @@ par boucles imbriquées indexées.
 
 Vous devriez pour décrypter ce plan est le reconnaître: c'est celui, discuté
 assez longuement déjà, de la jointure imbriquée indexée. Pour mémoire, il
-correspond à la figure suivante, reprise du chapitre  :ref:`chap-opalgo`.
+correspond à la figure suivante, très proche de celle
+du chapitre  :ref:`chap-opalgo`.
 
-.. figure:: ../figures/planEx-indexedjoin.png
+.. figure:: ../figures/planEx-indexedjoinOracle.png
    :width: 60%
    :align: center
    
    Plan Oracle pour une requête avec index    
 
-Ré-expliquons une dernière fois. Tout d'abord
+Ré-expliquons une nouvelle fois. Tout d'abord
 la table qui n'est pas indexée sur l'attribut
 de jointure (ici, ``Film``) est parcourue
 séquentiellement. Le nœud ``IndexJoin`` (appelé ``NESTED LOOPS`` par Oracle)
@@ -1104,7 +1105,13 @@ le sous-arbre du côté droit.
 On efffectue alors une recherche par clé dans l'index avec
 la valeur ``id_realisateur`` provenant du film courant. La recherche
 renvoie un ``ROWID`` qui est  utilisé pour
-prendre l'enregistrement complet dans la table ``Artiste``.
+prendre l'enregistrement complet dans la table ``Artiste``. Le nœud
+de jointure récupère cet enregistrement et l'associe au film.
+
+.. note:: Par rapport à la version de cet algorithme présenté précédemment,
+   ORACLE choisit d'effectuer le ``DirectAccess`` immédiatement après le 
+   parcours d'index (alors que nous avons montré une version où il avait lieu
+   après la jointure). Cela reste fondamentalement le même algorithme.
 
 Dans certains cas on peut éviter le parcours séquentiel à
 gauche de la jointure par boucles imbriquées, si une sélection
