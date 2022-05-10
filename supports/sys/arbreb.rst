@@ -1436,15 +1436,15 @@ Exercices
             de l'arbre est donc 51.
             
             Il faut indexer 1 000 000 enregistrements pour le  niveau des feuilles, soit
-            :math:`\lfloor  \frac{1\,000\,000}{102} \rfoor = 9\,803` blocs. Ensuite il
-            faut indexer chacun des 9\,803 blocs, soit :math:`\lfloor  \frac{9\,803}{102} \rfloor =96`
+            :math:`\lceil  \frac{1\,000\,000}{102} \rceil = 9\,804` blocs. Ensuite il
+            faut indexer chacun des 9\,804 blocs, soit :math:`\lceil  \frac{9\,804}{102} \rceil =97`
             blocs supplémentaires, que pour finir on indexe avec un seul bloc, la racine.
             
-            Donc il faut 9\,803 + 96 + 1 blocs pour constituer  l'index.
+            Donc il faut 9\,804 + 97 + 1 blocs pour constituer  l'index.
           - Si la clé n'occupe que 4 octets, une entrée occupe 4+8=12 octets. On met
             :math:`\lfloor \frac{4096}{12} \rfloor =341` entrées par bloc. Le niveau
-            des feuilles contient :math:`\lfloor \frac{1\,000\,000}{341} \rfloor = 2\,932` blocs,
-            le niveau suivant :math:`\lfloor \frac{2\,932}{341} \rfloor =8` blocs, et on les indexe avec la racine.
+            des feuilles contient :math:`\lceil \frac{1\,000\,000}{341} \rceil = 2\,933` blocs,
+            le niveau suivant :math:`\lceil \frac{2\,933}{341} \rceil =9` blocs, et on les indexe avec la racine.
             On a beaucoup gagné!
             
           - Recherche avec index: trois lectures dans l'index,  
@@ -1680,13 +1680,15 @@ Exercices
          - La troisième applique une fonction à la clé: l'index ne peut pas être utilisé
            car la critère de recherche n'est plus une valeur de clé
          - La quatrième est une recherche *par suffixe*: l'index n'est pas utilisable
-         - L'insertion tire partie de l'index sur la clé primaire: il faut vérifier
+         - L'insertion tire partie de l'index sur la clé primaire sur ``S``: il faut vérifier
            que la valeur de clé n'existe pas déjà. En l'absence d'index il faudrait 
-           parcourir toute la table à chaque insertion.
+           parcourir toute la table à chaque insertion. La clé sur ``R.idR`` 
+           est également utile pour vérifier la contrainte d'intégrité.
          - La requête par intervalle peut tirer partie de l'index, si l'intervalle est limité.
          - Enfin la destruction dans ``R`` implique la vérification qu'il n'existe
            pas de nuplet référençant dans ``S``, sinon la contrainte d'intégrité serait violée.
-           L'index sur la clé étrangère est ici très utile.
+           L'index sur la clé étrangère est ici très utile (en plus bien sûr de l'index
+           sur la clé primaire de ``R`` pour trouver les n-uplets à détruire).
 
 *******
 Atelier
