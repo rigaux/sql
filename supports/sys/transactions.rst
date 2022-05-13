@@ -2671,7 +2671,7 @@ Exercices
             begin
                 -- On recherche la valeur de id1 et de id2
                 select valeur into val1 from T where id = id1
-                select valeur into val1 from T where id = id2
+                select valeur into val2 from T where id = id2
 
                 -- On échange les valeurs
                 update T set valeur = val1 where id = id2
