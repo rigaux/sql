@@ -1912,7 +1912,7 @@ Quiz
    
     A) :eqt:`I`  Rien de spécial
     #) :eqt:`C` L'un des attributs est une clé étrangère
-    #) :eqt:`I`  La contrainte d'unicité s'applique uniquement à L'attribut discriminant 
+    #) :eqt:`I`  La contrainte d'unicité s'applique uniquement à l'attribut discriminant 
 
 ******************************
 S5: Un peu de rétro-ingénierie
