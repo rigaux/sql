@@ -278,7 +278,7 @@ donc directement à un nommage représentatif de l'association.
 
   - :math:`idMessage \to idPrédécesseur`
 
-Etant entendu que ``idPrédécesseur``  est l'identifiant d'un contact.
+Etant entendu que ``idPrédécesseur``  est l'identifiant d'un message.
 Nous avons les DF, il reste à identifier les clés. Les attributs
 ``idContact`` et ``idMessage`` sont les clés primaires, ``email``
 est une clé secondaire, et nous ne devons pas oublier la clé

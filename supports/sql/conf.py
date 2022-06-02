@@ -87,7 +87,7 @@ concexos='private'
 schemas='private'
 transactions='private'
 correctionlabo='private'
-correctionoeuvre='public'
+correctionoeuvre='private'
 soloperateur='private'
 
 # Add any paths that contain templates here, relative to this directory.

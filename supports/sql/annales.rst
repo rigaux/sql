@@ -1052,7 +1052,7 @@ donné dans l'énoncé de l'examen.**
  
  - Nom et prénom des clients qui ont souscrit un forfait avec engagement de plus de 24 mois.
 
-.. ifconfig:: soloperateur in ('public')
+   .. ifconfig:: soloperateur in ('public')
 
      .. admonition:: Correction
 
@@ -1063,10 +1063,10 @@ donné dans l'énoncé de l'examen.**
 			where s.idClient = c.id and s.duree > 24;
 
 
-  - Existe-t-il deux clients qui auraient le même numéro de téléphone pour le même forfait ?
-	Donnez leurs noms et prénoms (des .clients)
+ - Existe-t-il deux clients qui auraient le même numéro de téléphone pour le même forfait ?
+   Donnez leurs noms et prénoms (des .clients)
 
-.. ifconfig:: soloperateur in ('public')
+  .. ifconfig:: soloperateur in ('public')
 
      .. admonition:: Correction
 
@@ -1083,7 +1083,7 @@ donné dans l'énoncé de l'examen.**
  - Noms des clients qui ont un forfait nommé 
    ``Audace`` et un autre nommé ``Privilège`
 
-.. ifconfig:: soloperateur in ('public')
+  .. ifconfig:: soloperateur in ('public')
 
      .. admonition:: Correction
 
@@ -1100,7 +1100,7 @@ donné dans l'énoncé de l'examen.**
 
  - Quels clients n'ont pas souscrit de forfait ?
  
-.. ifconfig:: soloperateur in ('public')
+   .. ifconfig:: soloperateur in ('public')
 
      .. admonition:: Correction
      
@@ -1114,7 +1114,7 @@ donné dans l'énoncé de l'examen.**
 
  - Quels opérateurs n'ont pas de client à Lyon ?
 
-.. ifconfig:: soloperateur in ('public')
+   .. ifconfig:: soloperateur in ('public')
 
      .. admonition:: Correction
      
@@ -1131,7 +1131,7 @@ donné dans l'énoncé de l'examen.**
 
  - Donnez le nombre de souscriptions pour chaque forfait de l'opérateur ``Violet``.
 
-.. ifconfig:: soloperateur in ('public')
+   .. ifconfig:: soloperateur in ('public')
 
      .. admonition:: Correction
      
@@ -1146,7 +1146,7 @@ donné dans l'énoncé de l'examen.**
 
  - Quels clients ont deux souscriptions  ou plus ? Donnez le nombre de souscriptions.
 
-.. ifconfig:: soloperateur in ('public')
+   .. ifconfig:: soloperateur in ('public')
 
      .. admonition:: Correction
      
@@ -1175,7 +1175,7 @@ Algèbre relationnelle (3 pts)
    
 	  \pi_{c.id, c.nom, c.prenom} (Client) - \pi_{c.id, c.nom, c.prenom} (Client \underset{c.id=s.idClient}{\bowtie} \sigma_{duree \geq 48} (Souscription))
 
-.. ifconfig:: soloperateur in ('public')
+   .. ifconfig:: soloperateur in ('public')
 
      .. admonition:: Correction
  
@@ -1192,7 +1192,7 @@ Algèbre relationnelle (3 pts)
                  
    Donnez une expression SQL "déclarative" équivalente, et sans requête imbriquée.
 
-.. ifconfig:: soloperateur in ('public')
+   .. ifconfig:: soloperateur in ('public')
 
      .. admonition:: Correction
  
