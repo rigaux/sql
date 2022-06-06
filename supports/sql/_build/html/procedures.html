@@ -1,0 +1,1737 @@
+
+<!DOCTYPE html>
+
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Procédures et déclencheurs &#8212; Documentation Cours de bases de données Mars 2022</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/agogo.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="Transactions" href="transactions.html" />
+    <link rel="prev" title="Schémas relationnel" href="schemas.html" /> 
+  </head><body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">Procédures et déclencheurs</a></div>
+        <div class="rel">
+          <a href="schemas.html" title="Schémas relationnel"
+             accesskey="P">précédent</a><font color="white"> |</font>
+          <a href="transactions.html" title="Transactions"
+             accesskey="N">suivant</a><font color="white"> |</font>
+          <a href="genindex.html" title="Index général"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+<script type="text/javascript" src="_static/dynsite.js"></script>
+
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="procedures-et-declencheurs">
+<span id="chapprocedures"></span><h1>Procédures et déclencheurs<a class="headerlink" href="#procedures-et-declencheurs" title="Lien permanent vers ce titre">¶</a></h1>
+<p>Le langage SQL n’est pas un langage de programmation au sens courant du
+terme. Il ne permet pas, par exemple, de définir des fonctions ou des
+variables, d’effectuer des itérations ou des instructions conditionnelles. Il
+ne s’agit pas d’un défaut dans la conception du langage, mais d’une orientation
+délibérée de SQL vers les opérations de recherche de données dans une base
+volumineuse, la priorité étant donnée à la <em>simplicité</em> et à
+<em>l’efficacité</em>. Ces deux termes ont une connotation forte dans le contexte d’un
+langage d’interrogation, et correspondent à des critères (et à des contraintes)
+précisément définis.  La simplicité d’un langage est essentiellement relative à
+son caractère <em>déclaratif</em>, autrement dit à la capacité d’exprimer des
+recherches en laissant au système le soin de déterminer le meilleur moyen de
+les exécuter.  L’efficacité est, elle, définie par des caractéristiques liées
+à la complexité d’évaluation sur lesquelles nous ne nous étendrons pas
+ici. Signalons cependant que la terminaison d’une requête SQL est
+<em>toujours</em> garantie, ce qui n’est pas le cas d’un programme écrit dans un
+langage plus puissant, .</p>
+<p>Il est donc clair que SQL ne suffit pas pour le développement d’applications,
+et tous les SGBD relationnels ont, dès l’origine, proposé des interfaces
+permettant de l’associer à des langages plus classiques comme le C ou Java.
+Ces interfaces de programmation permettent
+d’utiliser SQL comme outil pour récupérer des données dans des programmes
+réalisant des tâches très diverses : interfaces graphiques, traitements
+« batch », production de rapports ou de sites web, etc. D’une certaine
+manière, on peut alors considérer  SQL comme une interface d’accès à la base de
+données, intégrée dans un langage de programmation généraliste. Il s’agit
+d’ailleurs certainement de son utilisation la plus courante.</p>
+<p>Pour certaines fonctionnalités, le recours à un langage de programmation
+« externe » s’avère cependant inadapté ou insatisfaisant. Une évolution
+des SGBD consiste donc à proposer, au sein même du système, des
+primitives de programmation qui viennent pallier le manque relatif
+d’expressivité des langages relationnnels. Le présent chapitre décrit ces
+évolutions et leur application à la création de <em>procédures stockées</em> et de
+déclencheurs (<em>triggers</em>). Les premières permettent d’enrichir un schéma de base de
+données par des calculs ou des fonctions qui ne peuvent pas - parfois même
+dans des cas très simples - être obtenus avec SQL ; les seconds étendent la
+possibilité de définir des contraintes.</p>
+<p>Parallèlement à ces applications pratiques, les procédures stockées illustrent
+simplement les techniques d’intégration de SQL à un langage de programmation
+classique, et soulignent les limites d’utilisation d’un langage
+d’interrogation, et plus particulièrement du modèle relationnel.</p>
+<div class="section" id="s1-procedures-stockees">
+<h2>S1. Procédures stockées<a class="headerlink" href="#s1-procedures-stockees" title="Lien permanent vers ce titre">¶</a></h2>
+<div class="admonition-supports-complementaires admonition">
+<p class="admonition-title">Supports complémentaires:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://sql.bdpedia.fr/files/slplsql.pdf">Diapositives: PL/SQL</a></p></li>
+<li><p><a class="reference external" href="https://mediaserver.cnam.fr/videos/principe-de-programmation-et-plsql/">Vidéo sur PL/SQL</a></p></li>
+</ul>
+</div>
+<p>Comme mentionné ci-dessus, les procédures stockées constituent
+une alternative à l’écriture de programmes avec
+une langage de programmation généraliste. Commençons par étudier plus en détail les avantages et
+inconvénients respectifs des deux solutions avant d’entrer
+dans les détails techniques.</p>
+<div class="section" id="role-et-fonctionnement-des-procedures-stockees">
+<h3>Rôle et fonctionnement des procédures stockées<a class="headerlink" href="#role-et-fonctionnement-des-procedures-stockees" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Une procédure stockée s’exécute au sein du SGBD, ce qui évite les échanges
+réseaux qui sont nécessaires quand les mêmes fonctionnalités sont
+implantées dans un programme externe communiquant en mode client/serveur avec
+la base de données. La  <a class="reference internal" href="#plsql"><span class="std std-numref">Fig. 49</span></a> illustre la différence entre les
+deux mécanismes. À gauche un programme externe, écrit par exemple en Java ou en Python, doit
+tout d’abord se connecter au serveur du SGBD. Le programme s’exécute alors en
+communiquant avec le serveur pour exécuter les requêtes et récupérer les
+résultats. Dans cette architecture, chaque demande d’exécution d’un ordre SQL
+implique une transmission sur le réseau, du programme vers le client, suivie
+d’une analyse de la requête par le serveur, de sa compilation et de son
+exécution (Dans certains cas les requêtes du programme client peuvent
+être précompilées, ou « préparées »). Ensuite, chaque fois que le programme client
+souhaite récupérer un n-uplet du résultat, il doit effectuer un appel externe,
+via le réseau. Tous ces échanges interviennent de manière non négligeable dans
+la performance de l’ensemble, et cet impact est d’autant plus élevé que les
+communications réseaux sont lentes et/ou que le nombre d’appels nécessaires à
+l’exécution du programme est important.</p>
+<div class="figure align-center" id="id3">
+<span id="plsql"></span><a class="reference internal image-reference" href="_images/architectures-prog.png"><img alt="_images/architectures-prog.png" src="_images/architectures-prog.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 49 </span><span class="caption-text">Comparaison programmes externes/procédures stockées</span><a class="headerlink" href="#id3" title="Lien permanent vers cette image">¶</a></p>
+</div>
+<p>Le recours à une procédure stockée permet de regrouper
+du côté serveur l’ensemble des requêtes SQL et le traitement
+des données récupérées. La procédure est compilée une fois
+par le SGBD, au moment de sa création, ce qui permet
+de l’exécuter rapidement au moment de l’appel. De plus
+les échanges réseaux ne sont plus nécessaires puisque
+la logique de l’application est étroitement intégrée
+aux requêtes SQL. Le rôle du programme externe se limite
+alors à se connecter au serveur et à demander
+l’exécution de la procédure, en lui passant au besoin les
+paramètres nécessaires.</p>
+<p>Bien entendu, en pratique, les situations ne sont pas aussi tranchées et le
+programme externe est en général amené à appeler plusieurs procédures, jouant
+en quelque sorte le rôle de coordinateur. Si les performances du système sont
+en cause, un recours judicieux aux procédures stockées reste cependant un bon
+moyen de réduire le trafic client-serveur.</p>
+<p>L’utilisation de procédures stockées est par ailleurs justifiée,
+même en l’absence de problèmes de performance, pour des fonctions très « sensibles », terme qui recouvre
+(non exclusivement) les cas suivants :</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>la fonction est basée sur des règles complexes
+qui doivent être implantées très soigneusement ;</p></li>
+<li><p>la fonction met à jour des données
+dont la correction et  la cohérence sont indispensable
+au bon fonctionnement de l’application ;</p></li>
+<li><p>la fonction évolue souvent.</p></li>
+</ol>
+</div></blockquote>
+<p>On est souvent amené, quand on développe une application, à utiliser plusieurs
+langages en fonction du contexte : le langage C ou Java pour les traitements
+<em>batch</em>, PHP ou Python pour l’interface web, un générateur d’application propriétaire
+pour la saisie et la consultation à l’écran, un langage de script pour la
+production de rapports, etc. Il est important alors de pouvoir factoriser les
+opérations de base de données partagées par ces différents contextes, de
+manière à les rendre disponibles pour les différents langages utilisés. Par
+exemple la réservation d’un billet d’avion, ou l’exécution d’un virement
+bancaire, sont des opérations dont le fonctionnement correct (pas deux billets
+pour le même siège ; pas de débit sans faire le crédit correspondant) et
+cohérent (les mêmes règles doivent être appliquées, quel que soit le contexte
+d’utilisation) doit toujours être assuré.</p>
+<p>C’est facile avec une procédure stockée, et cela permet d’une part d’implanter
+une seule fois des fonctions « sensibles », d’autre part de garantir la
+correction, la cohérence et l’évolutivité en imposant l’utilisation
+systématique de ces fonctions au lieu d’un accès direct aux données.</p>
+<p>Enfin, le dernier avantage des procédures stockées est la relative facilité de
+programmation des opérations de bases de données, en grande partie à cause de
+la très bonne intégration avec SQL.  Cet aspect est favorable à la qualité et à
+la rapidité du développement, et aide également à la diffusion et à
+l’installation du logiciel puisque les procédures sont compilées par les SGBD
+et fonctionnent donc de manière identique sur toute les plateformes.</p>
+<p>Il existe malheureusement une contrepartie à tous ces avantages : chaque
+éditeur de SGBD propose sa propre extension procédurale pour créer des
+procédures stockées, ce qui rend ces procédures incompatibles d’un système à un
+autre. Cela peut être dissuasif si on souhaite produire un logiciel qui
+fonctionne avec tous les SGBD relationnels.</p>
+<p>La description qui suit se base sur le langage PL/SQL d’Oracle (« PL »
+signifie <em>Procedural Language</em>) qui est sans doute le plus riche du
+genre. Le même langage, simplifié, avec quelques variantes syntaxiques
+mineures, est proposé par PostgreSQL, et les exemples que nous donnons peuvent
+donc y être transposés sans trop de problème.  Les syntaxes des langages
+utilisés par d’autres systèmes sont un peu différentes, mais tous partagent
+cependant un ensemble de concepts et une proximité avec SQL qui font de PL/SQL
+un exemple tout à fait représentatif de l’intérêt et de l’utilisation des
+procédures stockées.</p>
+</div>
+<div class="section" id="introduction-a-pl-sql">
+<h3>Introduction à PL/SQL<a class="headerlink" href="#introduction-a-pl-sql" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Nous allons commencer par quelques exemples très simples, appliqués à la base
+<em>Films</em>, afin d’obtenir un premier aperçu du langage.  Le premier exemple
+consiste en quelques lignes permettant d’afficher des statistiques sur la
+base de données (nombre de films et nombre d’artistes). Il ne s’agit pas pour
+l’instant d’une procédure stockée, mais d’un code qui est compilé et exécuté en
+direct.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Exemple de bloc PL/SQL donnant des informations sur la base</span>
+
+<span class="k">DECLARE</span>
+  <span class="c1">-- Quelques variables</span>
+  <span class="n">v_nbFilms</span>   <span class="nb">integer</span><span class="p">;</span>
+  <span class="n">v_nbArtistes</span> <span class="nb">integer</span><span class="p">;</span>
+
+<span class="k">begin</span>
+  <span class="c1">-- Compte le nombre de films</span>
+  <span class="k">select</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">into</span> <span class="n">v_nbFilms</span> <span class="k">from</span> <span class="n">Film</span><span class="p">;</span>
+  <span class="c1">-- Compte le nombre d&#39;artistes</span>
+  <span class="k">select</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">into</span> <span class="n">v_nbArtistes</span> <span class="k">from</span> <span class="n">Artiste</span><span class="p">;</span>
+
+  <span class="c1">-- Affichage des résultats</span>
+  <span class="n">DBMS_outPUT</span><span class="p">.</span><span class="n">PUT_LinE</span> <span class="p">(</span><span class="s1">&#39;Nombre de films: &#39;</span> <span class="o">||</span> <span class="n">v_nbFilms</span><span class="p">);</span>
+  <span class="n">DBMS_outPUT</span><span class="p">.</span><span class="n">PUT_LinE</span> <span class="p">(</span><span class="s1">&#39;Nombre d&#39;&#39;artistes: &#39;</span> <span class="o">||</span> <span class="n">v_nbArtistes</span><span class="p">);</span>
+
+  <span class="k">exception</span>
+    <span class="k">when</span> <span class="n">others</span> <span class="k">then</span>
+      <span class="n">DBMS_outPUT</span><span class="p">.</span><span class="n">PUT_LinE</span> <span class="p">(</span><span class="s1">&#39;Problème rencontré dans StatsFilms&#39;</span><span class="p">);</span>
+
+<span class="k">end</span><span class="p">;</span>
+<span class="o">/</span>
+</pre></div>
+</div>
+<p>Le code est structuré en trois parties
+qui forment un « bloc » : déclarations des variables,
+instructions (entre <code class="docutils literal notranslate"><span class="pre">begin</span></code> et <code class="docutils literal notranslate"><span class="pre">end</span></code>) et gestion des exceptions.
+La première remarque importante est que les variables sont typées, et que les
+types sont exactement ceux de SQL (ou plus largement les types supportés par le
+SGBD, qui peuvent différer légèrement de la norme).  Un autre aspect de
+l’intégration forte avec SQL est la possibilité d’effectuer des requêtes,
+d’utiliser dans cette requête des critères basés sur la valeur des variables de
+la procédure, et de placer le résultat dans une (ou plusieurs) variables grâce à
+la clause <code class="docutils literal notranslate"><span class="pre">into</span></code>.  En d’autres termes on transfère directement des
+données représentées selon le modèle relationnel et accessibles avec SQL,
+dans des unités d’information manipulables avec les structures classiques (test
+ou boucles) d’un langage impératif.</p>
+<p>Les fonctions SQL fournies par le SGBD sont également utilisables, ainsi que
+des librairies spécifiques à la programmation procédurale (des <em>packages</em>
+chez orACLE). Dans l’exemple ci-dessus on utilise le <em>package</em>
+<code class="docutils literal notranslate"><span class="pre">DBMS_outPUT</span></code> qui permet de produire des messages sur la sortie
+standard (l’écran en général).</p>
+<p>La dernière section du programme est celle qui gère les « exceptions ». Ce
+terme désigne une erreur qui est soit définie par l’utilisateur en fonction de
+l’application (par exemple l’absence d’un n-uplet, ou une valeur incorrecte
+dans un attribut), soit engendrée par le système à l’exécution (par exemple une
+division par zéro, ou l’absence d’une table).  Au moment où une erreur est
+rencontrée, PL/SQL redirige le flux d’exécution vers la section
+<code class="docutils literal notranslate"><span class="pre">exception</span></code> où le programmeur doit définir les actions à entreprendre au
+cas par cas.  Dans l’exemple précédent, on prend toutes les exceptions
+indifféremment (mot-clé <code class="docutils literal notranslate"><span class="pre">others</span></code> qui désigne le choix par défaut) et on
+affiche un message.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Un programme Pl/SQL peut être placé dans un fichier
+et executé avec la commande <code class="docutils literal notranslate"><span class="pre">start</span></code>  sous l’utilitaire de commandes.
+par exemple:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>SQL&gt;start StatsFilms
+</pre></div>
+</div>
+</div>
+<p>En cas d’erreur de compilation, la commande <code class="docutils literal notranslate"><span class="pre">SHOW</span> <span class="pre">ERRorS</span></code> donne la liste
+des problèmes rencontrés. Sinon le code est exécuté.  Voici par exemple ce que
+l’on obtient avec le code donné précédemment en exemple (La commande
+<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">serveroutput</span> <span class="pre">on</span></code> assure que les messages sont bien affichés à
+l’écran..</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SQL&gt; set serveroutput on
+SQL&gt; start StatsFilms
+Nombre de films: 48
+Nombre d&#39;artistes: 126
+</pre></div>
+</div>
+<p>Voici maintenant un exemple de procédure stockée. On retrouve
+la même structuration que précédemment (déclaractions, instructions,
+exception), mais cette fois ce « bloc »
+est nommé, stocké dans la base au moment de la compilation,
+et peut ensuite être appelé par son nom.
+La procédure implante la règle suivante : l’insertion d’un
+texte dans
+la table des genres s’effectue toujours en majuscules,
+et on vérifie au préalable que ce code n’existe pas déjà.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Insère un nouveau genre, en majuscules, et en vérifiant</span>
+<span class="c1">-- qu&#39;il n&#39;existe pas déjà</span>
+
+<span class="k">create</span> <span class="k">or</span> <span class="k">replace</span> <span class="k">procedure</span> <span class="n">InsereGenre</span> <span class="p">(</span><span class="n">p_genre</span> <span class="nb">varchar</span><span class="p">)</span> <span class="k">as</span>
+
+  <span class="c1">-- Déclaration des variables</span>
+  <span class="n">v_genre_majuscules</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span>
+  <span class="n">v_count</span> <span class="nb">integer</span><span class="p">;</span>
+  <span class="n">genre_existe</span> <span class="k">exception</span><span class="p">;</span>
+<span class="k">begin</span>
+  <span class="c1">-- On met le paramètre en majuscules</span>
+  <span class="n">v_genre_majuscules</span> <span class="p">:</span><span class="o">=</span> <span class="k">UPPER</span><span class="p">(</span><span class="n">p_genre</span><span class="p">);</span>
+
+  <span class="c1">-- On vérifie que le genre n&#39;existe pas déjà</span>
+  <span class="k">select</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">into</span> <span class="n">v_count</span>
+  <span class="k">from</span> <span class="n">Genre</span> <span class="k">where</span> <span class="n">code</span> <span class="o">=</span> <span class="n">v_genre_majuscules</span><span class="p">;</span>
+
+  <span class="c1">-- Si on n&#39;a rien trouvé: on insère</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">v_count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">then</span>
+   <span class="k">insert</span> <span class="k">into</span> <span class="n">Genre</span> <span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="n">v_genre_majuscules</span><span class="p">);</span>
+  <span class="k">else</span>
+   <span class="n">RAisE</span> <span class="n">genre_existe</span><span class="p">;</span>
+ <span class="k">end</span> <span class="k">if</span><span class="p">;</span>
+
+  <span class="k">exception</span>
+    <span class="k">when</span> <span class="n">genre_existe</span> <span class="k">then</span>
+     <span class="n">DBMS_outPUT</span><span class="p">.</span><span class="n">PUT_LinE</span><span class="p">(</span><span class="s1">&#39;Le genre existe déjà en &#39;</span> <span class="o">||</span>
+                         <span class="n">v_count</span> <span class="o">||</span> <span class="s1">&#39; exemplaire(s).&#39;</span><span class="p">);</span>
+
+<span class="k">end</span><span class="p">;</span>
+<span class="o">/</span>
+</pre></div>
+</div>
+<p>La procédure accepte des paramètres qui, comme les variables, sont typées.  Le
+corps de la procédure montre un exemple d’utilisation d’une fonction SQL
+fournie par le système, ici la fonction <code class="docutils literal notranslate"><span class="pre">UPPER</span></code> qui prend une chaîne de
+caractères en entrée et la renvoie mise en majuscules.</p>
+<p>La requête SQL garantit que l’on obtient un et un seul n-uplet.  Nous verrons
+plus loin comment traiter le cas où le résultat de la requête est une table
+contenant un nombre quelconque de n-uplets.  Dans l’exemple ci-dessus on obtient toujours un
+attribut donnant le nombre de n-uplets existants dans la table pour le code
+que l’on veut insérer.  Si ce nombre n’est pas nul, c’est que le genre existe
+déjà dans la table, et on produit une « exception » avec la clause
+<code class="docutils literal notranslate"><span class="pre">RAisE</span> <span class="pre">exception</span></code>, sinon c’est que le genre n’existe pas et on peut
+effectuer la clause d’insertion, en indiquant comme valeurs à insérer celles
+contenues dans les variables appropriées.</p>
+<p>On peut appeler cette procédure à partir de n’importe quelle
+application connectée au SGBD. Sous SQL*Plus
+on utilise l’instruction <code class="docutils literal notranslate"><span class="pre">execute</span></code>.
+Voici par
+exemple ce que l’on obtient avec deux appels successifs.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SQL</span><span class="o">&gt;</span>  <span class="k">execute</span> <span class="n">InsereGenre</span><span class="p">(</span><span class="s1">&#39;Policier&#39;</span><span class="p">);</span>
+
+<span class="k">SQL</span><span class="o">&gt;</span>  <span class="k">execute</span> <span class="n">InsereGenre</span><span class="p">(</span><span class="s1">&#39;Policier&#39;</span><span class="p">);</span>
+<span class="n">Le</span> <span class="n">genre</span> <span class="n">existe</span> <span class="n">déjà</span> <span class="n">en</span> <span class="mi">1</span> <span class="n">exemplaire</span><span class="p">(</span><span class="n">s</span><span class="p">).</span>
+</pre></div>
+</div>
+<p>Le premier appel s’est correctement déroulé puisque
+le genre « Policier » n’existait pas encore dans la table.
+Le second en revanche a échoué, ce qui a déclenché
+l’exception et l’affichage du message d’erreur.</p>
+<p>On peut appeler <code class="docutils literal notranslate"><span class="pre">InsereGenre()</span></code> depuis un programme C,
+Java, ou tout autre outil. Si on se fixe comme règle de toujours
+passer par cette procédure pour insérer dans la table <code class="docutils literal notranslate"><span class="pre">Genre</span></code>,
+on est donc sûr que les contraintes implantées dans la procédure
+seront toujours vérifiées.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Pour forcer les développeurs à toujours passer par
+la procédure, on peut fixer les droits d’accès de telle
+sorte que les utilisateurs orACLE aient le droit
+d’exécuter <code class="docutils literal notranslate"><span class="pre">InsereGenre()</span></code>, mais pas de droit
+de mise à jour sur la table <code class="docutils literal notranslate"><span class="pre">Genre</span></code> elle-même.</p>
+</div>
+<p>Voici un troisième exemple qui complète ce premier tour d’horizon
+rapide du langage. Il s’agit cette fois d’une <em>fonction</em>,
+la différence avec une procédure étant qu’elle renvoie
+une valeur, instance de l’un des types SQL. Dans l’exemple
+qui suit, la fonction prend en entrée l’identifiant d’un film
+et renvoie une chaîne de caractères contenant la liste des prénom
+et nom des acteurs du film, séparés par des virgules.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Fonction retournant la liste des acteurs pour un film donné</span>
+
+<span class="k">create</span> <span class="k">or</span> <span class="k">replace</span> <span class="k">FUNCTIon</span> <span class="n">MesActeurs</span><span class="p">(</span><span class="n">v_idFilm</span> <span class="nb">integer</span><span class="p">)</span> <span class="k">RETURN</span> <span class="nb">varchar</span> <span class="k">is</span>
+  <span class="c1">-- Le résultat</span>
+  <span class="n">resultat</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">255</span><span class="p">);</span>
+
+<span class="k">begin</span>
+  <span class="c1">-- Boucle prenant tous les acteurs du films</span>
+
+  <span class="k">for</span> <span class="n">art</span> <span class="k">in</span>
+    <span class="p">(</span><span class="k">select</span> <span class="n">Artiste</span><span class="p">.</span><span class="o">*</span> <span class="k">from</span> <span class="k">Role</span><span class="p">,</span> <span class="n">Artiste</span>
+    <span class="k">where</span> <span class="n">idFilm</span> <span class="o">=</span> <span class="n">v_idFilm</span>  <span class="k">and</span> <span class="n">idActeur</span><span class="o">=</span><span class="n">idArtiste</span><span class="p">)</span>
+  <span class="n">loop</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">resultat</span> <span class="k">is</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">)</span> <span class="k">then</span>
+      <span class="n">resultat</span> <span class="p">:</span><span class="o">=</span> <span class="n">resultat</span> <span class="o">||</span> <span class="s1">&#39;, &#39;</span> <span class="o">||</span> <span class="n">art</span><span class="p">.</span><span class="n">prenom</span> <span class="o">||</span> <span class="s1">&#39; &#39;</span> <span class="o">||</span> <span class="n">art</span><span class="p">.</span><span class="n">nom</span><span class="p">;</span>
+    <span class="k">else</span>
+      <span class="n">resultat</span> <span class="p">:</span><span class="o">=</span> <span class="n">art</span><span class="p">.</span><span class="n">prenom</span> <span class="o">||</span> <span class="s1">&#39; &#39;</span> <span class="o">||</span> <span class="n">art</span><span class="p">.</span><span class="n">nom</span><span class="p">;</span>
+   <span class="k">end</span> <span class="k">if</span><span class="p">;</span>
+
+  <span class="k">end</span> <span class="n">loop</span><span class="p">;</span>
+
+ <span class="k">return</span> <span class="n">resultat</span><span class="p">;</span>
+<span class="k">end</span><span class="p">;</span>
+<span class="o">/</span>
+</pre></div>
+</div>
+<p>La fonction effectue une requête SQL pour rechercher tous les acteurs du film
+dont l’identifiant est passé en paramètre. Contrairement à l’exemple précédent,
+cette requête renvoie en général plusieurs n-uplets. Une des caractéristiques
+principales des techniques d’accès à une base de données avec un langage
+procédural est que l’on ne récupère pas d’un seul coup le résultat d’un ordre
+SQL. Il existe au moins deux raisons à cela :</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>le résultat de la requête peut être extrêmement volumineux,
+ce qui poserait des problèmes d’occupation mémoire
+si on devait tout charger dans l’espace du programme client ;</p></li>
+<li><p>les langages de programmation ne sont en général pas
+équipés nativement des types nécessaires à la représentation
+d’un ensemble de n-uplets.</p></li>
+</ol>
+</div></blockquote>
+<p>Le concept utilisé, plus ou moins implicitement, dans toutes les interfaces
+permettant aux langages procéduraux d’accéder aux bases de données est celui de
+<em>curseur</em>.  Un curseur permet de parcourir, à l’aide d’une boucle,
+l’ensemble des n-uplets du résultat d’une requête, en traitant le n-uplet
+courant à chaque passage dans la boucle.  Ici nous avons affaire à la version
+la plus simple qui soit d’un curseur, mais nous reviendrons plus loin
+sur ce mécanisme.</p>
+<p>Une fonction renvoie une valeur, ce qui permet de l’utiliser dans une requête
+SQL comme n’importe quelle fonction native du système.  Voici par exemple une
+requête qui sélectionne le titre et la liste des acteurs du film dont
+l’identifiant est 5.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SQL</span><span class="o">&gt;</span> <span class="k">select</span> <span class="n">titre</span><span class="p">,</span> <span class="n">MesActeurs</span><span class="p">(</span><span class="n">idFilm</span><span class="p">)</span>  <span class="k">from</span> <span class="n">Film</span> <span class="k">where</span> <span class="n">idFilm</span><span class="o">=</span><span class="mi">5</span><span class="p">;</span>
+
+<span class="n">TITRE</span>        <span class="n">MESACTEURS</span><span class="p">(</span><span class="n">IDFILM</span><span class="p">)</span>
+<span class="c1">------------ -----------------------------</span>
+<span class="n">Volte</span><span class="o">/</span><span class="n">Face</span>   <span class="n">John</span> <span class="n">Travolta</span><span class="p">,</span> <span class="n">Nicolas</span> <span class="n">Cage</span>
+</pre></div>
+</div>
+<p>On peut noter que le résultat de la fonction <code class="docutils literal notranslate"><span class="pre">MesActeurs()</span></code> ne peut pas être
+obtenu avec une requête SQL. Il est d’ailleurs intéressant de se demander
+pourquoi, et d’en tirer quelques conclusions sur certaines limites de SQL.
+Il est important de mentionner également qu’orACLE ne permet
+pas l’appel, dans un ordre <code class="docutils literal notranslate"><span class="pre">select</span></code> de fonctions
+effectuant des mises  à jour dans la base : une requête
+n’est pas censée entraîner des modifications, surtout
+si elles s’effectuent de manière transparente pour l’utilisateur.</p>
+</div>
+<div class="section" id="syntaxe-de-pl-sql">
+<h3>Syntaxe de PL/SQL<a class="headerlink" href="#syntaxe-de-pl-sql" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Voici maintenant une présentation plus systématique du langage PL/SQL. Elle
+vise à expliquer et illustrer ses principes les plus intéressants et à donner
+les éléments nécessaires à une expérimentation sur machine mais ne couvre
+cependant pas toutes ses possibilités, très étendues.</p>
+<div class="section" id="types-et-variables">
+<h4>Types et variables<a class="headerlink" href="#types-et-variables" title="Lien permanent vers ce titre">¶</a></h4>
+<p>PL/SQL reconnaît tous les types standard de SQL,
+plus quelques autres dont le type <code class="docutils literal notranslate"><span class="pre">Boolean</span></code>
+qui peut prendre les valeurs <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>
+ou <code class="docutils literal notranslate"><span class="pre">FALSE</span></code>. Il propose également deux constructeurs permettant de créer des types
+composés :</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>le constructeur <code class="docutils literal notranslate"><span class="pre">RECORD</span></code> est comparable au schéma
+d’une table ; il décrit  un
+ensemble d’attributs typés et nommés ;</p></li>
+<li><p>le constructeur <code class="docutils literal notranslate"><span class="pre">TABLE</span></code> correspond
+aux classiques tableaux unidimensionnels.</p></li>
+</ol>
+</div></blockquote>
+<p>Le constructeur <code class="docutils literal notranslate"><span class="pre">RECORD</span></code> est particulièrement
+intéressant pour représenter un n-uplet d’une table,
+et donc pour définir des variables servant
+à stocker le résultat d’une requête SQL. On peut
+définir soit-même un type avec <code class="docutils literal notranslate"><span class="pre">RECORD</span></code>,
+avec une syntaxe très similaire à celle du
+<code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">TABLE</span></code>.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">DECLARE</span>
+  <span class="c1">-- Déclaration d&#39;un nouveau type</span>
+  <span class="k">TYPE</span> <span class="n">adresse</span> <span class="k">is</span> <span class="n">RECORD</span>
+   <span class="p">(</span><span class="k">no</span>         <span class="nb">integer</span><span class="p">,</span>
+    <span class="n">rue</span>        <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">),</span>
+    <span class="n">ville</span>      <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">),</span>
+    <span class="n">codePostal</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+   <span class="p">);</span>
+</pre></div>
+</div>
+<p>Mais PL/SQL offre également un mécanisme extrêmement utile consistant à dériver
+automatiquement un type <code class="docutils literal notranslate"><span class="pre">RECORD</span></code> en fonction d’une table ou d’un
+attribut d’une table. On utilise alors le nom de la table ou de l’attribut,
+associées respectivement au qualificateur <code class="docutils literal notranslate"><span class="pre">%ROWTYPE</span></code> ou à
+<code class="docutils literal notranslate"><span class="pre">%TYPE</span></code> pour désigner le type dérivé. Voici
+quelques exemples :</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Film.titre%TYPE</span></code> est le type de l’attribut
+<code class="docutils literal notranslate"><span class="pre">titre</span></code> de la table <code class="docutils literal notranslate"><span class="pre">Film</span></code> ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Artiste%ROWTYPE</span></code> est  un type <code class="docutils literal notranslate"><span class="pre">RECORD</span></code> correspondant aux attributs de la table <code class="docutils literal notranslate"><span class="pre">Artiste</span></code>.</p></li>
+</ol>
+</div></blockquote>
+<p>Le même principe de dérivation automatique d’un type s’applique également aux
+requêtes SQL définies dans le cadre des curseurs. Nous y reviendrons au moment
+de la présentation de ces derniers.</p>
+<p>La déclaration d’une variable consiste à donner son nom, son type, à indiquer si
+elle peut être <code class="docutils literal notranslate"><span class="pre">NULL</span></code>  et a donner éventuellement
+une valeur initiale. Elle est de la forme :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">nomVariable</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">typeVariable</span><span class="o">&gt;</span> <span class="p">[</span><span class="k">NOT</span> <span class="k">NULL</span><span class="p">]</span> <span class="p">[:</span><span class="o">=</span> <span class="o">&lt;</span><span class="n">valeurDéfaut</span><span class="o">&gt;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Il est possible de définir également des constantes, avec
+la syntaxe :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">nomConstante</span><span class="o">&gt;</span> <span class="n">ConSTANT</span> <span class="o">&lt;</span><span class="n">typeConstante</span><span class="o">&gt;</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;</span><span class="n">valeur</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Toutes les déclarations de variables ou de constantes doivent être comprises dans
+la section <code class="docutils literal notranslate"><span class="pre">DECLARE</span></code>. Toute variable non initialisée est à  <code class="docutils literal notranslate"><span class="pre">NULL</span></code>.
+Voici  quelques exemples de déclarations. Tous
+les noms de variables sont systématiquement
+préfixés par <code class="docutils literal notranslate"><span class="pre">v_</span></code>. Ce n’est pas
+une obligation mais ce type
+de convention permet de distinguer plus
+facilement les variables de PL/SQL des attributs
+des tables dans les ordres SQL.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">DECLARE</span>
+  <span class="c1">-- Constantes</span>
+  <span class="n">v_aujourdhui</span>  <span class="n">ConSTANT</span> <span class="nb">DATE</span>  <span class="p">:</span><span class="o">=</span> <span class="n">SYSDATE</span><span class="p">;</span>
+  <span class="n">v_pi</span>          <span class="n">ConSTANT</span> <span class="nb">NUMBER</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span> <span class="p">:</span><span class="o">=</span> <span class="mi">3</span><span class="p">.</span><span class="mi">14116</span><span class="p">;</span>
+
+  <span class="c1">-- Variables scalaires</span>
+  <span class="n">v_compteur</span>    <span class="nb">integer</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="p">:</span><span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">v_nom</span>         <span class="nb">varchar</span><span class="p">(</span><span class="mi">30</span><span class="p">);</span>
+
+  <span class="c1">-- Variables pour un n-uplet de la table Film et pour le résumé</span>
+  <span class="n">v_film</span> <span class="n">Film</span><span class="o">%</span><span class="n">ROWTYPE</span><span class="p">;</span>
+  <span class="n">v_resume</span> <span class="n">Film</span><span class="p">.</span><span class="n">resume</span><span class="o">%</span><span class="k">TYPE</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="structures-de-controle">
+<h4>Structures de contrôle<a class="headerlink" href="#structures-de-controle" title="Lien permanent vers ce titre">¶</a></h4>
+<p>L’affectation d’une variable est effectuée par l’opérateur
+<code class="docutils literal notranslate"><span class="pre">:=</span></code> avec la syntaxe :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">nomVariable</span><span class="o">&gt;</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;</span><span class="n">expression</span><span class="o">&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>où <code class="docutils literal notranslate"><span class="pre">expression</span></code> est toute expression valide retournant
+une valeur de même type que celle de la variable. Rappelons
+que tous les opérateurs SQL (arithmétiques, concaténation
+de chaînes, manipulation de dates) et toutes les fonctions
+du SGBD sont utilisables en PL/SQL. Un autre manière
+d’affecter une variable est d’y transférer
+tout ou partie d’un n-uplet provenant d’une
+requête SQL avec la syntaxe :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">&lt;</span><span class="n">nomAttribut1</span><span class="o">&gt;</span><span class="p">,</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">nomAttribut2</span><span class="o">&gt;</span><span class="p">,</span> <span class="p">...]</span>
+<span class="k">into</span>   <span class="o">&lt;</span><span class="n">nomVariable1</span><span class="o">&gt;</span><span class="p">,</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">nomVariable2</span><span class="o">&gt;</span><span class="p">,</span> <span class="p">...</span> <span class="p">]</span>
+<span class="k">from</span>   <span class="p">[...]</span>
+</pre></div>
+</div>
+<p>La variable doit être du même type que l’attribut  correspondant de la clause <code class="docutils literal notranslate"><span class="pre">select</span></code>, ce
+qui incite fortement à utiliser le type dérivé avec <code class="docutils literal notranslate"><span class="pre">%TYPE</span></code>.  Dès que l’on veut transférer
+plusieurs valeurs d’attributs  dans des variables, on a sans doute intérêt à utiliser un type
+dérivé <code class="docutils literal notranslate"><span class="pre">%ROWTYPE</span></code> qui limite le
+nombre de déclarations à effectuer. L’exemple suivant
+illustre l’utilisation de  la clause <code class="docutils literal notranslate"><span class="pre">select</span> <span class="pre">...</span> <span class="pre">into</span></code>
+associée à des types dérivés. La fonction renvoie le titre
+du film concaténé avec le nom du réalisateur.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Retourne une chaîne avec le titre du film et sont réalisateur</span>
+
+<span class="k">create</span> <span class="k">or</span> <span class="k">replace</span> <span class="k">FUNCTIon</span> <span class="n">TitreEtMES</span><span class="p">(</span><span class="n">v_idFilm</span> <span class="nb">integer</span><span class="p">)</span> <span class="k">RETURN</span> <span class="nb">varchar</span> <span class="k">is</span>
+
+  <span class="c1">-- Déclaration des variables</span>
+  <span class="n">v_titre</span> <span class="n">Film</span><span class="p">.</span><span class="n">titre</span><span class="o">%</span><span class="k">TYPE</span><span class="p">;</span>
+  <span class="n">v_idMES</span> <span class="n">Film</span><span class="p">.</span><span class="n">idMES</span><span class="o">%</span><span class="k">TYPE</span><span class="p">;</span>
+  <span class="n">v_mes</span>  <span class="n">Artiste</span><span class="o">%</span><span class="n">ROWTYPE</span><span class="p">;</span>
+
+<span class="k">begin</span>
+  <span class="c1">-- Recherche du film</span>
+  <span class="k">select</span>  <span class="n">titre</span><span class="p">,</span> <span class="n">idMES</span>
+  <span class="k">into</span> <span class="n">v_titre</span><span class="p">,</span> <span class="n">v_idMES</span>
+  <span class="k">from</span> <span class="n">Film</span>
+  <span class="k">where</span> <span class="n">idFilm</span><span class="o">=</span><span class="n">v_idFilm</span><span class="p">;</span>
+
+  <span class="c1">-- Recherche du metteur en scène</span>
+  <span class="k">select</span> <span class="o">*</span> <span class="k">into</span> <span class="n">v_mes</span> <span class="k">from</span> <span class="n">Artiste</span> <span class="k">where</span> <span class="n">idArtiste</span> <span class="o">=</span> <span class="n">v_idMES</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="n">v_titre</span>  <span class="o">||</span> <span class="s1">&#39;, réalisé par &#39;</span> <span class="o">||</span> <span class="n">v_mes</span><span class="p">.</span><span class="n">prenom</span>
+                  <span class="o">||</span> <span class="s1">&#39; &#39;</span> <span class="o">||</span> <span class="n">v_mes</span><span class="p">.</span><span class="n">nom</span><span class="p">;</span>
+<span class="k">end</span><span class="p">;</span>
+<span class="o">/</span>
+</pre></div>
+</div>
+<p>L’association dans la requête SQL de noms d’attributs et
+de noms de variables peut parfois s’avérer ambiguë
+d’où l’utilité d’une convention
+permettant de distinguer clairement ces derniers.</p>
+<p>Les structures de test et de boucles sont tout à fait standard.  La structure
+conditionnelle est le <code class="docutils literal notranslate"><span class="pre">if</span></code> dont la syntaxe est la suivante :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="o">&lt;</span><span class="n">condition</span><span class="o">&gt;</span> <span class="k">then</span>
+  <span class="o">&lt;</span><span class="n">instructions1</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">else</span>
+ <span class="o">&lt;</span><span class="n">instruction2</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">end</span> <span class="k">if</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Les conditions sont exprimées comme dans une clause <code class="docutils literal notranslate"><span class="pre">where</span></code>
+de SQL, avec notamment la possibilité de tester si une valeur est à <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, des opérateurs
+comme <code class="docutils literal notranslate"><span class="pre">LIKE</span></code> et les connecteurs usuels <code class="docutils literal notranslate"><span class="pre">and</span></code>, <code class="docutils literal notranslate"><span class="pre">or</span></code> et <code class="docutils literal notranslate"><span class="pre">NOT</span></code>.
+Le <code class="docutils literal notranslate"><span class="pre">else</span></code> est optionnel, et peut éventuellement
+être associé à un autre <code class="docutils literal notranslate"><span class="pre">if</span></code>, selon la syntaxe généralisée suivante :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="o">&lt;</span><span class="n">condition</span> <span class="mi">1</span><span class="o">&gt;</span> <span class="k">then</span>
+  <span class="o">&lt;</span><span class="n">instructions</span> <span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">ELSif</span> <span class="o">&lt;</span><span class="n">condition</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="k">then</span>
+ <span class="o">&lt;</span><span class="n">instruction</span> <span class="mi">2</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="p">[...]</span>
+<span class="k">ELSif</span> <span class="o">&lt;</span><span class="n">condition</span> <span class="n">n</span><span class="o">&gt;</span> <span class="k">then</span>
+ <span class="o">&lt;</span><span class="n">instruction</span> <span class="n">n</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">else</span>
+ <span class="o">&lt;</span><span class="n">instruction</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">end</span> <span class="k">if</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Il existe trois formes de boucles : <code class="docutils literal notranslate"><span class="pre">loop</span></code>,
+<code class="docutils literal notranslate"><span class="pre">for</span></code> et <code class="docutils literal notranslate"><span class="pre">while</span></code>. Seules les deux dernières sont
+présentées ici car elles suffisent à tous les besoins
+et sont semblables aux structures habituelles.</p>
+<p>La boucle <code class="docutils literal notranslate"><span class="pre">while</span></code> répète un ensemble d’instructions
+tant qu’une condition est vérifiée. La condition
+est testée à chaque entrée dans la boucle. Voici la
+syntaxe :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="n">while</span> <span class="o">&lt;</span><span class="n">condition</span><span class="o">&gt;</span> <span class="n">loop</span>
+  <span class="o">&lt;</span><span class="n">instructions</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">end</span> <span class="n">loop</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Rappelons que les expressions booléennes en SQL  peuvent prendre trois  valeurs :
+<code class="docutils literal notranslate"><span class="pre">TRUE</span></code>, <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> et <code class="docutils literal notranslate"><span class="pre">UNKNOWN</span></code> quand l’évaluation de l’expression rencontre une
+valeur à <code class="docutils literal notranslate"><span class="pre">NULL</span></code>. Une condition est donc vérifiée quand elle prend la valeur <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>,
+et une boucle <code class="docutils literal notranslate"><span class="pre">while</span></code> s’arrête  en cas de <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> ou <code class="docutils literal notranslate"><span class="pre">UNKNOWN</span></code>.</p>
+<p>La boucle <code class="docutils literal notranslate"><span class="pre">for</span></code> permet de répéter un ensemble
+d’instructions pour chaque valeur d’un intervalle de nombres entiers.
+La syntaxe est donnée ci-dessous. Notez les deux points
+entre les deux bornes de l’intervalle, et la
+possibilité de parcourir cet intervalle de haut en bas
+avec l’option <code class="docutils literal notranslate"><span class="pre">REVERSE</span></code>.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="o">&lt;</span><span class="n">variableCompteur</span><span class="o">&gt;</span> <span class="k">in</span> <span class="p">[</span><span class="n">REVERSE</span><span class="p">]</span> <span class="o">&lt;</span><span class="k">min</span><span class="o">&gt;</span><span class="p">..</span><span class="o">&lt;</span><span class="k">max</span><span class="o">&gt;</span> <span class="n">loop</span>
+  <span class="o">&lt;</span><span class="n">instructions</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">end</span> <span class="n">loop</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Des itérations couramment utilisées en PL/SQL
+consistent à parcourir le résultat d’une requête SQL
+avec un curseur.</p>
+</div>
+<div class="section" id="structure-du-langage">
+<h4>Structure du langage<a class="headerlink" href="#structure-du-langage" title="Lien permanent vers ce titre">¶</a></h4>
+<p>Le code PL/SQL est structuré en <em>blocs</em>.  Un bloc comprend trois sections
+explicitement délimitées : les déclarations, les
+instructions (encadrée par <code class="docutils literal notranslate"><span class="pre">begin</span></code> et <code class="docutils literal notranslate"><span class="pre">end</span></code>) et les exceptions,
+placées en général à la fin de la section d’instruction. On peut partout
+mettre des commentaires, avec deux formes possibles :
+soit une ligne commençant par deux tirets <code class="docutils literal notranslate"><span class="pre">--</span></code>,
+soit, comme en C/C++, un texte de longueur quelconque
+compris entre <code class="docutils literal notranslate"><span class="pre">/*</span></code> et <code class="docutils literal notranslate"><span class="pre">*/</span></code>. La structure générale d’un bloc
+est donc la suivante :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="k">DECLARE</span><span class="p">]</span>
+  <span class="c1">-- Déclaration des variables, constantes, curseurs et exceptions</span>
+
+<span class="k">begin</span>
+  <span class="c1">-- Instructions, requêtes SQL, structures de contrôle</span>
+
+<span class="k">exception</span>
+  <span class="c1">-- Traitement des erreurs</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Le bloc est l’unité de traitement de PL/SQL. Un bloc peut être  anonyme. Il commence alors
+par l’instruction <code class="docutils literal notranslate"><span class="pre">DECLARE</span></code>, et orACLE le compile et l’exécute dans la foulée au moment où
+il est rencontré. Le premier exemple que nous avons donné est un  bloc anonyme.</p>
+<p>Un bloc peut également être nommé  (cas des procédures et fonctions) et stocké.
+Dans ce cas le <code class="docutils literal notranslate"><span class="pre">DECLARE</span></code> est remplacé par l’instruction <code class="docutils literal notranslate"><span class="pre">create</span></code>.
+Le SGBD stocke la procédure ou la fonction et l’exécute quand on
+l’appelle dans le cadre d’un langage de programmation.
+La syntaxe de création d’une procédure stockée est donnée ci-dessous.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="p">[</span><span class="k">or</span> <span class="k">replace</span><span class="p">]</span> <span class="k">procedure</span> <span class="o">&lt;</span><span class="n">nomProcédure</span><span class="o">&gt;</span>
+  <span class="p">[(</span><span class="o">&lt;</span><span class="n">paramètre</span> <span class="mi">1</span><span class="o">&gt;</span><span class="p">,</span> <span class="p">...</span> <span class="o">&lt;</span><span class="n">paramètre</span> <span class="n">n</span><span class="o">&gt;</span><span class="p">)]</span> <span class="k">as</span>
+ <span class="p">[</span><span class="o">&lt;</span><span class="n">déclarations</span><span class="o">&lt;</span><span class="p">]</span>
+<span class="k">begin</span>
+ <span class="o">&lt;</span><span class="n">instructions</span><span class="o">&gt;</span><span class="p">;</span>
+
+ <span class="p">[</span><span class="k">exception</span>
+    <span class="o">&lt;</span><span class="n">gestionExceptions</span><span class="o">&gt;</span><span class="p">;</span>
+ <span class="p">]</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>La syntaxe des fonctions est identique, à l’exception
+d’un <code class="docutils literal notranslate"><span class="pre">RETURN</span> <span class="pre">&lt;type&gt;</span></code>  précédant le  <code class="docutils literal notranslate"><span class="pre">as</span></code>
+et indiquant le type de la valeur renvoyée.
+Procédures et fonctions prennent en entrée
+des <em>paramètres</em> selon la syntaxe suivante :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">nomParamètre</span><span class="o">&gt;</span> <span class="p">[</span><span class="k">in</span> <span class="o">|</span> <span class="k">out</span> <span class="o">|</span> <span class="k">in</span> <span class="k">out</span><span class="p">]</span> <span class="o">&lt;</span><span class="k">type</span><span class="o">&gt;</span> <span class="p">[:</span><span class="o">=</span> <span class="o">&lt;</span><span class="n">valeurDéfaut</span><span class="o">&gt;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>La déclaration des paramètres ressemble à celle des variables. Tous les types
+PL/SQL sont acceptés pour les paramètres,  notamment les types dérivés avec
+<code class="docutils literal notranslate"><span class="pre">%TYPE</span></code> et <code class="docutils literal notranslate"><span class="pre">%ROWTYPE</span></code>, et on peut définir des valeurs par défaut. Cependant la longueur
+des chaînes de caractères (<code class="docutils literal notranslate"><span class="pre">CHAR</span></code> ou <code class="docutils literal notranslate"><span class="pre">varchar</span></code>)
+ne doit pas être précisée pour les paramètres.  La principale différence avec la déclaration
+des variables est le mode d’utilisation des paramètres
+qui peut être <code class="docutils literal notranslate"><span class="pre">in</span></code>, <code class="docutils literal notranslate"><span class="pre">out</span></code> ou <code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">out</span></code>. Le mode détermine la manière dont les paramètres
+servent à communiquer avec le programme appelant :</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">in</span></code> indique que la valeur du paramètre peut être lue
+mais pas être modifiée ; c’est le mode par
+défaut ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">out</span></code> indique que la valeur du paramètre peut
+être modifée mais ne peut pas être lue;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">out</span></code> indique que la valeur du paramètre peut être lue et modifiée.</p></li>
+</ol>
+</div></blockquote>
+<p>En d’autres termes les paramètres <code class="docutils literal notranslate"><span class="pre">in</span></code> permettent au programme appelant de passer des valeurs
+à la procédure, les paramètres <code class="docutils literal notranslate"><span class="pre">out</span></code>  permettent à la procédure de renvoyer des valeurs
+au programme appelant, et les paramètres <code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">out</span></code> peuvent jouer les deux rôles.
+L’utilisation des paramètres <code class="docutils literal notranslate"><span class="pre">out</span></code> permet à une fonction
+ou une procédure de renvoyer plusieurs valeurs.</p>
+</div>
+<div class="section" id="gestion-des-erreurs">
+<h4>Gestion des erreurs<a class="headerlink" href="#gestion-des-erreurs" title="Lien permanent vers ce titre">¶</a></h4>
+<p>Les <em>exceptions</em> en PL/SQL peuvent être soit des erreurs renvoyées par le SGBD lui-même en cas
+de manipulation incorrecte des données, soit des erreurs définies par le programmeur lui-même.
+Le principe est que toute erreur rencontrée à l’exécution
+entraîne la levée} (<code class="docutils literal notranslate"><span class="pre">RAisE</span></code>) d’une exception, ce qui amène  le flux de l’exécution
+à se dérouter vers la section <code class="docutils literal notranslate"><span class="pre">exception</span></code> du bloc courant. Cette section rassemble les
+actions (<em>exception handlers</em>) à effectuer pour chaque type d’exception rencontrée.
+Voici quelques-unes des exceptions les plus communes
+levées par le SGBD.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">inVALID_NUMBER</span></code>, indique une conversion
+impossible d’une chaîne de caractères vers un numérique ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inVALID_cursor</span></code>, indique une tentative d’utiliser un nom de curseur inconnu ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NO_DATA_found</span></code>, indique une  requête SQL qui ne ramène aucun n-uplet ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TOO_MANY_ROWS</span></code>, indique une
+requête <code class="docutils literal notranslate"><span class="pre">select</span> <span class="pre">...</span> <span class="pre">into</span></code> qui n’est pas
+traitée par un curseur alors qu’elle ramène plusieurs
+n-uplets.</p></li>
+</ol>
+</div></blockquote>
+<p>Les exceptions utilisateurs doivent être définies
+dans la section de déclaration avec la syntaxe suivante.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">nomException</span><span class="o">&gt;</span> <span class="k">exception</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>On peut ensuite lever, au cours de l’exécution d’un bloc PL/SQL, les
+exceptions, systèmes ou utilisateurs, avec l’instruction <code class="docutils literal notranslate"><span class="pre">RAisE</span></code>.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="n">RAisE</span> <span class="o">&lt;</span><span class="n">nomException</span><span class="o">&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Quand une instruction <code class="docutils literal notranslate"><span class="pre">RAisE</span></code> est rencontrée, l’exécution PL/SQL est dirigée vers la section
+des exceptions, et recherche si l’exception levée fait l’objet d’un traitement particulier.
+Cette section elle-même consiste en une liste de conditions de le forme :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">when</span> <span class="o">&lt;</span><span class="n">nomException</span><span class="o">&gt;</span> <span class="k">then</span>
+   <span class="o">&lt;</span><span class="n">traitementException</span><span class="o">&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Si le nom de l’exception levée correspond à l’une des conditions de la liste,
+alors le traitement correspondant est exécuté.  Sinon c’est la section
+<code class="docutils literal notranslate"><span class="pre">others</span></code> qui est utilisée. S’il n’y a pas de section gérant les
+exceptions, l’exception est passée au programme appelant.  La procédure
+suivante montre quelques exemples d’exceptions.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Illustration des exceptions. La procédure prend un</span>
+<span class="c1">-- identifiant de film, et met le titre en majuscules.</span>
+<span class="c1">-- Les exceptions suivantes sont levées:</span>
+<span class="c1">--   Exception système: NO_DATA_found si le film n&#39;existe pas</span>
+<span class="c1">--   Exception utilisateur: DEJA_FAIT si le titre</span>
+<span class="c1">--            est déjà en majuscule</span>
+
+<span class="k">create</span> <span class="k">or</span> <span class="k">replace</span> <span class="k">procedure</span> <span class="n">TitreEnMajuscules</span> <span class="p">(</span><span class="n">p_idFilm</span> <span class="nb">inT</span><span class="p">)</span> <span class="k">as</span>
+
+  <span class="c1">-- Déclaration des variables</span>
+  <span class="n">v_titre</span> <span class="n">Film</span><span class="p">.</span><span class="n">titre</span><span class="o">%</span><span class="k">TYPE</span><span class="p">;</span>
+  <span class="n">deja_fait</span> <span class="k">exception</span><span class="p">;</span>
+<span class="k">begin</span>
+  <span class="c1">-- Recherche du film. Une exception est levée si on ne trouve rien</span>
+  <span class="k">select</span> <span class="n">titre</span> <span class="k">into</span> <span class="n">v_titre</span>
+  <span class="k">from</span> <span class="n">Film</span> <span class="k">where</span> <span class="n">idFilm</span> <span class="o">=</span> <span class="n">p_idFilm</span><span class="p">;</span>
+
+  <span class="c1">-- Si le titre est déjà en majuscule, on lève une autre</span>
+  <span class="c1">-- exception</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">v_titre</span> <span class="o">=</span> <span class="k">UPPER</span><span class="p">(</span><span class="n">v_titre</span><span class="p">))</span> <span class="k">then</span>
+      <span class="n">RAisE</span> <span class="n">deja_fait</span><span class="p">;</span>
+  <span class="k">end</span> <span class="k">if</span><span class="p">;</span>
+
+  <span class="c1">-- Mise à jour du titre</span>
+   <span class="k">update</span> <span class="n">Film</span> <span class="k">set</span> <span class="n">titre</span><span class="o">=</span><span class="k">UPPER</span><span class="p">(</span><span class="n">v_titre</span><span class="p">)</span> <span class="k">where</span> <span class="n">idFilm</span><span class="o">=</span><span class="n">p_idFilm</span><span class="p">;</span>
+
+  <span class="k">exception</span>
+    <span class="k">when</span> <span class="n">NO_DATA_found</span> <span class="k">then</span>
+     <span class="n">DBMS_outPUT</span><span class="p">.</span><span class="n">PUT_LinE</span><span class="p">(</span><span class="s1">&#39;Ce film n&#39;&#39;existe pas&#39;</span><span class="p">);</span>
+
+    <span class="k">when</span> <span class="n">deja_fait</span> <span class="k">then</span>
+     <span class="n">DBMS_outPUT</span><span class="p">.</span><span class="n">PUT_LinE</span><span class="p">(</span><span class="s1">&#39;Le titre est déjà en majuscules&#39;</span><span class="p">);</span>
+
+    <span class="k">when</span> <span class="n">others</span> <span class="k">then</span>
+     <span class="n">DBMS_outPUT</span><span class="p">.</span><span class="n">PUT_LinE</span><span class="p">(</span><span class="s1">&#39;Autre erreur...&#39;</span><span class="p">);</span>
+<span class="k">end</span><span class="p">;</span>
+<span class="o">/</span>
+</pre></div>
+</div>
+<p>Voici quelques exécutions de cette procédure qui montrent comment les exceptions sont
+levées selon le cas. On peut noter qu’orACLE considère comme une erreur
+le fait un ordre <code class="docutils literal notranslate"><span class="pre">select</span></code> ne ramène aucun n-uplet,
+et lève alors l’exception <code class="docutils literal notranslate"><span class="pre">NO_DATA_found</span></code>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SQL&gt; execute TitreEnMajuscules(900);
+Le film n&#39;existe pas
+
+SQL&gt; execute TitreEnMajuscules(5);
+
+SQL&gt; execute TitreEnMajuscules(5);
+Le titre est déjà en majuscules
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="quiz">
+<h3>Quiz<a class="headerlink" href="#quiz" title="Lien permanent vers ce titre">¶</a></h3>
+<div class="reauthoring_embedded_quiz" id="prog1-1"><form class="reauthoring_embedded_quiz_questions"><p>Qu’est-ce qu’une procédure stockée?</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Une procédure dont le code est sauvegardé dans la base de données
+avant d’être chargée et exécutée dans une application cliente</p></li>
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img>  Une procédure stockée et exécutée par le serveur de données</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img> Une procédure dont le code est placé sur le disque</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div><div class="reauthoring_embedded_quiz" id="prog1-2"><form class="reauthoring_embedded_quiz_questions"><p>Quelle affirmation ci-dessous vous semble exacte?</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img> Les procédures stockées étendent et remplacent SQL car elles offrent toute la puissance
+d’un langage de programmation</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Les procédures stockées sont utilisées par SQL pour évaluer les requêtes</p></li>
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img> Les procédures stockées complètent SQL avec les primitives (boucles, tests)
+d’un langage de programmation</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div><div class="reauthoring_embedded_quiz" id="prog1-3"><form class="reauthoring_embedded_quiz_questions"><p>Le cours parle d’une « intégration forte » entre SQL et le langage procédural. Concrètement,
+quelle forme prend cette intégration?</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img> Les variables et structures du langage sont identiques à celles de la base</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img> Le langage s’appuie sur les opérateurs de l’algèbre relationnelle</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img> Le langage permet de construire une interface de saisie et visualisation</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div><div class="reauthoring_embedded_quiz" id="prog1-4"><form class="reauthoring_embedded_quiz_questions"><p>Quelle est la différence entre une procédure et une fonction</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Seule une procédure peut effectuer des mises à jour</p></li>
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img> Seules les fonctions peuvent renvoyer une valeur</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Seules les fonctions peuvent recevoir des paramètres</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div><div class="reauthoring_embedded_quiz" id="prog1-5"><form class="reauthoring_embedded_quiz_questions"><p>Parmi les actions décrites ci-dessous, lesquelles nécessitent une procédure parce
+qu’elles ne peuvent pas d’écrire en SQL?</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Une mise à jour dans une table dépendant d’une condition sur une autre table</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img> Une sélection dans deux tables</p></li>
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img>  Une insertion dans deux tables</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div><div class="reauthoring_embedded_quiz" id="prog1-6"><form class="reauthoring_embedded_quiz_questions"><p>Qu’est-ce qu’un <code class="docutils literal notranslate"><span class="pre">RECORD</span></code> en PL/SQL</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img>  Une structure du langage correspondant à celle d’un nuplet relationnel</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img> Une structure du langage correspondant à celle d’une table relationnelle</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Une structure du langage correspondant à la colonne d’une table relationnelle</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div></div>
+</div>
+<div class="section" id="s2-les-curseurs">
+<h2>S2. Les curseurs<a class="headerlink" href="#s2-les-curseurs" title="Lien permanent vers ce titre">¶</a></h2>
+<div class="admonition-supports-complementaires admonition">
+<p class="admonition-title">Supports complémentaires:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://sql.bdpedia.fr/files/slcurseurs.pdf">Diapositives: les curseurs</a></p></li>
+<li><p><a class="reference external" href="https://mediaserver.cnam.fr/videos/les-curseurs/">Vidéo sur les curseurs</a></p></li>
+</ul>
+</div>
+<p>Comme nous l’avons indiqué précédemment, les <em>curseurs</em>
+constituent un mécanisme de base dans les programmes
+accèdant aux bases de données. Ce mécanisme repose
+sur l’idée de traiter <em>un n-uplet à la fois</em> dans
+le résultat d’une requête, ce qui permet notamment
+d’éviter le chargement, dans l’espace mémoire du
+client, d’un ensemble qui peut être très volumineux.</p>
+<p>Le traitement d’une requête par un curseur a un impact sur le style de
+programmation et l’intégration avec un langage procédural, sur les techniques
+d’évaluation de requêtes, et sur la gestion de la concurrence d’accès.  Ces
+derniers aspects sont traités dans d’autres chapitres. La
+présentation qui suit est générale pour ce qui concerne les concepts,
+et s’appuie sur PL/SQL pour les exemples concrets. L’avantage
+de PL/SQL est de proposer une syntaxe très claire et un ensemble
+d’options qui mettent bien en valeur les points importants.</p>
+<div class="section" id="declaration-d-un-curseur">
+<h3>Déclaration d’un curseur<a class="headerlink" href="#declaration-d-un-curseur" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Un curseur doit être déclaré dans la section  <code class="docutils literal notranslate"><span class="pre">DECLARE</span></code> du bloc PL/SQL. En général on
+déclare également une variable dont le type est dérivé de la définition du curseur. Voici un exemple
+de ces deux déclarations associées :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Déclaration d&#39;un curseur</span>
+<span class="k">cursor</span> <span class="n">MonCurseur</span> <span class="k">is</span>
+<span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Film</span><span class="p">,</span> <span class="n">Artiste</span>
+<span class="k">where</span> <span class="n">idMES</span> <span class="o">=</span> <span class="n">idArtiste</span><span class="p">;</span>
+
+<span class="c1">-- Déclaration de la variable</span>
+<span class="n">v_monCurseur</span> <span class="n">MonCurseur</span><span class="o">%</span><span class="n">ROWTYPE</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Le type de la variable, <code class="docutils literal notranslate"><span class="pre">MonCurseur%ROWTYPE</span></code>, est le type automatiquement calculé par PL/SQL pour
+représenter un n-uplet du résultat de la requête  définie par le curseur <code class="docutils literal notranslate"><span class="pre">MonCurseur</span></code>. Ce typage
+permet, sans avoir besoin d’effectuer des déclarations et d’énumérer de longues listes de variables
+réceptrices au moment de l’exécution de la requête, de transférer très simplement chaque n-uplet du résultat
+dans une structure du langage procédural. Nous verrons que les choses sont beaucoup plus laborieuses avec
+un langage, comme le C, dont l’intégration avec SQL n’est pas du tout naturelle.</p>
+<p>En général on utilise des curseurs <em>paramétrés</em> qui, comme leur nom
+l’indique, intègrent dans la requête SQL une ou plusieurs variables dont les
+valeurs, au moment de l’exécution, déterminent le résultat et donc l’ensemble
+de n-uplets à parcourir. Enfin on peut, optionnellement, déclarer l’intention
+de <em>modifier</em> les n-uplets traités par le curseur avec un <code class="docutils literal notranslate"><span class="pre">update</span></code>,
+ce qui entraîne au moment de l’exécution quelques conséquences importantes sur
+lesquelles nous allons revenir.  La syntaxe générale d’un curseur est donc la
+suivante :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">cursor</span> <span class="o">&lt;</span><span class="n">nomCurseur</span><span class="o">&gt;</span> <span class="p">[(</span><span class="o">&lt;</span><span class="n">listeParamètres</span><span class="o">&gt;</span><span class="p">)]</span>
+<span class="k">is</span> <span class="o">&lt;</span><span class="n">requête</span><span class="o">&gt;</span>
+<span class="p">[</span><span class="k">for</span> <span class="k">update</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Les paramètres sont indiqués comme pour une procédure, mais le mode doit toujours être <code class="docutils literal notranslate"><span class="pre">in</span></code>
+(cela n’a pas de sens de modifier le paramètre d’un curseur). Le
+curseur suivant effectue la même jointure que précédemment, mais les films sont sélectionnés
+sur l’année de parution grâce à un paramètre.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Déclaration d&#39;un curseur paramétré</span>
+<span class="k">cursor</span> <span class="n">MonCurseur</span> <span class="p">(</span><span class="n">p_annee</span> <span class="nb">integer</span><span class="p">)</span> <span class="k">is</span>
+ <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Film</span><span class="p">,</span> <span class="n">Artiste</span>
+ <span class="k">where</span> <span class="n">idMES</span> <span class="o">=</span> <span class="n">idArtiste</span>
+ <span class="k">and</span>   <span class="n">annee</span> <span class="o">=</span> <span class="n">p_annee</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Une déclaration complémentaire est celle des variables
+qui vont permettre de recevoir les n-uplets au fur et à
+mesure de leur parcours.  Le <em>type dérivé</em> d’un curseur
+est obtenu avec la syntaxe <code class="docutils literal notranslate"><span class="pre">&lt;nomCurseur&gt;%ROWTYPE</span></code>.
+Il s’agit d’un type <code class="docutils literal notranslate"><span class="pre">RECORD</span></code> avec un champ
+par correspondant à expression de la clause <code class="docutils literal notranslate"><span class="pre">select</span></code>.
+Le type de chaque champ est aisément déterminé par le système. Déterminer le nom du champ
+est un peu plus délicat car la clause <code class="docutils literal notranslate"><span class="pre">select</span></code> peut contenir des attributs (c’est le plus courant)
+mais aussi des expressions construites sur ces attributs comme, par exemple, <code class="docutils literal notranslate"><span class="pre">AVG(annee)</span></code>.
+Il est indispensable dans ce dernier cas de donner
+un alias à l’expression, qui deviendra le nom du champ dans le type dérivé. Voici un exemple
+de cette situation :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Déclaration du curseur</span>
+<span class="k">cursor</span> <span class="n">MonCurseur</span>  <span class="k">is</span>
+ <span class="k">select</span> <span class="n">prenom</span> <span class="o">||</span> <span class="n">nom</span> <span class="k">as</span> <span class="n">nomRéalisateur</span><span class="p">,</span> <span class="n">anneeNaiss</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">nbFilms</span>
+ <span class="k">from</span> <span class="n">Film</span><span class="p">,</span> <span class="n">Artiste</span>
+ <span class="k">where</span> <span class="n">idMES</span> <span class="o">=</span> <span class="n">idArtiste</span>
+<span class="c1">-- Déclaration d&#39;une variable associée</span>
+<span class="n">v_realisateur</span> <span class="n">MonCurseur</span><span class="o">%</span><span class="n">ROWTYPE</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Le type dérivé a trois champs, nommés respectivement <code class="docutils literal notranslate"><span class="pre">nomRealisateur</span></code>,
+<code class="docutils literal notranslate"><span class="pre">anneeNaiss</span></code> et <code class="docutils literal notranslate"><span class="pre">nbFilms</span></code>.</p>
+</div>
+<div class="section" id="execution-d-un-curseur">
+<h3>Exécution d’un curseur<a class="headerlink" href="#execution-d-un-curseur" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Un curseur est toujours exécuté en trois phases :</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>ouverture du curseur (ordre <code class="docutils literal notranslate"><span class="pre">open</span></code>) ;</p></li>
+<li><p>parcours du résultat en itérant des ordres <code class="docutils literal notranslate"><span class="pre">fetch</span></code>
+autant de fois que nécessaire ;</p></li>
+<li><p>fermeture  du curseur (<code class="docutils literal notranslate"><span class="pre">close</span></code>).</p></li>
+</ol>
+</div></blockquote>
+<p>Il faut bien être conscient de la signification de ces trois  phases. Au moment du <code class="docutils literal notranslate"><span class="pre">open</span></code>, le SGBD va analyser
+la requête, construire un plan d’exécution (un programme d’accès aux fichiers) pour calculer le résultat, et initialiser
+ce programme de manière à être en mesure de produire un n-uplet dès qu’un <code class="docutils literal notranslate"><span class="pre">fetch</span></code> est reçu. Ensuite,
+à chaque <code class="docutils literal notranslate"><span class="pre">fetch</span></code>, le n-uplet courant est envoyé par le SGBD au  curseur, et le plan d’exécution se prépare
+à produire le n-uplet suivant.</p>
+<p>En d’autres termes le résultat est déterminé au moment du <code class="docutils literal notranslate"><span class="pre">open</span></code>, puis
+exploité au fur est à mesure de l’appel des <code class="docutils literal notranslate"><span class="pre">fetch</span></code>. Quelle que soit la
+période sur laquelle se déroule cette exploitation (10 secondes, 1 heure ou une
+journée entière), le SGBD doit assurer que les données lues par le curseur
+refléteront l’état de la base au moment de l’ouverture du curseur. Cela
+signifie notamment que les modifications effectuées par
+d’autres utilisateurs, ou par le programme client (c’est-à-dire celui qui exécute le curseur) lui-même,
+ne doivent pas être visibles au moment du parcours du résultat.</p>
+<p>Les systèmes relationnels proposent différents niveaux d’isolation
+pour assurer ce type de comportement (pour en savoir plus, voir
+le chapitre sur la concurrence d’accès dans <a class="reference external" href="http://sys.bdpedia.fr">http://sys.bdpedia.fr</a>). Il suffit d’imaginer ce qui se passerait si le curseur était
+sensible à des insertions, mises à jour ou suppressions effectuées pendant le
+parcours du résultat. Voici par exemple un pseudo-code montrant une situation
+où le parcours du curseur ne finirait jamais !</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Un curseur qui s&#39;exécute indéfiniment</span>
+<span class="k">open</span> <span class="n">du</span> <span class="n">curseur</span> <span class="n">sur</span> <span class="n">la</span> <span class="k">table</span> <span class="n">T</span><span class="p">;</span>
+<span class="n">while</span> <span class="p">(</span><span class="k">fetch</span> <span class="n">du</span> <span class="n">curseur</span> <span class="n">ramène</span> <span class="n">un</span> <span class="n">n</span><span class="o">-</span><span class="n">upletdans</span> <span class="n">T</span><span class="p">)</span> <span class="n">loop</span>
+  <span class="n">Insérer</span> <span class="n">un</span> <span class="n">nouveau</span> <span class="n">n</span><span class="o">-</span><span class="n">uplet</span> <span class="n">dans</span> <span class="n">T</span><span class="p">;</span>
+<span class="k">end</span> <span class="n">loop</span><span class="p">;</span>
+<span class="k">close</span> <span class="n">du</span> <span class="n">curseur</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Chaque passage dans le <code class="docutils literal notranslate"><span class="pre">where</span></code> entraîne l’insertion d’un nouveau
+n-uplet, et on se sortirait donc jamais de la boucle
+si le curseur prenait en compte ce dernier.</p>
+<p>D’autres situations, moins caricaturales, et résultant
+d’actions effectuées par d’autres utilisateurs, poseraient des problèmes également. Le
+SGBD assure que le résultat est figé au moment du <code class="docutils literal notranslate"><span class="pre">open</span></code> puisque c’est à ce moment-là que la requête est constituée
+et – au moins conceptuellement – exécutée. On dit que le résultat d’un curseur est <em>immuable</em>
+(<em>immutable</em> en anglais).</p>
+<p>Une solution triviale pour satisfaire cette contrainte est le
+calcul complet du résultat au moment du <code class="docutils literal notranslate"><span class="pre">open</span></code>,
+et son stockage dans une table temporaire.
+Cette technique présente cependant de nombreux
+inconvénients :</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>il faut stocker le résultat quelque part,
+ce qui est pénalisant s’il est volumineux ;</p></li>
+<li><p>le programme client doit attendre que l’intégralité
+du résultat soit calculé avant d’obtenir
+le premièr n-uplet ;</p></li>
+<li><p>si le programme client souhaite effectuer des mises à jour,
+il faut réserver des n-uplets qui ne seront
+peut-être traités que dans plusieurs minutes voire
+plusieurs heures.</p></li>
+</ol>
+</div></blockquote>
+<p>Dire que le résultat est immuable
+ne signifie par forcément qu’il est calculé et matérialisé quelque part.
+Les chapitres consacrés à l’évaluation de requêtes et à la concurrence d’accès dans <a class="reference external" href="http://sys.bdpedia.fr">http://sys.bdpedia.fr</a>
+décrivent en détail
+les techniques plus sophistiquées pour gérer les curseurs.
+Ce qu’il faut retenir ici (et partout où nous parlerons de curseur), c’est que
+le résultat d’une requête n’est pas forcément pré-calculé dans son intégralité
+mais peut être construit, utilisé puis détruit au fur et à mesure de
+l’itération sur les ordres <code class="docutils literal notranslate"><span class="pre">fetch</span></code>.</p>
+<p>Ce mode d’exécution explique certaines restrictions qui semblent étranges si on
+n’en est pas averti.  Par exemple un curseur ne fournit pas d’information sur
+le nombre de n-uplets du résultat, puisque ces n-uplets, parcourus un à un, ne
+permettent pas de savoir à l’avance combien on va en rencontrer. De même, on ne
+sait pas revenir en arrière dans le parcours d’un résultat puisque les n-uplets
+produits ne sont parfois pas conservés.</p>
+<p>Il existe dans la norme  une option <code class="docutils literal notranslate"><span class="pre">SCROLL</span></code> indiquant que l’on peut
+choisir d’aller en avançant ou en reculant sur l’ensemble des n-uplets.  Cette
+option n’est disponible dans aucun système, du moins à l’heure où ces lignes
+sont écrites. Le <code class="docutils literal notranslate"><span class="pre">SCROLL</span></code> est problématique puisqu’il impose de
+conserver au SGBD le résultat complet pendant toute la durée de vie du curseur,
+l’utilisateur pouvant choisir de se déplacer d’avant en arrière sur l’ensemble
+des n-uplets. Le <code class="docutils literal notranslate"><span class="pre">SCROLL</span></code> est difficilement compatible avec la technique
+d’exécution employés dans tous les SGBD, et qui ne permet qu’un seul parcours
+séquentiel sur l’ensemble du résultat.</p>
+</div>
+<div class="section" id="les-curseurs-pl-sql">
+<h3>Les curseurs PL/SQL<a class="headerlink" href="#les-curseurs-pl-sql" title="Lien permanent vers ce titre">¶</a></h3>
+<p>La gestion des curseurs dans PL/SQL s’appuie sur une syntaxe
+très simple et permet, dans un grand nombre de cas, de limiter au maximum les déclarations et instructions
+nécessaires. La manière la plus générale de traiter un curseur, une fois sa déclaration effectuée,
+et de s’appuyer sur les trois instructions <code class="docutils literal notranslate"><span class="pre">open</span></code>, <code class="docutils literal notranslate"><span class="pre">fetch</span></code> et <code class="docutils literal notranslate"><span class="pre">close</span></code> dont
+la syntaxe est donnée ci-dessous.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">open</span> <span class="o">&lt;</span><span class="n">nomCurseur</span><span class="o">&gt;</span><span class="p">[(</span><span class="o">&lt;</span><span class="n">valeursParamètres</span><span class="o">&gt;</span><span class="p">)];</span>
+<span class="k">fetch</span> <span class="o">&lt;</span><span class="n">nomCurseur</span><span class="o">&gt;</span> <span class="k">into</span> <span class="o">&lt;</span><span class="n">variableRéceptrice</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">close</span> <span class="o">&lt;</span><span class="n">nomCurseur</span><span class="o">&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>La (ou les) variable(s) qui suivent le <code class="docutils literal notranslate"><span class="pre">into</span></code> doivent correspondre au type d’un n-uplet du résultat.
+En général on utilise une variable déclarée avec le type dérivé du curseur, <code class="docutils literal notranslate"><span class="pre">&lt;nomCurseur&gt;%ROWTYPE</span></code>.</p>
+<p>Une remarque importante est que les curseurs ont l’inconvénient d’une part de consommer de la mémoire du côté serveur, et
+d’autre part de bloquer d’autres utilisateurs si des n-uplets doivent être réservés
+en vue d’une mise à jour (option <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">update</span></code>). Une bonne habitude
+consiste à effectuer le <code class="docutils literal notranslate"><span class="pre">open</span></code> le plus tard possible, et le <code class="docutils literal notranslate"><span class="pre">close</span></code> le plus
+tôt possible après le dernier <code class="docutils literal notranslate"><span class="pre">fetch</span></code>.</p>
+<p>Au cours de l’accès au résultat (c’est-à-dire après le premier <code class="docutils literal notranslate"><span class="pre">fetch</span></code>
+et avant le <code class="docutils literal notranslate"><span class="pre">close</span></code>), on peut obtenir les informations
+suivantes sur le statut du curseur.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;nomCurseur&gt;%found</span></code> est un booléen
+qui vaut <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> si le dernier <code class="docutils literal notranslate"><span class="pre">fetch</span></code>
+a ramené un n-uplet ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;nomCurseur&gt;%NOTfound</span></code> est un booléen
+qui vaut <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> si le dernier <code class="docutils literal notranslate"><span class="pre">fetch</span></code>
+n’a pas ramené de n-uplet ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;nomCurseur&gt;%ROWcount</span></code> est le nombre
+de n-uplets parcourus jusqu’à
+l’état courant (en d’autres termes c’est le
+nombre d’appels <code class="docutils literal notranslate"><span class="pre">fetch</span></code>) ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;nomCurseur&gt;%isopen</span></code> est un boolén qui indique si
+un curseur a été ouvert.</p></li>
+</ol>
+</div></blockquote>
+<p>Cela étant dit, le parcours d’un curseur consiste à l’ouvrir, à effectuer une boucle en effectuant
+des <code class="docutils literal notranslate"><span class="pre">fetch</span></code> tant que l’on trouve des n-uplets (et qu’on souhaite continuer le traitement), enfin
+à fermer le curseur. Voici un exemple assez complet qui utilise un curseur paramétré pour parcourir
+un ensemble de films et leurs metteur en scène pour une année donnée, en afichant à chaque <code class="docutils literal notranslate"><span class="pre">fetch</span></code>
+le titre, le nom du metteur en scène et la liste des acteurs.
+Remarquez que cette liste est elle-même obtenu par
+un appel à la fonction PL/SQL <code class="docutils literal notranslate"><span class="pre">MesActeurs</span></code>.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Exemple d&#39;un curseur pour rechercher les films</span>
+<span class="c1">-- et leur metteur en scène pour une année donnée</span>
+
+<span class="k">create</span> <span class="k">or</span> <span class="k">replace</span> <span class="k">procedure</span> <span class="n">CurseurFilms</span> <span class="p">(</span><span class="n">p_annee</span> <span class="nb">inT</span><span class="p">)</span> <span class="k">as</span>
+
+  <span class="c1">-- Déclaration d&#39;un curseur paramétré</span>
+  <span class="k">cursor</span> <span class="n">MonCurseur</span> <span class="p">(</span><span class="n">v_annee</span> <span class="nb">integer</span><span class="p">)</span> <span class="k">is</span>
+   <span class="k">select</span> <span class="n">idFilm</span><span class="p">,</span> <span class="n">titre</span><span class="p">,</span> <span class="n">prenom</span><span class="p">,</span> <span class="n">nom</span>
+   <span class="k">from</span> <span class="n">Film</span><span class="p">,</span> <span class="n">Artiste</span>
+   <span class="k">where</span> <span class="n">idMES</span> <span class="o">=</span> <span class="n">idArtiste</span>
+   <span class="k">and</span>   <span class="n">annee</span> <span class="o">=</span> <span class="n">v_annee</span><span class="p">;</span>
+
+  <span class="c1">-- Déclaration de la variable associée au curseur</span>
+  <span class="n">v_monCurseur</span> <span class="n">MonCurseur</span><span class="o">%</span><span class="n">ROWTYPE</span><span class="p">;</span>
+  <span class="c1">-- Déclaration de la variable pour la liste des acteurs</span>
+  <span class="n">v_mesActeurs</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">255</span><span class="p">);</span>
+<span class="k">begin</span>
+  <span class="c1">-- Ouverture du curseur</span>
+  <span class="k">open</span> <span class="n">MonCurseur</span><span class="p">(</span><span class="n">p_annee</span><span class="p">);</span>
+
+  <span class="c1">-- On prend le premier n-uplet</span>
+  <span class="k">fetch</span> <span class="n">MonCurseur</span> <span class="k">into</span> <span class="n">v_monCurseur</span><span class="p">;</span>
+  <span class="c1">-- Boucle sur les n-uplets</span>
+  <span class="n">while</span> <span class="p">(</span><span class="n">MonCurseur</span><span class="o">%</span><span class="k">found</span><span class="p">)</span> <span class="n">loop</span>
+    <span class="c1">-- Recherche des acteurs avec la fonction MesActeurs</span>
+    <span class="n">v_mesActeurs</span> <span class="p">:</span><span class="o">=</span> <span class="n">MesActeurs</span> <span class="p">(</span><span class="n">v_monCurseur</span><span class="p">.</span><span class="n">idFilm</span><span class="p">);</span>
+
+    <span class="n">DBMS_outPUT</span><span class="p">.</span><span class="n">PUT_LinE</span><span class="p">(</span><span class="s1">&#39;Ligne &#39;</span> <span class="o">||</span> <span class="n">MonCurseur</span><span class="o">%</span><span class="n">ROWcount</span> <span class="o">||</span>
+           <span class="s1">&#39; Film:  &#39;</span> <span class="o">||</span> <span class="n">v_monCurseur</span><span class="p">.</span><span class="n">titre</span> <span class="o">||</span>
+           <span class="s1">&#39;, de &#39;</span> <span class="o">||</span> <span class="n">v_monCurseur</span><span class="p">.</span><span class="n">prenom</span> <span class="o">||</span> <span class="s1">&#39; &#39;</span> <span class="o">||</span>
+           <span class="n">v_monCurseur</span><span class="p">.</span><span class="n">nom</span> <span class="o">||</span> <span class="s1">&#39;, avec &#39;</span> <span class="o">||</span> <span class="n">v_mesActeurs</span><span class="p">);</span>
+    <span class="c1">-- Passage au n-uplet suivant</span>
+    <span class="k">fetch</span> <span class="n">MonCurseur</span> <span class="k">into</span> <span class="n">v_monCurseur</span><span class="p">;</span>
+  <span class="k">end</span> <span class="n">loop</span><span class="p">;</span>
+  <span class="c1">-- Fermeture du curseur</span>
+  <span class="k">close</span> <span class="n">MonCurseur</span><span class="p">;</span>
+
+  <span class="k">exception</span>
+    <span class="k">when</span> <span class="n">others</span> <span class="k">then</span>
+     <span class="n">DBMS_outPUT</span><span class="p">.</span><span class="n">PUT_LinE</span><span class="p">(</span><span class="s1">&#39;Problème dans CurseurFilms : &#39;</span> <span class="o">||</span>
+                             <span class="n">sqlerrm</span><span class="p">);</span>
+
+<span class="k">end</span><span class="p">;</span>
+<span class="o">/</span>
+</pre></div>
+</div>
+<p>Le petit extrait d’une session sous SQL*Plus
+donné ci-dessous montre le résultat d’un appel à cette procédure
+pour l’année 1992.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SQL</span><span class="o">&gt;</span> <span class="k">set</span> <span class="n">serveroutput</span> <span class="k">on</span>
+<span class="k">SQL</span><span class="o">&gt;</span> <span class="k">execute</span> <span class="n">CurseurFilms</span><span class="p">(</span><span class="mi">1992</span><span class="p">);</span>
+<span class="n">Ligne</span> <span class="mi">1</span> <span class="n">Film</span><span class="p">:</span>  <span class="n">Impitoyable</span><span class="p">,</span> <span class="n">de</span> <span class="n">Clint</span> <span class="n">Eastwood</span><span class="p">,</span> <span class="n">avec</span>
+         <span class="n">Clint</span> <span class="n">Eastwood</span><span class="p">,</span> <span class="n">Gene</span> <span class="n">Hackman</span><span class="p">,</span> <span class="n">Morgan</span> <span class="n">Freeman</span>
+<span class="n">Ligne</span> <span class="mi">2</span> <span class="n">Film</span><span class="p">:</span>  <span class="n">Reservoir</span> <span class="n">dogs</span><span class="p">,</span> <span class="n">de</span> <span class="n">Quentin</span> <span class="n">Tarantino</span><span class="p">,</span> <span class="n">avec</span>
+          <span class="n">Quentin</span> <span class="n">Tarantino</span><span class="p">,</span> <span class="n">Harvey</span> <span class="n">Keitel</span><span class="p">,</span> <span class="n">Tim</span> <span class="n">Roth</span><span class="p">,</span> <span class="n">Chris</span> <span class="n">Penn</span>
+</pre></div>
+</div>
+<p>La séquence des instructions <code class="docutils literal notranslate"><span class="pre">open</span></code>, <code class="docutils literal notranslate"><span class="pre">fetch</span></code> et <code class="docutils literal notranslate"><span class="pre">close</span></code> et la plus générale, notamment
+parce qu’elle permet de s’arrêter à tout moment en interrompant la boucle.
+On retrouve cette structure dans les langages de programmations
+comme  C, Java
+et PHP. Elle a cependant l’inconvénient d’obliger à écrire deux instructions
+<code class="docutils literal notranslate"><span class="pre">fetch</span></code>, l’une avant l’entrée dans la boucle, l’autre à l’intérieur. PL/SQL propose une syntaxe
+plus concise, basée sur la boucle <code class="docutils literal notranslate"><span class="pre">for</span></code>, en tirant partie de sa forte intégration avec SQL qui permet
+d’inférer le type manipulé en fonction de la définition
+d’un curseur. Cette variante de <code class="docutils literal notranslate"><span class="pre">for</span></code> se base sur la syntaxe suivante :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="o">&lt;</span><span class="n">variableCurseur</span><span class="o">&gt;</span> <span class="k">in</span> <span class="o">&lt;</span><span class="n">nomCurseur</span><span class="o">&gt;</span> <span class="n">loop</span>
+  <span class="o">&lt;</span><span class="n">instructions</span><span class="p">;</span>
+<span class="k">end</span> <span class="n">loop</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>L’économie de cette construction vient du fait qu’il n’est nécessaire ni de
+déclarer la variable <code class="docutils literal notranslate"><span class="pre">variableCurseur</span></code>, ni d’effectuer un <code class="docutils literal notranslate"><span class="pre">open</span></code>,
+un <code class="docutils literal notranslate"><span class="pre">close</span></code> ou des <code class="docutils literal notranslate"><span class="pre">fetch</span></code>. Tout est fait automatiquement
+par PL/SQL, la variable étant définie uniquement dans le contexte
+de la boucle. Voici un exemple qui montre également
+comment traiter des mises sur les n-uplets sélectionnés.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Exemple d&#39;un curseur effectuant des mises à jour</span>
+<span class="c1">-- On parcourt la liste des genres, et on les met en majuscules,</span>
+<span class="c1">-- on détruit ceux qui sont à NULL</span>
+
+<span class="k">create</span> <span class="k">or</span> <span class="k">replace</span> <span class="k">procedure</span> <span class="n">CurseurMAJ</span>  <span class="k">as</span>
+
+  <span class="c1">-- Déclaration du curseur</span>
+  <span class="k">cursor</span> <span class="n">CurseurGenre</span> <span class="k">is</span>
+   <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Genre</span>  <span class="k">for</span> <span class="k">update</span><span class="p">;</span>
+<span class="k">begin</span>
+  <span class="c1">-- Boucle for directe: pas de open, pas de close</span>
+
+  <span class="k">for</span> <span class="n">v_genre</span> <span class="k">in</span> <span class="n">CurseurGenre</span> <span class="n">loop</span>
+   <span class="k">if</span> <span class="p">(</span><span class="n">v_genre</span><span class="p">.</span><span class="n">code</span> <span class="k">is</span> <span class="k">NULL</span><span class="p">)</span> <span class="k">then</span>
+     <span class="k">delete</span> <span class="k">from</span> <span class="n">Genre</span> <span class="k">where</span> <span class="k">current</span> <span class="k">of</span> <span class="n">CurseurGenre</span><span class="p">;</span>
+   <span class="k">else</span>
+     <span class="k">update</span> <span class="n">Genre</span> <span class="k">set</span> <span class="n">code</span><span class="o">=</span><span class="k">UPPER</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+     <span class="k">where</span> <span class="k">current</span> <span class="k">of</span> <span class="n">CurseurGenre</span><span class="p">;</span>
+   <span class="k">end</span> <span class="k">if</span><span class="p">;</span>
+  <span class="k">end</span> <span class="n">loop</span><span class="p">;</span>
+<span class="k">end</span><span class="p">;</span>
+<span class="o">/</span>
+</pre></div>
+</div>
+<p>Notez que la variable <code class="docutils literal notranslate"><span class="pre">v_genre</span></code> n’est pas déclarée explicitement.
+Le curseur est défini avec une clause <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">update</span></code>
+qui indique au SGBD qu’une mise à jour peut être effectuée
+sur chaque n-uplet. Dans ce cas – et dans ce cas seulement –
+il est possible de faire référence au n-uplet courant,
+au sein de la boucle <code class="docutils literal notranslate"><span class="pre">for</span></code>, avec
+la syntaxe <code class="docutils literal notranslate"><span class="pre">where</span> <span class="pre">current</span> <span class="pre">of</span> <span class="pre">&lt;nomCurseur&gt;</span></code>.</p>
+<p>Si on n’a pas utilisé la clause <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">update</span></code>,  il est possible de modifier (ou détruire) le n-uplet courant, mais
+en indiquant dans le <code class="docutils literal notranslate"><span class="pre">where</span></code> de la clause <code class="docutils literal notranslate"><span class="pre">update</span></code> la valeur de la clé. Outre la
+syntaxe légèrement moins concise, cette désynchronisation
+entre la lecture par le curseur, et la modification
+par SQL, entraîne des risques d’incohérence (mise
+à jour par un autre utilisateur entre le
+<code class="docutils literal notranslate"><span class="pre">open</span></code> et le <code class="docutils literal notranslate"><span class="pre">fetch</span></code>)
+qui sont développés dans le chapitre consacré
+à la concurrence d’accès (<a class="reference external" href="http://sys.bdpedia.fr">http://sys.bdpedia.fr</a>).</p>
+<p>Il existe une syntaxe encore plus simple pour parcourir un curseur en PL/SQL. Elle consiste à ne
+pas déclarer explicitement de curseur, mais à placer la requête SQL directement
+dans la boucle <code class="docutils literal notranslate"><span class="pre">for</span></code>, comme par exemple :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">v_genre</span> <span class="k">in</span> <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Genre</span><span class="p">)</span> <span class="n">loop</span>
+  <span class="o">&lt;</span><span class="n">instructions</span><span class="p">;</span>
+<span class="k">end</span> <span class="n">loop</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Signalons pour conclure que PL/SQL traite <em>toutes</em> les requêtes SQL par des curseurs, que ce soit
+des ordres <code class="docutils literal notranslate"><span class="pre">update</span></code>, <code class="docutils literal notranslate"><span class="pre">insert</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code> ou des requêtes <code class="docutils literal notranslate"><span class="pre">select</span></code>
+ne ramenant qu’une seule ligne. Ces curseurs sont
+« implicites » car non déclarés par le programmeur,
+et tous portent le même nom conventionnel,
+<code class="docutils literal notranslate"><span class="pre">SQL</span></code>. Concrètement, cela signifie que
+les valeurs suivantes sont définies
+après une mise à jour par <code class="docutils literal notranslate"><span class="pre">update</span></code>, <code class="docutils literal notranslate"><span class="pre">insert</span></code>,
+<code class="docutils literal notranslate"><span class="pre">delete</span></code> :</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SQL%found</span></code>        vaut <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> si la mise à jour a affecté au moins un n-uplet ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SQL%NOTfound</span></code> vaut <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> si la  mise à jour n’a affecté aucun n-uplet ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SQL%ROWcount</span></code> est le nombre de n-uplets affecté par la mise à jour ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SQL%isopen</span></code> renvoie systématiquement <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> puisque les trois phases
+(ouverture, parcours et fermeture) sont effectuées
+solidairement.</p></li>
+</ol>
+</div></blockquote>
+<p>Le cas du <code class="docutils literal notranslate"><span class="pre">select</span></code> est un peu différent : une exception
+est toujours levée quand une recherche sans curseur
+ne ramène pas de n-uplet (exception <code class="docutils literal notranslate"><span class="pre">NO_DATA_found</span></code>)
+ou en ramène plusieurs (exception <code class="docutils literal notranslate"><span class="pre">TOO_MANY_ROWS</span></code>).
+Il faut donc être prêt à traiter ces exceptions pour ce type de requête. Par exemple, la recherche :</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">into</span> <span class="n">v_film</span>
+<span class="k">from</span> <span class="n">Film</span>
+<span class="k">where</span> <span class="n">titre</span> <span class="k">LIKE</span> <span class="s1">&#39;V%&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>devrait être traitée par un curseur car il y n’y a
+pas de raison qu’elle ramène un seul n-uplet.</p>
+</div>
+<div class="section" id="id1">
+<h3>Quiz<a class="headerlink" href="#id1" title="Lien permanent vers ce titre">¶</a></h3>
+<div class="reauthoring_embedded_quiz" id="prog2-1"><form class="reauthoring_embedded_quiz_questions"><p>Qu’est-ce qu’un curseur ?</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Un tableau contenant le résultat d’une requête</p></li>
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img> Un mécanisme permettant de parcourir le résultat d’une requête</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Une variable indiquant combien de nuplets on souhaite récupérer après
+exécution d’une requête</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div><div class="reauthoring_embedded_quiz" id="prog2-2"><form class="reauthoring_embedded_quiz_questions"><p>Dire qu’un curseur est <em>immuable</em>, c’est dire que</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  l’on ne peut pas modifier les nuplets sélectionnés</p></li>
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img> le contenu parcouru par le curseur n’est pas affecté par des mises à jour
+des autres sessions, tant que le curseur n’est pas fermé</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  le résultat est toujours le même à chaque exécution du curseur</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div><div class="reauthoring_embedded_quiz" id="prog2-3"><form class="reauthoring_embedded_quiz_questions"><p>Combien de temps peut-on utiliser un curseur?</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img>  jusqu’à ce qu’il soit fermé</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img> tant que personne ne modifie les nuplets sélectionnés</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  le résultat d’un curseur est figé et toujours disponible</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div><div class="reauthoring_embedded_quiz" id="prog2-4"><form class="reauthoring_embedded_quiz_questions"><p>Quelle affirmation est correcte?</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  On ne peut ouvrir qu’un curseur à la fois</p></li>
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img>  On peut ouvrir autant de curseurs simultanés que l’on veut</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  On ne peut ouvrir un second curseur que dans le corps de la
+boucle d’un premier curseur, car les curseurs ne peuvent pas être indépendants
+les uns des autres</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div></div>
+</div>
+<div class="section" id="s3-les-declencheurs">
+<h2>S3. Les déclencheurs<a class="headerlink" href="#s3-les-declencheurs" title="Lien permanent vers ce titre">¶</a></h2>
+<div class="admonition-supports-complementaires admonition">
+<p class="admonition-title">Supports complémentaires:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://sql.bdpedia.fr/files/sltriggers.pdf">Diapositives: les déclencheurs</a></p></li>
+<li><p><a class="reference external" href="https://mediaserver.cnam.fr/videos/les-triggers//">Vidéo sur les déclencheurs</a></p></li>
+</ul>
+</div>
+<p>Le mécanisme de <em>triggers</em> (que l’on peut traduire par « déclencheur » ou « réflexe »)
+est implanté dans les SGBD depuis de nombreuses années, et a été normalisé
+par SQL99. Un <em>trigger</em> est simplement une procédure
+stockée dont la particularité principale est de se déclencher
+automatiquement  sur certains événements
+mise à jour <em>spécifiés par le créateur du trigger</em>.</p>
+<p>On peut considérer les <em>triggers</em> comme une extension
+du système de contraintes proposé par la clause
+<code class="docutils literal notranslate"><span class="pre">CHECK</span></code>: à la différence de cette dernière, l’événement déclencheur est explicitement indiqué,
+et l’action n’est pas limitée à la simple alternative acceptation/rejet. Les possibilités
+offertes par les <em>triggers</em>
+sont très intéressantes. Citons:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>la gestion des redondances; l’enregistrement automatique de certains
+évèvenements (<em>auditing</em>);</p></li>
+<li><p>la spécification de contraintes complexes liées à l’évolution des données (exemple:
+le prix d’une séance ne peut qu’augmenter);</p></li>
+<li><p>toute règle  liée à l’environnement d’exécution (restrictions
+sur les horaires, les utilisateurs, etc.).</p></li>
+</ul>
+</div></blockquote>
+<p>Les <em>triggers</em> sont discutés dans ce qui suit de manière générale, et illustrés par
+des exemples orACLE. Il faut mentionner que
+la syntaxe de déclaration des <em>triggers</em> est suivie
+par la plupart des SGBD, les principales
+variantes se situant au niveau du langage
+permettant d’implanter la partie procédurale.
+Dans ce qui suit, ce langage sera bien entendu PL/SQL.</p>
+<div class="section" id="principes-des-triggers">
+<h3>Principes des <em>triggers</em><a class="headerlink" href="#principes-des-triggers" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Le modèle d’exécution des <em>triggers</em>
+est basé sur la séquence <em>Evénement-Condition-Action</em> (ECA)
+que l’on peut décrire ainsi:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>un <em>trigger</em> est déclenché par un <em>événement</em>, spécifié
+par le programmeur, qui est en général
+une insertion, destruction ou modification  sur une table;</p></li>
+<li><p>la première action d’un <em>trigger</em> est  de tester une <em>condition</em>: si cette
+condition ne s’évalue pas à <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>,  l’exécution s’arrête;</p></li>
+<li><p>enfin <em>l’action</em> proprement dite peut consister en toute ensemble d’opérations
+sur la base de données, effectuée si nécessaire à l’aide du langage procédural
+supporté par le SGBD.</p></li>
+</ul>
+</div></blockquote>
+<p>Une caractéristique importante de cette procédure (action) est de
+pouvoir manipuler simultanément les valeurs ancienne et nouvelle
+de la donnée modifiée, ce qui permet de faire des tests sur
+l’évolution de la base.</p>
+<p>Parmi les autres caractéristiques importantes, citons les deux suivantes. Tout d’abord
+un <em>trigger</em> peut être exécuté au choix une fois pour un seul ordre SQL, ou à chaque n-uplet concerné
+par cet ordre. Ensuite l’action déclenchée
+peut intervenir <em>avant</em> l’événement, ou <em>après</em>.</p>
+<p>L’utilisation des <em>triggers</em> permet de rendre
+une base de données <em>dynamique</em>: une opération
+sur la base peut en déclencher d’autres, qui elles-mêmes
+peuvent entraîner en cascade d’autres réflexes.
+Ce mécanisme n’est pas sans danger à cause des risques de boucle
+infinie.</p>
+<p>Prenons l’exemple suivant: on souhaite conserver au niveau de la
+table <code class="docutils literal notranslate"><span class="pre">Cinéma</span></code> le nombre total de places (soit la
+somme des capacités des salles). Il s’agit en principe
+d’une redondance à éviter, mais que l’on
+peut gérer avec les <em>triggers</em>.
+On peut en effet  implanter un <em>trigger</em> au niveau <code class="docutils literal notranslate"><span class="pre">Salle</span></code>
+qui, pour toute mise à jour, va aller modifier la
+donnée au niveau <code class="docutils literal notranslate"><span class="pre">Cinéma</span></code>.</p>
+<p>Maintenant il est facile d’imaginer une situation
+où on se retrouve avec des <em>triggers</em> en cascade.
+Prenons le cas d’une table <code class="docutils literal notranslate"><span class="pre">Ville</span> <span class="pre">(nom,</span> <span class="pre">capacité)</span></code>
+donnant le nombre de places de cinéma dans la ville.</p>
+<p>Maintenant, supposons que la ville gère l’heure de
+la première séance d’une salle: on aboutit à un cycle infini!</p>
+</div>
+<div class="section" id="syntaxe">
+<h3>Syntaxe<a class="headerlink" href="#syntaxe" title="Lien permanent vers ce titre">¶</a></h3>
+<p>La syntaxe générale de création d’un <em>trigger</em>
+est donnée ci-dessous.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span> create [or replace] trigger &lt;nomTrigger&gt;
+  {before | after}
+  {delete | insert | update [of column, [, column] ...]}
+     [ or {delete | insert | update [of column, [, column] ...]}] ...
+  on &lt;nomTable&gt; [for each row]
+[when &lt;condition]
+   &lt;blocPLSQL&gt;
+</pre></div>
+</div>
+<p>On peut distinguer trois parties dans cette construction
+syntaxique. La partie <em>événement</em>
+est spécifiée après <code class="docutils literal notranslate"><span class="pre">before</span></code> ou <code class="docutils literal notranslate"><span class="pre">after</span></code>,
+la partie <em>condition</em> après <code class="docutils literal notranslate"><span class="pre">when</span></code>
+et la partie <em>action</em> correspond au bloc PL/SQL.
+Voici quelques explications complémentaires sur ces trois
+parties.</p>
+<blockquote>
+<div><ul>
+<li><p>« Evénement », peut être ` before`` ou <code class="docutils literal notranslate"><span class="pre">after</span></code>,
+suivi de  <code class="docutils literal notranslate"><span class="pre">delete</span></code>, <code class="docutils literal notranslate"><span class="pre">update</span></code> ou <code class="docutils literal notranslate"><span class="pre">insert</span></code> séparés
+par des <code class="docutils literal notranslate"><span class="pre">or</span></code>.</p></li>
+<li><p>« Condition »,  <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">each</span> <span class="pre">row</span></code> est optionnel. En son
+absence le <em>trigger</em> est déclenché
+une fois pour toute requête modifiant
+la table, <em>et ce sans condition</em>.</p>
+<p>Sinon <code class="docutils literal notranslate"><span class="pre">&lt;condition&gt;</span></code> est toute condition
+booléenne SQL. De plus on peut rérférencer
+les anciennes et nouvelles valeurs du tuple
+courant avec la syntaxe <code class="docutils literal notranslate"><span class="pre">new.attribut</span></code>
+et <code class="docutils literal notranslate"><span class="pre">old.attribut</span></code>  respectivement.</p>
+</li>
+<li><p>« Action » est une procédure qui peut être
+implantée, sous Oracle, avec le langage PL/SQL.
+Elle peut contenir des ordres SQL <em>mais
+pas de mise à jour de la table courante</em>.</p>
+<p>Les anciennes et nouvelles valeurs du tuple
+courant sont référencées par <code class="docutils literal notranslate"><span class="pre">:new.attr</span></code>
+et <code class="docutils literal notranslate"><span class="pre">:old.attr</span></code>.</p>
+<p>Il est possible de modifier <code class="docutils literal notranslate"><span class="pre">new</span></code> et <code class="docutils literal notranslate"><span class="pre">old</span></code>.
+Par exemple <code class="docutils literal notranslate"><span class="pre">:new.prix=500;</span></code> forcera
+l’attribut <code class="docutils literal notranslate"><span class="pre">prix</span></code> à 500 dans un <code class="docutils literal notranslate"><span class="pre">before</span></code>
+<em>trigger</em>.</p>
+</li>
+</ul>
+</div></blockquote>
+<p>La disponibilité de <code class="docutils literal notranslate"><span class="pre">new</span></code> et <code class="docutils literal notranslate"><span class="pre">old</span></code>
+dépend du contexte. Par exemple <code class="docutils literal notranslate"><span class="pre">new</span></code> est
+à <code class="docutils literal notranslate"><span class="pre">NULL</span></code> dans un <em>trigger</em> déclenché
+par <code class="docutils literal notranslate"><span class="pre">delete</span></code>.</p>
+</div>
+<div class="section" id="quelques-exemples">
+<h3>Quelques exemples<a class="headerlink" href="#quelques-exemples" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Voici tout d’abord un exemple de <em>trigger</em> qui maintient
+la capacité d’un cinéma à chaque mise à jour
+sur la table <code class="docutils literal notranslate"><span class="pre">Salle</span></code>.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">trigger</span> <span class="n">CumulCapacite</span>
+<span class="k">after</span> <span class="k">update</span> <span class="k">on</span> <span class="n">Salle</span>
+<span class="k">for</span> <span class="k">each</span> <span class="k">row</span>
+<span class="k">when</span> <span class="p">(</span><span class="k">new</span><span class="p">.</span><span class="n">capacite</span> <span class="o">!=</span> <span class="k">old</span><span class="p">.</span><span class="n">capacite</span><span class="p">)</span>
+<span class="k">begin</span>
+  <span class="k">update</span> <span class="n">Cinema</span>
+  <span class="k">set</span> <span class="n">capacite</span> <span class="o">=</span> <span class="n">capacite</span> <span class="o">-</span> <span class="p">:</span><span class="k">old</span><span class="p">.</span><span class="n">capacite</span>  <span class="o">+</span> <span class="p">:</span><span class="k">new</span><span class="p">.</span><span class="n">capacite</span>
+  <span class="k">where</span>  <span class="n">nom</span> <span class="o">=</span> <span class="p">:</span><span class="k">new</span><span class="p">.</span><span class="n">nomCinema</span><span class="p">;</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Pour garantir la validité du cumul, il
+faudrait créer des <em>triggers</em> sur les événements
+<code class="docutils literal notranslate"><span class="pre">update</span></code> et <code class="docutils literal notranslate"><span class="pre">insert</span></code>. Une solution plus
+concise (mais plus coûteuse) est de recalculer
+systématiquement le cumul: dans ce cas
+on peut utiliser un <em>trigger</em> qui se déclenche
+globalement pour la requête:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">trigger</span> <span class="n">CumulCapaciteGlobal</span>
+<span class="k">after</span> <span class="k">update</span> <span class="k">or</span> <span class="k">insert</span> <span class="k">or</span> <span class="k">delete</span> <span class="k">on</span> <span class="n">Salle</span>
+<span class="k">begin</span>
+  <span class="k">update</span> <span class="n">Cinema</span> <span class="k">C</span>
+  <span class="k">set</span> <span class="n">capacite</span> <span class="o">=</span> <span class="p">(</span><span class="k">select</span> <span class="k">sum</span> <span class="p">(</span><span class="n">capacite</span><span class="p">)</span>
+                  <span class="k">from</span>   <span class="n">Salle</span> <span class="n">S</span>
+                  <span class="k">where</span>  <span class="k">C</span><span class="p">.</span><span class="n">nom</span> <span class="o">=</span> <span class="n">S</span><span class="p">.</span><span class="n">nomCinema</span><span class="p">);</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Quiz<a class="headerlink" href="#id2" title="Lien permanent vers ce titre">¶</a></h3>
+<div class="reauthoring_embedded_quiz" id="prog3-1"><form class="reauthoring_embedded_quiz_questions"><p>Quand se déclenche un <em>trigger</em>?</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Périodiquement, en fonction d’une configuration</p></li>
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img> En fonction d’événements affectant la base de données</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  À la demande d’un utilisateur</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div><div class="reauthoring_embedded_quiz" id="prog3-2"><form class="reauthoring_embedded_quiz_questions"><p>Parmi les actions suivantes, laquelle ne peut pas être effectuée par un <em>trigger</em>?</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Comparer un nuplet avant et après une mise à jour</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img> Effectuer une insertion ou mise à jour dans une table autre que celle affectée
+par l’événement déclencheur</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Annuler l’effet d’une mise à jour ou d’une destruction</p></li>
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img>  Corriger une erreur de syntaxe dans la requête</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div><div class="reauthoring_embedded_quiz" id="prog3-3"><form class="reauthoring_embedded_quiz_questions"><p>À votre avis que se passe-t-il si un <em>trigger</em> duplique un nuplet à chaque
+fois que ce nuplet est lu?</p>
+<ol class="upperalpha eqt-answer-list simple">
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Tout curseur accédant à la table ne terminera jamais puisqu’à
+chaque lecture il y aura un nouvel nuplet à lire</p></li>
+<li><p><input type="radio" name="question" value="C" />  <img class="result_icon" style="display: none;"       src="_static/Correct_20x20.png"></img>  Si j’exécute plusieurs fois un curseur, la taille du résultat double à chaque fois</p></li>
+<li><p><input type="radio" name="question" value="I" />  <img class="result_icon" style="display: none;"       src="_static/Incorrect_20x20.png"></img>  Tout lecture entraîne une erreur puisque le résultat devient incohérent</p></li>
+</ol>
+</form><div class="reauthoring_embedded_quiz_buttons"><input class="reauthoring_quiz_button reauthoring-grade"        style="display:none;"        type="button" value="Vérifier" /><input class="reauthoring_quiz_button reauthoring-again"        style="display:none;"        type="button" value="Nouvel essai" /><input class="reauthoring_quiz_button reauthoring-solution"        style="display:none;"        type="button" value="Solution" />  <img class="correct_icon" style="opacity: 0;"       src="_static/Correct_20x20.png"></img>  <img class="incorrect_icon" style="opacity: 0;"       src="_static/Incorrect_20x20.png"></img><span class="reauthoring-embedded-answer"></span></div></div></div>
+</div>
+<div class="section" id="atelier-jdbc-optionnel">
+<h2>Atelier: JDBC (optionnel)<a class="headerlink" href="#atelier-jdbc-optionnel" title="Lien permanent vers ce titre">¶</a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Cet atelier propose une découverte de l’interface normalisée JDBC d’accès
+à une base relationnelle. C’est du Java: si vous ne connaissez (un peu) pas le langage
+et si vous ne souhaitez pas l’apprendre, contentez-vous de lire.</p>
+<p>Ceux qui sont éauipés sont encouragés à metre en pratique ce qui suit et à compléter les exercices
+proposés.</p>
+</div>
+<div class="admonition-supports-complementaires admonition">
+<p class="admonition-title">Supports complémentaires:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://sql.bdpedia.fr/files/mysql-connector-java-5.1.15-bin.jar">Le driver MySQL</a> Vous pouvez récupérer
+une version plus récentes sur le site d’Oracle ou de MySQL. Pour les <em>drivers</em> des autres SGBD, à vous de trouver,
+ils sont tous en accès libre.</p></li>
+<li><p><a class="reference external" href="http://sql.bdpedia.fr/files/ListeVoyageurs.java">Le programme de lecture des voyageurs</a></p></li>
+</ul>
+</div>
+<p>JDBC (acronyme qui signifie probablement « Java Database
+Connectivity » par analogie avec ODBC), est une API (<em>Application Programming Interface</em> =
+description d’une interface fonctionnelle)  Java qui permet de
+se connecter à une base de données, d’interroger cette base
+afin d’en extraire des données, ou effectuer des mises à jour.</p>
+<p>JDBC est complètement indépendant de tout SGBD: la même
+application peut être utilisée pour accéder
+à une base Oracle, Postgres, MySQL, etc. Conséquences: pas besoin d’apprendre
+une nouvelle API quand on change de SGBD,
+et réutilisation totale du code.</p>
+<p>La présentation qui suit ne couvre pas tous les
+aspects de JDBC. Vous trouverez de très nombreux tutoriels surt le Web,
+de bonne qualité dans l’ensemble.  Dans la suite
+de ce texte vous trouverez une description des principes
+de JDBC, et une introduction à ses fonctionnalités,
+essentiellement basée sur des exemples simples.</p>
+<div class="section" id="principes-de-jdbc">
+<h3>Principes de JDBC<a class="headerlink" href="#principes-de-jdbc" title="Lien permanent vers ce titre">¶</a></h3>
+<p>L’utilisation de JDBC se fait dans le cadre
+d’une application Java que nous appellerons <em>le client</em>. L’application
+communique avec le serveur du SGBD via le réseau. Je vous renvoie à
+la  <a class="reference internal" href="#plsql"><span class="std std-numref">Fig. 49</span></a> et aux explications qui l’accompagnent.</p>
+<p>Le dialogue avec la base distante se fait par l’intermédiaire d’une <em>connexion</em>,
+qui elle-même utilise les services
+d’un <em>driver</em>. Chaque SGBD propose son  <em>driver</em>: tous sont conformes à l’API JDBC,
+et chacun a la spécificité de savoir dialoguer avec le serveur dans  son protocole particulier.
+Pour se connecter a MySQL il faut le <em>driver</em> de MySQL, pour Postgres le <em>driver</em> de Postgres et ainsi
+de suite.  Ce n’est pas en contradiction avec la généricité
+du code Java. Tous les drivers ont la même interface et s’utilisent de la même façon.
+Pour passer d’un SGBD à un autre, notre code reste le même, il suffit d’utiliser
+de <em>driver</em> adapté.</p>
+<p>Quand une requête doit être exécutée, elle le fait par l’intermédiaire d’une <em>connexion</em>.
+Une connexion est un objet Java de la classe
+<em>Connection</em> qui est chargé de dialoguer
+avec une base de données. Pour créer un objet <code class="docutils literal notranslate"><span class="pre">Connection</span></code>, il faut disposer d’un droit
+d’accès (c’est une différence avec nos exemple PL/SQL: pour exécuter sur PL/SQL,il faut <em>déjà</em> être
+connecté au serveur).</p>
+<p>Dans ce qui suit, je suppose que le serveur est MySQL, en écoute sur le port 3306 de la machine <code class="docutils literal notranslate"><span class="pre">localhost</span></code>
+(la même que celle où s’exécute l’application donc). Le compte d’accès est le suivant:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">grant</span> <span class="k">all</span> <span class="k">privileges</span> <span class="k">on</span> <span class="n">Voyageurs</span><span class="p">.</span><span class="o">*</span> <span class="k">to</span> <span class="n">moi</span> <span class="n">identified</span> <span class="k">by</span> <span class="s1">&#39;motdepasse&#39;</span>
+</pre></div>
+</div>
+<p>Le <em>driver</em> est donc celui de MySQL. Vous vous faciliter les choses j’en ai mis un en téléchargement ci=dessus.
+Le fichier <em>jar</em> doit faire partie de ceux mentionnés par votre varible <code class="docutils literal notranslate"><span class="pre">CLASSPATH</span></code>. Je n’en dis
+pas plus: vous trouverez beaucoup de ressources sur le Web pour configurer votre environnement si vous avez des difficultés.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Si vous avez Postgres ou n’importe quel autre SGBD, le code doit fonctionner aussi,
+il faut juste installer le <em>driver</em> correspondant et modifier l’URL de connexion, voir ci-dessous.</p>
+</div>
+</div>
+<div class="section" id="premier-exemple">
+<h3>Premier exemple<a class="headerlink" href="#premier-exemple" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Voici un premier programme JDBC
+Il se connecte à la base, recherche l’ensemble des
+voyageurs, et  affiche les nom et prénom à l’écran.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Import de tous les packages JDBC</span>
+<span class="kn">import</span> <span class="nn">java.sql.*</span><span class="p">;</span>
+
+<span class="c1">// Une classe qui affiche les noms des voyageurs</span>
+<span class="kd">class</span> <span class="nc">ListeVoyageurs</span> <span class="p">{</span>
+   <span class="c1">// Méthode &quot;main&quot;, celle qui s&#39;exécute quand on lance le programme</span>
+   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[]</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">SQLException</span> <span class="p">{</span>
+      <span class="c1">// Paramètres de connexion</span>
+      <span class="n">String</span> <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;jdbc:mysql://localhost:3306/Voyageurs&quot;</span><span class="p">;</span>
+      <span class="n">String</span> <span class="n">utilisateur</span> <span class="o">=</span> <span class="s">&quot;moi&quot;</span><span class="p">;</span>
+      <span class="n">String</span> <span class="n">motdepasse</span> <span class="o">=</span> <span class="s">&quot;motdepasse&quot;</span><span class="p">;</span>
+
+      <span class="k">try</span> <span class="p">{</span>
+         <span class="c1">// Connection à la base</span>
+         <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">utilisateur</span><span class="p">,</span> <span class="n">motdepasse</span><span class="p">);</span>
+
+         <span class="c1">// Création d&#39;un Statement,autrement dit un curseur</span>
+         <span class="n">Statement</span> <span class="n">stmt</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="na">createStatement</span><span class="p">();</span>
+         <span class="c1">// Exécution de la requête qui ramène les voyageurs</span>
+         <span class="n">ResultSet</span> <span class="n">rset</span> <span class="o">=</span> <span class="n">stmt</span><span class="p">.</span><span class="na">executeQuery</span><span class="p">(</span><span class="s">&quot;select * from Voyageur&quot;</span><span class="p">);</span>
+
+         <span class="c1">// Affichage du résultat = parcours du curseur</span>
+         <span class="k">while</span> <span class="p">(</span><span class="n">rset</span><span class="p">.</span><span class="na">next</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">rset</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&quot;prénom&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="n">rset</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&quot;nom&quot;</span><span class="p">));</span>
+         <span class="p">}</span>
+         <span class="c1">// On libère proprement les ressources</span>
+         <span class="n">rset</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+         <span class="n">stmt</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+      <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+         <span class="c1">// Oups, quelque chose s&#39;est mal passé</span>
+         <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Problème quelque part !!!&quot;</span><span class="p">);</span>
+         <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="na">getMessage</span><span class="p">());</span>
+      <span class="p">}</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Les commentaires dans le programme vous disent à peu près tout ce qu’il faut savoir. Notez</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>les paramètres de connexion: l’URL est spécifique à MySQL, elle indique
+l’hôte (<code class="docutils literal notranslate"><span class="pre">localhost</span></code>), le port (3306) et la base.</p></li>
+<li><p>l’interrogation se fait classiquement par curseur, avec un <code class="docutils literal notranslate"><span class="pre">open</span></code> (<code class="docutils literal notranslate"><span class="pre">execute</span></code> en JDBC)
+et une série de <code class="docutils literal notranslate"><span class="pre">next()</span></code>. Enfin, on libère les ressources avec <code class="docutils literal notranslate"><span class="pre">close()</span></code> (qu’il faut appeler deux
+fois, ne me demandez pas pourquoi).</p></li>
+<li><p>les nuplets ramenés par <code class="docutils literal notranslate"><span class="pre">next()</span></code>  sont accessibles via l’interface de la classe <code class="docutils literal notranslate"><span class="pre">ResultSet</span></code>;
+pour accéder aux champs, il faut connaître leur nom et leur type (pour choisir entre <code class="docutils literal notranslate"><span class="pre">getString()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">getInt()</span></code>, etc..</p></li>
+</ul>
+</div></blockquote>
+<p>Voilà. Premier exercice: récupérer le code (lien en début de section) et compilez-le</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>javac ListeVoyageurs
+</pre></div>
+</div>
+<p>Vous pouvez alors l’exécuter</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java ListeVoyageurs
+</pre></div>
+</div>
+<p>Et vous devriez obtenir la liste des voyageurs. Sinon, il faut chercher ce qui cloche.</p>
+</div>
+<div class="section" id="exercices">
+<h3>Exercices<a class="headerlink" href="#exercices" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Voici une suggestion d’exercices pour améliorer notre premier exemple et découvrir JDBC.</p>
+</div>
+<div class="section" id="requetes-preparees">
+<h3>Requêtes préparées<a class="headerlink" href="#requetes-preparees" title="Lien permanent vers ce titre">¶</a></h3>
+<p>La classe <code class="docutils literal notranslate"><span class="pre">PreparedStatement</span></code> permet de soumettre des requêtes dites « préparées » dans lesquelles
+on peut introduire des paramètres.</p>
+<p>Etudiez cette classe (faites une requête Google pour trouver une description sur le Web) et écrivez
+une version du programme de lecture qui prend en paramètre la région des voyageurs.</p>
+<p>Pour tester les mises à jour, vous pouvez également écrire un programme qui insère un nouveau
+voyageur. Pour bien faire, il faudrait</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>vérifier que le voyageur n’existe pas, avant d’effectuer l’insertion</p></li>
+<li><p>trouver une valeur d’identifiant non utilisée (astuce: cherchez l’identifiant maximal, et ajoutez 1)</p></li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Idéalement, les paramètres seraient fournis au programme au moment de l’appel.</p>
+</div>
+</div>
+<div class="section" id="l-interface-resultset">
+<h3>L’interface <code class="docutils literal notranslate"><span class="pre">ResultSet</span></code><a class="headerlink" href="#l-interface-resultset" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Avec <code class="docutils literal notranslate"><span class="pre">ResultSet</span></code> vous pouvez obtenir des métadonnées sur le résultat d’une requête: le nombre
+de nuplets, et les noms et types des attributs.</p>
+<p>Modifiez le programme pour afficher en entête les noms des champs. En utilisant des tabulations
+vous devriez pouvoir obtenir un joli affichage, bien aligné.</p>
+<p>Vous devriez finalement être capable d’obtenir un programme auquel on passe n’importe quelle requête SQL, qui
+l’exécute et qui affiche le résultat avec les noms des attributs en entête. Autrement dit
+l’équivalent de l’interface que vous avez sans doute utilisée pour tester vos requêtes SQL.
+À vous de jouer.</p>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+            <div>        
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Licence Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">
+  Ce cours</span> de <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.bdpedia.fr" property="cc:attributionName" rel="cc:attributionURL">Philippe Rigaux</a> est mis à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">licence Creative Commons Attribution - Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 4.0 International</a>.
+</div>
+        <hr/>
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relationnel.html">Le modèle relationnel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calcul.html">SQL, langage déclaratif</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alg.html">SQL, langage algébrique</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sql.html">SQL, récapitulatif</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conception.html">Conception d’une base de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">Schémas relationnel</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Procédures et déclencheurs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#s1-procedures-stockees">S1. Procédures stockées</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#role-et-fonctionnement-des-procedures-stockees">Rôle et fonctionnement des procédures stockées</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#introduction-a-pl-sql">Introduction à PL/SQL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syntaxe-de-pl-sql">Syntaxe de PL/SQL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#quiz">Quiz</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#s2-les-curseurs">S2. Les curseurs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#declaration-d-un-curseur">Déclaration d’un curseur</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#execution-d-un-curseur">Exécution d’un curseur</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#les-curseurs-pl-sql">Les curseurs PL/SQL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Quiz</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#s3-les-declencheurs">S3. Les déclencheurs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#principes-des-triggers">Principes des <em>triggers</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syntaxe">Syntaxe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#quelques-exemples">Quelques exemples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Quiz</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#atelier-jdbc-optionnel">Atelier: JDBC (optionnel)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#principes-de-jdbc">Principes de JDBC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#premier-exemple">Premier exemple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#exercices">Exercices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#requetes-preparees">Requêtes préparées</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#l-interface-resultset">L’interface <code class="docutils literal notranslate"><span class="pre">ResultSet</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transactions.html">Transactions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="etudecas.html">Une étude de cas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annales.html">Annales des examens</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Recherche</h3>
+          <form class="search" action="search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+      Saisissez un ou plusieurs mots-clés.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="schemas.html" title="Schémas relationnel"
+             >précédent</a> |
+          <a href="transactions.html" title="Transactions"
+             >suivant</a> |
+          <a href="genindex.html" title="Index général"
+             >index</a>
+        </div>
+
+        <div class="right">
+        <a href="index.html">Procédures et déclencheurs</a><br/>
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2002-2022, Philippe Rigaux.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

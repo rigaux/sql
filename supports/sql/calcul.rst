@@ -1923,6 +1923,104 @@ Exercices
         
          Le résultat est vide si l'affirmation est vraie. 
 
+
+.. _Ex-calcul-3bis:
+.. admonition:: Exercice `Ex-calcul-3bis`_: aidons les Dupondt à bien raisonner
+
+   Supposons les  prédicats suivants :
+   
+   - :math:`\rm{Competence}  (p,c)` indique que la personne :math:`p` a la compétence :math:`c`
+   - :math:`\rm{OffreEmploi} (o,c)` indique que l'organisation :math:`o` offre un emploi pour la compétence :math:`c`
+   - :math:`\rm{FaitLaffaire} (p,o)` indique que la personne :math:`p` fait l'affaire
+     pour un emploi dans l'organisation :math:`o`.
+
+  On suppose que la règle :math:`r` suivante est toujours vraie :
+
+  ..  math::
+  
+       \rm{OffreEmploi} (o,c) \land \rm{Competence} (p,c) \to \rm{FaitLaffaire} (p,o)
+
+  Voici une petite mise en application des règles de raisonnement que nous avons abordées.
+  Si vous n'arrivez pas à exprimer une démonstration mathématique, essayez au moins de
+  formuler des réponses intuitives (mais claires).
+ 
+   - Reformulez la règle :math:`r` sans implication
+   - Dans la figure ci-dessous, les Dupondt peuvent-ils considérer de manière
+     certaine que le capitaine Haddock les traite de clowns? Formulez
+     la phrase du capitaine selon les prédicats logiques ci-dessus, et 
+     vérifiez si on peut en déduire que les Dupondt ont la compétence 'clown'.
+
+      .. _haddock-cirque1:
+      .. figure:: ./figures-sql/haddock-cirque1.jpeg
+            :width: 80%
+            :align: center
+   
+            La première expression du capitaine Haddock, apparemment insultante pour les Dupondt
+
+  À tort ou a raison, les Dupondt se sentent offensés. Le capitaine 
+  Haddock propose une reformulation (figure ci-dessous).
+
+    .. _haddock-cirque2:
+    .. figure:: ./figures-sql/haddock-cirque2.jpeg
+          :width: 60%
+          :align: center
+   
+          Les excuses (?)  du capitaine Haddock
+
+  Cette reformulation revient-elle vraiment
+  à dire que les Dupondt *ne sont pas* des clowns?
+  
+  Quelle serait la bonne formulation d'une phrase qui indiquerait
+  explicitement que le capitaine ne considère pas les Dupondt comme des clowns?
+     
+  .. ifconfig:: calcul in ('public')
+
+      .. admonition:: Correction
+
+		Correction
+		
+		  - :math:`p \to q` est équivalent à :math:`\neg p \lor q`. Donc :math:`r` est équivalent à 
+		  
+		   ..  math::
+ 
+			    r \equiv \neg \rm{OffreEmploi} (o,c) \lor \neg \rm{Competence} (p,c) \lor \rm{FaitLaffaire} (p,o)
+			  
+		  - Le capitaine énonce la conjonction de deux faits: 
+
+		   .. math::
+ 
+			    \rm{OffreEmploi} (\rm{'Hipparque'}, \rm{'clown'}) \land \rm{FaitLaffaire} (\rm{'Dupondt'}, \rm{'Hipparque'})		  
+			  
+		   Si :math:`\rm{FaitLaffaire} (\rm{'Dupondt'}, \rm{'Hipparque'})` est vrai,
+		   alors :math:`\neg \rm{Competence} (p,c)` peut être vrai ou 
+		   faux sans remettre en question la vérité de la règle :math:`r`.  Rien dans notre
+		   modèle logique ne permet donc d'en déduire 
+		   que les Dupondt sont des clowns ! Il faudrait pour cela que notre règle 
+		   :math:`r` soit une *équivalence*, pas une *implication*. 
+    
+		  - Cette fois le capitaine énonce les faits  
+
+		   ..  math::
+ 
+			    \neg \rm{OffreEmploi} (\rm{'Hipparque'}, \rm{'clown'}) \land \neg \rm{FaitLaffaire} (\rm{'Dupondt'}, \rm{'Hipparque'})
+			  
+		   Ici encore, :math:`\neg \rm{Competence} (p,c)` peut être vrai ou 
+		   faux sans remettre en question la vérité de la règle :math:`r`. Les Dupondt pourraient
+		   être des clowns !
+
+		  - Regardons notre règle formulée sans implication. Pour
+		    que :math:`\neg \rm{Competence} (\rm{'Dupondt'},\rm{'clown'}))` soit vrai sans ambiguité
+		    (donc les Dupondt ne sont pas des clowns),
+		    il faut que :math:`\neg \rm{OffreEmploi}(\rm{'Hipparque'},\rm{'clown'})` soit faux et 
+		    :math:`\rm{FaitLaffaire} (\rm{'Dupondt'},\rm{'Hipparque'})` soit faux également.
+
+		   ..  math::
+ 
+			    \rm{OffreEmploi}(\rm{'Hipparque'},\rm{'clown'}) \land \neg \rm{FaitLaffaire} (\rm{'Dupondt'},\rm{'Hipparque'})
+			  
+		   Le capitaine devrait dire : ``Le cirque Hipparque a besoin de deux clowns,
+		   mais vous ne faites pas l'affaire''. CQFD. 
+
 .. _Ex-calcul-4:
 .. admonition:: Exercice `Ex-calcul-4`_: des équivalences
 
@@ -1970,7 +2068,7 @@ Exercices
     - Quelle formule exprime la condition "Soit :math:`x`  est propriétaire, soit :math:`x` est auteur mais pas les deux"
       (pour une même œuvre :math:`o`)
     - Quelle est la négation de l'énoncé: "Soit :math:`x` est propriétaire, soit :math:`x` est auteur" (idem)
-    - Comment exprimer l'énoncé suivant sans implication\,: "Si :math:`x` est auteur, alors :math:`x` n'est pas propriétaire"
+    - Comment exprimer l'énoncé suivant sans implication : "Si :math:`x` est auteur, alors :math:`x` n'est pas propriétaire"
       (idem; utiliser uniquement les connecteurs de SQL: and, or et not).
 
     .. ifconfig:: calcul in ('public')
@@ -2067,7 +2165,7 @@ Exercices
         from   Logement as l, Activité as a, Séjour as s  
         where  l.code = a.codeLogement
        
-    Qu'obtient-on dans les trois cas suivants\,:
+    Qu'obtient-on dans les trois cas suivants :
     
           - la table ``Séjour`` contient 1 nuplet,
           - la table ``Séjour`` contient 100 000 nuplets,
@@ -2104,7 +2202,7 @@ Exercices
     veut calculer l'intersection de ``R`` avec l'union de ``S``
     et ``T``, soit :math:`R \cap (S \cup T)` 
    
-      - La requête suivante est-elle correcte\,? Expliquez
+      - La requête suivante est-elle correcte ? Expliquez
         pourquoi.
 
         .. code-block:: sql

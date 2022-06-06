@@ -77,7 +77,7 @@ def setup(app):
     app.add_config_value('soloperateur', '', True)
 
 relationnel='private'
-calcul='private'
+calcul='public'
 calculTP1='private'
 calculTP2='private'
 algebre='private'

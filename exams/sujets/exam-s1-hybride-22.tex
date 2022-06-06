@@ -69,7 +69,7 @@ create table Voisins (idDpt1 int not null,
 \end{minted}
   
     \item Il existe une symétrie dans la notion de voisin\,: si A
-    est voisin avec B, B est voisin avec A. Pour éviter le doubblon
+    est voisin avec B, B est voisin avec A. Pour éviter le doublon
    de représentation (voisin(A, B) et voisin(B,A)), on décide 
    de n'accepter que le premier, d'où la clause \texttt{check} 
      \item 
@@ -97,6 +97,8 @@ On définit algébriquement les deux relations suivantes:
 \begin{enumerate}
   \item Comment caractériseriez-vous le contenu  de $V3$\,?
     \item Donnez la commande SQL de création de la vue V3.
+    \item Soit le département $d_1$  de code 
+      $c_1$. Quelle requête algébrique sur $V3$ donne les codes de \emph{tous} ses voisins. 
 \end{enumerate}
 
 
@@ -118,6 +120,15 @@ union
 select codeDpt2 as codeDpt1, codeDpt1 as codeDpt2
 from Voisins
 \end{minted}
+
+   \item Avec V3, on n'a plus besoin de se soucier de l'ordre des codes de département.
+     On peut donc écrire soit\,:
+   
+   $$\pi_{codeDpt2} (\sigma_{codeDpt1=c_1} (\rm{Voisins}))$$   
+   ou
+   $$\pi_{codeDpt1} (\sigma_{codeDpt2=c_1} (\rm{Voisins}))$$
+   qui donneront le même résultat.
+
 \end{enumerate}
 
 \end{solution}
@@ -289,8 +300,8 @@ renvoie \texttt{null}).
 
 Supposons les  prédicats suivants\,:
 \begin{itemize}
-  \item $Competence (p,c)$ indique que la personne $p$ a la compétence $c$
-  \item $OffreEmploi (o,c)$ indique que l'organisation $o$ offre un emploi pour la compétence $c$
+  \item $\rm{Competence}  (p,c)$ indique que la personne $p$ a la compétence $c$
+  \item $\rm{OffreEmploi} (o,c)$ indique que l'organisation $o$ offre un emploi pour la compétence $c$
   \item $\rm{FaitLaffaire} (p,o)$ indique que la personne $p$ fait l'affaire
         pour un emploi dans l'organisation $o$.
 \end{itemize}
@@ -308,12 +319,12 @@ formuler des réponses intuitives (mais claires).
      la phrase du capitaine selon les prédicats logiques ci-dessus, et 
      vérifiez si on peut en déduire que les Dupondt ont la compétence 'clown'.
       
-\centerline{\includegraphics[scale=2]{haddock-cirque1.jpeg}}
+\centerline{\includegraphics[scale=2]{../supports/sql/figures-sql/haddock-cirque1.jpeg}}
 
 \item À tort ou a raison, les Dupondt se sentent offensés. Le capitaine 
 Haddock propose une reformulation (figure ci-dessous).
 
-\centerline{\includegraphics[scale=2]{haddock-cirque2.jpeg}}
+\centerline{\includegraphics[scale=2]{../supports/sql/figures-sql/haddock-cirque2.jpeg}}
 
    Cette reformulation revient-elle vraiment
    à dire que les Dupondt \emph{ne sont pas} des clowns\,?
