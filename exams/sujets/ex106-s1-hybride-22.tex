@@ -19,7 +19,7 @@ On suppose qu'on peut placer  2 enregistrements par bloc.
 
 \begin{enumerate}
   \item On veut construire un index non-dense sur le premier attribut.
-    Que faut-il faire au préalable\,? Donnez les différents niveeaux de l'index.
+    Que faut-il faire au préalable\,? Donnez les différents niveaux de l'index.
  
   \item Construire un arbre B sur le second attribut, 
      en supposant 2 enregistrements et trois pointeurs par bloc \emph{au maximum}.
@@ -198,7 +198,7 @@ Quelle taille peut-on estimer pour $R \Join S$\,?
 On considère le système d'information
 d'un institut de sondage, avec les tables relationnelles 
 suivantes (les attributs ou combinaisons d'attributs qui forment 
-une clé unique sont \underline{soulignés}).
+une clé unique sont \textbf{en gras}).
 
 \begin{itemize}
   \item  Personne (\textbf{numPers}, nom, sexe, numCat)
@@ -213,16 +213,15 @@ $$H : r_1[x] r_2[y] w_1[x] r_3[y]  r_2[x] w_3[y] r_2[z] C_1 r_3[z] w_2[z] C_2 w_
 
 \begin{enumerate}
   \item Parmi les programmes qui s'exécutent dans le système, 
-il y a \texttt{ModifierAvis(nomPers, numQuestion, avis\_donné,
-nouvel\_avis)},  qui modifie 
-la réponse \textit{réponse\_donnée} par
+il y a \texttt{ModifierAvis(nomPers, numQuestion, nouvelle\_réponse)},  qui modifie 
+la réponse donnée par
 la personne \texttt{nomPers} à  la question \texttt{numQuestion} 
-en \textit{nouvelle\_réponse}. 
+en \texttt{nouvelle\_réponse}. 
 
 Si
 les enregistrements de $H$ sont des nuplets des relations de la base 
 de données, montrez (en justifiant votre réponse)
-quelles transactions de $H$ pourraient provenir de \textit{ModifierAvis}.
+quelles transactions de $H$ pourraient provenir de \texttt{ModifierAvis}.
 
 
 

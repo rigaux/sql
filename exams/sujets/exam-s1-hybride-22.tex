@@ -1,6 +1,6 @@
 \enteteExam{NFP 107 -- Systèmes de gestion de bases de données - Durée 2h30}%
 {Examen première session 15 juin 2022}%
-{Examen sur table -- Seuls documents autorisés\,: 10 pages maximum de notes manuscrites}%
+{Examen sur table -- Seuls documents autorisés\,: 10 pages maximum de notes manuscrites.}%
 
 On met en place un système d'information sur les structures administratives française\,: 
 régions, départements, préfectures 
@@ -23,7 +23,7 @@ Régions et départements sont présidés par une personne.
 
 Deux départements sont voisins s'ils ont une frontière commune.
 
-\subsection*{Compréhension du schéma (6 pts)}
+\section{Compréhension du schéma (6 pts)}
 
 \begin{enumerate}
  \item Donner les commandes de création de table pour \texttt{Département} et \texttt{Voisins}.
@@ -53,6 +53,12 @@ check (codeDpt1  < codeDpt2)
    et que devient le schéma relationnel\,?
    
 \end{enumerate}
+
+Dans toute la suite de l'examen, on travaille sur 
+le schéma donné dans l'énoncé, et en supposant que la contrainte
+sur l'ordre des codes de département est respectée dans la table \texttt{Voisins}
+(donc,
+\texttt{codeDpt1  $<$ codeDpt2}).
 
 \begin{solution}
  \begin{enumerate}
@@ -84,9 +90,9 @@ create table Voisins (idDpt1 int not null,
 
 
 
-\subsection*{Algèbre et vues (3 pts)}
+\section{Algèbre et vues (4 pts)}
 
-On définit algébriquement les deux relations suivantes:
+On définit algébriquement les relations suivantes:
 
 \begin{itemize}
   \item $V1 := Voisins$
@@ -95,16 +101,20 @@ On définit algébriquement les deux relations suivantes:
 \end{itemize}
 
 \begin{enumerate}
+  \item Quel est le résultat de $V1 \cap V2$\,?
   \item Comment caractériseriez-vous le contenu  de $V3$\,?
-    \item Donnez la commande SQL de création de la vue V3.
+    \item Donnez la commande SQL de création de la vue $V3$.
     \item Soit le département $d_1$  de code 
-      $c_1$. Quelle requête algébrique sur $V3$ donne les codes de \emph{tous} ses voisins. 
+      $c_1$. Quelle requête algébrique sur $V3$ donne les codes de \emph{tous} ses voisins
+      (expliquer). 
 \end{enumerate}
 
 
 \begin{solution}
 
-\begin{enumerate}
+\begin{enumerate} 
+  \item Le résultat est vide\,!
+
   \item Dans $V2$ on inverse la relation entre les codes de département. Donc, dans V2,
      \texttt{codeDpt2  $<$ codeDpt1}). Du coup, dans V3, chaque relation de voisinage
      entre deux départements est représentée dans les deux sens.
@@ -134,11 +144,9 @@ from Voisins
 \end{solution}
 
 
-\subsection*{SQL (8 pts)}
+\section{SQL (8 pts)}
 
-Sur le schéma donné dans l'énoncé, et en supposant que la contrainte
-sur l'ordre des codes de département est respecté (donc,
-\texttt{codeDpt1  $<$ codeDpt2}), exprimez en SQL les requêtes suivantes\,:
+Exprimez en SQL les requêtes suivantes\,:
 
 \begin{enumerate}
   \item Qui préside (prénom, nom) la région contenant le département 'Cantal'\,?
@@ -189,6 +197,7 @@ and r.idPrésident = p.idPersonne
 select r.préfecture as ville, r.intitulé, d.noms
 from  Région as r, Département as d
 where r.préfecture = d.préfecture
+and d.population > 10000
 \end{minted}
 
 
@@ -296,7 +305,7 @@ renvoie \texttt{null}).
 
 
 
-\subsection*{Un peu de logique (2 pts \textbf{+ 2 pts bonus pour les deux dernières questions})}
+\section{Un peu de logique (2 pts \textbf{+ 2 pts bonus pour les deux dernières questions})}
 
 Supposons les  prédicats suivants\,:
 \begin{itemize}

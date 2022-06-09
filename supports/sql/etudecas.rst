@@ -875,7 +875,7 @@ Quiz
 
 .. eqt:: cas4-2
 
-    L'exécution d'une requête par le client a-t-ellepour effet  que tous les nuplets
+    L'exécution d'une requête par le client a-t-elle  pour effet  que tous les nuplets
     du résultat sont transférés depuis le serveur?
     
     A) :eqt:`I` Oui
