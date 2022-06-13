@@ -903,7 +903,7 @@ une sélection doit s'apppliquer directement à une table.
 
 .. math::
 
-     \sigma_{A=C \land C > B \land E =F} (T_1 \times T_2)
+     \sigma_{A=C \land A=D \land E =F \land C > B } (T_1 \times T_2)
 
 
 .. ifconfig:: correctionoeuvre in ('public')
@@ -912,7 +912,7 @@ une sélection doit s'apppliquer directement à une table.
     
         .. math::
         
-             \sigma_{A=C \land C > B} (T_1) \Join \sigma_{A=C \land E > F}(T_2)$$
+             \sigma_{A=C \land C > B} (T_1) \Join_{A=D} \sigma_{E = F}(T_2)
 
 Transactions (2 points)
 =======================
@@ -1072,7 +1072,7 @@ donné dans l'énoncé de l'examen.**
 
 		.. code-block:: sql
 
-			select nom, c.prenom
+			select c1.nom as nom1, c1.prenom as prénom1,  c2.nom as nom2 , c2.prenom as prénom2 
 			from Client as c1, Souscription as s1,
 			      Client as c2, Souscription as s2
 			where c1.id = s1.idClient,
@@ -1213,7 +1213,7 @@ Que renvoie la requête suivante ?
 .. code-block:: sql 
 
 	select c.nom, c.prénom, f.nom
-	from (Client as c outer join (Souscription as s join Forfait as f
+	from (Client as c left outer join (Souscription as s join Forfait as f
                                      on s.idForfait=f.id)
             on c.id = s.idClient
 	where ville= 'Nantes'
