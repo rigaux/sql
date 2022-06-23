@@ -1,10 +1,9 @@
 \enteteExam{NFE106 -- Administration de bases de données}%
 {Examen 22 juin 2022 -- session 1 -- 3h}%
-{Examen sur table -- Seuls documents autorisés\,: 10 pages maximum de notes manuscrites\,; 
-calculettes autorisées}%
+{Examen à distance -- Copie en un seul PDF à rendre dans l'espace Moodle}%
 
 
-\section{Indexation et tri (6 points)}
+\section{Indexation et tri (5 points)}
 
 Voici le contenu d'un fichier \texttt{animaux}\,:
 
@@ -89,7 +88,7 @@ Et finalement il reste \texttt{(anguille, saumon)} à la racine, soit 4 niveaux.
 \end{enumerate}
 \end{solution}
 
-\section{Jointures et optimisation (8 points)}
+\section{Jointures et optimisation (9 points)}
 
 On considère trois relations 
 $R(\textbf{a},b,d)$, $S(\textbf{c},d,e)$ et $T(\textbf{e},f)$ dont les clés
@@ -106,7 +105,7 @@ Les jointures se font sur les attributs de même nom.
 
 \begin{enumerate}
   \item Quelle est le nombre maximal
-    de enregistrements de $S \Join T$ (indiquez également la condition 
+    d'enregistrements dans $S \Join T$ (indiquez également la condition 
      pour que ce nombre maximal soit atteint)\,? Quelle est la clé de la
     relation obtenue\,?
 
@@ -115,7 +114,7 @@ Les jointures se font sur les attributs de même nom.
   \item Décrire le fonctionnement de l'algorithme par boucles 
    imbriquées pour calculer $S \Join T$, en exploitant au mieux la
    mémoire disponible. 
-   Indiquez le coût en entrées/sorties pour cet algorithme?
+   Indiquez le coût en entrées/sorties pour cet algorithme.
 
   \item Même question l'algorithme par boucles 
    imbriquées \emph{indexées}.
@@ -125,13 +124,13 @@ Les jointures se font sur les attributs de même nom.
     évaluer son coût (nombre de blocs lus).
     
     \item  Une application a inséré des enregistrements dans $S$
-qui contient maintenant 5~000 enregistrements. Le
+qui en contient maintenant 5~000. Le
 SGBD gère un histogramme qui indique que la sélectivité
 de l'attribut $d$ est 5 (autrement dit, une sélection 
 sur $R$ ou $S$ pour une valeur de $d$ ramène 5\% des enregistrements).
 Quelle taille peut-on estimer pour $R \Join S$\,?
 
-  \item (\textbf{Question bonus, pour 2 points}) Je n'ai toujours que 20 blocs en mémoire.
+  \item Je n'ai toujours que 20 blocs en mémoire.
   Décrire l'algorithme de jointure par hachage pour $R \Join S$ 
   et évaluer son coût.
 \end{enumerate}
@@ -140,7 +139,8 @@ Quelle taille peut-on estimer pour $R \Join S$\,?
  \begin{enumerate}
    \item Il y a au plus 20 enregistrements, et il faut pour l'atteindre
        que la clé étrangère soit \texttt{not null},
-       et le respect de l'intégrité référentielle de $S$ vers $T$.
+       et le respect de l'intégrité référentielle de $S$ vers $T$. La clé
+       est $c$ (il y a dépendance fonctionnelle de $c$  vers $e$).
 
   \item Dans le pire des cas il y a $200~000 \times 20$ enregistrements
         (s'il y a une seule valeur pour $d$).
@@ -181,10 +181,10 @@ Quelle taille peut-on estimer pour $R \Join S$\,?
    \item Pour chaque tuple de $R$, on trouve $5000 \times 0,05 = 250$
     enregistrements dans $S$: 50 M de enregistrements au final.
 
-   \item Jointure par hachage\,:je hache $S$ en 25 fragments de 
-   200 enresgistremets chacune (20 blocs en mémoire). Ensuite je hache $R$ en 25
+   \item Jointure par hachage\,: je hache $S$ en 25 fragments de 
+   200 enregistrements chacune (20 blocs en mémoire). Ensuite je hache $R$ en 25
    fragments également (leur taille m'importe peu). Puis je fais la jointure
-   entre chaque paire de fragmentss. Coût =
+   entre chaque paire de fragmentss. Coût (très 	pproximatif) =
    $3 \times (|S| + |R|) = 3 \times (20\,000 + 500) = 61\,500$.
  
  \end{enumerate}
@@ -256,7 +256,7 @@ les conflits et en construisant le graphe de sérialisation.
    lue par $r_2[x]$ n'existera plus et $T_2$  risque de 
    valider un état incohérent.
 
-   \item $r_1[x] r_2[y] w_1[x] r_3[y] (T_2\, attente sur r_2[x]) (T_3\ attente sur w_3[y])
+   \item $r_1[x] r_2[y] w_1[x] r_3[y] (T_2\,\ \rm{attente\ sur }\ r_2[x]) (T_3\ \rm{\ attente\ sur\ }w_3[y])
       C_1 r_2[x] r_2[z] w_2[z] C_2 w_3[y] r_3[z] w_3[z] C_3$
 
    \item Avec l'algo de versionnement, on rejette $w_3[z]$ 

@@ -444,18 +444,289 @@ Questions
 
         .. admonition:: Correction
 
-            Réponses:
-            
-              -  Sur x :  aucun conflit
-              - Sur y :  :math:`w_1[y] r_3[y]`, :math:`w_1[y] w_3[y]`, :math:`r_3[y] w_2[y]`, 
-                :math:`w_1[y] w_2[y]` et :math:`w_3[y] w_2[y]`
-              - Sur z :  :math:`r_1[z] w_2[z]`,  :math:`r_1[z] w_3[z]`,:math:`w_3[z] w_2[z]`
+			- Réponses:
+			
+			   -  Sur x :  aucun conflit
+			   - Sur y :  :math:`w_1[y] r_3[y]`, :math:`w_1[y] w_3[y]`, :math:`r_3[y] w_2[y]`, 
+			     :math:`w_1[y] w_2[y]` et :math:`w_3[y] w_2[y]`
+			   - Sur z :  :math:`r_1[z] w_2[z]`,  :math:`r_1[z] w_3[z]`, :math:`w_3[z] w_2[z]`
 
-            :math:`T_1 \rightarrow T_3, T_3 \rightarrow T_2, T_1 \rightarrow T_2`. 
-            Il n'y a pas de cycle, dont H est *sérialisable*.
+			- :math:`T_1 \rightarrow T_3, T_3 \rightarrow T_2, T_1 \rightarrow T_2`. 
+			  Il n'y a pas de cycle, dont H est *sérialisable*.
+			- Exécution finale:
+			
+			  .. math::
+			    
+			      H' =  r_2[x] r_3[x] w_1[y] r_1[z] c_1 r_3[y] w_3[y] w_3[z] c_3 w_2[y] w_2[z] c_2
+			- Si on ne pose que des verrous exclusifs (par exemple avec la clause ``for update``), 
+			  :math:`r_3[x]` (donc :math:`T_3`) est bloqué par  :math:`T_2` qui a effectué :math:`r_2[x]`.
+			  :math:`T_3` doit attendre la fin des deux autres transactions pour reprendre.
 
-            Exécution finale:
-             
-            .. math::
+****************
+Examen juin 2022
+****************
+
+Stockage et indexation (6 points)
+=================================
+
+Voici le contenu d'un fichier  ``animaux``:
+
+.. code-block:: text
+
+	(jaguar, 17), (chameau, 22), (gnou, 1), (girafe, 13), (chat, 3),
+	(lion, 8), (dauphin, 40), (zèbre, 11), (hamster, 6), (hyène,9),
+	(licorne, 2), (babouin, 12), (piranha,55), (saumon, 82), (bar,44), 
+	(anguille, 43), (gorille,98), (tigre,76), (requin, 56), (escargot,45).
+
+
+On suppose que l'on peut placer  2 enregistrements par bloc. 
+
+ - On veut construire un index non-dense sur le premier attribut.
+   Que faut-il faire au préalable ? Donnez les différents niveaux de l'index.
+ 
+ - Construire un arbre B sur le second attribut, 
+   en supposant 2 enregistrements et trois pointeurs par bloc *au maximum*.
+
+ - On dispose des deux index ci-dessus. Quel est le 
+   nombre d'entrées/sorties *dans le pire des cas*
+   pour la recherche des animaux dont le nom commence par un 'g',
+   et pour la recherche des animaux dont l'identifiant est compris
+   entre 40 et 50 (prendre en compte les accès à l'index *et*
+   au fichier).
+
+ - On veut trier ce fichier (tel qu'il est donné dans l'énoncé)
+   avec seulement 3 blocs, toujours
+   en supposant qu'on peut placer deux enregistrements par bloc.
+   Décrivez le déroulement de l'algorithme de tri-fusion, 
+   et donnez le nombre total d'entrées/sorties, sans compter
+   l'écriture finale du fichier trié. 
+
+
+.. ifconfig:: annales_2022 in ('public')
+
+    .. admonition:: Correction
+ 
+ 
+		- Il faut d'abord trier le fichier:
+		
+		  .. code-block:: text
+
+				(anguille, 43),  (bar, 44), (babouin, 12), (chameau, 22),  
+				(chat, 3), (dauphin, 40),  (escargot,44),
+				(girafe, 13), (gnou, 1),  (gorille,98), 
+				(hamster, 6), (hyène,9), (jaguar, 17),  
+				(licorne, 2),  (lion, 8),   (piranha,55), (saumon, 82),  (requin, 56),
+				(tigre,76), (zèbre, 11),
+
+		  Ensuite on groupe par 2 et on crée le premier niveau d'index:
+
+		  .. code-block:: text
+		  
+			anguille -- babouin -- chat -- escargot -- gnou -- hasmter --
+			jaguar -- lion -- saumon -- tigre
+
+		  Encore une fois:
+
+		  .. code-block:: text
+		  
+				anguille --  chat --  gnou -- jaguar -- saumon 
+	
+		  Puis
+
+		  .. code-block:: text
+		  
+				anguille --   gnou -- saumon 
+
+		  Et finalement il reste ``(anguille, saumon)`` à la racine, soit 4 niveaux.
+
+		- Standard.
+
+		- La première recherche doit ramener trois enregistrements. 
+		  Dans le cas de l'index non-dense, le fichier est trié.
+		  On peut donc parcourir séquentiellement à partir du
+		  premier 'g'. On lit donc 4 blocs dans l'index pour arriver aux feuilles, 
+		  puis 2 blocs en parcours séquentiel.
+		  
+		  Les enregistrements ne sont pas ordonnés pour l'arbre B. Il faut donc, après le
+		  parcours d'index, parcourir les feuilles pour les valeurs de clé entre 40 et 50,
+		  avec une lecture de bloc (au pire) pour chacune.
+
+		- On utilise 2 blocs pour l'entrée, un pour la sortie. Dans
+		  les 2 blocs on place 4 enregistrements. Il y a 20 animaux
+		  donc (1) 5 fragments initiaux de 2 blocs, puis (2)
+		  2 fragments de 4 blocs, et
+		  un  fragment de 2 blocs, puis (3) un fragment de 8 blocs et un  de deux.
+		  Et on termine par une lecture. Donc coût = :math:`3 \times 2 \times 10 + 10 = 70`.
+		  Plus subtil: on peut utiliser 3 blocs pour la phase de tri, et diviser la mémoire
+		  en 2+1 seulement pour la phase de fusion.
+
+
+Jointures et optimisation (9 points)
+====================================
+
+On considère trois relations 
+:math:`R(\textbf{a},b,d)`, :math:`S(\textbf{c},d,e)` et :math:`T(\textbf{e},f)` dont les clés
+primaires sont respectivement :math:`a`, :math:`c` et :math:`e`.
+:math:`R` contient 200 000 enregistrements, :math:`S`  20 enregistrements et :math:`T` 500 enregistrements. Des index
+sont créés sur les clés primaires, et on suppose que
+pour chaque relation, y compris celles qui sont calculées par une jointure,
+on stocke 10 enregistrements par bloc.
+
+On suppose que tous les index sont toujours en mémoire principale
+(donc pas d'entrée/sortie pour les accès aux index).
+On dispose de 20 blocs en mémoire pour traiter les jointures.
+Les jointures se font sur les attributs de même nom.
+
+ - Quel est le nombre maximal
+   d'enregistrements dans :math:`S \Join T` (indiquez également la condition 
+   pour que ce nombre maximal soit atteint) ? Quelle est la clé de la
+   relation obtenue ?
+
+ - Mêmes questions pour :math:`R \Join S \Join T`.
+
+ - Décrire le fonctionnement de l'algorithme par boucles 
+   imbriquées pour calculer :math:`S \Join T`, en exploitant au mieux la
+   mémoire disponible. 
+   Indiquez le coût en entrées/sorties pour cet algorithme.
+
+ - Même question l'algorithme par boucles 
+   imbriquées *indexées*.
    
-                H' =  r_2[x] r_3[x] w_1[y] r_1[z] c_1 r_3[y] w_3[y] w_3[z] c_3 w_2[y] w_2[z] c_2
+ - Décrire un plan d'exécution  
+   pour calculer :math:`R \Join S \Join T`\ et 
+   évaluer son coût (nombre de blocs lus).
+    
+ - Une application a inséré des enregistrements dans :math:`S`
+   qui en contient maintenant 5 000. Le
+   SGBD gère un histogramme qui indique que la sélectivité
+   de l'attribut :math:`d` est 5 (autrement dit, une sélection 
+   sur :math:`R` ou :math:`S` pour une valeur de :math:`d` ramène 5\% des enregistrements).
+   Quelle taille peut-on estimer pour :math:`R \Join S` ?
+
+ - Je n'ai toujours que 20 blocs en mémoire.
+   Décrire l'algorithme de jointure par hachage pour :math:`R \Join S` 
+   et évaluer son coût.
+
+
+.. ifconfig:: annales_2022 in ('public')
+
+    .. admonition:: Correction
+
+		- Il y a au plus 20 enregistrements, et il faut pour l'atteindre
+		  que la clé étrangère soit ``not null``,
+		  et le respect de l'intégrité référentielle de :math:`S` vers :math:`T`. La clé
+		  est :math:`c` (il y a dépendance fonctionnelle de :math:`c`  vers :math:`e`).
+		  
+		- Dans le pire des cas il y a :math:`200~000 \times 20` enregistrements
+		  (s'il y a une seule valeur pour :math:`d`).
+
+		- On met :math:`S` en mémoire (donc 2 blocs) et on l'organise
+		  comme une table de hachage sur l'attribut :math:`S.e`. Puis on lit :math:`T` séquentiellement (50 blocs),
+		  en cherchant pour chaque enregistrement :math:`(e_i,f_i)` de :math:`T` le ou les
+		  enregistrements correspondant dans la table de hachage.
+		  
+		  Coût ,: 52 blocs.
+   
+		- On parcourt :math:`S` séquentiellement (2 blocs), pour chaque enregistrement
+		  :math:`(c, d,e)` (il y en a 20), on utilise l'index pour accéder à :math:`T`. Pour chaque entrée
+		  trouvée dans l'index il faut lire un bloc (au pire) sur le disque.
+		  
+		  Coût ,: 2 + 20 blocs. 
+
+		- On constate qu'il n'existe pas d'index disponible 
+		  pour la jointure avec :math:`R`, car la clé primaire de :math:`R` ne se trouve
+		  en tant que clé étrangère ni dans :math:`S` ni dans :math:`T`.
+		  
+		  L'algorithme : on évalue  :math:`S \Join T`, comme indiqué précemment. 
+		  Il faut ensuite choisir un algorithme de jointure sans index.
+		  Etant donnée la petite taille de :math:`S \Join T`, on choisit
+		  la jointure par boucles imbriquées. On construit une table de hachage en mémoire sur le résultat de :math:`S \Join T`
+		  (2 blocs au maximum, clé de hachage : :math:`d`) ; on lit séquentiellement :math:`R` 
+		  en joignant chaque enregistrement avec la table de hachage. 
+		  
+		  La lecture de :math:`R` est prédominante : 20 000 blocs à lire séquentiellement.
+		  
+		  Toutes les autres possibilités sont moins bonnes, à cause de la taille
+		  du résultat de la jointure entre :math:`R` et une autre table. Penser par exemple
+		  au coût qui résulterait d'un tri préalable de :math:`R` sur l'attribut :math:`d` pour
+		  une jointure par tri-fusion.
+          
+		- Pour chaque tuple de :math:`R`, on trouve :math:`5000 \times 0,05 = 250`
+		  enregistrements dans :math:`S`: 50 M de enregistrements au final.
+
+		- Jointure par hachage : je hache :math:`S` en 25 fragments de 
+		  200 enregistrements chacune (20 blocs en mémoire). Ensuite je hache :math:`R` en 2
+		  fragments également (leur taille m'importe peu). Puis je fais la jointure
+		  entre chaque paire de fragmentss. Coût (très 	approximatif) =
+		  :math:`3 \times (|S| + |R|) = 3 \times (20 000 + 500) = 61 500`.
+
+Concurrence (6 points)
+======================
+
+On considère le système d'information
+d'un institut de sondage, avec les tables relationnelles 
+suivantes (les attributs ou combinaisons d'attributs qui forment 
+une clé unique sont **en gras**).
+
+ - Personne (**numPers**, nom, sexe, numCat)
+ - Question (**numQ**, description)
+ - Avis (**numQ, numPers**, reponse)
+
+
+L'exécution suivante est reçue par le système de l'institut de sondage :
+
+.. math::
+
+        H : r_1[x] r_2[y] w_1[x] r_3[y]  r_2[x] w_3[y] r_2[z] C_1 r_3[z] w_2[z] C_2 w_3[z] C_3
+
+Répondez aux questions suivantes sur :math:`H`. 
+
+  - Parmi les programmes qui s'exécutent dans le système, 
+    il y a ``ModifierAvis(nomPers, numQuestion, nouvelle_réponse)``,  qui modifie
+    la réponse donnée par
+    la personne ``nomPers`` à  la question ``numQuestion`` 
+    en ``nouvelle\_réponse`` 
+   
+    Si les enregistrements de :math:`H` sont des nuplets des relations de la base 
+    de données, montrez (en justifiant votre réponse) 
+    quelles transactions de :math:`H` pourraient provenir de ``ModifierAvis``.
+   
+  - Vérifiez si :math:`H` est sérialisable en identifiant 
+    les conflits et en construisant le graphe de sérialisation.
+  - Montrer qu'il existe des lectures sales, 
+    et expliquez les conséquences possibles.
+  - Quelle est l'exécution obtenue par verrouillage 
+    à deux phases à partir de :math:`H`? 
+  - (**Question bonus, pour 2 points**). Quelle est l'exécution obtenue avec
+    l'algorithme de concurrence par versionnement ?
+    On suppose que toutes les transactions débutent
+    au même moment.
+
+
+.. ifconfig:: annales_2022 in ('public')
+
+    .. admonition:: Correction
+    
+		- Les transactions sont :math:`T_1 = r_1[x] w_1[x]`, :math:`T_2 = r_2[y] r_2[x] r_2[z] w_2[z]`,
+		  :math:`T_3 = r_3[y] w_3[y] r_3[z] w_3[z]`  
+		  
+		  ``ModifierAvis`` doit lire un avis et 
+		  le modifier. On peut donc considérer qu'il s'agit de :math:`T_1`. :math:`T_2`
+		  est également une possibilité, en supposant qu'on lit d'abord la personne
+		  puis la question.
+		-- Les conflits sont: :math:`w_1[x] \to r_2[x]`,  :math:`r_2[y] \to w_3[y]`,
+		   :math:`r_3[y] \to w_2[z]`  et :math:`w_2[z] \to w_3[z]`.  On trouve un cycle
+		   :math:`T_2`  et :math:`T_3`  donc :math:`H` n'est pa sérialisable. 
+		- :math:`r_2[x]` est une lecture sale (car précédée de :math:`w_1[x]`). 
+		  Si :math:`T_1` s'interrompt avant le ``commit``, la valeur
+		  lue par :math:`r_2[x]` n'existera plus et :math:`T_2`  risque de 
+		  valider un état incohérent.
+		  
+		- Après verrouillage à deux phases, on obtient :
+		
+		  .. math::
+		  
+		     r_1[x] r_2[y] w_1[x] r_3[y] (T_2 \ \rm{attente\ sur }\ r_2[x]) (T_3\ \rm{\ attente\ sur\ }w_3[y]) C_1 r_2[x] r_2[z] w_2[z] C_2 w_3[y] r_3[z] w_3[z] C_3
+		     
+		- Avec l'algo de versionnement, on rejette :math:`w_3[z]` 
+		  car l'écriture :math:`w_2[z]` est intervenue entre-temps.
