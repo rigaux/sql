@@ -134,9 +134,9 @@ from Voisins
    \item Avec V3, on n'a plus besoin de se soucier de l'ordre des codes de département.
      On peut donc écrire soit\,:
    
-   $$\pi_{codeDpt2} (\sigma_{codeDpt1=c_1} (\rm{Voisins}))$$   
+   $$\pi_{codeDpt2} (\sigma_{codeDpt1=c_1} (\rm{V3}))$$   
    ou
-   $$\pi_{codeDpt1} (\sigma_{codeDpt2=c_1} (\rm{Voisins}))$$
+   $$\pi_{codeDpt1} (\sigma_{codeDpt2=c_1} (\rm{V3}))$$
    qui donneront le même résultat.
 
 \end{enumerate}
@@ -216,12 +216,13 @@ and v.codeDpt2=d2.codeDpt
 \item Solution avec la vue V3.
 \begin{minted}{sql}
 select r.intitulé, d1.nom as nomDpt1, d2.nom as nomDpt2
-from  Région as r, Département as d1, Département as d2, , V3 as v
+from  Région as r1, Région as r2, Département as d1, Département as d2, V3 as v
 where d1.codeRégion = r1.codeRégion
 and d2.codeRégion = r2.codeRégion
 /* On sait que dans V3, on trouve chaque voisinage représenté dans les deux sens */
 and v.codeDpt1=d1.codeDpt
 and v.codeDpt2=d2.codeDpt
+and r1.codeRégion != r2.codeRégion
 \end{minted}
 
 Sinon, solution SQL complète avec un 'ou' logique
