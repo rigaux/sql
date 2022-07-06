@@ -12,7 +12,8 @@ all:  exam-blanc-janvier19.pdf exam-s1-fod-19.pdf exam-s2-fod-19.pdf exam-s1-pre
 				ex106-s1-foad-21.pdf ex106-s2-foad-21.pdf \
 				exam-s1-foad-22.pdf exam-subst-foad-22.pdf exam-s2-foad-22.pdf \
 				exam-s1-hybride-22.pdf \
-				ex106-s1-hybride-22.pdf
+				ex106-s1-hybride-22.pdf \
+				exam-s2-hybride-22.pdf
 
 %.pdf: sujets/%.tex
 	pdflatex   -shell-escape "\newcommand\inputFile{sujets/$*.tex}\input{sujet}"
