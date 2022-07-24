@@ -1,12 +1,12 @@
 \enteteExam{NFP 107 -- Systèmes de gestion de bases de données - Durée 2h30}%
-{Examen seconde session 30 août 2022}%
+{Examen seconde session 31 août 2022}%
 {Examen sur table -- Seuls documents autorisés\,: 10 pages maximum de notes manuscrites.}%
 
 M. Hardy se prépare à déménager, ce qui nécessite
 de ranger toutes ses affaires dans des cartons.
 Afin de faciliter l'emménagement, il décide de constituer
 une base de données pour savoir ce que contient
-exactement chaque carton. Il donne donc un code 
+exactement chaque carton. Il donne donc un code
 et un libellé à tous ses objets, un numéro à
 tous ses cartons, et numérote également
 les pièces de son ancien et de son nouvel appartement.
@@ -23,7 +23,7 @@ crée alors un schéma relationnel avec les tables suivantes
 
       \begin{itemize}
         \item Pièce (\textbf{noPièce}, libellé, surface)
-        \item Carton (\textbf{noCarton}, jourEmballage, noPièceOrigine, 
+        \item Carton (\textbf{noCarton}, jourEmballage, noPièceOrigine,
                             noPièceDestination)
         \item  Objet (\textbf{codeObjet}, intitulé, poids,
                      noCarton)
@@ -50,7 +50,7 @@ create table Pièce
     libellé varchar not null,
     surface integer not null,
      primary key(noPièce));
-     
+
 create table Carton
    (noCarton integer not null,
     jourEmballage varchar not null,
@@ -59,20 +59,20 @@ create table Carton
      primary key(noCarton),
      foreign key (noPièceOrigine) references Pièce (noPièce),
      foreign key (noPièceDestination) references Pièce (noPièce));
-     
+
 create table Objet
    (codeObjet integer not null,
     intitulé varchar not null,
     poids integer not null,
     noCarton integer not null,
     primary key(codeObjet),
-    foreign key (noPièceOrigine) references Pièce (noPièce));
+    foreign key (noCarton) references Carton (noCarton));
 \end{minted}
 \end{solution}
 
    \item ({\bf 1 pt}) Le schéma permet-il que la pièce d'origine soit la même
       que la pièce de destination\,? Si vous pensez que c'est le
-      cas donnez la contrainte SQL qui 
+      cas donnez la contrainte SQL qui
        force la pièce d'origine d'un carton à être
          différente de la pièce de destination.
 
@@ -85,18 +85,18 @@ check (noPièceOrigine != noPièceDestination)
 
 
 
-  \begin{figure}[htb]  
+  \begin{figure}[htb]
   \begin{center}
    \includegraphics{../figures/schema-demenagement}
-    \caption{Modélisation de la base du déménagement}  
-    \label{schema-hardy}  
+    \caption{Modélisation de la base du déménagement}
+    \label{schema-hardy}
     \end{center}
-  \end{figure}  
+  \end{figure}
 
 
     \item ({\bf 2 pts}) M. Hardy avait essayé de décrire son besoin avec le
       schéma entité-association de la figure~\ref{schema-hardy}.
-     Ce schéma comporte des erreurs qui ont été corrigées 
+     Ce schéma comporte des erreurs qui ont été corrigées
        par M. Laurel
        au moment de la création du schéma relationnel. Quelles
        sont ces erreurs\,?
@@ -107,12 +107,12 @@ cartons. Et les cardinalités sont inversées entre Pièce et Carton.
 De même un
 objet est contenu dans un seul carton.
 \end{solution}
- 
- \item ({\bf 1 pt}) Après de nouvelles discussions entre les deux amis, M. Laurel 
+
+ \item ({\bf 1 pt}) Après de nouvelles discussions entre les deux amis, M. Laurel
         propose à M. Hardy une évolution du schéma pour prendre en compte
         des besoins plus complexes que ceux estimés à l'origine. Voici
         la nouvelle version \emph{proposée}.
-        
+
       \begin{itemize}
         \item Pièce (\textbf{noPièce}, libellé, surface)
         \item Carton (\textbf{noCarton}, jourEmballage, noPièceOrigine)
@@ -122,11 +122,11 @@ objet est contenu dans un seul carton.
        \end{itemize}
   À votre avis qu'est-ce qui peut motiver ce changement\,? Que pouvons-nous
  représenter maintenant qui n'était pas possible auparavant\,?
- 
+
 \begin{solution}
  Les objets d'un même carton peuvent maintenant être distribués dans plusieurs pièces.
 \end{solution}
- 
+
 
  \item ({\bf 1 pt}) À quoi correspondrait cette table \texttt{Destination} sur le schéma
  EA\,?
@@ -144,9 +144,9 @@ sur le schéma donné dans l'énoncé, pas sur le schéma modifié proposé par 
 
 \begin{enumerate}
 % 1 pt
-  \item Donnez l'intitulé de chaque objet, et le libellé de la pièce 
+  \item Donnez l'intitulé de chaque objet, et le libellé de la pièce
     dont il provient.
-    
+
 % 1 pt
   \item Pour chaque carton emballé le jeudi, donnez le no du carton et les libellé et surface
       de la pièce d'origine et de la pièce de destination.
@@ -155,7 +155,7 @@ sur le schéma donné dans l'énoncé, pas sur le schéma modifié proposé par 
 % 1 pts
   \item Quelles pièces ne recevront aucun carton\,?
 % 1 pts
-  \item Donnez les pièces dont aucun carton n'a pour destination le salon.
+  \item Donnez les pièces d'origine dont aucun carton n'a pour destination le salon.
 % 1 pts
   \item Pour chaque carton indiquez le numéro du carton, le nombre d'objets et le poids du carton.
 % 2 pts
@@ -167,7 +167,7 @@ sur le schéma donné dans l'énoncé, pas sur le schéma modifié proposé par 
 \begin{solution}
 Pièce (\textbf{noPièce}, libellé, surface)
 
-Carton (\textbf{noCarton}, jourEmballage, noPièceOrigine, 
+Carton (\textbf{noCarton}, jourEmballage, noPièceOrigine,
                             noPièceDestination)
 
 Objet (\textbf{codeObjet}, intitulé, poids,
@@ -179,24 +179,25 @@ from Pièce as p, Objet as o, Carton as c
 where o.noCarton = c.noCarton
 and p.noPièce = c.noPièceOrigine
 
-select c.noCarton, p1.libellé as libelléOrig, p1.surface as surfOrig, 
+select c.noCarton, p1.libellé as libelléOrig, p1.surface as surfOrig,
          p2.libellé as libelléDest, p2.surface as surfDest
 from Pièce as p1, Pièce as p2, Carton as c
 where c.noPièceOrigine = p1.noPièce
 and c.noPièceDestination = p2.noPièce
 and c.jourEmballage = 'jeudi'
 
-select p.libellé 
+select p.libellé
 from Pièce as p, Carton as c1, Carton as c2
-where c.noPièceOrigine = p.noPièce
-and c.noPièceDestination = p.noPièce
+where c1.noPièceOrigine = p.noPièce
+and c2.noPièceDestination = p.noPièce
+and c1.noCarton != c2.noCarton
 
-select p.libellé 
+select p.libellé
 from Pièce as p
 where not exists (select * from Carton as c
-                  where c.noPièceOrigine = p.noPièce)
+                  where c.noPièceDestination = p.noPièce)
 
-select p.libellé 
+select p.libellé
 from Pièce as p
 where not exists (select * from Carton as c, Pièce as p2
                   where c.noPièceOrigine = p.noPièce
@@ -210,7 +211,7 @@ group by c.noCarton
 
 select p.libellé, count(distinct c.noCarton) as nbCartons, sum(o.poids) as poidsTotal
 from Pièce as p, Carton as c, Objet as o
-where c.noPièceDestination = p.noPièce 
+where c.noPièceDestination = p.noPièce
 and c.noCarton = o.noCarton
 group by p.noPièce, p.libellé
 having count(*) >= 20
@@ -226,7 +227,8 @@ en algèbre relationnelle.
 
 \section{Equivalences logiques ({\bf 2 pts})}
 
-Réécrire la requête suivante sans négation et sans disjonction.
+Réécrire la requête suivante sans négation et sans disjonction logique
+(mais l'inégalité \texttt{!=} est perrmise).
 
 
 \begin{minted}{sql}
@@ -235,7 +237,7 @@ from Pièce as p, Carton as c
 where not (p.noPièce = c.noPièceOrigine or p.noPièce = c.noPièceDestination)
 \end{minted}
 
-Peut-on dire que cette requête sélectionne les pièces qui ne sont ni origine, ni destination 
+Peut-on dire que cette requête sélectionne les pièces qui ne sont ni origine, ni destination
 d'un carton\,?
 
 \begin{solution}
@@ -246,7 +248,7 @@ from Pièce as p, Carton as c
 where p.noPièce != c.noPièceOrigine and p.noPièce != c.noPièceDestination
 \end{minted}
 
-On trouve les pièces pour les lesquelles il existe au moins un carton 
+On trouve les pièces pour les lesquelles il existe au moins un carton
 qui n'a la pièce ni pour origine ni pour destination.
 \end{solution}
 
@@ -261,3 +263,14 @@ $TG \to E$; $R \to G$; $E \to G$.
   \item Quel est le résultat de l'algorithme de normalisation\,?
   \item Ce résultat est-il en troisième forme normale\,?
 \end{enumerate}
+
+
+\begin{solution}
+Tous les attriuts qui n'apparaissent pas à droite sont nécessairement
+dans la clé, donc T, V  et R. On vérifie aisément que TVR est une clé
+(la seule).
+
+On a donc les relations (TGE), (RG) et (EG), auxquelles il faut ajouter la clé
+(TVR). Le résultat est en troisième forme normale.
+
+\end{solution}
