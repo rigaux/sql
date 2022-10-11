@@ -622,7 +622,7 @@ Et maintenant nous pouvons définir ce qu'est un schéma de relation normalisé.
 .. admonition:: Définition: schéma normalisé (troisième forme normale)
 
    Un schéma de relation *R* est *normalisé* quand, dans
-   toute dépendance fonctionnelle :math:`S \to A` sur
+   toute dépendance fonctionnelle (minimale et directe) :math:`S \to A` sur
    les attributs de *R*, *S* est une clé. 
    
 .. admonition:: Remarque
@@ -1318,7 +1318,7 @@ Exercices
    Autre axiome d'Armstrong: la réflexion. 
    
    En l'absence de toute
-   dépendance fonctionnelle, quelle est la clé d'une relation? 
+   dépendance fonctionnelle non triviale, quelle est la clé d'une relation? 
    
    .. ifconfig:: relationnel in ('public')
 
