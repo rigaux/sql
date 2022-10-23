@@ -2297,7 +2297,6 @@ scripts), vous devez exprimer les requêtes suivantes:
    - Nom des logements dont la capacité est inférieure à 20
    - Description des activités de plongée
    - Nom des logements avec piscine
-   - Nom des logements sans piscine
    - Nom des voyageurs qui sont allés en Corse
    - Les voyageurs qui sont allés ailleurs qu'en Corse
    - Nom des logements visités par un auvergnat
@@ -2360,6 +2359,7 @@ autrement).
 
    - Nom des voyageurs qui ne sont pas allés en Corse
    - Noms des voyageurs qui ne vont qu'en Corse s'ils vont quelque part.
+   - Nom des logements sans piscine
    - Nom des voyageurs qui ne sont allés nulle part
    - Les logements où personne n'est allé
    - Les voyageurs qui n'ont jamais eu l'occasion de faire de la plongée
