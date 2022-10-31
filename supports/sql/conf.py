@@ -76,7 +76,7 @@ def setup(app):
     app.add_config_value('correctionoeuvre', '', True)
     app.add_config_value('soloperateur', '', True)
 
-relationnel='private'
+relationnel='public'
 calcul='private'
 calculTP1='private'
 calculTP2='private'
