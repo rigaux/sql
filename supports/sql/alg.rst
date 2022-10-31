@@ -15,7 +15,7 @@ cartésiens* ou des *projections*, etc.
    sens mathématique du terme, avec au moins deux conséquences importantes:
 
     - il n'y pas de doublon dans un ensemble, donc tous les opérateurs
-       éliminent implicitement tout potentiel doublon dansn le résultat ;
+      éliminent implicitement tout potentiel doublon dansn le résultat ;
     - un ensemble n'est pas ordonné: en aucun cas on ne peut donc s'appuyer
       sur l'hypothèse d'un ordre sur les nuplets.  
 
