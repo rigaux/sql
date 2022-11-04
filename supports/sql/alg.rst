@@ -17,7 +17,7 @@ cartésiens* ou des *projections*, etc.
     - il n'y pas de doublon dans un ensemble, donc tous les opérateurs
       éliminent implicitement tout potentiel doublon dansn le résultat ;
     - un ensemble n'est pas ordonné: en aucun cas on ne peut donc s'appuyer
-      sur l'hypothèse d'un ordre sur les nuplets.  
+      sur l'hypothèse d'un ordre sur les nuplets.
 
 On peut voir l'algèbre relationnelle comme un
 langage de programmation très simple qui permet d'exprimer des requêtes
@@ -1632,12 +1632,25 @@ Voici le contenu de la table *Propriétaire*.
 
 
 .. _Ex-alg-1:
-.. admonition:: Exercice `Ex-alg-1`_: encore les doublons
+.. admonition:: Exercice `Ex-alg-1`_: gestion des doublons
 
-    Soit deux relations ``R(idR, A, B, C, ...)``   et ``S(idS, U, V, W, ..)``
-    avec pour clés primaires ``idR`` et ``idS``. On veut montrer que le ``distinct`` est-il toujours
-    inutile après un produit cartésien :math:`R \times S`.
-
+	Dans le modèle théorique, une relation est un ensemble, et ne contient
+	donc aucun doublon. Dans la norme SQL, les choses sont différentes : pour des raisons
+	pratiques, les doublons sont acceptés (les relations sont donc des multiensembles, ou *bag* en anglais)
+	et on doit toujours se demander en exprimant une requête SQL s'il faut les éliminer avec 
+	``distinct``.
+	
+	Posons-nous la question pour le produit cartésien. Soit deux relations ``R(idR, A, B, C, ...)``   et ``S(idS, U, V, W, ..)``
+	avec pour clés primaires ``idR`` et ``idS``. On veut montrer que le ``distinct`` est-il toujours
+	inutile dans la requête:
+    
+	.. code-block:: sql
+    
+         select * 
+         from R cross join S
+    
+	On montre que le ``distinct`` est inutile: 
+     
        - Montrer l'unicité de la paire constituée des identifiants dans :math:`R \times S`.
        - En déduire la propriété cherchée
 

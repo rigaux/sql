@@ -1718,9 +1718,9 @@ Quiz
 
     Même question pour la :numref:`construireSQLQuiz4`. On cherche *a1* et *a2*
 
-    A) :eqt:`I` Les paires d'acteurs qui ont tourné dans le même film
+    A) :eqt:`C` Les paires d'acteurs qui ont tourné dans le même film
     #) :eqt:`I` Les films dans lesquels un rôle a pu être par un artiste ou par un autre
-    #) :eqt:`C` Les films dans lesquels deux acteurs jouent le même rôle
+    #) :eqt:`I` Les films dans lesquels deux acteurs jouent le même rôle
 
 
 .. eqt:: constrSQL5
