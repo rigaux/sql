@@ -1081,7 +1081,7 @@ donné dans l'énoncé de l'examen.**
 			and c1.numéro = c2.numéro
 
  - Noms des clients qui ont un forfait nommé 
-   ``Audace`` et un autre nommé ``Privilège`
+   ``Audace`` et un autre nommé ``Privilège``.
 
   .. ifconfig:: soloperateur in ('public')
 
@@ -1181,7 +1181,7 @@ Algèbre relationnelle (3 pts)
  
  			Les clients qui n'ont pas de souscription supérieure à 48 mois.
 
- - Voici une expression SQL ``algébrique''
+ - Voici une expression SQL "algébrique"
  
    .. code-block:: sql 
 

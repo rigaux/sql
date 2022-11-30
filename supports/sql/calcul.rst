@@ -28,7 +28,8 @@ se fait classiquement par des formules logiques qui indiquent comment l'existenc
 d'un fait :math:`f_1` au départ implique l'existence d'un fait :math:`f_2` à l'arrivée.
 
 Cela peut paraître abstrait, et de fait ça l'est puisqu'aucun calcul n'est spécifié. On s'appuie
-simplement sur le fait que l'informatique *sait* effectuer des calculs spécifiés par des formules logiques (dans le cas particulier
+simplement sur le fait que l'informatique *sait* effectuer des calculs spécifiés par 
+des formules logiques (dans le cas particulier
 des bases de données en tout cas)  apparemment indépendantes
 de tout processus calculatoire. Il se trouve que SQL *est* un langage déclaratif,
 et qu'il l'était même exclusivement
@@ -295,9 +296,9 @@ une œuvre intitulée Don Giovanni. En affectant à :math:`x` toutes les valeurs
 on énumère tous les nuplets de ce type. La plupart sont faux (ceux qui ne sont pas dans la base),
 certains sont vrais.
 
-*Interroger une base relationnelle, c'est simplement demander au système
-les valeurs de* :math:`x` *pour lesquelles* :math:`Compose (x, Don Giovanni)` *est vrai. La réponse
-est probablement* ``Mozart``.
+Interroger une base relationnelle, c'est simplement demander au système
+les valeurs de :math:`x` pour lesquelles :math:`Compose (x, Don Giovanni)` est vrai. La réponse
+est probablement ``Mozart``.
 
 Collections et quantificateurs
 ==============================
@@ -1355,7 +1356,7 @@ Quiz
 
          select * from Logement as l
          where not exists (select * from Activité as a
-                           where a.activité='Ski')"
+                           where a.activité='Ski')
 
     A) :eqt:`I` Les logements où on fait du ski
     #) :eqt:`C` Tous les logements, à condition qu'il n'en existe aucun où on fait du ski
