@@ -1095,7 +1095,7 @@ Quiz
 
 .. eqt:: conc2-5
 
-    Si je trouve dans ma base un film sans aucun rôle, quelle est la bonne interpétation?
+    Si je trouve dans ma base un film sans aucun rôle, quelle est la bonne interprétation?
    
     A) :eqt:`I`  C'est un film sans acteur ou actrice, par exemple un dessin animé
     #) :eqt:`C`  Pour une raison X ou Y, ce film a été inséré sans rôle, même

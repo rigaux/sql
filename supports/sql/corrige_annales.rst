@@ -174,35 +174,38 @@ SQL
 
 .. code-block:: sql
 
-   select nom 
-   from Joueur as j, But as b
-   where j.id = b.idJoueur and j.âge > 30 and b.minute = 1
+    select nom 
+    from Joueur as j, But as b
+    where j.id = b.idJoueur and j.age > 30 and b.minute = 1;
 
-   select nom 
-   from Joueur as j, Equipe as e
-   where j.idEquipe = e.id 
-   and e.pays = 'France' 
-   and j.id NOT IN (select idJoueur from But)
 
-   select prixBillet 
-   from Stade as s1
-   where not exists (select ''
+.. code-block:: sql
+
+    select nom 
+    from Joueur as j, Equipe as e
+    where j.idEquipe = e.id 
+    and e.pays = 'France' 
+    and j.id NOT IN (select idJoueur from But);
+
+    select prixBillet 
+    from Stade as s1
+    where not exists (select ''
                 from Stade as s2
-                where s2.prixBillet >= s1.prixBillet)
+                where s2.prixBillet >= s1.prixBillet);
 
-   select entraineur, count(*)
-   from Equipe as e, Joueur as j, But as b
-   where e.id=j.idEquipe
-   and b.idJoueur = j.id
-   group by e.id, e.entraineur
+    select entraineur, count(*)
+    from Equipe as e, Joueur as j, But as b
+    where e.id=j.idEquipe
+    and b.idJoueur = j.id
+    group by e.id, e.entraineur;
 
-   select prénom, nom
-   from Match as m, Joueur as j, But as b
-   where e.id=j.idEquipe
-   and b.idJoueur = j.id
-   and m.id = b.idMatch
-   and e.id != m.idEquipe1
-   and e.id != e.idEquipe2
+    select prénom, nom
+    from Match as m, Joueur as j, But as b
+    where e.id=j.idEquipe
+    and b.idJoueur = j.id
+    and m.id = b.idMatch
+    and e.id != m.idEquipe1
+    and e.id != e.idEquipe2;
 
 Il faut soit Match.equipe1='France', soit  Match.equipe2='France'. 
 
