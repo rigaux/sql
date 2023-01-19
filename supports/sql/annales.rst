@@ -965,8 +965,7 @@ par la suite.
  - Forfait (**id**, nom, idOpérateur, prix)
  - Client(**id**, nom, prénom, ville)
  - Souscription(**idClient, idForfait**, durée, numéro)
- - Résiliation (id, dateResiliation, portabilité, idNouvelleSouscription)
-
+ 
 L'attribut *durée* est un entier positif exprimant le nombre de mois d'engagement.
 les clés étrangères ne sont pas indiquées.
 
