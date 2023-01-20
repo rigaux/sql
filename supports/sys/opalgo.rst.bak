@@ -31,7 +31,7 @@ S1: Modèle d'exécution: les itérateurs
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: les itérateurs <http://sys.bdpedia.fr/files/sliter.pdf>`_
-    * `Vidéo de présentation du modèle d'exécution <https://mediaserver.lecnam.net/permalink/v125f35a422c9s35js6h/>`_    
+    * `Vidéo de présentation du modèle d'exécution <https://mediaserver.cnam.fr/permalink/v125f35a422c9s35js6h/>`_    
   
 L'exécution d'une requête s'effectue par combinaison d'opérateurs qui assurent
 chacun une tâche spécialisée. De même qu'une
@@ -408,8 +408,8 @@ S2: les opérateurs de base
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: les opérateurs de base <http://sys.bdpedia.fr/files/sloperateurs.pdf>`_
-    * `Vidéo plans d'exécution (partie 1) <https://mediaserver.lecnam.net/permalink/v125f35a42376acjqp1g/>`_    
-    * `Vidéo plans d'exécution (partie 2) <https://mediaserver.lecnam.net/permalink/v125f35a423cagaw4i9b/>`_    
+    * `Vidéo plans d'exécution (partie 1) <https://mediaserver.cnam.fr/permalink/v125f35a42376acjqp1g/>`_    
+    * `Vidéo plans d'exécution (partie 2) <https://mediaserver.cnam.fr/permalink/v125f35a423cagaw4i9b/>`_    
  
 Cette section est consacrée aux principaux opérateurs
 utilisés dans l'évaluation d'une requête "simple", accédant à une seule
@@ -866,7 +866,7 @@ S3: Le tri externe
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: le tri-fusion <http://sys.bdpedia.fr/files/sltrifusion.pdf>`_
-    * `Algorithme de tri  <https://mediaserver.lecnam.net/permalink/v125f35a42431bmd2zas/>`_    
+    * `Algorithme de tri  <https://mediaserver.cnam.fr/permalink/v125f35a42431bmd2zas/>`_    
 
 *Le tri* est une autre opération
 fondamentale pour l'évaluation des requêtes. On a besoin du
@@ -1217,8 +1217,8 @@ S4: Algorithmes de jointure
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: algorithmes de jointure <http://sys.bdpedia.fr/files/slalgojoin.pdf>`_
-    * `Vidéo algorithmes de jointure (partie 1)  <https://mediaserver.lecnam.net/permalink/v125f35a424a4rd7jddw/>`_    
-    * `Vidéo algorithmes de jointure (partie 2)  <https://mediaserver.lecnam.net/permalink/v125f35a4250dhtk787f/>`_    
+    * `Vidéo algorithmes de jointure (partie 1)  <https://mediaserver.cnam.fr/permalink/v125f35a424a4rd7jddw/>`_    
+    * `Vidéo algorithmes de jointure (partie 2)  <https://mediaserver.cnam.fr/permalink/v125f35a4250dhtk787f/>`_    
     
 Passons maintenant aux *algorithmes de jointure*.  Avec les opérateurs
 présentés dans cette section, nous complétons notre catalogue d'opérateurs

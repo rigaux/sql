@@ -125,7 +125,7 @@ S1: Transactions
 
     * `Diapositives: la notion de transaction <http://sys.bdpedia.fr/files/sltransactions.pdf>`_
     * `Fichier de commandes pour tester les transactions sous MySQL <http://sys.bdpedia.fr/files/commandes-transactions.sql>`_    
-    * `Vidéo sur la notion de transaction <https://mediaserver.lecnam.net/videos/transactions/>`_ 
+    * `Vidéo sur la notion de transaction <https://mediaserver.cnam.fr/permalink/v125f594787839i1vv7k//>`_ 
     
 Une *transaction* est une séquence d'opérations de lecture ou de mise
 à jour sur une base de données, se terminant par
@@ -202,35 +202,35 @@ pour être concret (et concis), la version PL/SQL.
     v_spectacle Spectacle%ROWTYPE;
     v_places_libres INTEGER;  
     v_places_reservees INTEGER;  
-    begin
+    BEGIN
     -- On recherche le spectacle
-    select * into v_spectacle 
-    from Spectacle where id_spectacle=v_id_spectacle;
+    SELECT * INTO v_spectacle 
+    FROM Spectacle WHERE id_spectacle=v_id_spectacle;
   
     -- S'il reste assez de places: on effectue la reservation
-    if (v_spectacle.nb_places_libres >= nb_places) 
-    then
+    IF (v_spectacle.nb_places_libres >= nb_places) 
+    THEN
       -- On recherche le client
-      select * into v_client from Client where id_client=v_id_client;
+      SELECT * INTO v_client FROM Client WHERE id_client=v_id_client;
 
       -- Calcul du transfert
       v_places_libres := v_spectacle.nb_places_libres - nb_places;
       v_places_reservees := v_client.nb_places_reservees + nb_places;
     
       -- On diminue le nombre de places libres
-      update Spectacle set nb_places_libres = v_places_libres 
-         where id_spectacle=v_id_spectacle;
+      UPDATE Spectacle SET nb_places_libres = v_places_libres 
+         WHERE id_spectacle=v_id_spectacle;
 
       -- On augmente le nombre de places reervees par le client
-      update Client set nb_places_reservees=v_places_reservees
-        where id_client = v_id_client;
+      UPDATE Client SET nb_places_reservees=v_places_reservees
+        WHERE id_client = v_id_client;
 
       -- Validation
       commit;
     ELSE
      rollback;
-    end if;
-    end;
+    END IF;
+    END;
     /
 
 
@@ -534,8 +534,8 @@ si la transaction arrive à terme (sinon le système l'annule).
 
 Tout se passe bien parce que le programmeur a placé le ``commit``
 au bon endroit. Imaginons maintenant qu'un ``commit`` 
-soit introduit après le premier ``update``. Si le second
-``update`` soulève une erreur, le système effectue
+soit introduit après le premier ``UPDATE``. Si le second
+``UPDATE`` soulève une erreur, le système effectue
 un ``rollback`` jusqu'au ``commit`` qui précède,
 et laisse donc la base dans un état incohérent --déséquilibre
 entre les places prises et les places réservées-- du point de vue
@@ -647,7 +647,7 @@ Quiz
    
    .. code-block:: sql
 
-       DELETE * from Client; where id=1;
+       DELETE * FROM Client; WHERE id=1;
 
    Réponse du serveur: 100 000 lignes détruites. Pourquoi et que faire?
 
@@ -684,7 +684,7 @@ S2: Pratique des transactions
 .. admonition::  Supports complémentaires:
 
     * `Lien vers l'application de travaux pratiques en ligne  <http://deptfod.cnam.fr/bd/tp/transactions/>`_
-    * `Vidéo expliquant le fonctionnement de l'application "transactions",  <https://mediaserver.lecnam.net/videos/demonstration-de-lapplication-transactions/>`_ 
+    * `Vidéo expliquant le fonctionnement de l'application "transactions",  <https://mediaserver.cnam.fr/permalink/v125f5947108eug0fjgs//>`_ 
     * `Fichier de commandes pour tester les transactions sous un SGBD (MySQL, Oracle) <http://sys.bdpedia.fr/files/commandes-transactions.sql>`_    
 
 Pour cette session, nous vous proposons une mise en pratique consistant à constater directement les notions de base
@@ -705,7 +705,7 @@ nous expliquons le contenu de la fenêtre d'interaction avec cette base.
   
      Vous pouvez à tout moment réinitialiser l'ensemble de la base en appuyant sur le bouton 
      "Réinitialiser" en haut à droite de la fenêtre. Avant d'exécuter cette réinitialisation, vous devez 
-     sélectionner le niveau d'isolation parmi les 4 possibles : SERIALIZABLE, REPEATABLE READ, READ commitTED et READ UNcommitTED. 
+     sélectionner le niveau d'isolation parmi les 4 possibles : SERIALIZABLE, REPEATABLE READ, READ COMMITTED et READ UNCOMMITTED. 
      Pour l'instant, conservez le niveau d'isolation par défaut, nous y reviendrons ultérieurement.
 
 
@@ -874,7 +874,7 @@ celle de gauche, et elle continue durant toute son existence à voir la base
 telle qu'elle existait *au moment où elle a débuté*. C'est ce qu'indique le
 mode ``repeatable read``: les mêmes lectures renvoient *toujours* le même résultat.
 
-Commencez une autre transaction à droite: il suffit de faire ``commit`` ou ``rollback``. 
+Commencez une autre transaction à gauche: il suffit de faire ``commit`` ou ``rollback``. 
 Cette fois le nouvel état de la base apparaît.
 
 
@@ -963,15 +963,15 @@ Voici les premières requêtes effectuées par la session 1.
 
 .. code-block:: sql
 
-    Session1>select * from Client;
+    Session1>SELECT * FROM Client;
 
     ID_CLIENT NB_PLACES_RESERVEES      SOLDE
     ---------- ------------------- ----------
              1                   3       2000
 
-    Session1>select * from Spectacle;
+    Session1>SELECT * FROM Spectacle;
 
-    ID_SPECTACLE NB_PLACES_OFFERTES NB_PLACES_LIBRES      TARif
+    ID_SPECTACLE NB_PLACES_OFFERTES NB_PLACES_LIBRES      TARIF
     ------------ ------------------ ---------------- ----------
                1                250              200         10
  
@@ -981,24 +981,24 @@ augmente maintenant le nombre de places réservées.
 
 .. code-block:: sql
 
-    Session1>update Client set nb_places_reservees = nb_places_reservees + 5 
-              where id_client=1;
+    Session1>UPDATE Client SET nb_places_reservees = nb_places_reservees + 5 
+              WHERE id_client=1;
 
     1 row updated.
 
-    Session1>select * from Client;
+    Session1>SELECT * FROM Client;
 
     ID_CLIENT NB_PLACES_RESERVEES      SOLDE
     ---------- ------------------- ----------
              1                   8       2000
 
-    Session1>select * from Spectacle;
+    Session1>SELECT * FROM Spectacle;
 
-    ID_SPECTACLE NB_PLACES_OFFERTES NB_PLACES_LIBRES      TARif
+    ID_SPECTACLE NB_PLACES_OFFERTES NB_PLACES_LIBRES      TARIF
     ------------ ------------------ ---------------- ----------
                1                250              200         10
  
-Après l'ordre ``update``, si on regarde le contenu des
+Après l'ordre ``UPDATE``, si on regarde le contenu des
 tables *Client* et *Spectacle*, on voit bien
 l'effet des mises à jour. Notez que la base est ici dans un état instable
 puisqu'on n'a pas encore diminué le nombre de places libres. Voyons
@@ -1006,15 +1006,15 @@ maintenant les requêtes de lecture pour la session 2.
 
 .. code-block:: sql
 
-    Session2>select * from Client;
+    Session2>SELECT * FROM Client;
 
      ID_CLIENT NB_PLACES_RESERVEES      SOLDE 
     ---------- ------------------- ----------
              1                   3       2000
 
-    Session2>select * from Spectacle;
+    Session2>SELECT * FROM Spectacle;
 
-    ID_SPECTACLE NB_PLACES_OFFERTES NB_PLACES_LIBRES      TARif
+    ID_SPECTACLE NB_PLACES_OFFERTES NB_PLACES_LIBRES      TARIF
     ------------ ------------------ ---------------- ----------
                1                250              200         10
  
@@ -1026,8 +1026,8 @@ tente d'effectuer la mise à jour du client.
 
 .. code-block:: sql
 
-    Session2>update Client set nb_places_reservees = nb_places_reservees + 7 
-                    where id_client=1;
+    Session2>UPDATE Client SET nb_places_reservees = nb_places_reservees + 7 
+                    WHERE id_client=1;
 
 La transaction est mise en attente car, appliquant des techniques
 de verrouillage qui seront décrites plus loin, ORACLE a réservé
@@ -1037,8 +1037,8 @@ pour cette session.
 
 .. code-block:: sql
 
-    Session1>update Spectacle set nb_places_libres = nb_places_libres - 5 
-              where id_spectacle=1;
+    Session1>UPDATE Spectacle SET nb_places_libres = nb_places_libres - 5 
+              WHERE id_spectacle=1;
 
     1 row updated.
 
@@ -1050,20 +1050,20 @@ Après le ``commit``, la session 2 est libérée,
 
 .. code-block:: sql
 
-    Session2>update Client set nb_places_reservees = nb_places_reservees + 7
-                  where id_client=1;
+    Session2>UPDATE Client SET nb_places_reservees = nb_places_reservees + 7
+                  WHERE id_client=1;
 
     1 row updated.
     Session2>
-    Session2>select * from Client;
+    Session2>SELECT * FROM Client;
 
      ID_CLIENT NB_PLACES_RESERVEES      SOLDE
     ---------- ------------------- ----------
              1                  15       2000
 
-    Session2>select * from Spectacle;
+    Session2>SELECT * FROM Spectacle;
 
-    ID_SPECTACLE NB_PLACES_OFFERTES NB_PLACES_LIBRES      TARif
+    ID_SPECTACLE NB_PLACES_OFFERTES NB_PLACES_LIBRES      TARIF
     ------------ ------------------ ---------------- ----------
                1                250              195 	10
 
@@ -1093,15 +1093,15 @@ si on effectue le ``rollback``.
 
     rollback complete.
 
-    Session2>select * from Client;
+    Session2>SELECT * FROM Client;
 
      ID_CLIENT NB_PLACES_RESERVEES      SOLDE
     ---------- ------------------- ----------
              1                   8       2000
 
-    Session2>select * from Spectacle;
+    Session2>SELECT * FROM Spectacle;
 
-    ID_SPECTACLE NB_PLACES_OFFERTES NB_PLACES_LIBRES      TARif
+    ID_SPECTACLE NB_PLACES_OFFERTES NB_PLACES_LIBRES      TARIF
     ------------ ------------------ ---------------- ----------
                1                250              195         10
 
@@ -1178,7 +1178,7 @@ S3: effets indésirables des transactions concurrentes
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: anomalies transactionnelles <http://sys.bdpedia.fr/files/sltransanomalies.pdf>`_
-    * `Vidéo sur les anomalies transactionnelles <https://mediaserver.lecnam.net/videos/anomalies-transactionnelles/>`_ 
+    * `Vidéo sur les anomalies transactionnelles <https://mediaserver.cnam.fr/permalink/v125f5947877fb68lef1//>`_ 
 
 Pour illustrer les problèmes potentiels en cas
 d'absence de contrôle de concurrence, ou de techniques
@@ -1720,7 +1720,7 @@ S4: choisir un niveau d'isolation
 .. admonition::  Supports complémentaires:
 
    * `Diapositives: niveaux d'isolation <http://sys.bdpedia.fr/files/slisolation.pdf>`_
-   * `Vidéo sur les niveaux d'isolation <https://mediaserver.lecnam.net/videos/les-niveaux-disolation/>`_ 
+   * `Vidéo sur les niveaux d'isolation <https://mediaserver.cnam.fr/permalink/v125f5947877f703ivj8//>`_ 
      
 Du point du programmeur d'application, l'objectif du contrôle de concurrence
 est de garantir la cohérence des données et d'assurer la recouvrabilité des
@@ -2001,7 +2001,7 @@ avec des lectures.
      Session 1> START TRANSACTION;
      Query OK, 0 rows affected (0,00 sec)
 
-     Session 1> select * from Spectacle where id_spectacle=1;
+     Session 1> SELECT * FROM Spectacle WHERE id_spectacle=1;
      +--------------+--------------------+------------------+-------+
      | id_spectacle | nb_places_offertes | nb_places_libres | tarif |
      +--------------+--------------------+------------------+-------+
@@ -2009,7 +2009,7 @@ avec des lectures.
      +--------------+--------------------+------------------+-------+
      1 row in set (0,01 sec)
 
-     Session 1> select * from Client where id_client=1;
+     Session 1> SELECT * FROM Client WHERE id_client=1;
      +-----------+---------------------+-------+
      | id_client | nb_places_reservees | solde |
      +-----------+---------------------+-------+
@@ -2025,7 +2025,7 @@ reste 50 places libres. La session 2 exécute à son tour les lectures.
      Session 2> START TRANSACTION;
      Query OK, 0 rows affected (0,00 sec)
 
-     Session 2> select * from Spectacle where id_spectacle=1;
+     Session 2> SELECT * FROM Spectacle WHERE id_spectacle=1;
      +--------------+--------------------+------------------+-------+
      | id_spectacle | nb_places_offertes | nb_places_libres | tarif |
      +--------------+--------------------+------------------+-------+
@@ -2033,7 +2033,7 @@ reste 50 places libres. La session 2 exécute à son tour les lectures.
      +--------------+--------------------+------------------+-------+
      1 row in set (0,00 sec)
 
-     Session 2> select * from Client where id_client=2;
+     Session 2> SELECT * FROM Client WHERE id_client=2;
      +-----------+---------------------+-------+
      | id_client | nb_places_reservees | solde |
      +-----------+---------------------+-------+
@@ -2046,13 +2046,13 @@ qu'il en reste 50 avant la mise à jour, elle place le nombre
 
 .. code-block:: sql
 
-     Session 2> update Spectacle set nb_places_libres=48 
-            where id_spectacle=1;
+     Session 2> UPDATE Spectacle SET nb_places_libres=48 
+            WHERE id_spectacle=1;
      Query OK, 1 row affected (0,00 sec)
      Rows matched: 1  Changed: 1  Warnings: 0
 
-     Session 2> update Client set solde=40, nb_places_reservees=2 
-              where id_client=2;
+     Session 2> UPDATE Client SET solde=40, nb_places_reservees=2 
+              WHERE id_client=2;
      Query OK, 1 row affected (0,00 sec)
      Rows matched: 1  Changed: 1  Warnings: 0
 
@@ -2066,18 +2066,18 @@ de 5 places aboutit aux requêtes suivantes.
 
 .. code-block:: sql
 
-     Session 1> update Spectacle set nb_places_libres=45 where id_spectacle=1;
+     Session 1> UPDATE Spectacle SET nb_places_libres=45 WHERE id_spectacle=1;
      Query OK, 1 row affected (0,00 sec)
      Rows matched: 1  Changed: 1  Warnings: 0
 
-     Session 1> update Client set solde=50, nb_places_reservees=5 where id_client=1;
+     Session 1> UPDATE Client SET solde=50, nb_places_reservees=5 WHERE id_client=1;
      Query OK, 1 row affected (0,00 sec)
      Rows matched: 1  Changed: 1  Warnings: 0
 
      Session 1> commit;
      Query OK, 0 rows affected (0,01 sec)
 
-     Session 1> select * from Spectacle where id_spectacle=1;
+     Session 1> SELECT * FROM Spectacle WHERE id_spectacle=1;
      +--------------+--------------------+------------------+-------+
      | id_spectacle | nb_places_offertes | nb_places_libres | tarif |
      +--------------+--------------------+------------------+-------+
@@ -2085,7 +2085,7 @@ de 5 places aboutit aux requêtes suivantes.
      +--------------+--------------------+------------------+-------+
      1 row in set (0,00 sec)
 
-     Session 1> select * from Client;
+     Session 1> SELECT * FROM Client;
      +-----------+---------------------+-------+
      | id_client | nb_places_reservees | solde |
      +-----------+---------------------+-------+
@@ -2151,13 +2151,13 @@ La session 1 commence par ses lectures.
 
 .. code-block:: sql
 
-     Session 1> set TRANSACTION ISOLATION LEVEL serializable;
+     Session 1> SET TRANSACTION ISOLATION LEVEL serializable;
      Query OK, 0 rows affected (0,04 sec)
 
      Session 1> START TRANSACTION;
      Query OK, 0 rows affected (0,00 sec)
 
-     Session 1> select * from Spectacle where id_spectacle=1;
+     Session 1> SELECT * FROM Spectacle WHERE id_spectacle=1;
      +--------------+--------------------+------------------+-------+
      | id_spectacle | nb_places_offertes | nb_places_libres | tarif |
      +--------------+--------------------+------------------+-------+
@@ -2165,7 +2165,7 @@ La session 1 commence par ses lectures.
      +--------------+--------------------+------------------+-------+
      1 row in set (0,00 sec)
 
-     Session 1> select * from Client where id_client=1;
+     Session 1> SELECT * FROM Client WHERE id_client=1;
      +-----------+---------------------+-------+
      | id_client | nb_places_reservees | solde |
      +-----------+---------------------+-------+
@@ -2177,13 +2177,13 @@ et cherche à effectuer la première mise à jour.
 
 .. code-block:: sql
 
-     Session 2> set TRANSACTION ISOLATION LEVEL serializable;
+     Session 2> SET TRANSACTION ISOLATION LEVEL serializable;
      Query OK, 0 rows affected (0,00 sec)
 
      Session 2> START TRANSACTION;
      Query OK, 0 rows affected (0,00 sec)
 
-     Session 2> select * from Spectacle where id_spectacle=1;
+     Session 2> SELECT * FROM Spectacle WHERE id_spectacle=1;
      +--------------+--------------------+------------------+-------+
      | id_spectacle | nb_places_offertes | nb_places_libres | tarif |
      +--------------+--------------------+------------------+-------+
@@ -2191,7 +2191,7 @@ et cherche à effectuer la première mise à jour.
      +--------------+--------------------+------------------+-------+
      1 row in set (0,00 sec)
 
-     Session 2> select * from Client where id_client=2;
+     Session 2> SELECT * FROM Client WHERE id_client=2;
      +-----------+---------------------+-------+
      | id_client | nb_places_reservees | solde |
      +-----------+---------------------+-------+
@@ -2199,7 +2199,7 @@ et cherche à effectuer la première mise à jour.
      +-----------+---------------------+-------+
      1 row in set (0,00 sec)
 
-     Session 2> update Spectacle set nb_places_libres=48 where id_spectacle=1;
+     Session 2> UPDATE Spectacle SET nb_places_libres=48 WHERE id_spectacle=1;
  
 La transaction 2 est mise en attente car, en mode sérialisable,
 MySQL/InnoDB pose un verrou en lecture  sur les lignes sélectionnées. La
@@ -2214,7 +2214,7 @@ réaction de InnoDB.
 
 .. code-block:: sql
 
-     Session 1> update Spectacle set nb_places_libres=45 where id_spectacle=1;
+     Session 1> UPDATE Spectacle SET nb_places_libres=45 WHERE id_spectacle=1;
      ERROR 1213 (40001): Deadlock found when trying to get lock; 
             try restarting transaction
 
@@ -2249,7 +2249,7 @@ Certains systèmes permettent de poser explicitement
 des verrous, ce qui permet pour le programmeur averti
 de choisir un niveau d'isolation relativement permissif,
 tout en augmentant le niveau de verrouillage quand c'est nécessaire.
-ORACLE, PostgreSQL et MySQL  proposent notamment une clause ``FOR update`` 
+ORACLE, PostgreSQL et MySQL  proposent notamment une clause ``FOR UPDATE`` 
 qui peut se placer à la fin d'une requête SQL, et dont l'effet
 est de réserver chaque nuplet lu en vue d'une prochaine modification.
 
@@ -2262,14 +2262,14 @@ les deux premières requêtes de la manière suivante:
 .. code-block:: sql
 
     ...
-    select * into v_spectacle 
-    from Spectacle 
-    where id_spectacle=v_id_spectacle
-    FOR update;
+    SELECT * INTO v_spectacle 
+    FROM Spectacle 
+    WHERE id_spectacle=v_id_spectacle
+    FOR UPDATE;
     ...
-    select * into v_client from Client 
-    where id_client=v_id_client
-    FOR update;
+    SELECT * INTO v_client FROM Client 
+    WHERE id_client=v_id_client
+    FOR UPDATE;
     ..
 
 On annonce donc explicitement, dans le code, que la lecture
@@ -2278,7 +2278,7 @@ par la mise à jour de ce même nuplet. Le système
 pose alors un *verrou exclusif* qui réserve
 l'accès au nuplet, en lecture ou en mise à jour,
 à la transaction qui a effectué la lecture
-avec ``FOR update``. Les verrous posés
+avec ``FOR UPDATE``. Les verrous posés
 sont libérés au moment du ``commit``
 ou du ``rollback``.
 
@@ -2299,7 +2299,7 @@ On obtient l'exécution en série suivante.
     r_1(s)  r_1(c_1) w_1(s) w_1(c_1) C_1 r_2(s)  r_2(c_2)  w_2(s)  w_2(c_2) C_2
 
 La déclaration,
-avec ``FOR update`` de l'intention de modifier
+avec ``FOR UPDATE`` de l'intention de modifier
 un nuplet revient à le réserver et donc à empêcher 
 un entrelacement avec d'autres transactions menant soit
 à un rejet, soit à une annulation autoritaire du SGBD.
@@ -2327,7 +2327,7 @@ le spectacle puis le client 1.
     Session 1> LOCK TABLES Client WRITE, Spectacle WRITE;
     Query OK, 0 rows affected (0,00 sec)
 
-    Session 1> select * from Spectacle where id_spectacle=1;
+    Session 1> SELECT * FROM Spectacle WHERE id_spectacle=1;
     +--------------+--------------------+------------------+-------+
     | id_spectacle | nb_places_offertes | nb_places_libres | tarif |
     +--------------+--------------------+------------------+-------+
@@ -2335,7 +2335,7 @@ le spectacle puis le client 1.
     +--------------+--------------------+------------------+-------+
     1 row in set (0,00 sec)
 
-    Session 1> select * from Client where id_client=1;
+    Session 1> SELECT * FROM Client WHERE id_client=1;
     +-----------+---------------------+-------+
     | id_client | nb_places_reservees | solde |
     +-----------+---------------------+-------+
@@ -2356,12 +2356,12 @@ les tables avec la commande ``UNLOCK TABLES``.
 
 .. code-block:: sql
 
-    Session 1> update Spectacle set nb_places_libres=45 
-            where id_spectacle=1;
+    Session 1> UPDATE Spectacle SET nb_places_libres=45 
+            WHERE id_spectacle=1;
     Query OK, 1 row affected (0,00 sec)
 
-    Session 1> update Client set solde=50, nb_places_reservees=5 
-             where id_client=1;
+    Session 1> UPDATE Client SET solde=50, nb_places_reservees=5 
+             WHERE id_client=1;
     Query OK, 1 row affected (0,00 sec)
 
     Session 1> UNLOCK TABLES;
@@ -2400,14 +2400,14 @@ transactions, le risque d'interblocage, temporaire ou définitif (voir
 plus loin) est important, et on peut envisager de précéder la longue
 transaction par un verrouillage en écriture.
 
-Verrouillage d'une ligne avec ``FOR update``
+Verrouillage d'une ligne avec ``FOR UPDATE``
 --------------------------------------------
 
 Une alternative au mode ``serializable``
 est la pause explicite de verrous sur les lignes que l'on
 s'apprête à modifier.
-La clause ``FOR update`` place un verrou exclusif
-sur les nuplets sélectionnés par un ordre ``select``.
+La clause ``FOR UPDATE`` place un verrou exclusif
+sur les nuplets sélectionnés par un ordre ``SELECT``.
 Ces nuplets sont donc réservés pour une future modification:
 aucune autre transaction ne peut placer de verrou en lecture
 ou en écriture.  L'intérêt est de ne pas réserver les nuplets
@@ -2422,7 +2422,7 @@ en veillant à verrouiler les lignes que l'on
 va modifier. 
 
  * C'est la transaction 1 qui commence. Elle lit le spectacle et le client :math:`c_1`
-   en posant un verrou exclusif avec la clause  ``FOR update``.
+   en posant un verrou exclusif avec la clause  ``FOR UPDATE``.
 
  * Ensuite c'est la seconde transaction qui transmet ses commandes au serveur. Elle aussi cherche
    à placer des verrous (c'est normal, il s'agit de l'exécution du même code). Bien entendu elle est mise en attente puisque 
@@ -2433,7 +2433,7 @@ va modifier.
 
 Au final les deux transactions
 se sont exécutées en série.
-La base est dans un état cohérent. L'utilisation de ``FOR update``
+La base est dans un état cohérent. L'utilisation de ``FOR UPDATE``
 est un compromis entre l'isolation assurée par le système,
 et la déclaration explicite, par le programmeur, des données
 lues en vue d'être modifiées. Elle assure le maximum
@@ -2547,10 +2547,10 @@ Exercices
        ne voit toujours pas l'adresse, même en réaffichant sans cesse son écran. La tension monte
        entre les deux.       Que feriez-vous pour les aider?
        
-    -  Timothée veut surveiller les nouvelles réservations de billets d'avion. Il écrit une transaction qui effectue
-       une boucle de lecture sur la table des vols et affiche le total des billets réservés. Or, le résultat
-       affiché est toujours le même, alors que des billets sont bel et bien réservés. Que conseilleriez-vous
-       à Timothée ?
+     -  Timothée veut surveiller les nouvelles réservations de billets d'avion. Il écrit une transaction qui effectue
+        une boucle de lecture sur la table des vols et affiche le total des billets réservés. Or, le résultat
+        affiché est toujours le même, alors que des billets sont bel et bien réservés. Que conseilleriez-vous
+        à Timothée ?
        
     .. ifconfig:: transactions in ('public')
 
@@ -2654,6 +2654,7 @@ Exercices
               de *B* et réciproquement: c'est un interblocage, le prix à payer (parfois) pour une isolation
               complète. Une des transactions sera rejetée.
               
+
 
 
 .. _Ex-transaction-3: 
@@ -2761,7 +2762,6 @@ Exercices
             - En mode ``serialisable``, même punition que prédédemment: l'écriture :math:`w_1(p)` est bloqueé
               par :math:`r_2(p)` qui précède, et :math:`w_2(m)` est bloqueé
               par :math:`r_1(m)` qui précède. Encore un *deadlock* et un rejet de transaction.
-
 
 
 *******************************************
