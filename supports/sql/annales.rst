@@ -255,7 +255,25 @@ Algèbre
 -------
 
   - La requête 4 renvoie 2 nuplets: (1,1) et (6,6)
-  - La requête renvoie 3 nuplets: (1,0,2), (1,0,7) et (4,1,2)
+  - Voici l'union :math:`S \cup T`:
+ 
+    .. csv-table:: 
+      :header:  "A",  "B", "E"
+      :widths: 4, 4, 4
+
+        1, 0, 2
+        4, 1, 2
+        8, 6, 6
+        4, 2, 2
+        1, 0, 7
+        8, 6, 5
+        8, 5, 6
+        
+  La jointure sur A et B avec ``R``  renvoie 5 nuplets: (1,0,1,2) s'associe à 2 nuplets dans
+  :math:`S \cup T`,  de même que (1,0,1,1). (4,1,2,2) s'associe à un nuplet.
+  
+
+Relation T
   - La requête renvoie également 3 nuplets
   - :math:`\pi_{nom, prenom}(Personne \underset{id=idSpectateur}{\bowtie} \sigma_{prix > 500}(BILLET))`
   - :math:`\pi_{id}(Personne) - \pi_{idArtiste} (Spectacle)`
