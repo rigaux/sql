@@ -1,38 +1,25 @@
-Plan d'avancement du cours NFE106
-=================================
+Voici une proposition de plan d'avancement, avec les visios programmées
 
-9 mars
-------
+23 février -> visio de présentation du cours
 
-Dispositifs de stockage (chap 2)
+7 mars -> Dispositifs de stockage (chap 2)
 
-19 mars
--------
+16 mars -> Index et arbre B (chap 3)
 
-Index et arbre B (chap 3)
+28 mars -> Hachage (chap 4)
 
-30 mars
--------
+31 mars: premier devoir à rendre (stockage et indexation)
 
-Hachage (chap 4)
+13 avril -> Opérateurs et algorithmes (chap 6)
 
+25 avril -> Evaluation et optimisation (chap 7)
 
-16 avril
--------
+30 avril: second devoir à rendre (évaluation de requêtes)
 
-Opérateurs et algorithmes (chap 6)
+11 mai -> Transactions
 
-7 mai
-------
+23 mai -> Concurrence accès
 
-Evaluation et optimisation
+31 mai: troisième de voir à rendre (concurrence)
 
-18 mai
-------
-
-Transactions
-
-4 juin
-------
-
-Concurrence accès
+15 juin -> Révisions (exameen blanc)

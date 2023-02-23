@@ -1349,7 +1349,7 @@ Quiz
 
     Dire qu'un curseur est *immuable*, c'est dire que
        
-    A) :eqt:`I`  l'on ne peut pas modifier les nuplets sélectionnés
+    A) :eqt:`I`  personne ne peut pas modifier les nuplets sélectionnés
     #) :eqt:`C` le contenu parcouru par le curseur n'est pas affecté par des mises à jour
        des autres sessions, tant que le curseur n'est pas fermé
     #) :eqt:`I`  le résultat est toujours le même à chaque exécution du curseur
