@@ -2348,13 +2348,14 @@ dans le prochain chapitre).
             from Logement as l, Voyageur as v
             where région=lieu
 
-            select l.nom as nomLogement, v.nom, count(*) as nbVisites
-            from Logement as l, Séjour as s, Voyageur as v
-            where l.code = s.codeLogement
-            and s.idVoyageur =v.idVoyageur
-            group by l.nom, v.nom
-            having count(*) > 1
-
+            select l.nom as nomLogement, v1.nom as voyageur1, v2.nom as voyageur2
+            from Logement as l, Séjour as s1, Voyageur as v1, Séjour as s2, Voyageur as v2
+            where l.code = s1.codeLogement
+            and l.code = s2.codeLogement
+            and s1.idVoyageur =v1.idVoyageur
+            and s2.idVoyageur =v2.idVoyageur
+            and s1.idVoyageur != s2.idVoyageur
+  
 Pour les requêtes suivantes, en revanche, vous avez droit à l'imbrication (il serait difficile de faire
 autrement).
 
@@ -2364,6 +2365,8 @@ autrement).
    - Nom des voyageurs qui ne sont allés nulle part
    - Les logements où personne n'est allé
    - Les voyageurs qui n'ont jamais eu l'occasion de faire de la plongée
+   - Les voyageurs et les logements où ils n'ont jamais séjourné
+   - Les logements où tout le monde est allé
 
 Vous pouvez finalement reprendre quelques-unes de requêtes précédentes et les exprimer avec
 l'imbrication.
@@ -2373,7 +2376,6 @@ l'imbrication.
       .. admonition:: Correction
 
         .. code-block:: sql
-
 
             select v.prénom, v.nom
             from Voyageur as v
@@ -2391,12 +2393,49 @@ l'imbrication.
                 and s.idVoyageur =v.idVoyageur
                 and lieu != 'Corse')
 
+             select l.nom
+            from Logement as l
+            where not exists (select ''
+                from Activité as a
+                where l.code = a.codeLogement
+                and a.codeActivité='Piscine')
+
             select v.prénom, v.nom
             from Voyageur as v
             where not exists (select ''
                   from Séjour as s
                   where  s.idVoyageur =v.idVoyageur)
 
+           select l.nom
+            from Logement as l
+            where not exists (select ''
+                  from Séjour as s
+                  where  l.code =s.codeLogement)
+
+           select v.prénom, v.nom
+            from Voyageur as v
+            where not exists (select ''
+                  from Séjour as s, Activité as a
+                  where  s.idVoyageur =v.idVoyageur
+                  and s.codeLogement=a.codeLopement
+                  and a.codeActivité='Plongée')
+
+         select v.nom as nomVoyageur, l.nom as nomLogement
+            from Voyageur as v, Logement as l
+            where not exists (select ''
+                  from Séjour as s
+                  where s.codeLogement = l.code
+                  and  s.idVoyageur =v.idVoyageur)
+
+          select l.nom
+          from Logement as l
+          where not exists (select *
+                  from Voyageur as v
+                  where  not exists (
+                    select * from Séjour as s
+                    where s.idVoyageur =v.idVoyageur
+                    and s.codeLogement=l.codeLopement
+                  )
 
 ***************************************
 Atelier: requêtes sur la base des films
