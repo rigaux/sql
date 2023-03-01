@@ -2348,7 +2348,7 @@ dans le prochain chapitre).
             from Logement as l, Voyageur as v
             where région=lieu
 
-            select l.nom as nomLogement, v1.nom as voyageur1, v2.nom as voyageur2
+            select distinct l.nom as nomLogement, v1.nom as voyageur1, v2.nom as voyageur2
             from Logement as l, Séjour as s1, Voyageur as v1, Séjour as s2, Voyageur as v2
             where l.code = s1.codeLogement
             and l.code = s2.codeLogement
@@ -2417,7 +2417,7 @@ l'imbrication.
             where not exists (select ''
                   from Séjour as s, Activité as a
                   where  s.idVoyageur =v.idVoyageur
-                  and s.codeLogement=a.codeLopement
+                  and s.codeLogement=a.codeLogement
                   and a.codeActivité='Plongée')
 
          select v.nom as nomVoyageur, l.nom as nomLogement
@@ -2434,8 +2434,8 @@ l'imbrication.
                   where  not exists (
                     select * from Séjour as s
                     where s.idVoyageur =v.idVoyageur
-                    and s.codeLogement=l.codeLopement
-                  )
+                    and s.codeLogement=l.code
+                  ))
 
 ***************************************
 Atelier: requêtes sur la base des films
