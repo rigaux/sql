@@ -2348,6 +2348,13 @@ dans le prochain chapitre).
             from Logement as l, Voyageur as v
             where région=lieu
 
+          select distinct l.nom as nomLogement, v.nom as voyageur
+            from Logement as l, Séjour as s1, Voyageur as v, Séjour as s2
+            where l.code = s1.codeLogement
+            and l.code = s2.codeLogement
+            and s1.idVoyageur =v.idVoyageur
+            and s2.idVoyageur =v.idVoyageur
+
             select distinct l.nom as nomLogement, v1.nom as voyageur1, v2.nom as voyageur2
             from Logement as l, Séjour as s1, Voyageur as v1, Séjour as s2, Voyageur as v2
             where l.code = s1.codeLogement
