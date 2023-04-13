@@ -319,7 +319,7 @@ Quiz
             le même résultat.
 
  * Ma clé primaire est un idenfifiant séquentiel. Que peut-on dire du stockage
-   de deux enregistrements consécutifs?
+   de deux enregistrements dont les clés sont consécutives?
  
    .. eqt:: hach1-3
 

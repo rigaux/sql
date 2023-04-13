@@ -812,7 +812,7 @@ Quiz
 
         A) :eqt:`I` Un nuplet
         #) :eqt:`I`  L’ensemble des nuplets du résultat
-        #) :eqt:'C`  L’adresse d’un nuplet
+        #) :eqt:`C`  L’adresse d’un nuplet
         #) :eqt:`I` L’ensemble des adresses des nuplets du résultat
 
   - On suppose qu’il existe un index sur l’année, quelles sont parmi les requêtes suivantes celles dont le plan 

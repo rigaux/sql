@@ -2338,6 +2338,12 @@ dans le prochain chapitre).
             and s.idVoyageur =v.idVoyageur
             and lieu='Corse'
 
+            select v.prénom, v.nom
+            from Logement as l, Séjour as s, Voyageur as v
+            where l.code = s.codeLogement
+            and s.idVoyageur =v.idVoyageur
+            and lieu != 'Corse'
+            
             select l.nom as nomLogement, v.nom
             from Logement as l, Séjour as s, Voyageur as v
             where l.code = s.codeLogement
@@ -2354,6 +2360,7 @@ dans le prochain chapitre).
             and l.code = s2.codeLogement
             and s1.idVoyageur =v.idVoyageur
             and s2.idVoyageur =v.idVoyageur
+            and s1.idSéjour != s2.idSéjour
 
             select distinct l.nom as nomLogement, v1.nom as voyageur1, v2.nom as voyageur2
             from Logement as l, Séjour as s1, Voyageur as v1, Séjour as s2, Voyageur as v2
