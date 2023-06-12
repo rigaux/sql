@@ -2660,7 +2660,7 @@ Exercices
 .. _Ex-transaction-3: 
 .. admonition:: Exercice `Ex-transaction-3`_:  sérialisabilité et mode autocommit
 
-    On dispose d'une table $T (id, valeur)$. Initialement toutes les valeurs sont différentes. 
+    On dispose d'une table :math:`T (id, valeur)`. Initialement toutes les valeurs sont distinctes. 
     Voici une procédure qui échange les valeurs de 2 nuplets.
 
     .. code-block:: sql
@@ -2682,6 +2682,28 @@ Exercices
     On est en mode ``autocommit``: un ``commit`` a lieu après chaque requête SQL. Expliquez
     dans quel scénario l'exécution concurrente de deux procédures d'échange peut aboutir
     à ce que deux nuplets aient la même valeur.
+
+    .. ifconfig:: transactions in ('public')
+
+      .. admonition:: Correction
+
+          On suppose deeux transactions :math:`T_1(v_1, v_2)`
+          et  :math:`T_2(v_2, v_1)`. Dans une exécution en série,
+          quel que soit l'ordre, les valeurs sont distinctes
+          à la fin si elles le sont au début. 
+          On peut imaginer le scénario suivant (prenons :math:`v_1=1` et 
+          :math:`v_2=2` comme valeurs initiales).
+          
+            - :math:`T_1` lit la valeur de :math:`v_1`, c'est 1
+            - :math:`T_1` lit la valeur de :math:`v_2`, c'est 2
+            - :math:`T_1` écrit la valeur 1 dans :math:`v_2`
+            - :math:`T_2` lit la valeur de :math:`v_2`, c'est 1 (après la mise à jour précédente)
+            - :math:`T_2` lit la valeur de :math:`v_1`, c'est 1
+            - :math:`T_1` écrit la valeur 2 dans :math:`v_1`
+            - :math:`T_2` écrit la valeur 1 dans :math:`v_1`
+            - :math:`T_2` écrit la valeur 1 dans :math:`v_2`
+          
+          Et donc à la fin :math:`v_1` et :math:`v_2` valent 1...
 
 .. _Ex-transaction-4: 
 .. admonition:: Exercice `Ex-transaction-4`_:  la sérialisabilité, suite

@@ -1144,6 +1144,24 @@ Exercices
         le contrôle de concurrence multi-versions pour vérifier s'il détecte et prévient les anomalies
         de cette exécution.
 
+   .. ifconfig:: conc in ('public')
+
+      .. admonition:: Correction
+
+          - Les deux procédures lisent la base avant toute modification, et en
+            concluent toutes les deux que nos trois médecins sont de garde. Ce qui est vrai.
+          - Chaque procédure met "hors garde" son médecin respectif (soit Philippe
+            et Michel) en pensant chacune qu'il en restera 2 (=3-1) à la fin. Mais
+            après les ``commit``, seule Alice est de garde.
+          - On trouve évidemment des conflits de :math:`T_1` vers :math:`T_2`
+            et réciproquement, ce qui confirme que l'exécution n'est pas sérialisable.
+            Le contrôle de concurrence MV vérifie, au moment de la mise à jour,
+            que le médecin concerné n'a pas été modifié depuis le début
+            de la transaction. C'est le cas, donc aucun blocage n'est effectué,
+            et le résultat est incorrect. Ce ne serait pas le cas avec le verrouillage
+            à deux phases qui bloquerait sur l'écriture d'un médecin qui a été
+            *lu* par une autre transaction.
+
 .. _ex-debitcredit:
 .. admonition:: Exercice `ex-debitcredit`_: le cas des débits/crédits
 
