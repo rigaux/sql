@@ -2687,7 +2687,7 @@ Exercices
 
       .. admonition:: Correction
 
-          On suppose deeux transactions :math:`T_1(v_1, v_2)`
+          On suppose deux transactions :math:`T_1(v_1, v_2)`
           et  :math:`T_2(v_2, v_1)`. Dans une exécution en série,
           quel que soit l'ordre, les valeurs sont distinctes
           à la fin si elles le sont au début. 
