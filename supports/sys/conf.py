@@ -84,9 +84,9 @@ optim='public'
 transactions='public'
 conc='public'
 rp='public'
-annales_2020_1='private'
-annales_2020_2='private'
-annales_2022='private'
+annales_2020_1='public'
+annales_2020_2='public'
+annales_2022='public'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

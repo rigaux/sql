@@ -625,13 +625,13 @@ Les jointures se font sur les attributs de même nom.
 		  en cherchant pour chaque enregistrement :math:`(e_i,f_i)` de :math:`T` le ou les
 		  enregistrements correspondant dans la table de hachage.
 		  
-		  Coût ,: 52 blocs.
+		  Coût: 52 blocs.
    
 		- On parcourt :math:`S` séquentiellement (2 blocs), pour chaque enregistrement
 		  :math:`(c, d,e)` (il y en a 20), on utilise l'index pour accéder à :math:`T`. Pour chaque entrée
 		  trouvée dans l'index il faut lire un bloc (au pire) sur le disque.
 		  
-		  Coût ,: 2 + 20 blocs. 
+		  Coût: 2 + 20 blocs. 
 
 		- On constate qu'il n'existe pas d'index disponible 
 		  pour la jointure avec :math:`R`, car la clé primaire de :math:`R` ne se trouve
@@ -652,10 +652,10 @@ Les jointures se font sur les attributs de même nom.
 		  une jointure par tri-fusion.
           
 		- Pour chaque tuple de :math:`R`, on trouve :math:`5000 \times 0,05 = 250`
-		  enregistrements dans :math:`S`: 50 M de enregistrements au final.
+		  enregistrements dans :math:`S`: 50 M d'enregistrements au final.
 
 		- Jointure par hachage : je hache :math:`S` en 25 fragments de 
-		  200 enregistrements chacune (20 blocs en mémoire). Ensuite je hache :math:`R` en 2
+		  200 enregistrements chacun (20 blocs en mémoire). Ensuite je hache :math:`R` en 25
 		  fragments également (leur taille m'importe peu). Puis je fais la jointure
 		  entre chaque paire de fragmentss. Coût (très 	approximatif) =
 		  :math:`3 \times (|S| + |R|) = 3 \times (20 000 + 500) = 61 500`.

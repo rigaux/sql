@@ -1335,7 +1335,7 @@ Exercices
             et  :math:`r_1(y) \to w_3(y)`; sur *u* et *z* (les commandes), aucun
             conflit.
             
-            Il y a bien un cycle, donc l'exécution est non sérialisable.
+            Il n'y pas  de cycle, donc l'exécution est sérialisable.
             
           - On exécute :math:`r_1(x)r_1(y)`. La transaction :math:`T_2` 
             (qui modifie le prix du produit) est alors mise en attente
