@@ -66,7 +66,7 @@ Questions :
           première entrée est inférieure ou égale à P1A3 et dont la dernière entrée est 
           supérieure ou égale à P1A3. On recherche dans cette feuille l'entrée la plus grande 
           inférieure ou égale à P1A3. Cette entrée contient l'adresse du bloc du fichier qui 
-          contient l'article de code  P1A3.  On accède à ce bloc bloc. 
+          contient l'article de code  P1A3.  On accède à ce bloc. 
           Les articles sont triés sur ``A``. 
           Soit tous les articles de code compris entre P1A3 et P3G5 sont dans ce bloc soit ils sont
           à cheval sur deux blocs adjacents (ils ne peuvent pas être sur plus de 2 blocs
@@ -80,7 +80,7 @@ Questions :
 
       .. admonition:: Correction
 
-          La recherche utilise  l'index non dense sur ``B``. La  différence essentielle 
+          La recherche utilise  l'index dense sur ``B``. La  différence essentielle 
           est que le parcours séquentiel s'effectue *au niveau des feuilles de l'index*.
           Il n'est plus possible de le faire sur le fichier car ce dernier n'est plus
           trié. 
