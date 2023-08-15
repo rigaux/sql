@@ -26,11 +26,12 @@ Conception (5 points)
 ===================== 
 
  - Donnez le modèle entité / association correspondant au schéma de notre base.
- - Pensez-vous qu'une association a été réifiée? Si oui, laquelle?
- - Donnez la commande de création de la table ``Spectacle``
+ - Pensez-vous qu'une association a été réifiée ? Si oui, laquelle ?
+ - Donnez la commande de création de la table ``Spectacle`` 
  - On veut qu'un même spectateur puisse avoir au plus un billet pour un spectacle.  
-   Quelle dépendance fonctionnelle cela ajoute-t-il? Que proposez-vous pour en tenir compte dans le schéma?
-  
+   Quelle dépendance fonctionnelle cela ajoute-t-il ? Que proposez-vous 
+   pour en tenir compte dans le schéma ?
+
 
 SQL  (6 points)
 ===============
@@ -1242,4 +1243,285 @@ Que renvoie la requête suivante ?
 
 		On obtient tous les clients de Nantes, et leurs forfaits. Si un client n'a aucun forfait, une ligne
 		est produite quand même, avec le nom du forfait à ``null``.
+
+
+**************************************
+Examen session 1, second semestre 2023
+**************************************
+
+
+Une application met en contact des personnes dont certaines (les professeurs)
+proposent des leçons en ligne à d'autres (les étudiants). 
+Dans ce qui suit on va supposer ques les leçons sont des cours de langue.
+
+Au départ le concepteur a placé les données sur les leçons
+dans un unique fichier CSV
+dont voici un extrait du contenu sous forme de tableau.
+
+..  csv-table::
+	:header: idProf, professeur, idEtudiant, étudiant, langue, date
+
+	1 , Luca , 2 , Philippe , italien , 14 mars
+	2 ,  Philippe , 3 , Lydia , français , 15 mars
+	1 ,  Luca , 3 , Lydia , italien , 20 mars
+	2 ,  Philippe , 3 , Lydia , français , 2 avril 
+	1 ,  Luca , 3 , Lydia , italien , 6 avril
+	3 ,  Lydia , 2 , Philippe , anglais , 12 avril 
+	3 ,  Lydia , 2 , Philippe , allemand , 13 avril 
+
+On va chercher à faire mieux avec une base relationnelle.
+
+Conception du schéma (7 pts)
+============================
+
+
+ - Pour chacune des DFs suivantes, indiquez si elle est respectée ou pas
+   *dans le tableau précédent*. Si elle ne l'est pas, expliquez pourquoi.
+   
+     - :math:`professeur \to langue`
+     - :math:`professeur, date \to etudiant`
+     - :math:`etudiant \to professeur`
+     - :math:`etudiant, langue \to professeur`
+   
+    .. ifconfig:: solcourslangue in ('public')
+
+       .. admonition:: Correction
+
+			- :math:`professeur \to langue` : non, car on voit que Lydia enseigne l'anglais et l'allemand
+			-   :math:`professeur, date \to etudiant` : oui, pas de contre-exemple dans le tableau (mais on en trouverait sans doute en continuant à accumuler les exemples)
+			- :math:`etudiant \to professeur`, non, Philippe suit des cours avec Luca et Lydia
+			- :math:`etudiant, langue \to professeur` : oui, pour une langue donnée, chaque étudiant n'a qu'un seul professeur
+
+   - Finalement, après avoir étudié beaucoup plus d'exemples, on
+     détermine les dépendances fonctionnelles suivantes: 
+     :math:`idProf \to professeur`, :math:`idEtudiant \to etudiant` et
+     :math:`(idProf, idEtudiant, date) \to langue`. 
+      
+        - Quelle est la clé de la relation ?
+        - Quelle est la décomposition en 3FN ?
+      
+    .. ifconfig:: solcourslangue in ('public')
+
+       .. admonition:: Correction
+      
+			- Quelle est la clé de la relation ? C'est le triplet  :math:`(idProf, idEtudiant, date)`
+			- Quelle est la décomposition en 3FN ? On applique la 
+			  normalisation et on trouve 3 relations : Professeur (id, nom),
+			  Etudiant (id, nom) et Cours(idProf, idEtudiant, date, langue). 
+			  Il est clair qu'il est préférable de fusionner les tables Professeur et Etudiant.
+
+Pour la suite de l'examen nous travaillons avec le schéma suivant.
+    
+      - Personne(**id**, nom, codeLangueNatale)
+      - Langue (**code**, intitulé)
+      - Cours(**id**, idProfesseur, idEtudiant, codeLangue, date)
+
+   - Sur ce schéma, répondez aux questions suivantes :
+
+     - Enumérez les clés étrangères
+     - Donnez le schéma entité-association correspondant
+     - Donnez les commandes ``create table``
+     - Une des relations correspond-elle à une réification ? Si oui
+       indiquez ce que serait le schéma sans réification.
+
+    .. ifconfig:: solcourslangue in ('public')
+
+       .. admonition:: Correction
+      
+      		- Clés étrangères : codeLangueNatale, codeLangue, idProfesseur et idEtudiant dans Cours.
+			- Standard
+			- Standard
+			- Réification : la relation Cours peut être interprétée comme venant d'une relation ternaire (Prof, Etudiant, Date), ce qui
+			  donnerait une clé avec trois attributs sans réification (voir les DF ci-dessus).
+			  Après réification, on a simplifié la clé, mais il faut prendre 
+			  garde à ce qu'un professeur ne donne pas deux cours au même moment (avec une clause ``unique``). 
+
+SQL (7 pts)
+===========
+
+Sur le schéma donné précédemment, exprimez en SQL les requêtes suivantes :
+
+
+  - Liste des cours de l'étudiant Philippe (on suppose qu'il n'y en a qu'un),  
+    en indiquant le nom du professeur et la date.
+    
+    .. ifconfig:: solcourslangue in ('public')
+
+		.. admonition:: Correction
+
+			.. code-block:: sql 
+
+				select prof.nom as nomProfesseur, 
+				from Cours as c, Personne as p, Personne as prof
+				where c.idEtudiant = p.id
+				and   c.idProfesseur = prof.id
+				and    p.nom='Philippe'
+
+   - Les personnes qui sont professeur *et* étudiant
+
+    .. ifconfig:: solcourslangue in ('public')
+
+		.. admonition:: Correction
+
+			Il faut trouver un cours où la personne est étudiante, un autre
+			où la personne est professeure. Le distinct est utile.
+
+			.. code-block:: sql 
+
+				select distinct p.nom 
+				from Cours as c1, Cours as c2, Personne as p
+				where c1.idEtudiant = p.id
+				and   c2.idProfesseur = p.id
+				
+   - Les professeurs qui donnent des cours dans une autre langue
+     que leur langue natale
+     
+    .. ifconfig:: solcourslangue in ('public')
+
+		.. admonition:: Correction
+
+			Il faut trouver (au moins) un cours d'une langue
+			qui  n'est pas celle du professeur.
+
+			.. code-block:: sql 
+
+				select distinct p.nom 
+				from Cours as c, Personne as p
+				where c.codeLangue != p.codeLangueNatale
+				and   c.idProfesseur = p.id
+
+   - Les professeurs qui ne donnent jamais cours dans une autre langue
+       que leur langue natale
+       
+    .. ifconfig:: solcourslangue in ('public')
+
+		.. admonition:: Correction
+
+			Ici, il faut que l'ensemble des cours dans une autre langue que
+			la langue natale du professeur soit vide.
+
+			.. code-block:: sql 
+
+				select  p.nom
+				from Personne as p
+				where not exists (select *
+				from Langue as l, Cours as c
+				where   c.idProfesseur = p.id
+				and c.codeLangue != p.codeLangueNatale)
+				
+   - Les personnes et les langues qu'elles n'apprennent pas
+   
+    .. ifconfig:: solcourslangue in ('public')
+
+		.. admonition:: Correction
+
+			On combine toutes les personnes et toutes les langues, 
+			on ne garde que les paires pour lesquelles il n'existe pas de cours
+
+			.. code-block:: sql 
+
+				select p.nom, l.intitulé
+				from Personne as p, Langue as l
+				where not exists (select*
+				from Cours as c
+				and   c.idEtudiant = p.id
+				and c.codeLangue = l.code)
+
+   - Donner, pour chaque personne, le nombre de langues qu'elle apprend
+   
+    .. ifconfig:: solcourslangue in ('public')
+
+		.. admonition:: Correction
+
+			Petite astuce: il faut compter le nombre de langues distinctes
+			(n'était pas pénalisé)
+
+
+
+
+			.. code-block:: sql 
+
+				select p.nom, count(distinct langue.intitulé) as langue
+				from Personne as p, Cours as c, Langue as l
+				where c.idEtudiant = p.id
+				and c.codeLangue = l.code
+				group by p.id, p.nom 
+
+   - Donner les langues pour lesquelles on trouve au moins
+       trois personnes dont c'est la langue natale. 
+
+    .. ifconfig:: solcourslangue in ('public')
+
+		.. admonition:: Correction
+
+			.. code-block:: sql 
+
+				select l.intitulé, count(*) as nbPersonnes
+				from Personne as p, Langue as l
+				where l.code = p.codeLangueNatale
+				group by l.code
+				having count(*)  >= 3
+
+Algèbre (2 pts)
+===============
+
+
+Donnez les expressions algébriques pour les requêtes suivantes :
+
+
+  - Nom des personnes qui se donnent un cours à elles-mêmes..
+  - Les personnes (on se contentera de l'identifiant)
+    qui n'étudient pas l'italien (langue dont le code est ``it``)
+
+.. ifconfig:: solcourslangue in ('public')
+
+	.. admonition:: Correction
+
+		- :math:`\pi_{nom} (\sigma_{idProfesseur=idEtudiant} \Join_{idProfesseur=id} Personne)`
+		- :math:`\pi_{id} (Personne) -  \pi_{idEtudiant} (\sigma_{langue='IT'} (Cours))`
+
+
+Valeurs nulles, vues (2 pts)
+============================
+
+
+   - Créez une vue ``Inscriptions`` donnant, pour chaque
+     personne, le code des langues apprises, ou ``NULL``
+     si aucune langue n'est apprise.
+      
+   - En utilisant cette vue, quelle requête donne les personnes
+     qui n'apprennent aucune langue ?
+
+.. ifconfig:: solcourslangue in ('public')
+
+	.. admonition:: Correction
+
+		- Il faut une jointure externe
+
+			.. code-block:: sql 
+
+				create view Inscription as 
+				select p.nom, c.codeLangue
+				from Personne as p outer join Cours as c 
+				where c.idEtudiant = p.id
+
+		- On peut interroger très simplement la vue
+
+			.. code-block:: sql 
+
+				select *
+				from Inscription as i
+				where i.codeLangue is null
+
+Procédures (2 pts)
+==================
+
+Expliquez ce que signifie l'immuabilité d'un curseur.
+
+.. ifconfig:: solcourslangue in ('public')
+
+	.. admonition:: Correction
+		
+		Voir le cours.
+		
 
