@@ -565,7 +565,7 @@ Jointures et optimisation (9 points)
 ====================================
 
 On considère trois relations 
-:math:`R(\textbf{a},b,d)`, :math:`S(\textbf{c},d,e)` et :math:`T(\textbf{e},f)` dont les clés
+:math:`R(**{a},b,d)`, :math:`S(**{c},d,e)` et :math:`T(**{e},f)` dont les clés
 primaires sont respectivement :math:`a`, :math:`c` et :math:`e`.
 :math:`R` contient 200 000 enregistrements, :math:`S`  20 enregistrements et :math:`T` 500 enregistrements. Des index
 sont créés sur les clés primaires, et on suppose que
@@ -730,3 +730,240 @@ Répondez aux questions suivantes sur :math:`H`.
 		     
 		- Avec l'algo de versionnement, on rejette :math:`w_3[z]` 
 		  car l'écriture :math:`w_2[z]` est intervenue entre-temps.
+		  
+
+****************
+Examen juin 2023
+****************
+
+On prend pour exemple  l'extrait suivant de la base de données qui sert à la gestion d'une grande
+ bibliothèque :
+
+   - Livre (id, titre, id_auteur, date_publication, catégorie, éditeur)
+   - Emprunt (id_personne, id_livre, date_début, date_fin)
+   - Personne  (id, nom, prénom, âge)
+
+Stockage et indexation (6 pts)
+==============================
+
+
+	- Pour la table Livre, identifiez les clés primaires et étrangères.
+
+	  .. ifconfig:: annales_2023 in ('public')
+
+		 .. admonition:: Correction
+
+				- Clé primaire: id
+				- Clés étrangères: id\_auteur :math:`\rightarrow` AUTEUR(id)
+
+	- Donnez la commande SQL pour créer la table Livre. 
+
+	  .. ifconfig:: annales_2023 in ('public')
+
+		 .. admonition:: Correction
+ 
+			.. code-block:: sql
+
+				  create table Livre(
+				    id integer not null,
+				    titre varchar(50),
+				    id_auteur integer,
+				    date_publication date,
+				    categorie varchar(20),
+				    editeur varchar(20),
+				    primary key id,
+				    foreign key id_auteur references  Auteur(id))
+
+	- On  suppose que chaque enregistrement a une taille de 
+	  250 octets et que chaque bloc a un entête de 150 octets. 
+	  Indiquez le nombre de blocs nécessaires si la table 
+	  contient 3 millions de livres. La taille d'un bloc est de 4 000 octets.
+	  
+	  .. ifconfig:: annales_2023 in ('public')
+
+		 .. admonition:: Correction
+
+			Il y a 3 850 octets utiles dans un bloc. On place :math:`3850/250=15` enregistrements par bloc.  
+			Il faut :math:`\lceil \frac{3 000 000}{15} \rceil = 200 000` blocs.
+
+
+	- On décide de trier la table Livre sur la date de publication et de construire
+	  un index non-dense à un niveau. Combien contient-t-il d'entrées, 
+	  Sachant qu'une adresse et une date occupent chacun 8 octets, combien d'entrées met-on dans
+	  un bloc et combien de blocs sont nécessaires ?
+
+	  .. ifconfig:: annales_2023 in ('public')
+
+		 .. admonition:: Correction
+
+			Il y a 200 000 entrées de 16 octets chacune.  
+			On place :math:`4000/16=250` entrées par bloc.  Il faut 
+			:math:`\lceil \frac{200 000}{250} \rceil = 800` blocs.
+
+Indexation (4 points)
+=====================
+
+On insère successivement les enregistrements suivants dans la table 
+``Personne``, selon cet ordre :
+
+.. csv-table:: 
+        :header:  "id",  "nom", "prénom", "âge"
+        :widths: 4, 12, 12, 4
+
+	1, Martin, Georges, 30
+	2, Dubois, Inna, 20 
+	3, Thomas, Maxime, 14
+	4, Richard, Boris, 45
+	5, Petit, Gérald, 32
+	6, Durand, Valérie, 43
+	7, Leroy, Jacques, 34 
+	8, Simon, Michel, 22 
+	9, Laurent, Jean-Jacques, 63
+	10, Moreau, Eddie, 12
+	11, Morel, Philippe, 15
+	12, Perrin, Gloria, 18 
+	13, Clement, Bob, 19
+	14, Dumont ,  Claire, 67
+
+On met en place un index sur l'attribut **âge** de cette table. 
+
+
+	- Construire l'arbre B d'ordre **2** (4 entrées par bloc)
+	  correspondant à cet ensemble d'articles, en respectant l'ordre d'arrivée. 
+	  Donner les étapes de construction intermédiaires importantes (celles qui produisent 
+	  un changement de la structure de l'arbre).
+
+	  .. ifconfig:: annales_2023 in ('public')
+
+		 .. admonition:: Correction
+	
+			Standard
+
+	- On considère que cet arbre B  est stocké à raison d'un nœud par bloc sur disque. On recherche les noms des personnes dont l'âge est entre 20 et 40 ans (inclus). 
+	  Combien de blocs disque doivent être chargées au minimum pour répondre à cette requête en utilisant l'arbre B ? Justifier. 
+
+	  .. ifconfig:: annales_2023 in ('public')
+
+		 .. admonition:: Correction
+
+			Il s'agit ici d'une requête par intervalle: on commence par chercher les enregistrements pour lesquels l'âge est égal à 20 (lecture de 5 enregistrements). Il suffit ensuite d'exploiter le chaînage des feuilles pour trouver les autres enregistrements, en parcourant ici encore 5 enregistrements dans l'arbre B). On charge donc 10 
+			blocs d'index. Il faut ensuite récupérer les données pointées par l'index sur disque. Dans le meilleur cas (peu probable mais possible), toutes ces données sont stockées dans un même 
+			bloc. Donc on charge au minimum 11 blocs. 
+
+
+Optimisation (6 points)
+=======================
+
+On suppose que seules les clés primaires sont indexées.
+
+	- Soit la requête suivante:
+  
+ 
+	  .. code-block:: sql
+
+		  select p.nom, p.prénom
+		  from Livre as l,Personne as p
+		  where l.titre = "Bilbo"
+		  and l.id_auteur = p.id
+
+  	  Donnez le plan d'exécution classique des boucles imbriquées indexées.
+
+	  .. ifconfig:: annales_2023 in ('public')
+
+		 .. admonition:: Correction
+
+			On parcourt séquentiellement la table ``Livre``. Pour chaque livre
+			obtenu on utilise l'identifiant de l'auteur pour une recherche par index
+			sur la table ``Personne`` (donc, parcours d'index suivi d'un accès direct).
+ 
+
+     
+     - On considère maintenant la requête suivante, avec une jointure entre ``Livre``    et ``Emprunt`` 
+     
+	  .. code-block:: sql
+
+		     select e.date_debut, e.date_fin 
+		     from Livre as l, Emprunt as e
+		     where  l.titre = "Bilbo"
+		     and e.id_livre = l.id
+
+	  Donner de même le plan d'exécution utilisant le plus possible les index 
+	  et indiquer où se situe la sélection sur le titre.
+ 
+	  .. ifconfig:: annales_2023 in ('public')
+
+		 .. admonition:: Correction
+		 
+		 	On parcourt ``Emprunt``, on utilise l'index sur la table ``Livre`, 
+		 	et la sélection se fait au moment de l'accès direct.
+
+	  - Peut-on éviter tout parcours séquentiel en ajoutant un index sur 
+	    le titre des livres ? Justifiez votre réponse.
+     
+	  .. ifconfig:: annales_2023 in ('public')
+
+		 .. admonition:: Correction
+
+			Pas vraiment, car même en cherchant le livre par l'index, on ne
+			peut pas échapper  à un parcours séquentiel de la table ``Emprunt``
+			dont l'index (dans l'ordre donné) ne permet pas une recherche basée 
+			sur ``id_livre``.
+
+	  - On suppose qu'il n'y a pas d'index sur la table ``Livre``.
+	    Elle occupe 50 MO, alors que la table ``Emprunt`` en occupe 200. 
+	    Le système dispose de 100 MO de mémoire RAM pour effectuer la jointure. 
+	    Expliquer  l'algorithme de jointure qui vous semble le plus efficace. 
+	    Combien de MOs seront lus au final ?
+
+	  .. ifconfig:: annales_2023 in ('public')
+	
+		 .. admonition:: Correction
+
+			On charge la table ``Livre`` en mémoire sous la forme d'une
+			table de hachage. Puis on parcourt séquentiellement ``Emprunt`` 
+			en cherchant le livre à chaque fois dans la table de hachage. 
+			On va lire une seule fois chaque table : 250 MO au total.
+ 
+Concurrence (4 points)
+======================
+
+Soit l'exécution concurrente suivante
+
+:math:`H = r_1[x] r_2[x] r_3[y] w_1[x] w_1[z] c_1 w_2[y] c_2 w_3[z] c_3`
+
+ 
+	- Donner la liste des conflits de H
+ 
+	  .. ifconfig:: annales_2023 in ('public')
+	
+		 .. admonition:: Correction
+
+			-[sur x : ] :math:`r_2[x] w_1[x]`
+			-[sur y : ] :math:`r_3[y] w_2[y]`
+			-[sur z : ] :math:`w_1[z] w_3[z]`
+
+
+	  - Donner le graphe de s\'erialisation de :math:`H`. 
+	    Que pouvez-vous déduire de ce graphe? 
+
+	  .. ifconfig:: annales_2023 in ('public')
+	  
+		 .. admonition:: Correction
+
+			:math:`T_2 \rightarrow T_1, T_3 \rightarrow T_2, T_1 \rightarrow T_3`. 
+			Il y a un cycle, dont :math:`H` n'est pas *sérialisable*.
+
+	  - Donner l'exécution finale par application de l'algorithme de verrouillage 
+	    à deux phases.  Donner le détail du déroulement de l'algorithme.
+
+	  .. ifconfig:: annales_2023 in ('public')
+	  
+		 .. admonition:: Correction
+		 
+		 	- :math:`T_1`  est mis en attente au moment où :math:`w_1[x]` est soumis 
+		 	  (:math:`x` a un  verrou partagé avec :math:`T_2`)
+			- :math:`T_2`  est mis en attente au moment où :math:`w_2[y]` est soumis 
+			  (:math:`x` a un  verrou partagé avec :math:`T_3`).
+			- :math:`T_3` finit alors de s'exécuter, :math:`T_2` 
+			   est libérée et termine, puis :math:`T_1`.
+

@@ -74,7 +74,8 @@ def setup(app):
     app.add_config_value('annales_2020_1', '', True)
     app.add_config_value('annales_2020_2', '', True)
     app.add_config_value('annales_2022', '', True)
-    
+    app.add_config_value('annales_2023', '', True)
+
 latex = 'private'
 stock='public'
 index='public'
@@ -87,6 +88,7 @@ rp='public'
 annales_2020_1='public'
 annales_2020_2='public'
 annales_2022='public'
+annales_2023='public'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

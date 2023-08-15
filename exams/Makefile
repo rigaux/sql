@@ -15,7 +15,8 @@ all:  exam-blanc-janvier19.pdf exam-s1-fod-19.pdf exam-s2-fod-19.pdf exam-s1-pre
 				sujets/2022/exam-s2-hybride-22.pdf sujets/2022/exam-s1-hybride-22.pdf \
 				sujets/2023/exam-s1-foad-23.pdf sujets/2023/exam-s2-foad-23.pdf  \
 				sujets/2023/ex106-s1-23.pdf \
-				sujets/2023/exam-s1-hybride-23.pdf
+				sujets/2023/exam-s1-hybride-23.pdf sujets/2023/exam-s2-hybride-23.pdf
+
 
 %.pdf: %.tex
 	pdflatex   -shell-escape "\newcommand\inputFile{$*.tex}\input{sujet}"
