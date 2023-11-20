@@ -78,19 +78,19 @@ def setup(app):
     app.add_config_value('solcourslangue', '', True)
 
 relationnel='public'
-calcul='public'
-calculTP1='public'
-calculTP2='public'
-algebre='public'
-algTP1='public'
-algTP2='public'
-concexos='public'
-schemas='public'
-transactions='public'
-correctionlabo='public'
-correctionoeuvre='public'
-soloperateur='public'
-solcourslangue='public'
+calcul='private'
+calculTP1='private'
+calculTP2='private'
+algebre='private'
+algTP1='private'
+algTP2='private'
+concexos='private'
+schemas='private'
+transactions='private'
+correctionlabo='private'
+correctionoeuvre='private'
+soloperateur='private'
+solcourslangue='private'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

@@ -27,7 +27,8 @@ point de départ (les données de la base, dans notre cas). La description de ce
 se fait classiquement par des formules logiques qui indiquent comment l'existence
 d'un fait :math:`f_1` au départ implique l'existence d'un fait :math:`f_2` à l'arrivée.
 
-Cela peut paraître abstrait, et de fait ça l'est puisqu'aucun calcul n'est spécifié. On s'appuie
+Cela peut paraître abstrait, et de fait ça l'est puisqu'aucun calcul n'est spécifié. 
+On s'appuie
 simplement sur le fait que l'informatique *sait* effectuer des calculs spécifiés par 
 des formules logiques (dans le cas particulier
 des bases de données en tout cas)  apparemment indépendantes
@@ -35,11 +36,12 @@ de tout processus calculatoire. Il se trouve que SQL *est* un langage déclarati
 et qu'il l'était même exclusivement
 dans sa version initiale.
 
-.. note:: Il existe de très bonnes raisons pour privilégier le caractère déclaratif des langages de requêtes,
-   liées à l'indépendance entre le niveau logique et le niveau physique donc
+.. note:: Il existe de très bonnes raisons pour privilégier le caractère 
+   déclaratif des langages de requêtes,
+   liées à l'indépendance entre le niveau logique et le niveau physique dont
    nous avons déjà parlé, et à l'opportunité que cette indépendance laisse au
    SGBD pour déterminer la meilleure manière d'évaluer une requête. Cela n'est
-   possible que si l'expression de cette requête est assez abstraite pour n'imposer
+   possible que si l'expression de cette dernière est assez abstraite pour n'imposer
    aucun choix de calcul à priori.
 
 Avec SQL, on ne dit rien sur la manière dont le résultat doit être calculé: c'est le problème
@@ -1334,7 +1336,7 @@ Quiz
     A) :eqt:`I` Elles peuvent donner le même résultat
     #) :eqt:`C` Elles donnent toujours le même résultat
     #) :eqt:`I`  Elles sont exactement écrites de la même manière
-	# ) :eqt:`I` Le temps d'exécution est le même
+	#) :eqt:`I` Le temps d'exécution est le même
 
 .. eqt:: negation4
 
