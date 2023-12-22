@@ -78,9 +78,9 @@ def setup(app):
     app.add_config_value('solcourslangue', '', True)
 
 relationnel='public'
-calcul='private'
-calculTP1='private'
-calculTP2='private'
+calcul='public'
+calculTP1='public'
+calculTP2='public'
 algebre='private'
 algTP1='private'
 algTP2='private'
@@ -106,7 +106,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Cours de bases de données'
-copyright = u'2002-2023, Philippe Rigaux'
+copyright = u'2002-2024, Philippe Rigaux'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

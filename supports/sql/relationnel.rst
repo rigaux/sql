@@ -37,7 +37,7 @@ S1: relations et nuplets
 .. admonition::  Supports complémentaires:
 
     * `Diapositives: modèle relationnel <http://sql.bdpedia.fr/files/slmodrel.pdf>`_
-    * `Vidéo sur le modèle relationnel <https://mediaserver.lecnam.net/videos/modele-relationnel/>`_ 
+    * `Vidéo sur le modèle relationnel <https://par.moodle.lecnam.net/mod/ubicast/view.php?id=624892/>`_ 
 
 
 L'expression  "modèle relationnel" a pour origine (surprise!)  la notion de relation, 

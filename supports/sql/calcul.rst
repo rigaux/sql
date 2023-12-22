@@ -191,8 +191,8 @@ quelconques, on a:
   - :math:`F \lor (F_1 \lor F_2)` est équivalente à :math:`(F\lor F_1) \lor F_2` (associativité)
   - :math:`F \lor (F_1 \land F_2)` est équivalente à :math:`(F\lor F_1) \land (F \lor F_2)` (distribution)
   - :math:`F \land (F_1 \lor F_2)` est équivalente à :math:`(F\land F_1) \lor (F \land F_2)` (distribution)
-  - :math:`\neg (F_1 \land F_2)` est équivalente à :math:`(\neg F_1) \lor (\neg F_2)` (loi DeMorgan)
-  - :math:`\neg (F_1 \lor F_2)` est équivalente à :math:`(\neg F_1) \land (\neg F_2)` (loi DeMorgan)
+  - :math:`\neg (F_1 \land F_2)` est équivalente à :math:`(\neg F_1) \lor (\neg F_2)` (loi de De Morgan)
+  - :math:`\neg (F_1 \lor F_2)` est équivalente à :math:`(\neg F_1) \land (\neg F_2)` (loi de De Morgan)
 
 Une *tautologie* est une formule qui est toujours vraie. La tautologie la plus évidente est
 
@@ -1578,7 +1578,8 @@ par la solution partielle qui consiste à trouver les films avec Deneuve
      and r.idActeur = a.idArtiste
      and a.nom='Deneuve'
 
-Maintenant on ajoute la contrainte suivante sur le film *f*: ``dans l'ensemble des acteurs du film *f*, on
+Maintenant on ajoute la contrainte suivante sur le film *f*: ``dans l'ensemble des acteurs du film`` 
+*f*``, on
 ne doit pas trouver Gérard Depardieu``. L'ensemble des acteurs du film *f* qui se nomment
 Depardieu est obtenu par une requête fonction de *f*, cette requête est
 ajoutée dans le ``where`` et  on obtient la requête complète
@@ -1634,7 +1635,7 @@ comme l'union de requêtes écrites sans "ou". Cherchons les films avec Deneuve 
      from Film as f, Rôle as r, Artiste as a
      where f.idFilm=r.idFilm
      and r.idActeur = a.idArtiste
-     and a.nom='Deneuve'
+     and a.nom='Depardieu'
 
 Ce n'est pas très concis. Il est à peu près toujours possible de trouver une formulation plus condensée
 avec le "or". Ici ce serait:
