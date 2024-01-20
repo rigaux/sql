@@ -12,6 +12,7 @@ et un libellé à tous ses objets, un numéro à
 tous ses cartons, et numérote également
 les pièces de son ancien et de son nouvel appartement.
 
+
 Ensuite, il indique, pendant l'emballage, dans quel
 carton se trouve chaque objet. Un carton
 contient les objets d'une même pièce d'origine, et
@@ -166,13 +167,6 @@ sur le schéma donné dans l'énoncé, pas sur le schéma modifié proposé par 
 
 
 \begin{solution}
-Pièce (\textbf{noPièce}, libellé, surface)
-
-Carton (\textbf{noCarton}, jourEmballage, noPièceOrigine,
-                            noPièceDestination)
-
-Objet (\textbf{codeObjet}, intitulé, poids,
-                     noCarton)
 
 \begin{minted}{sql}
 select o.intitulé, p.libellé
@@ -271,7 +265,13 @@ Tous les attriuts qui n'apparaissent pas à droite sont nécessairement
 dans la clé, donc T, V  et R. On vérifie aisément que TVR est une clé
 (la seule).
 
-On a donc les relations (TGE), (RG) et (EG), auxquelles il faut ajouter la clé
-(TVR). Le résultat est en troisième forme normale.
+On a donc les relations (TGE) et (RG), auxquelles il faut ajouter la clé
+(TVR). 
+
+Le résultat est en troisième forme normale, si l'on admet une petite extension\,:
+dans la relation TGE, la DF E -> G n'a pas la clé pour partie gauche. Mais on ne peut 
+pas décomposer plus sans perdre d'information. C'est un cas (très rare en pratique) où il
+faut admettre une définition de lea 3FN un peu plus compliquée que celle donnée en cours.
+
 
 \end{solution}
