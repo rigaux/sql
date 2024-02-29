@@ -77,18 +77,18 @@ def setup(app):
     app.add_config_value('annales_2023', '', True)
 
 latex = 'private'
-stock='public'
-index='public'
-hachage='public'
-opalgo='public'
-optim='public'
-transactions='public'
-conc='public'
-rp='public'
-annales_2020_1='public'
-annales_2020_2='public'
-annales_2022='public'
-annales_2023='public'
+stock='private'
+index='private'
+hachage='private'
+opalgo='private'
+optim='private'
+transactions='private'
+conc='private'
+rp='private'
+annales_2020_1='private'
+annales_2020_2='private'
+annales_2022='private'
+annales_2023='private'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

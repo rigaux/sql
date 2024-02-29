@@ -819,12 +819,11 @@ Quiz
     #) :eqt:`I` Un même manuscrit peut avoir deux titres différents.
     #) :eqt:`C` Je ne peux pas connaître d'expert s'il n'a pas évalué au moins un manuscrit.
     #) :eqt:`C` Si je détruis un manuscrit je peux perdre toutes les informations sur l'expert qui l'a évalué.
-    #) :eqt:`C` Si je détruis un expert je perd toutes les informations sur un manuscrit qu'il a évalué.
+    #) :eqt:`C` Si je détruis un expert je perds toutes les informations sur un manuscrit qu'il a évalué.
 
 .. eqt:: depfonc4
 
-    Reprenons le schéma initial sur les films, auquel on a ajouté des identifiants (MES est
-    l'acronyme de Metteur En Scène).
+    Reprenons le schéma initial sur les films, auquel on a ajouté des identifiants.
 
     .. code-block:: text
 

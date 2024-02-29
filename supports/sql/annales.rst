@@ -99,19 +99,19 @@ Relation T
   - Pour quelle requête le résultat contient-il plus d’un nuplet?  Attention: souvenez-vous que l'opérateur
     de projection élimine les doublons.
 
-      #.  :math:`\pi_{A,C} (\sigma_{B=0}(R))`
-      #. :math:`\pi_{A,C} (\sigma_{D=0}(R))`
-      #. :math:`\pi_{A,C} (\sigma_{B=0}(R) \cup \sigma_{D=0}(R))`
-      #.  :math:`\pi_{A,C} (\sigma_{A=C}(R)`
+      #.  :math:`\pi_{A,C (\sigma_{B=0(R))`
+      #. :math:`\pi_{A,C (\sigma_{D=0(R))`
+      #. :math:`\pi_{A,C (\sigma_{B=0(R) \cup \sigma_{D=0(R))`
+      #.  :math:`\pi_{A,C (\sigma_{A=C(R)`
 
-  - Combien de nuplets retourne la requête :math:`\pi_{A,B,E} (S \Join_{A=A \land B=B} R)`?
+  - Combien de nuplets retourne la requête :math:`\pi_{A,B,E (S \Join_{A=A \land B=B R)`?
 
        #. 2
        #. 3
        #. 4
        #. 5
 
-  - Combien de nuplets retourne la requête :math:`R \Join_{A=A \land B=B} (S \cup T)`?
+  - Combien de nuplets retourne la requête :math:`R \Join_{A=A \land B=B (S \cup T)`?
 
        #. 3
        #. 5
@@ -276,8 +276,8 @@ Algèbre
 
 Relation T
   - La requête renvoie également 3 nuplets
-  - :math:`\pi_{nom, prenom}(Personne \underset{id=idSpectateur}{\bowtie} \sigma_{prix > 500}(BILLET))`
-  - :math:`\pi_{id}(Personne) - \pi_{idArtiste} (Spectacle)`
+  - :math:`\pi_{nom, prenom(Personne \underset{id=idSpectateur{\bowtie \sigma_{prix > 500(BILLET))`
+  - :math:`\pi_{id(Personne) - \pi_{idArtiste (Spectacle)`
 
 
 Transactions
@@ -373,7 +373,7 @@ Algèbre (3 points)
 
 .. math::
 
-      \pi_{idMatch}(But \Join_{idMatch=id} \sigma_{scoreEquipe1=0 \land scoreEquipe2=0}(Match))
+      \pi_{idMatch(But \Join_{idMatch=id \sigma_{scoreEquipe1=0 \land scoreEquipe2=0(Match))
 
 Programmation et transactions (3 points)
 ========================================
@@ -500,21 +500,21 @@ Algèbre
 
 .. math::
 
-     \pi_{nom}(\sigma_{age > 30} (Joueur) \underset{id=idJoueur}{\bowtie} \sigma_{minute = 1}(But) )
+     \pi_{nom(\sigma_{age > 30 (Joueur) \underset{id=idJoueur{\bowtie \sigma_{minute = 1(But) )
 
 Joueurs français:
 
 
 .. math::
 
-     A = \sigma_{pays='France'}(Joueur\;j) \underset{j.idEquipe = e.id}{\bowtie} Equipe\;e)
+     A = \sigma_{pays='France'(Joueur\;j) \underset{j.idEquipe = e.id{\bowtie Equipe\;e)
 
 Joueurs français qui ont marqué au moins un but :
 
 
 .. math::
 
-     B = \sigma_{pays='France'}(But\;b \underset{b.idJoueur = j.id}{\bowtie} Joueur\;j) \underset{j.idEquipe = e.id}{\bowtie} Equipe\;e)
+     B = \sigma_{pays='France'(But\;b \underset{b.idJoueur = j.id{\bowtie Joueur\;j) \underset{j.idEquipe = e.id{\bowtie Equipe\;e)
 
 Résultat:
 
@@ -680,7 +680,7 @@ Algèbre (3 points)
 
     .. math::
           
-          \pi_{id} (Chercheur) - \pi_{idChercheur} (R\acute{e}dige)
+          \pi_{id (Chercheur) - \pi_{idChercheur (R\acute{edige)
 
    
   .. ifconfig:: correctionlabo in ('public')  
@@ -688,8 +688,8 @@ Algèbre (3 points)
 
       .. admonition:: Correction
          
-          - :math:`\pi_{nom}(\pi_{id} (\sigma_{nom = 'Vertigo'} (Equipe)) \underset{id=idEquipe}{\bowtie} Chercheur )`
-          - :math:`\pi_{titre} ( (  (\sigma_{annee \geq 2015} (Article) \underset{ref=refArticle}{\bowtie} Redige) \underset{idChercheur=id}{\bowtie} Chercheur ) \underset{idEauipe=id}{\bowtie} \sigma_{nom = 'ROC'} Equipe)`
+          - :math:`\pi_{nom(\pi_{id (\sigma_{nom = 'Vertigo' (Equipe)) \underset{id=idEquipe{\bowtie Chercheur )`
+          - :math:`\pi_{titre ( (  (\sigma_{annee \geq 2015 (Article) \underset{ref=refArticle{\bowtie Redige) \underset{idChercheur=id{\bowtie Chercheur ) \underset{idEauipe=id{\bowtie \sigma_{nom = 'ROC' Equipe)`
           - L'expression recherche les chercheurs qui n'ont rien publié.
 
             .. code-block:: sql
@@ -922,7 +922,7 @@ une sélection doit s'apppliquer directement à une table.
 
 .. math::
 
-     \sigma_{A=C \land A=D \land E =F \land C > B } (T_1 \times T_2)
+     \sigma_{A=C \land A=D \land E =F \land C > B  (T_1 \times T_2)
 
 
 .. ifconfig:: correctionoeuvre in ('public')
@@ -931,7 +931,7 @@ une sélection doit s'apppliquer directement à une table.
     
         .. math::
         
-             \sigma_{A=C \land C > B} (T_1) \Join_{A=D} \sigma_{E = F}(T_2)
+             \sigma_{A=C \land C > B (T_1) \Join_{A=D \sigma_{E = F(T_2)
 
 Transactions (2 points)
 =======================
@@ -1185,13 +1185,13 @@ Algèbre relationnelle (3 pts)
     
     .. math:: 
 
-   	    \pi_{nom, prenom}(\sigma_{ville='Paris'}(Client) \underset{id=idClient}{\bowtie} (\sigma_{duree > 24}(Souscription) \underset{idForfait=id}{\bowtie} \sigma_{nom='\rm{Audace}'} (Forfait))
+   	    \pi_{nom, prenom(\sigma_{ville='Paris'(Client) \underset{id=idClient{\bowtie (\sigma_{duree > 24(Souscription) \underset{idForfait=id{\bowtie \sigma_{nom='\rm{Audace' (Forfait))
 
  - Même question pour l'expression suivante
  
    .. math:: 
    
-	  \pi_{c.id, c.nom, c.prenom} (Client) - \pi_{c.id, c.nom, c.prenom} (Client \underset{c.id=s.idClient}{\bowtie} \sigma_{duree \geq 48} (Souscription))
+	  \pi_{c.id, c.nom, c.prenom (Client) - \pi_{c.id, c.nom, c.prenom (Client \underset{c.id=s.idClient{\bowtie \sigma_{duree \geq 48 (Souscription))
 
    .. ifconfig:: soloperateur in ('public')
 
@@ -1477,8 +1477,8 @@ Donnez les expressions algébriques pour les requêtes suivantes :
 
 	.. admonition:: Correction
 
-		- :math:`\pi_{nom} (\sigma_{idProfesseur=idEtudiant} \Join_{idProfesseur=id} Personne)`
-		- :math:`\pi_{id} (Personne) -  \pi_{idEtudiant} (\sigma_{langue='IT'} (Cours))`
+		- :math:`\pi_{nom (\sigma_{idProfesseur=idEtudiant \Join_{idProfesseur=id Personne)`
+		- :math:`\pi_{id (Personne) -  \pi_{idEtudiant (\sigma_{langue='IT' (Cours))`
 
 
 Valeurs nulles, vues (2 pts)
@@ -1524,4 +1524,302 @@ Expliquez ce que signifie l'immuabilité d'un curseur.
 		
 		Voir le cours.
 		
+
+
+*********************************
+Examen session 1, 27 janvier 2024
+*********************************
+
+
+On veut implanter une application de réservation de places en crèche. Voici le schéma proposé :
+
+
+  - Crèche (**idCrèche**, nom, ville, capacité)
+  - Personne (**idPersonne**, prénom, nom, néeEn, ville, idPère, idMère)
+  - Demande (**idDemande**, idEnfant, idCrèche, année)
+  - Inscription (**idEnfant**, année, idCrèche, idPuéricultrice)
+   
+
+Modélisation (8 points)
+=======================
+
+  - Etudiez soigneusement le schéma et identifiez toutes les clés étrangères
+    qui font référence à la table ``Personne` (1 pt)
+     
+     
+	.. ifconfig:: solcreche in ('public')
+
+		.. admonition:: Correction
+	
+			Il y en a beaucoup : idPère, idMère, idEnfant et idPuericultrice.
+     
+
+  - Donnez les commandes SQL de création des tables suivantes : 
+    Crèche, Personne et Inscription. Note : on peut ne pas connaître
+    le père ou la mère d'un enfant. (2 pts)
+  
+     
+	.. ifconfig:: solcreche in ('public')
+
+		.. admonition:: Correction
+
+			Voir ci-dessous.
+
+			.. code-block:: sql
+
+				create table Personne 
+				   (idPersonne int not null,
+				    prénom varchar not null,
+				    nom varchar not null,
+				    néeEn int not null,
+				    ville varchar not null,
+				    idPère int ,
+				    idMère int ,
+    				primary key (idPersonne),
+    				foreign key (idPère) reference Personne(idPersonne),
+    				foreign key (idMère) reference Personne(idPersonne)
+   				)
+
+				create table Inscription 
+				   (idEnfant int not null,
+				    année int not null,
+				    idCrèche int not null,
+				    idPuericultrice int not null,
+				    primary key (idEnfant, année),
+				    foreign key (idEnfant) reference Personne(idPersonne),
+				    foreign key (idCrèche) reference Crèche(idCrèche),
+				    foreign key (idPuericultrice) reference Personne(idPersonne)
+				   )
+  
+  - Voyez-vous une table résultant d'une réification ? Une table résultant d'une entité faible ? 
+    Lesquelles ? (1 pt)
+  
+    
+	.. ifconfig:: solcreche in ('public')
+
+		.. admonition:: Correction
+   
+   		  	La table ``Inscription`` provient d'une entité faible : on voit que son
+		   	identifiant comprend l'identifiant d'un enfant, auquel elle est donc 
+		   	indissolublement liée.
+   		   	La table ``Demande`` résulte d'une réification.
+     
+  - Donnez le schéma Entité/association correspondant à ce schéma relationnel (2 pts)
+  
+  - Un enfant peut-il être inscrit à plusieurs crèches la même année ; un enfant peut-il demander
+    à s'inscrire dans plusieurs crèches la même année ? (1 pt)
+     
+	.. ifconfig:: solcreche in ('public')
+
+		.. admonition:: Correction
+		
+		    Non, pas d'inscription d'un enfant la même année car la clé est constituée 
+		    de ces deux attributs. En revanche on peut *demander* une inscription dans plusieurs crèches pour une même année.
+     
+    - Si on ajoutait la dépendance fonctionnelle :math:`idPuéricultrice \to idCrèche`,
+      comment faudrait-il modifier le schéma pour qu'il reste en 3FN ? (1 pt)
+      
+      .. ifconfig:: solcreche in ('public')
+
+		.. admonition:: Correction
+
+			Il faut d'abord réaliser que ``idPuéricultrice`` 
+			est un alias pour ``idPersonne``. 
+			Il faut donc représenter la nouvelle dépendance fonctionnelle dans le schéma
+   			en ajoutant la clé étrangère ``idCrèche`` dans la table
+    		``Personne`` (elle peut être à ``null`` pour toutes les 
+    		personnes qui ne sont pas puéricultrices). 
+    
+    		On peut alors retirer ``idCrèche`` de la table ``Inscription`` puisque
+    		la crèche est déterminée par la puéricultrice. 
+     
+Requêtes SQL (7 points)
+=======================
+
+Les requêtes sont à exprimer en SQL. 
+
+  - Quels sont les enfants inscrits dans une crèche à Paris (donnez le nom de l'enfant
+    et le nom de la crèche) ?
+    
+	.. ifconfig:: solcreche in ('public')
+
+		.. admonition:: Correction
+
+			.. code-block:: sql
+			
+				select p.nom as 'nomEnfant', c.nom as 'nomCrèche'
+				from Crèche as c, Inscription as i, Personne as p
+				where c.idCrèche = i.idCrèche
+				and i.idEnfant=p.idPersonne
+				and c.ville='Paris'
+     
+  - Quels sont les enfants demandant une crèche dans la ville où ils habitent
+    (donner le nom, prénom et la ville) ?
+       
+	.. ifconfig:: solcreche in ('public')
+
+		.. admonition:: Correction
+
+			.. code-block:: sql
+
+				select p.prénom, p.nom, p.ville
+				from Crèche as c, Demande as d, Personne as p
+				where c.idCrèche = d.idCrèche
+				and d.idEnfant=p.idPersonne
+				and c.ville=p.ville
+
+
+  - Pour chaque enfant donnez le prénom de l'enfant, le nom de son père, de sa mère
+    et de sa puéricultrice.
+
+	.. ifconfig:: solcreche in ('public')
+
+		.. admonition:: Correction
+
+			.. code-block:: sql
+
+				select enfant.nom as 'nomEnfant', père.nom as 'nomPère',
+			       mère.nom as 'nomMère', puericultrice.nom as 'nomPuericultrice'
+				from Inscription as i, Personne as enfant, Personne as père, 
+			        Personne as mère, Personne as puericultrice
+				where i.idEnfant = enfant.idPersonne
+				and   enfant.idPère = père.idPersonne
+				and   enfant.idMère = mère.idPersonne
+				and i.idPuericultrice = puericultrice.idPersonne
+
+  - Je veux donner la liste de tous les enfants nés en 2022, avec le nom
+    de leur puericultrice s'ils sont inscrits à une crèche, et ``null``
+    sinon. Donnez la requête SQL.
+      
+	.. ifconfig:: solcreche in ('public')
+
+		.. admonition:: Correction
+ 
+ 			Il faut penser dans ce cas à effectuer une jointure externe. 
+
+			.. code-block:: sql
+
+				select e.nom as 'nomEnfant',  p.nom as 'nomPuericultrice'
+				from  Personne as e left outer join 
+			        (Inscription as i join Personne as p on i.idPuericultrice=p.idPersonne)
+       				on  i.idEnfant = e.idPersonne
+				where néeEn=2022
+
+  - Indiquez les demandes en cours pour l'année 2024 : celles pour lesquelles il existe une 
+    demande de l'enfant à une crèche, mais pas d'inscription. Donnez simplement
+    l'identifiant de l'enfant et l'identifiant de la crèche.
+ 	
+	.. ifconfig:: solcreche in ('public')
+
+		.. admonition:: Correction
+ 
+			.. code-block:: sql
+
+				select d.idEnfant, c.idCrèche
+				from  Demande as d
+				where année = 2024
+				and not exists (select * from Inscription as i
+                			  	where d.idEnfant = i.idEnfant
+                  			  	and d.idCrèche = i.idCrèche
+                  				and année = 2024)
+
+  - Donnez la liste des enfants nés en 2022 et les crèches de leur ville
+    qu'ils n'ont pas demandées (nom de l'enfant, nom de la crèche).
+
+	.. ifconfig:: solcreche in ('public')
+
+		.. admonition:: Correction
+ 
+			.. code-block:: sql
+
+				select p.nom as 'nomEnfant', c.nom as 'nomCrèche'
+				from  Personne as p, Crèche as c
+				where p.néeEn=2022
+				and p.ville = c.ville
+				and not exists (select * from Demande as d
+                				where d.idEnfant = i.idEnfant
+                  				and d.idCrèche = i.idCrèche)
+
+  - Quelles sont les crèches n'ayant pas rempli toutes leurs places
+    en 2024 (autrement dit  le nombre d'inscriptions est inférieur à la capacité)?
+
+	Aide : faites une première requête affichant le nombre d'inscriptions
+	et  la capacité. Puis ajoutez la clause indiquant que le premier doit
+	être inférieur au second.
+
+	.. ifconfig:: solcreche in ('public')
+
+		.. admonition:: Correction
+
+			.. code-block:: sql
+
+				select c.*
+				from  Crèche as c, Inscription as i
+				where c.idCrèche = i.idCrèche
+				and année = 2024
+				group by c.idCrèche
+				having count(*) < c.capacité
+
+
+ 
+Algèbre (2 points)
+==================
+
+
+Donnez l'expression algébrique pour les requêtes 1 et  5 de la section précédente.
+
+ 
+.. ifconfig:: solcreche in ('public')
+
+	.. admonition:: Correction
+
+		Pour la première on procède en 3 étapes, en définissant d'abord :math:`R_1` et :math:`R_2`
+			- :math:`R_1 := \pi_{nomEnfant,idCreche,nomCreche} ((\rho_{nom \to nomEnfant}(Personne)  \Join_{idPersonne=idEnfant} Inscription)`
+			- :math:`R_2 := \pi_{idCreche,nomCreche} (\sigma_{ville='Paris'}(Cr\grave{e}che))`
+			- :math:`R_1 \Join_{idCreche=idCreche} R_2`
+			- :math:`\pi_{idEnfant,idCreche} (\sigma_{annee=2024}(Demande)) - \pi_{idEnfant,idCreche} (\sigma_{annee=2024} (Cr\acute{e}che))`
+		
+
+Programmation (3 points)
+========================
+
+On implante une procédure d'inscription qui effectue les étapes suivantes :
+
+  - On parcourt les demandes des enfants qui ne sont pas encore inscrits
+  - Pour chaque demande on vérifie qu'il reste de la place dans la crèche demandée
+  - Si oui, on crée le nuplet dans la table ``Inscription``
+
+
+.. code-block:: bash
+
+	Procédure inscription()
+	begin
+  		demandes_en_cours = (résultat requête 5)
+  		for each demande in demandes_en_cours do
+    		places_restantes = (résultat requête 7)
+    		si (places_restantes > 0)
+      			Insérer inscription
+  		end for
+	end
+
+Questions
+---------
+
+  - Est-ce que l'insertion d'une inscription change le contenu du curseur sur les demandes
+    en cours ?  Justifiez votre réponse.
+  - Combien d'inscriptions ce programme va-t-il engendrer pour un même enfant ? 
+  - En déduisez-vous une raison pour que l'exécution de ce programme soulève
+    un problème, et lequel ?
+  - Que proposez-vous pour résoudre ce problème éventuel ?
+     
+.. ifconfig:: solcreche in ('public')
+
+	.. admonition:: Correction
+
+		- Non le curseur estimmuable : cf. cours	
+		- Autant d'inscriptions que de demandes, ce qui ne semble pas normal
+		- La base ne permet de représenter qu'une seule inscription
+		  pour une année, donc le programme rejettera les insertions 
+		  dès la seconde tentative.
+    	- Il faut sortir de  la boucle dès la première inscription.
 
