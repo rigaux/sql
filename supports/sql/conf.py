@@ -87,10 +87,10 @@ algTP2='public'
 concexos='public'
 schemas='public'
 transactions='public'
-correctionlabo='private'
-correctionoeuvre='private'
-soloperateur='private'
-solcourslangue='private'
+correctionlabo='public'
+correctionoeuvre='public'
+soloperateur='public'
+solcourslangue='public'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

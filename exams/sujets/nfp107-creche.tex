@@ -6,7 +6,7 @@ On veut implanter une application de réservation de places en crèche. Voici le
 
 \begin{itemize}
   \item Crèche (\textbf{idCrèche}, nom, ville, capacité)
-   \item Personne (\textbf{idPersonne}, prénom, nom, néEn, ville, idPère, idMère)
+   \item Personne (\textbf{idPersonne}, prénom, nom, néeEn, ville, idPère, idMère)
   \item Demande (\textbf{idDemande}, idEnfant, idCrèche, année)
   \item Inscription (\textbf{idEnfant, année}, idCrèche, idPuéricultrice)
    
@@ -40,7 +40,7 @@ create table Personne
    (idPersonne int not null,
     prénom varchar not null,
     nom varchar not null,
-    néEn int not null,
+    néeEn int not null,
     ville varchar not null,
     idPère int ,
     idMère int ,
@@ -94,7 +94,7 @@ create table Inscription
 Il faut 
     représenter la nouvelle dépendance fonctionnelle dans le schéma
     en ajoutant la clé étrangère \texttt{idCrèche} dans la table
-    \texttt{Personne} (elle peut être à \textt{null} pour toutes les 
+    \texttt{Personne} (elle peut être à \texttt{null} pour toutes les 
     personnes qui ne sont pas puéricultrices). 
     On peut alors retirer \texttt{idCrèche} de la table \texttt{Inscription} puisque
     la crèche est déterminée par la puéricultrice. 
@@ -108,7 +108,6 @@ Il faut
 Les requêtes sont à exprimer en SQL. 
 
 \begin{enumerate}
-
   
   \item Quels sont les enfants inscrits dans une crèche à Paris (donnez le nom de l'enfant
       et le nom de la crèche)\,?
@@ -168,7 +167,7 @@ select e.nom as 'nomEnfant',  p.nom as 'nomPuericultrice'
 from  Personne as e left outer join 
         (Inscription as i join Personne as p on i.idPuericultrice=p.idPersonne)
        on  i.idEnfant = e.idPersonne
-where néEn=2022
+where néeEn=2022
 \end{minted}
 \end{small}
 \end{solution}
@@ -199,7 +198,8 @@ and not exists (select * from Inscription as i
 \begin{minted}{sql}
 select p.nom as 'nomEnfant', c.nom as 'nomCrèche'
 from  Personne as p, Crèche as c
-where néEn=2022
+where p.néeEn=2022
+and p.ville = c.ville
 and not exists (select * from Demande as d
                   where d.idEnfant = i.idEnfant
                   and d.idCrèche = i.idCrèche)
@@ -234,7 +234,7 @@ Donnez l'expression algébrique pour les requêtes 1 et  5 de la section précé
 
 
 \begin{solution}
-$$\pi_{idEnfant,idCreche} (Demande) - \pi_{idEnfant,idCreche} (Cr\acute{e}che)$$
+$$\pi_{idEnfant,idCreche} (\sigma_{annee=2024} (Demande)) - \pi_{idEnfant,idCreche} (\sigma_{annee=2024} (Cr\acute{e}che))$$
 \end{solution}
 
 \section{Programmation (4 points)}
@@ -268,5 +268,19 @@ end
       un problème, et lequel\,?
       \item Que proposez-vous pour résoudre ce problème éventuel\,?
 \end{enumerate}
+
+
+\begin{solution}
+\begin{itemize}
+  \item Non le curseur estimmuable\,: cf. cours
+  \item Autant d'inscriptions que de demandes, ce qui ne semble pas normal
+  \item La base ne permet de représenter qu'une seule inscription
+      pour une année, donc le programme rejettera les insertions 
+      dès la seconde tentative.
+   \item Il faut sortir de  la boucle dès la première inscription.
+\end{itemize}
+\end{solution}
+
+
 \end{document}
 
