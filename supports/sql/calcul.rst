@@ -1034,12 +1034,10 @@ Quiz
 
 .. eqt:: conjonctif3bis
 
-    Si :math:`x` et :math:`y`sont deux variables, alors toute égalité
-    :math:`x.a=y.b`dans la clause ``where`` doit se faire sur des clés primaires et étrangères
+    Si :math:`x` et :math:`y` sont deux variables, alors toute égalité :math:`x.a=y.b`dans la clause ``where`` doit se faire sur des clés primaires et étrangères
 
     A) :eqt:`I` Oui
     #) :eqt:`C` Non
-
 
 .. eqt:: conjonctif4
 

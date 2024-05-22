@@ -989,7 +989,7 @@ Quiz
     
         - select * from Livre where année is not null
         - select * from Livre where not (année is null)
-        - select * from Livre where not (année + 0)  is not null
+        - select * from Livre where année + 1 = année
     
     A) :eqt:`I`  faux
     #) :eqt:`C`  vrai

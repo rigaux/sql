@@ -830,14 +830,14 @@ on obtient une structure extrêmement efficace. Effectuons quelques calculs pour
     
     On place donc   :math:`\lfloor \frac{4096}{12} \rfloor = 341` entrées
     (au maximum) dans un bloc. Comme le niveau des feuilles de l'abre B est dense,
-    il faut :math:`\lfloor \frac{1000000}{341} \rfloor=2\,932` blocs 
+    il faut :math:`\lceil \frac{1000000}{341} \rceil=2\,933` blocs 
     pour le  niveau des feuilles. 
 
     Le deuxième niveau est *non dense*. Il comprend autant d'entrées que de blocs
-    à indéxer, soit :math:`2\,932`.  Il faut
-    donc :math:`\lfloor \frac{2\,932}{341} \rfloor = 8` blocs (au mieux).
+    à indéxer, soit :math:`2\,933`.  Il faut
+    donc :math:`\lceil\frac{2\,933}{341} \rceil = 9` blocs (au mieux).
     Finalement, un troisième niveau, constitué d'un bloc
-    avec 8 entrées suffit pour compléter l'index.
+    avec 9 entrées suffit pour compléter l'index.
 
 .. important:: Le calcul précédent est valable dans le *meilleur* des cas, celui
    où chaque bloc est parfaitement plein. Mais alors quel est le *pire* des cas?
@@ -1398,12 +1398,12 @@ Exercices
         
             L'index dense à deux niveaux. 
 
-         La :numref:`construct1` montre l'arbre B sur les numéros, après l'insertion du 42. Le complément
+         La :numref:`construct2` montre l'arbre B sur les numéros, après l'insertion du 42. Le complément
          est laissé à titre d'exercice. Les différents types de pointeurs sont montrés avec des graphies
          distinctes: trait plein pour le liens entre niveaux, trtait plein, tête blanche
          pour les liens des feuilles, traits pointillés pour les liens entre index et données.
          
-         .. _construct:
+         .. _construct2:
          .. figure:: ../figures/ConstructArbreB-2.png
             :width: 95%
             :align: center
@@ -1689,49 +1689,3 @@ Exercices
            pas de nuplet référençant dans ``S``, sinon la contrainte d'intégrité serait violée.
            L'index sur la clé étrangère est ici très utile (en plus bien sûr de l'index
            sur la clé primaire de ``R`` pour trouver les n-uplets à détruire).
-
-*******
-Atelier
-*******
-
-Nous reprenons la base de notre atelier et nous allons créer des index.
-
-Arbre B
-=======
-
-  - Nous souhaitons créer un arbre B sur l'attribut ``Identifiant`` 
-    de la table ``Salle``. Donner l'arbre d'ordre 2 après insertion des valeurs suivantes. 
-    Vous ferez apparaître les étapes d'éclatement:
-    
-    .. code-block:: text
-
-        100, 25, 72, 48, 10, 33, 58, 110, 40, 52, 115, 80, 5, 28, 49, 75
-        
-  - Nous créons maintenant un index d'orbre 3 sur l'attribut ``Capacité`` de la 
-    table ``Salle``, avec les valeurs suivantes: 20, 30, 40, 20, 25, 200, 300, 150, 40, 
-    20, 20, 50, 30. Donnez l'arbre final.
-  - Lors de la création d'un index, on ne spécifie pas l'ordre de celui-ci. 
-    Il est calculé automatiquement en fonction de la taille de l'attribut indexé, 
-    de la taille d'une adresse, et de la taille d'un bloc (idem que pour les données). 
-    Calculer l'ordre de l'index sur l'attribut ``Capacité``.
-  - Au vu de l'ordre d'un arbre B, on peut estimer la hauteur de cet index 
-    (permet d'estimer son coût de parcours). Donner la hauteur de l'index sur 
-    ``Capacité``.
-
-
-Index dense et non dense
-========================
-
-  - Quelle est la hauteur maximum d'un index *dense* sur l'attribut ``id_Personne`` 
-    de la table ``Personne`` ?
-  - Quelle est la hauteur maximum d'un index *non-dense* sur l'attribut ``id_Personne`` 
-    de la table ``Personne`` ?
-  - Supposons qu'il existe un index non-dense sur la table ``Personne`` pour l'attribut
-    ``id_Personne`` . On souhaite maintenant ajouter un index sur l'attribut  ``Nom``, 
-    peut-il être un index non-dense ?
-
-
-
-    
-
-

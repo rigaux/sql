@@ -77,9 +77,9 @@ def setup(app):
     app.add_config_value('annales_2023', '', True)
 
 latex = 'private'
-stock='private'
-index='private'
-hachage='private'
+stock='public'
+index='public'
+hachage='public'
 opalgo='private'
 optim='private'
 transactions='private'

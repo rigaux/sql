@@ -85,12 +85,12 @@ entrée d'index occupe 12 octets, soit 8 octets pour l'adresse, et 4 pour la cl�
 \begin{blocgauche}
 \begin{redbullet}
     
-    \item  Il faut $\lfloor \frac{1000000}{341} \rfloor=2\,932$ blocs 
+    \item  Il faut $\lceil \frac{1000000}{341} \rceil=2\,933$ blocs 
     pour le  niveau des feuilles. 
    
    \item  Le deuxième niveau est \alert{non dense}. Il comprend autant d'entrées que de blocs
-    à indexer, soit 2932.  Il faut
-    donc $\lfloor \frac{2\,932}{341} \rfloor = 8$ blocs (au mieux).
+    à indexer, soit 2933.  Il faut
+    donc $\lceil \frac{2\,933}{341} \rceil = 9$ blocs (au mieux).
     
     \item Finalement, un troisième niveau, constitué d'un bloc
      avec 8 entrées suffit pour compléter l'index.

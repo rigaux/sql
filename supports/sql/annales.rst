@@ -1715,7 +1715,7 @@ Les requêtes sont à exprimer en SQL.
  
 			.. code-block:: sql
 
-				select d.idEnfant, c.idCrèche
+				select d.idEnfant, d.idCrèche
 				from  Demande as d
 				where année = 2024
 				and not exists (select * from Inscription as i
@@ -1737,8 +1737,8 @@ Les requêtes sont à exprimer en SQL.
 				where p.néeEn=2022
 				and p.ville = c.ville
 				and not exists (select * from Demande as d
-                				where d.idEnfant = i.idEnfant
-                  				and d.idCrèche = i.idCrèche)
+                				where d.idEnfant = p.idPersonne
+                  				and d.idCrèche = c.idCrèche)
 
   - Quelles sont les crèches n'ayant pas rempli toutes leurs places
     en 2024 (autrement dit  le nombre d'inscriptions est inférieur à la capacité)?

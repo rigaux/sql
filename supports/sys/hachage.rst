@@ -223,7 +223,7 @@ nouveaux fragments.
 Cette situation est illustrée dans la figure :numref:`hachage2`.
 On a inséré un nouveau film, *Citizen Kane*. La valeur donnée
 par la fonction de hachage est 3, rang de la lettre 'c'
-dans l'aplhabet, mais le bloc 3 est déjà plein. 
+dans l'alphabet, mais le bloc 3 est déjà plein. 
 
 
 .. _hachage2:       

@@ -1,6 +1,7 @@
 \enteteExam{NFP 107 -- Systèmes de gestion de bases de données - Durée 2h30}%
-{Examen FOAD session 1}%
-{Documents autorisés\,: 10 pages recto-verso de notes manuscrites}%
+{Examen FOAD session 2}%
+{Documents autorisés\,: 10 pages recto-verso de notes manuscrites ou imprimées}%
+
 
 Essayons de modéliser un système  qui permet d'emprunter 
 un réseau de transport en comptabilisant les passages. Le réseau
@@ -27,7 +28,7 @@ Les jours sont répresentés simplement sous la forme 'jj/mm/aaaa', par exemple 
    \item Quelles sont les clés étrangères\,?
 
  \item Aurait-on pu choisir comme clé de la table \texttt{Trajet}
-      la paire d'attributs \texttt{(idAbonné, idStationEntrée)}\,? Donnez vos arguments pour ou contre
+      la paire d'attributs \texttt{(idAbonné, idStationDépart)}\,? Donnez vos arguments pour ou contre
       un tel changement.
        
   \item Le schéma permet-il de savoir par quelles lignes est passé un abonné pendant un trajet\,?
@@ -156,7 +157,7 @@ where not exists (
       from DétailLigne as d2
       where d2.idStation = s.id
       and   d2.idLigne != l1.idLigne)
-where s.id = d1.idStation
+ans s.id = d1.idStation
 and d1.idLigne=l1.id
 and l1.intitulé='Rouge'
 \end{verbatim} 
@@ -168,7 +169,7 @@ where s.id not in (
       select d2.idStationSuivante
       from DétailLigne as d2
       where d2.idLigne = l1.id)
-where s.id = d1.idStation
+and s.id = d1.idStation
 and d1.idLigne=l1.id
 and l1.intitulé='Rouge'
 \end{verbatim} 
@@ -177,7 +178,7 @@ and l1.intitulé='Rouge'
 select s.nom
 from Station as s, Ligne as l1,  DétailLigne as d1
 where d1.idStationSuivante is null
-where s.id = d1.idStation
+and s.id = d1.idStation
 and d1.idLigne=l1.id
 and l1.intitulé='Rouge'
 \end{verbatim} 

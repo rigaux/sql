@@ -496,7 +496,7 @@ plus importantes:
  
    .. math::
    
-       \pi_{A_1 ... A_p}(R) \Join_{A_i=B_j}\pi_{B_1... B_q}(S))\; i \in \{1,..,p\}, j \in \{1,...,q\}
+        \pi_{A_1 ... A_pB_1... B_q} (R \Join_{A_i=B_j} S) \equiv \pi_{A_1 ... A_p}(R) \Join_{A_i=B_j}\pi_{B_1... B_q}(S)\; i \in \{1,..,p\}, j \in \{1,...,q\}
 
  - Distributivité de la projection sur l'union
 
@@ -852,6 +852,7 @@ Quiz
 S4: illustration avec Oracle
 ****************************
     
+    
 Cette section présente l'application concrète des concepts,
 structures et algorithmes présentés dans ce qui précède
 avec le SGBD Oracle. Ce système est un  bon exemple
@@ -865,17 +866,20 @@ De plus le système propose des outils simples et pratiques
 par l'optimiseur, et obtenir des statistiques sur les
 performances (coût en E/S et coût CPU, entre autres).
 
-Tous les GBD relationnel proposent un outil comparable 
-d'exlication des plans d'exécution choisis. Les travaux
+Tous les SGBD relationnel proposent un outil comparable 
+d'explication des plans d'exécution choisis. Les travaux
 pratique nous permettrons d'utiliser celui d'oracle, mais aussi celui
 de Postgres.
+
+.. note:: Pour utiliser Oracle en ligne le site https://apex.oracle.com/en/
+   est recommandé.  Sans installation, et gratuit pour des petites bases. 
 
 Paramètres et statistiques
 ==========================
 
 L'optimiseur s'appuie sur des paramètres divers et sur 
 des statistiques.
-Parmi les plus paramètres les plus intéressants, citons:
+Parmi les paramètres les plus intéressants, citons:
 
 
  - ``OPTIMIZER_MODE``:  permet  d'indiquer si le coût
@@ -1102,7 +1106,7 @@ un du côté gauche. Pour chaque film on va
 alors récupérer l'artiste correspondant avec
 le sous-arbre du côté droit.
 
-On efffectue alors une recherche par clé dans l'index avec
+On effectue alors une recherche par clé dans l'index avec
 la valeur ``id_realisateur`` provenant du film courant. La recherche
 renvoie un ``ROWID`` qui est  utilisé pour
 prendre l'enregistrement complet dans la table ``Artiste``. Le nœud
