@@ -178,7 +178,8 @@ and l1.intitulé='Rouge'
 select s.nom
 from Station as s, Ligne as l1,  DétailLigne as d1
 where d1.idStationSuivante is null
-and s.id = d1.idStation
+and
+ s.id = d1.idStation
 and d1.idLigne=l1.id
 and l1.intitulé='Rouge'
 \end{verbatim} 
