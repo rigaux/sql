@@ -1,3 +1,7 @@
+\enteteExam{NFP 107 -- Systèmes de gestion de bases de données - Durée 2h30}%
+{Examen du 12 juin  2024}%
+{Documents autorisés\,: 5 pages recto-verso de notes manuscrites ou imprimées}%
+
 
 Nous avons affaire à une base de données décrivant les concerts d'un festival.
 Voici le schéma 
@@ -37,8 +41,21 @@ sa ville et son nombre de places.
     \item Un groupe peut-il participer à deux concerts différents d'un même festival (expliquer)?
     \item Un groupe peut-il jouer deux fois dans un même concert (à des positions différentes)?
  
-    \item Un même lieu peut-il être utilisé par des festivals différents (expliquer)\,?
-    
+    \item La plupart des festivals sont récurrents et proposent 
+     une nouvelle édition chaque année. Une révision de la conception
+     permet d'identifier les dépendances fonctionnelles suivantes\,:
+     \begin{itemize}
+       \item $idFestival \to nom $
+       \item $idFestival, ann\acute{e}e \to directeur, budget$
+     \end{itemize}
+     Quel est l'impact sur le schéma relationnel\,? A-t-on de 
+     nouvelles tables (dans ce cas indiquer clés primaire et étrangères) 
+     et quelles modifications
+     sont nécessaires sur les tables existantes\,?
+     
+    \item Sur le schéma obtenu, quelles tables résultent d'une
+    association plusieurs-plusieurs, quelles tables 
+    résultent d'une entité faible (expliquer)
 \end{enumerate}
 
 \begin{solution}
@@ -71,12 +88,25 @@ create table Concert(
     \item Un groupe peut-il jouer deux fois dans un même concert : non car position ne fait
     pas partie de la clé
  
-    \item Absolument rien ne l'empêche.
+    \item On applique l'algorithme de normalisation.
+    On doit retirer l'année de la table \texttt{Festival} 
+    qui devient  Festival (\textbf{id}, nom). On ajoute 
+    une table \'Edition (\textbf{\textit{idFestival}, année}, directeur, budget).
+    
+    Enfin, en bonus, il faut sans doute changer la clé étrangère dans la table
+    Concert pour référencer une édition avec la paire (idFestival, année)
+    
+    \item Participation vient d'une association plusieurs-plusieurs, 
+    tandis que \'Edition est une entité faible (on ne peut 
+    pas avoir d'édition dans festival).
 \end{enumerate}
 \end{solution}
 
 
 \section{SQL (8 points)}
+
+Les requêtes s'expriment sur le schéma \emph{donné dans l'énoncé} (avant 
+donc l'introduction les évolutions liées à la notion d'édition).
 
 \begin{enumerate}
 
@@ -114,7 +144,7 @@ and f.année = 1969
 \begin{minted}{sql}
 select g.nom
 from Groupe as g
-where not exists (select 'x' 
+where not exists (select *
         from Concert as c, Festival as f, Participation as p
         where c.idFestival=f.id
         and  p.idConcert=c.id
@@ -125,8 +155,9 @@ where not exists (select 'x'
 \end{solution}
 
 
-\item Combien de concerts ont été donnés par les Beatles  (c'est un nom de groupe) à Paris
-(c'est un nom de ville)?
+\item Combien de concerts ont été donnés par les Beatles  
+(c'est un nom de groupe\,!) à Paris
+(c'est un nom de ville\,!)
 
 \begin{solution}
 \begin{minted}{sql}
@@ -146,10 +177,13 @@ et le nom du groupe).
 \begin{solution}
 \begin{minted}{sql}
 select c.idConcert, g.nom
-from Groupe as g, Concert as c, Participation as p
+from Groupe as g, Concert as c, Participation as p1
 where p.idConcert=c.id
 and p. idGroupe=g.id
-and position = (select max(position) from Participation as c2 where c2.idConcert=c.id)
+and not exists = (select * 
+                  from Participation as p2 
+                  where p2.idConcert=c.id
+                  and p1. position <= p2.position)
 \end{minted}
 \end{solution}
 
@@ -176,8 +210,9 @@ having count(*) > 1
 \begin{enumerate}
    \item Donnez l'expression algébrique pour la première requête SQL (section précédente)
 
-   \item Donnez la requête SQL correspondant à l'expression algébrique suivante et expliquez-en le sens.
-
+   \item Expliquez le sens de l'expression algébrique suivante, puis   
+  donnez la requête SQL correspondante.
+  \item 
        $$\pi_{nom} (Lieu) - \pi_{nomLieu} (Concert)$$
 
 \end{enumerate}
@@ -185,7 +220,10 @@ having count(*) > 1
 
 \begin{solution}
 
-Les lieux où aucun concert n'a eu lieu.
+\begin{enumerate}
+\item $\pi_{nomLieu} (\sigma_{nom='Woodstock' \land annee=1969} (Festival) \Join_{id=idFestival} Concert)$ 
+
+   \item Les lieux où aucun concert n'a eu lieu.
 
 
 \begin{minted}{sql}
@@ -193,7 +231,7 @@ select nom
 from Lieu 
 where nom not in (select nomLieu from Concert)
 \end{minted}
-
+\end{enumerate}
 
 \end{solution}
 
@@ -214,7 +252,7 @@ $idC, idG \to position$.
 \begin{solution}
    \begin{enumerate}
       \item La clé est (idC, idG)
-       \item Non à cause de $idC \to nomLieu$
+       \item Non à cause de $idC \to nomLieu$, ainsi que $idG \to nomGroupe$
        \item On obtient le schéma de l'énoncé
     \end{enumerate}
 \end{solution}
