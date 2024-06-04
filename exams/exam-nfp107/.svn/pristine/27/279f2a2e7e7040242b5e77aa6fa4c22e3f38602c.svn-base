@@ -1,0 +1,340 @@
+\entete{HTO}{18 juin 2014}
+
+% \documentclass[10pt,a4paper]{article}
+% \usepackage{epsf,comment,times,fancyvrb,amsmath,amsthm,amssymb,latexsym,xspace}
+% \usepackage{epsfig}
+% \usepackage[french]{babel}
+% \usepackage[T1]{fontenc}
+% %\usepackage[utf8]{inputenc}
+% \usepackage{listings}
+% \usepackage{color}
+% \usepackage{comment}
+% \usepackage{lastpage}
+% \usepackage{fullpage}
+% \usepackage{verbatim}
+% \usepackage{amsmath}
+% \lstset{language=SQL,basicstyle=\small,showstringspaces=false,columns=fullflexible,emph={REFERENCES},emphstyle=\textbf}
+% \usepackage{tikz}
+% \usetikzlibrary{shapes,positioning}
+% 
+% \parindent=0pt
+% 
+% \newenvironment{correction}[0]{
+% ~\\ \color{red} \textbf{correction :}}{%
+% }
+% 
+% %\excludecomment{correction}
+% 
+% \begin{document}
+% 
+% \begin{center}
+% {\Large \bf Conservatoire National
+% des Arts et M\'etiers\\ NFP107: Syst\`emes de gestion de bases de donn\'ees\\
+% EXAMEN avril 2014\\ ~\\
+% Dur\'ee de l'examen : 2 heures et 30 minutes}\\ 
+% \end{center}
+% 
+% Consignes :\\
+% {\bf Tous les documents papier sont autorisés.\\
+% Pensez \`a reporter votre numéro d'anonymat sur toutes les feuilles de votre copie.\\
+% Merci de soigner votre écriture et de ne pas rédiger au crayon papier sur votre copie. \\
+% Éteignez vos téléphones portables. Ceux-ci ne sont pas autorisés, même pas pour servir d'horloge.\\
+% Ce sujet comporte \pageref{LastPage} pages d'énoncé.} 
+
+\section{Algèbre relationnelle et SQL (10 points)}
+
+Soit l'extrait suivant du schéma de la base de données permettant de gérer une société de location de voitures:
+
+\smallskip
+\noindent
+\texttt{\textbf{VEHICULE}(idVehicule, modele, gamme, dateAcquisition, kilometrage, agence)}\\
+\texttt{\textbf{AGENCE}(idAgence, ville, dateOuverture, gerant)}\\
+\texttt{\textbf{CLIENT}(idClient, nom, prenom, datePremiereLocation, dateDerniereLocation)}\\
+\texttt{\textbf{LOCATION}(idVehicule,idClient,gammeDemandee,dateDebut,dateFin,agenceFin)}\\
+
+\smallskip
+
+Chaque voiture est affectée à une agence (attribut agence dans VEHICULE). Lors d'une location, un client indique la gamme de voiture (citadine, compacte, familiale, monospace, break, etc.) souhaitée (l'information se trouve dans gammeDemandee), l'agence lui met à disposition un véhicule disponible de cette gamme, sinon d'une gamme supérieure (l'information se trouvera dans l'attribut gamme du véhicule loué). La voiture peut être retournée dans l'agence de départ ou dans une autre agence (agenceFin).
+
+\begin{enumerate}
+
+\item Pour la table LOCATION, identifiez les clés primaires et étrangères. (0,5 points)
+\begin{correction}
+Si on considère qu'un même client peut louer plusieurs fois le même véhicule, alors la clé primaire pourrait être (idVehicule, idClient, dateDebut).\\
+Les clés étrangères seront: idVehicule $\rightarrow$ VEHICULE(idVehicule), idClient $\rightarrow$ CLIENT(idClient), agenceFin $\rightarrow$ AGENCE(idAgence)
+\end{correction}
+
+\item Donnez la commande SQL pour créer la table LOCATION. (0,5 points)
+\begin{correction}
+\vspace*{-0.8cm}
+\begin{verbatim}
+CREATE TABLE LOCATION(
+    idVehicule INTEGER,
+    idClient   INTEGER,
+    gammeDemandee VARCHAR2(20),
+    dateDebut  DATE,
+    dateFin    DATE,
+    agenceFin  INTEGER,
+    CONSTRAINT pk_loc  PRIMARY_KEY (idVehicule, idClient, dateDebut)
+    CONSTRAINT fk1_loc FOREIGN_KEY idVehicule REFERENCES VEHICULE(idVehicule),
+    CONSTRAINT fk2_loc FOREIGN_KEY idClient   REFERENCES CLIENT(idClient),
+    CONSTRAINT fk3_loc FOREIGN_KEY agenceFin  REFERENCES AGENCE(idAgence))
+\end{verbatim}
+\end{correction}
+
+\item (Algèbre et SQL) Quels véhicules ont un kilométrage supérieur à 10.000 km? (1 point)
+\begin{correction}
+$\sigma_{kilometrage > 10000 \; km}(VEHICULE)$
+
+\begin{verbatim}
+SELECT * FROM VEHICULE
+WHERE kilometrage > 10000;
+\end{verbatim}
+\end{correction}
+
+\item (SQL seulement) De combien de véhicules de chaque gamme dispose l'agence de Tarbes (dont l'identifiant est 18)? (1 point)
+\begin{correction}
+\vspace{-0.8cm}
+\begin{verbatim}
+SELECT gamme, COUNT(idVehicule)
+FROM   VEHICULE
+WHERE  agence = 18
+GROUP  BY gamme;
+\end{verbatim}
+\end{correction}
+
+%\item (SQL seulement) Combien de véhicules de chaque gamme ont été loués dans l'agence de Nice (dont l'identifiant est 3)? (1 point)
+%
+%\begin{correction}
+%\vspace{-0.8cm}
+%\begin{verbatim}
+%SELECT v.gamme, COUNT(*)
+%FROM   VEHICULE v, LOCATION l
+%WHERE  v.agence = 3 AND
+       %v.idVehicule = l.idVehicule
+%GROUP BY v.gamme;
+%\end{verbatim}
+%\end{correction}
+
+\item (SQL seulement) Trier les agences par nombre décroissant de surclassements accordés (surclassement: pour une location, la gamme du véhicule loué est différente de gammeDemandee)? (2 points)
+\begin{correction}
+\vspace{-0.8cm}
+\begin{verbatim}
+SELECT v.agence, COUNT(*) AS nbSurclassements
+FROM LOCATION l, VEHICULE v
+WHERE l.idVehicule     = v.idVehicule AND
+      l.gammeDemandee != v.gamme
+GROUP BY v.agence
+ORDER BY nbSurclassements;
+\end{verbatim}
+\end{correction}
+
+\item (Algèbre et SQL) Noms et prénoms des clients ayant loué au moins un véhicule dans l'agence de Nice après le 23/12/2013. (3 points)
+\begin{correction}
+\begin{multline}
+\pi_{nom,prenom}\{CLIENT \Join \\ [(\sigma_{dateDebut > 23/12/2013}LOCATION) \Join (\sigma_{agence=3}VEHICULE)] \}
+\end{multline}
+
+\begin{verbatim}
+SELECT c.nom, c.prenom
+FROM CLIENT c, LOCATION l, VEHICULE v
+WHERE l.dateDebut > 23/12/2013 AND
+      v.agence = 3 AND
+      l.idVehicule = v.idVehicule AND
+      l.idClient = l.idClient;
+\end{verbatim}
+\end{correction}
+
+\item (Algèbre seulement) Quels clients ont loué au moins une voiture de chaque gamme? (2 points)
+\begin{correction}
+$R1 := \pi_{idClient,gamme}(VEHICULE \Join LOCATION)$; signification: gammes des voitures louées par chaque client; la jointure est naturelle et se fait sur le seul attribut commun, idVehicule.\\
+$R2 := \pi_{gamme}VEHICULE$; signification: ensemble des gammes de voitures de la table VEHICULE.\\
+Résultat $R := R1 \div R2$; signification: clients ayant loué au moins une voiture de chaque gamme.\\
+
+Pour information, une des requêtes SQL possibles avec l'interprétation suivante: quels sont les clients tels qu'il n'y a aucune gamme de véhicules dans laquelle ils n'ont pas loué de véhicule?
+\begin{lstlisting}[language=sql]
+select Client.idClient
+from   Client
+where not exists
+     (select Vehicule.gamme
+      from   Vehicule
+      where not exists
+           (select *
+            from  Location
+            where Location.idVehicule = Vehicule.idVehicule
+              and Location.idClient   = Client.idClient));
+\end{lstlisting}
+et une autre possibilité (donne-t-elle toujours les mêmes résultats que la première?):
+\begin{verbatim}
+SELECT l.idClient, COUNT(DISTINCT(v.gamme))
+FROM   LOCATION l, VEHICULE v
+WHERE  l.idVehicule = v.idVehicule       
+GROUP BY l.idClient
+HAVING COUNT(DISTINCT(v.gamme)) = (SELECT COUNT(DISTINCT(gamme))
+                                   FROM VEHICULE);
+\end{verbatim}
+\end{correction}
+
+\end{enumerate}
+
+
+\section{Indexation (3 points)}
+
+On crée un index la table \texttt{Location} avec la commande suivante\,:
+
+\begin{lstlisting}[language=sql]
+create unique index on Location (idVehicule, idClient, dateDebut)
+\end{lstlisting}
+
+Pour chacune des requêtes ci-dessous, indiquez si l'index peut être utilisé
+(et justifiez votre réponse à chaque fois).
+
+\begin{enumerate}
+    \item 
+\begin{lstlisting}[language=sql]
+select * from Location 
+where idVehicule=398 and dateDebut='18-06-2014'
+\end{lstlisting}%
+\begin{correction}
+Oui, car \texttt{idVehicule} est un préfixe de la clé indexée.
+\end{correction}
+   \item 
+\begin{lstlisting}[language=sql]
+select * from Location 
+where idClient=3987 and dateDebut='18-06-2014'
+\end{lstlisting}
+   
+\begin{correction}
+Non, car ni \texttt{idClient}, ni \texttt{dateDebut} ne sont  préfixe de la clé indexée.
+\end{correction}
+   \item 
+\begin{lstlisting}[language=sql]
+select nom
+from Client as c, Location as l
+where c.idClient = l.idClient 
+and dateDebut='18-06-2014'
+\end{lstlisting}
+\begin{correction}
+Non, car \texttt{idClient} n'est pas préfixe de la clé indexée.
+\end{correction}
+\end{enumerate}
+
+\section{Optimisation (4 points)}
+
+\begin{enumerate}
+\item  (2 pts) Pour chacune des requêtes de la section précédente, indiquez le plan
+d'exécution que vous attendriez d'un SGBD relationnel. 
+
+Vous pouvez
+représenter un plan d'exécution sous la forme qui vous convient\,: 
+\textbf{explain} (Oracle) ou arbre d'itérateurs.
+
+\begin{correction}
+\begin{enumerate}
+\item Parcours d'index, puis accès direct à la table.
+\item Parcours séquentiel, sauf si l'on crée un index supplémentaire sur \texttt{idCLient}
+\item Parcours séquentiel de \texttt{Location}, avec sélection sur la date; pour chaque
+   location, accès par l'index au client.
+\end{enumerate}
+\end{correction}
+\item  (1 pt) La figure~\ref{join-plan} montre le plan d'exécution donné par le SGBD
+    pour la requête de jointure. Commentez ce plan et indiquez l'action
+    éventuelle à entreprendre.
+    
+ \begin{figure*}[hbt]
+  \begin{center}
+  \includegraphics[height=7cm,keepaspectratio]{./Fig/2014-sortmerge}
+  \caption{\label{join-plan}  Plan d'exécution pour la requête de jointure}
+  \end{center}
+ \end{figure*}
+ 
+ 
+\begin{correction}
+Tri fusion, donc il manque un index sur \texttt{Client.idClient}. Il faut impérativement
+en créer un.
+\end{correction}
+
+\item  (1 pt) Pour la requête de jointure, quel(s) index peut-on créer pour obtenir
+   un plan d'exécution qui n'effectue \emph{que} des accès par index, et aucun
+     accès par balayage séquentiel\,?
+\end{enumerate}
+
+
+\begin{correction}
+ Il faut impérativement
+en créer sur \texttt{Client.idClient}, et on peut en ajouter un sur \texttt{dateDebut}.
+\end{correction}
+\section{Concurrence (4 points)}
+
+Une agence $a$ propose une procédure de location de limousines
+qui  s'effectue pour un véhicule $v$,
+un client $c$, à une date $d$ et pour un nombre $n$ de jours. 
+Elle exécute, dans cet ordre, les requêtes suivantes\,:
+
+\begin{lstlisting}[language=sql]
+select * from Client where idClient = $c
+\end{lstlisting}
+\begin{lstlisting}[language=sql]
+insert into Location values ($v, $c, 'Limousine',  $d, $d+$n, $a)
+\end{lstlisting}
+\begin{lstlisting}[language=sql]
+update Client set dateDernierelocation=$d where idClient = $c
+\end{lstlisting}
+
+
+\begin{enumerate}
+ \item (0,5 pts) L'exécution concurrente ci-dessous peut-elle représenter
+   l'entrelacement de deux exécutions de la procédure de location\,?
+ 
+  $$H_1 = r_1[c_1] r_2[c_2] w_1[l_1] w_1[c_2] w_2[l_2]  w_2[c_2] $$
+ 
+\begin{correction}
+	Non, car $T_1$ modifie un client $c_2$ après avoir lu un client $c_1$. Ce n'est
+	pas possible avec la procédure de location.
+\end{correction}
+ \item (0,5 pts) Même question pour l'exécution suivante.
+ 
+  $$H_2 = r_1[c_1] r_2[c_1] w_1[l_1] w_1[c_1]  C_1 w_2[l_2]  w_2[c_1]  C_2$$
+ 
+\item (0,5 pts) Donner la liste des conflits de $H_2$.
+
+\begin{correction}
+	\begin{itemize}
+		\item[sur x : ] $r_1[c_1] w_2[c_1]$
+		\item[sur y : ] $r_2[c_1] w_1[c_1]$
+		\item[sur z : ] $w_1[c_1] w_2[c_1]$
+	\end{itemize}
+\end{correction}
+
+\item (0,5 pts) Donner le graphe de sérialisation de $H_2$. Que pouvez-vous déduire de ce
+graphe?
+\begin{correction}
+	$T_2 \rightarrow T_1, T_2 \rightarrow T_1$. Il y a un cycle, dont H n'est pas \textit{s\'erialisable}.
+\end{correction}
+
+
+\item (1 pt) Donner l'exécution obtenue par application de l'algorithme de verrouillage 
+à deux phases. Donner le détail du déroulement de l'algorithme. 
+On suppose que les verrous sont rel\^ach\'es imm\'ediatement apr\`es 
+les {\it commit}. 
+
+\begin{correction}
+	\begin{itemize}
+		\item Blocage de $T_1$ sur $w_1[c_1]$
+		\item Blocage de $T_2$ sur $w_2[c_1]$
+		\item \textit{Deadlock}! 
+	\end{itemize}
+\end{correction}
+
+\item (1 pt) Que se passe-t-il si on écrit la première requête de la manière suivante\,?
+
+\begin{lstlisting}[language=sql]
+select * from Client where idClient = $c for update
+\end{lstlisting}
+
+\begin{correction}
+Verrou exclusif sur la lecture: plus d'interblocage.
+\end{correction}
+\end{enumerate}
+
+% \end{document}

@@ -1,0 +1,188 @@
+\documentclass[10pt]{article}
+\usepackage[T1]{fontenc}
+%\usepackage[utf8]{inputenc}
+%\usepackage[francais]{babel}
+%\usepackage{listingsutf8}
+
+\usepackage[french]{babel}
+%\usepackage[T1]{fontenc}
+\usepackage{comment,fullpage}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{lastpage}
+\usepackage{amsmath}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+%\newenvironment{solution}{\paragraph{Correction}}{}
+\newenvironment{solution}{\vspace{6pt}\noindent\color{red}\textbf{Correction : }}{\vspace{6pt}\ignorespacesafterend}
+
+\includecomment{comment}
+%\excludecomment{solution}
+
+% MATH -----------------------------------------------------------
+\newcommand{\norm}[1]{\left\Vert#1\right\Vert}
+\newcommand{\abs}[1]{\left\vert#1\right\vert}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\Real}{\mathbb R}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\To}{\longrightarrow}
+\newcommand{\BX}{\mathbf{B}(X)}
+\newcommand{\A}{\mathcal{A}}
+% ----------------------------------------------------------------
+
+\begin{document}
+
+\begin{center}
+{\Large NFP 107 -- Systèmes de gestion de bases de données}\\\vspace{1ex}
+{\Large Examen juin 2017. Durée: 2h30.}\\
+
+\end{center}
+
+\vspace{1ex}
+\hrule
+\vspace{1ex}
+\textbf{Consignes :}\\
+-- Tous les documents sont autorisés.\\
+-- Les téléphones mobiles et autres équipements communicants (exemple: PC, tablette, etc.)  doivent être éteints et rangés dans les sacs pendant toute la durée de l'épreuve.\\
+-- Pensez à reporter votre numéro d'anonymat sur toutes les feuilles.\\
+-- Merci de soigner votre écriture et de ne pas rédiger au crayon papier sur votre copie.\\
+Ce sujet comporte 2 pages d'énoncé.
+
+\vspace{1ex}
+\hrule
+\vspace{1ex}
+
+%\input{./titlepage.tex}
+% \addtocounter{page}{1}
+
+\vspace{1ex}
+
+Le sch\'ema de base de donn\'ees suivant sera utilis\'e pour l'ensemble du
+sujet. Il permet de gérer une base sur le guide du Routard.
+
+\begin{tabular}{ll}
+{\sc Routard} &(\underline{nomR}, pays, dateNaissance)\\
+{\sc Lieu} &(\underline{codeL}, nomL, type, quartier, ville, pays, GPS)\\
+{\sc Commentaire} &(\underline{codeL, date, nomR}, note, commentaire, photo)\\
+{\sc Guide} &(\underline{codeG}, nomG, annee)\\
+{\sc PageGuide} &(\underline{codeG, codeL, date}, numPage)\\
+\end{tabular}\\
+
+Les attributs cl\'es de chaque relation sont  soulign\'es. 
+Le type de {\sc Lieu} peut être : Hôtel, Restaurant ou POI.
+La table {\sc Commentaire} permet d'associer le commentaire d'un routard avec le lieu à une date donnée (un même routard peut revenir plusieurs fois). Le {\sc guide} est l'édition d'un "Guide du Routard" à une année donnée, la table {\sc PageGuide} permet de faire le lien entre les commentaires et le guide.
+
+\section{Algèbre relationnelle et SQL (10 points)}
+
+1. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. (1 point)
+
+\begin{solution}\\
+Solution...
+\end{solution}
+
+\section{Indexation (3 points)}
+
+\begin{enumerate}
+
+\item Quelles sont, parmi les propriétés suivantes, celles qui caractérisent un arbre B (1,5 pts)
+
+\begin{enumerate}
+  \item La hauteur est fixe
+  \item Tous les chemins de la racine vers une feuille ont la même longueur
+  \item L'arbre se réorganise dynamiquement
+  \item 
+\end{enumerate}
+
+\begin{solution}
+Réponse 3
+\end{solution}
+
+
+\item  (1,5 pts)
+
+
+\end{enumerate}
+
+
+
+\section{Optimisation (4 points)}
+
+
+\begin{enumerate}
+
+\item L'optimisation de requêtes, c'est\,? (1 pt)
+
+\begin{enumerate}
+  \item Modifier une requête SQL pour qu'elle soit la plus efficace possible.
+  \item   Structurer les données pour qu'elles soient adaptées aux requêtes soumises.
+  \item    Choisir, pour chaque requête, la meilleure manière de l'exécuter.
+\end{enumerate}
+
+\begin{solution}
+Réponse 3
+\end{solution}
+
+
+
+\item Soit la requête suivante:
+
+\begin{verbatim}
+select nomR, commentaire 
+from Routard as r, Commentaire as c
+where r.nomR = c.nomR
+and c.date='06/06/2017'
+\end{verbatim}
+
+On suppose que les clés primaires sont indexées par un arbre B. Indiquez les index utilisables pour cette requête
+et décrivez par la méthode de votre choix au moins n plan d'exécution possible.
+
+\begin{solution}
+Le seul index utilisable est celui de la table Routard, car \texttt{nomR} est un suffixe de l'index
+sur la clé primaire de Commentaire.
+
+On peut effectuer des boucles imbriquées indexées: on parcourt les commentaires en ne conservant que ceux
+parus le 6 juin 2017. Pour chaque commentaire on connaît le nom du routard, que l'on utilise pour accéder
+par l'index à la table \texttt{Routard}.
+\end{solution}
+
+
+\end{enumerate}
+
+\section{Concurrence(3 points)}
+
+\begin{enumerate}
+
+\item À quel moment doit-on effectuer un \texttt{commit}\,? (1 pt)
+
+\begin{enumerate}
+  \item  Dès que la base est arrivée à un état cohérent
+  \item   Après chaque mise à jour
+  \item   À intervalles périodiques (par exemple toutes les 5 mns)
+\end{enumerate}
+
+
+\begin{solution}
+Réponse 1
+\end{solution}
+
+\item 
+Soit l'exécution concurrente suivante~:
+
+$$H=r_1(x)r_2(y)w_3(z)r_1(y)w_1(x)r_3(x)w_2(y)C_1w_3(x)w_2(z)C_3w_2(y)C_2$$
+
+Donnez l'exécution obtenue après l'application de l'algorithme de verrouillage à deux phases. 
+Donnez les détails du déroulement de l'algorithme. (2 points)
+
+\begin{solution}
+$H'=r_1(x)r_2(y)w_3(z)r_1(y)w_1(x)C_1r_3(x)w_2(y)w_3(x)C_3w_2(z)w_2(y)C_2$
+\end{solution}
+
+
+\end{enumerate}
+
+\end{document}
+

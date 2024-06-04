@@ -1,0 +1,248 @@
+\entete{HTT}{Septembre 2013}
+
+\section{Algèbre relationnelle et SQL (10 points)}
+
+Soit l'extrait suivant de la base de données qui sert à la gestion de la bibliothèque de la ville de Metropolis :
+
+\smallskip
+\texttt{\textbf{LIVRE}(id, titre, id\_auteur, date\_publication, catégorie, éditeur)}\\
+\texttt{\textbf{EMPRUNT}(id\_personne, id\_livre, date\_début, date\_fin)}\\
+\texttt{\textbf{PERSONNE}(id, nom, prénom, age)}\\
+\texttt{\textbf{AUTEUR}(id, nom, prénom, date\_naissance, date\_décés, nationalité)}\\
+
+\smallskip
+
+\begin{enumerate}
+
+\item Pour la table LIVRE, identifiez les clés primaires et étrangères. (0,5 points)
+\begin{solution}
+Clé primaire: id\\
+Clés étrangères: id\_auteur $\rightarrow$ AUTEUR(id)
+\end{solution}
+
+\item Donnez la commande SQL pour créer la table LIVRE. (0,5 points)
+\begin{solution}
+\begin{verbatim}
+CREATE TABLE LIVRE(
+    id NUMBER(10),
+    titre VARCHAR2(50),
+    id_auteur NUMBER(10),
+    date_publication DATE,
+    catégorie VARCHAR2(20),
+    éditeur VARCHAR2(20),
+    CONSTRAINT pk_livre PRIMARY_KEY id,
+    CONSTRAINT fk_livre FOREIGN_KEY id_auteur REFERENCES AUTEUR(id)
+\end{verbatim}
+\end{solution}
+
+\item (Algèbre et SQL) Donnez les titres de livres publiés avant 01/01/2010 chez l'éditeur "Henry Lemoine".  (1 point)
+\begin{solution}
+
+$\pi_{titre}(\sigma_{editeur = 'Henry\,Lemoine'\, AND\, date <= '01/01/2010'}(LIVRE))$
+
+\begin{verbatim}
+SELECT titre FROM LIVRE
+WHERE editeur = 'Henry Lemoine' AND date <= '01/01/2010'
+\end{verbatim}
+\end{solution}
+
+\item (Algèbre et SQL) Donnez les noms des personnes qui ont emprunté des livres de la catégorie  'thriller' écrits par un auteur français. (3 point)
+\begin{solution}
+
+$A = \rho_{id/id\_auteur}(AUTEUR)$\\
+$L = \rho_{id/id\_livre}(LIVRE)$\\
+$P = \rho_{id/id\_personne}(PERSONNE)$\\
+$\pi_{titre}(\sigma_{nationalite = 'francaise'\,AND\,categorie = 'thriller'}(A \Join (P \Join (L \Join EMPRUNT))))$
+
+\begin{verbatim}
+SELECT nom FROM EMPRUNT e, LIVRE l, AUTEUR a, PERSONNE p
+WHERE  AND e.id_personne = p.id AND e.id_livre = l.id
+       AND l.id_auteur = a.id AND l.categorie = 'thriller'
+       AND a.nationalite = 'francaise';
+\end{verbatim}
+\end{solution}
+
+\item (SQL seulement) Donnez la moyenne d'âge des personnes qui ont emprunté des livres de la catégorie 'jeunesse' parus en 2013 (2 points):
+\begin{solution}
+\begin{verbatim}
+SELECT AVG(age) FROM EMPRUNT e, LIBRE l, PERSONNE p
+WHERE e.id_livre = l.id AND e.id_personne = p.id
+      AND l.categorie = 'jeunesse' AND date_publication >= '01/01/2013'
+      AND date_publication <= '31/12/2013'
+\end{verbatim}
+\end{solution}
+
+\item Donnez les noms des personnes qui ont emprunté le plus de livres (3 points).
+
+\begin{solution}
+\begin{verbatim}
+SELECT p.nom FROM EMPRUNT e, PERSONNE p
+WHERE e.id_personne = p.id
+GROUP BY id_personne
+HAVING COUNT(*) = (SELECT MAX(COUNT(*)) 
+                   FROM EMPRUNT
+                   GROUP BY id_personne)
+
+\end{verbatim}
+\end{solution}
+
+\end{enumerate}
+
+\section{Indexation (3 points)}
+
+
+On insère successivement les enregistrements suivants dans la table \texttt{PERSONNE}, selon cet ordre :
+
+\begin{center}
+\begin{small}
+\begin{tabular}{|c|c|c|c|c}
+\hline
+id & nom & prénom & \textbf{age} \\
+\hline
+\hline
+1 & Martin & Georges & 30\\
+\hline
+2 & Dubois & Inna & 20 \\
+\hline
+3 & Thomas & Maxime & 14\\
+\hline
+4 & Richard & Boris & 45\\
+\hline
+5 & Petit & Gérald & 32\\
+\hline
+6 & Durand & Valérie & 43\\
+\hline
+7 & Leroy & Jacques & 34 \\
+\hline
+8 & Simon & Michel & 22 \\
+\hline
+9 & Laurent & Jean-Jacques & 63\\
+\hline
+10 & Moreau & Eddie & 12\\
+\hline
+11 & Morel & Philippe & 15\\
+\hline
+12 & Perrin & Gloria & 18 \\
+\hline
+13 & Clement & Bob & 19\\
+\hline
+14 & Dumont  &  Claire & 67\\
+\hline
+\end{tabular}
+\end{small}
+\end{center}
+
+On met en place un index sur l'attribut \textbf{âge} de cette table. 
+
+\begin{enumerate}
+
+\item Construire l'arbre B+ d'ordre \textbf{2} correspondant à cet ensemble d'articles, en respectant l'ordre d'arrivée. Donner les étapes de construction intermédiaires importantes (celles qui produisent un changement de la structure de l'arbre). (2 points)
+
+\begin{solution}
+
+L'arbre final est le suivant:
+
+\begin{small}
+\medskip
+
+\begin{center}
+\begin{tikzpicture}
+\tikzstyle{bplus}=[rectangle split, rectangle split horizontal,rectangle split ignore empty parts,draw,minimum height=0.4cm]
+\tikzstyle{every node}=[bplus]
+\tikzstyle{level 1}=[sibling distance=60mm]
+\tikzstyle{level 2}=[sibling distance=5cm]
+\node {15 \nodepart{two} 20  \nodepart{three}  30 \nodepart{four}  43}
+ [->]
+child[sibling distance=25mm] {node (b) {12 \nodepart{two} 14 \nodepart{three} 15}}
+ child {node (h) [right=  1 cm of b]{ 18 \nodepart{two}  19 \nodepart{three} 20}}    
+ child {node (k)[right= 1 cm of h] {20 \nodepart{two} 30}}
+ child {node (mi)[right= 1 cm of k] { 32 \nodepart{two} 34 \nodepart{three} 43}}    
+ child {node (mo) [right= 1 cm of mi] {45 \nodepart{two} 63 \nodepart{three} 67}}    
+;
+
+
+\draw[thick,>=stealth,->] (b)--+(h);
+\draw[thick,>=stealth,->] (h)--+(k);
+\draw[thick,>=stealth,->] (k)--+(mi);
+\draw[thick,>=stealth,->] (mi)--+(mo);
+\end{tikzpicture}
+\end{center}
+
+\end{small}
+
+NB pour la suite: les feuilles de l'arbre B+ ``pointent'' vers le fichier de donn\'ees n'apparaissant pas ici.
+
+\end{solution}
+
+\item On considère que cet arbre B+ est stocké à raison d'un noeud par page sur disque. On recherche les noms des personnes dont l'âge est entre 20 et 40 ans (inclus). Combien de pages disque doivent être chargées au minimum pour répondre à cette requête en utilisant l'arbre B+ ? Justifier. (1 point)
+
+
+\begin{solution}
+Il s'agit ici d'une requête par intervalle: on commence par chercher les enregistrements pour lesquels l'âge est égal à 20 (lecture de 5 enregistrements). Il suffit ensuite d'exploiter le chaînage des feuilles pour trouver les autres enregistrements, en parcourant ici encore 5 enregistrements dans l'arbre B+). On charge donc 10 pages d'index. Il faut ensuite récupérer les données pointées par l'index sur disque. Dans le meilleur cas (peu probable mais possible), toutes ces données sont stockées dans une même page. Donc on charge au minimum 11 pages. 
+\end{solution}
+
+\end{enumerate}
+
+
+\section{Optimisation (4 points)}
+
+Soit la requ\^ete suivante:
+      \begin{verbatim}
+     Select PERSONNE.id, PERSONNE.nom, PERSONNE.prénom
+     From LIVRE, EMPRUNT, PERSONNE, AUTEUR
+     Where AUTEUR.nom = "Cioran"
+           AND LIVRE.id_auteur = AUTEUR.id
+           AND EMPRUNT.id_livre = LIVRE.id
+           AND PERSONNE.id = EMPRUNT.id_personne;
+     \end{verbatim}
+
+\begin{enumerate}
+\item On suppose qu'il existe des index sur les attributs suivants (et seulement sur ceux-ci) :
+
+\begin{itemize}
+\item \texttt{nom} de AUTEUR,
+\item \texttt{id} de LIVRE, et
+\item \texttt{id\_livre} de EMPRUNT, 
+\end{itemize}
+Donner un plan d'ex\'ecution (arborescente ou EXPLAIN) produit par l'optimiseur pour la requ\^ete (indiquez les prédicats de sélection sur ce plan). \textbf{Argumenter} la r\'eponse. (2 points)
+%\begin{solution}
+%\end{solution}
+
+\item On ajoute maintenant (\underline{en plus des index de la question pr\'ec\'edente}) l'index suivant:
+\begin{itemize}
+\item un index sur l'attribut \texttt{id\_personne} de EMPRUNT.
+\end{itemize}
+
+Donner un plan d'ex\'ecution (arborescente ou EXPLAIN) pour la requ\^ete produit par l'optimiseur (privilégiant l'utilisation des index). \textbf{Argumenter} la r\'eponse. (2 points)
+%\begin{solution}
+%\end{solution}
+\end{enumerate}
+
+
+\section{Concurrence (3 points)}
+
+Soit l'histoire suivante :\\
+H = $r_1[x] r_2[x] r_3[y] w_1[x] w_1[z] c_1 w_2[y] c_2 w_3[z] c_3$
+
+\begin{enumerate}
+
+\item Donner la liste des conflits de H; \texttt{(0,5 point)}
+\begin{solution}
+	\begin{itemize}
+		\item[sur x : ] $r_2[x] w_1[x]$
+		\item[sur y : ] $r_3[y] w_2[y]$
+		\item[sur z : ] $w_1[z] w_3[z]$
+	\end{itemize}
+\end{solution}
+
+\item Donner le graphe de s\'erialisation de H. Que pouvez-vous déduire de ce graphe? \texttt{(0,5 point)}
+\begin{solution}
+	$T_2 \rightarrow T_1, T_3 \rightarrow T_2, T_1 \rightarrow T_3$. Il y a un cycle, dont H n'est pas \textit{s\'erialisable}.
+\end{solution}
+
+
+\item Donner l'histoire finale par application de l'algorithme de verrouillage \`a deux phases. Donner le d\'etail du d\'eroulement de l'algorithme. On suppose que les verrous sont rel\^ach\'es imm\'ediatement apr\`es les {\it commit}. \texttt{(2 points)}
+%\begin{solution}
+%\end{solution}
+
+\end{enumerate}

@@ -1,0 +1,237 @@
+\entete{HTT}{4 Juillet 2012}
+
+\section{Alg\`ebre relationnelle et SQL (10 points)}
+
+Voici une partie de la base de donn\'ees utilis\'ee pour g\'erer les jeux Olympiques de Londres~:\\
+\texttt{
+EPREUVE(\underline{ID}, nom, recordMonde, recordOlympique)\\
+ATHLETE(\underline{ID}, nom, prenom, sexe, date\_naiss, nationalite)\\
+CLASSEMENT(\underline{{\it IDAthlete}, {\it IDEpreuve}}, classement, record)\\
+}
+Le record est une chaîne de caractères contenant la valeur du record et sa mesure (8.45s, 8,47m, 146kg, \ldots).\\
+Le classement correspond à la place de l'athlète dans l'épreuve (1 = or, 2 = argent, 3 = bronze, \ldots).
+\begin{enumerate}
+  \item (1 point) Donner le schéma conceptuel entités/associations correspondant à ce schéma relationnel, en précisant si vous avez employé la notation UML ou MERISE.
+\begin{correction}
+Deux entités Epreuve et Athlete. Une association Classement (avec deux attributs).
+\end{correction}
+  \item (1 point) Répondre aux questions suivantes en argumentant brièvement votre réponse~:
+  \begin{itemize}
+    \item Un athlète peut-il avoir deux classements différents pour la même épreuve~?
+\begin{correction}
+Non, l'association est unique pour une épreuve et un athlète.
+\end{correction}
+    \item Un athlète peut-il participer à plusieurs épreuves différentes~?
+\begin{correction}
+Oui, rien n'empêche l'association l'appartenance d'un athlète à deux épreuves.
+\end{correction}
+    \item Un athlète peut-il avoir un record personnel supérieur au record mondial de l'épreuve correspondante~?
+\begin{correction}
+Oui, aucune contrainte n'est visible sur la notion de record personnel.
+\end{correction}
+    \item Deux athlètes différents peuvent-ils avoir la médaille d'or (classement = 1) pour la même épreuve~?
+\begin{correction}
+Oui, malheureusement, il n'y a pas de contraintes sur le classement. Donc c'est possible. 
+\end{correction}
+  \end{itemize}
+  Pour les questions suivantes, indiquer pour chaque expression donnée une requête en algèbre et/ou en SQL~: 
+  \item (1 point - Algèbre + SQL) Le record des athlètes qui ont eu une médaille d'or~? 
+\begin{correction}
+  $\pi_{record}(\sigma_{classement=1}(CLASSEMENT))$
+  \begin{lstlisting}
+  SELECT record
+  FROM CLASSEMENT
+  WHERE classement = 1;
+  \end{lstlisting}
+\end{correction}
+\item (1 point - Algèbre + SQL) Le nom des épreuves pour lesquelles le record du Monde est égal à son record Olympique~?
+\begin{correction}
+  $\pi_{nom}(\sigma_{recordMonde=recordOlympique}(EPREUVE))$
+  \begin{lstlisting}
+  SELECT nom
+  FROM EPREUVE
+  WHERE recordMonde=recordOlympique;
+  \end{lstlisting}
+\end{correction}
+\item (1 point - Algèbre + SQL) Liste des pays distincts ayant eu une médaille (or, argent ou bronze)~?
+\begin{correction}
+  $\pi_{nationalite}(\sigma_{classement<=3}(CLASSEMENT) \Join_{IDAthlete = ID} ATHLETE)$
+  \begin{lstlisting}
+  SELECT DISTINCT nationalite
+  FROM CLASSEMENT, ATHLETE
+  WHERE IDAthlete = ID AND CLASSEMENT BETWEEN 1 AND 3 ;
+  \end{lstlisting}
+\end{correction}
+\item (1.5 point - SQL) Nombre de médailles par pays, classés par ordre décroissant de nombre de médailles~?
+\begin{correction}
+  \begin{lstlisting}
+  SELECT nationalite, count(*) AS NB
+  FROM CLASSEMENT, ATHLETE
+  WHERE IDAthlete = ID AND CLASSEMENT BETWEEN 1 AND 3
+  GROUP BY nationalite
+  ORDER BY NB DESC ;
+  \end{lstlisting}
+\end{correction}
+\item (1.5 point - Algèbre + SQL) Le nom des athlètes ayant eu une médaille à chaque épreuve qu'il a effectué~?
+\begin{correction}
+  $\pi_{nom}(\pi_{id, nom}(ATHLETE) - \pi_{id, nom}(ATHLETE \Join_{IDAthlete=ID} \sigma_{classement>3}CLASSEMENT))$
+  \begin{lstlisting}
+  SELECT nom
+  FROM ATHLETE
+  WHERE ID NOT IN (SELECT IDAthlete FROM CLASSEMENT WHERE CLASSEMENT > 3) ;
+  \end{lstlisting}
+\end{correction}
+\item (2 points - SQL) Le nom du pays ayant eu le plus de médailles, ainsi que le nombre de ces médailles~?
+\begin{correction}
+  $\pi_{nom, prenom}(\rho_{id \rightarrow id\_aud}(AUDITEUR) \Join(INSCRIPTION \div \rho_{id \rightarrow id\_ue}(\pi_{id}(UE))))$
+  \begin{lstlisting}
+  SELECT nationalite
+  FROM ATHLETE, CLASSEMENT
+  WHERE IDAthlete = ID AND classement < 4
+  GROUP BY nationalite
+  HAVING COUNT(*) = (SELECT MAX(COUNT(*)
+                     FROM ATHLETE, CLASSEMENT
+                     WHERE IDAthlete = ID AND classement < 4
+                     GROUP BY nationalite);
+  \end{lstlisting}
+\end{correction}
+  
+\end{enumerate}
+ 
+\section{Index (2 points)}
+
+\begin{enumerate}
+  \item (2 points) Créer un index B+Tree d'ordre 2 sur la nationalité des Athlètes avec les valeurs ci-dessous. Toute valeur en doublon apparaîtra plusieurs fois. Vous montrerez chaque étape d'éclatement de l'arbre.
+\begin{center}
+fr, en, us, au, it, ch, br, fr, us, us, de, ru, ru,  
+\end{center}
+
+\end{enumerate}	
+
+\section{Optimisation  (3 points)}
+
+\begin{enumerate}
+  \item (3 points) Pour la requête ci-dessous, dire ce quelle produit comme résultat et donner un plan d'exécution (EXPLAIN \underline{et} arborescent) sachant qu'il existe un index sur l'attribut {\tt classement} de la table {\tt CLASSEMENT}, qu'il n'y a pas d'autres index et que les deux tables sont de tailles moyennes.
+\begin{lstlisting}
+  SELECT NOM, PRENOM
+  FROM Athlete A, CLASSEMENT C
+  WHERE A.ID=C.IDAthlete
+        AND C.classement = 1
+        AND A.nationalite = 'Fr'
+\end{lstlisting}~
+\begin{correction}
+Cette requête donne les noms et prénoms des Athlètes Français classés premiers dans une épreuve. 
+\begin{verbatim}
+0  SELECT STATEMENT
+1*   NESTED LOOPS
+2      TABLE ACCESS BY INDEX ROWID   Classement
+3*       INDEX RANGE SCAN            IDX_CLASSEMENT
+4*     TABLE ACCESS FULL             Athlete
+
+(1) A.ID=C.ID_Athlete
+(3) CLASSEMENT = 1
+(4) a.nationalite = 'Fr'
+\end{verbatim}
+\end{correction}
+\end{enumerate}	
+\vspace*{-.75cm}
+\section{Concurrence (5 points)}
+
+Soit les deux programmes de locations suivants\footnote{Chaque opération de lecture donne en premier paramètre la table sélectionnée, puis l'identifiant correspondant, et enfin dans le cas des écritures la valeur modifiée.} :
+
+\textbf{Programme P1 :}
+\begin{itemize}
+\item 
+\scriptsize
+\begin{verbatim}
+Nouveau_record_personnel (IDAthlete, IDEpreuve, record)
+  var tmp
+begin
+  Start    //Lecture puis mise à jour du record de l'athlète pour une épreuve
+  tmp = Read (Classement, IDAthlete, IDEpreuve)
+  Write (Classement, IDAthlete, IDEpreuve, record)
+  //Lecture de l'épreuve correspondante pour voir s'il faut changer le record
+  tmp = Read (Epreuve, IDEpreuve)
+  if (tmp.recordOlympique < record)                  //Mise à jour du record
+    Write (Epreuve, IDEpreuve, record)
+  end if
+  Commit
+end
+\end{verbatim}
+\end{itemize}
+
+\textbf{Programme P2 :}
+\begin{itemize}
+\item 
+\scriptsize
+\begin{verbatim}
+ModifClassement (IDEpreuve, IDAthlete, classement)
+  var tmp
+begin
+  Start                               //Mise à jour du classement d'un athlete 
+  Write (Classement, IDEpreuve, IDAthlete, classement)
+  //Verification si un autre athlete a déjà ce classement (il en existe au plus un)
+  tmp = Read (Classement, IDEpreuve, IDAthlete)
+  if (tmp == null)       //S'il n'y en a pas (fin de chaine), on finalise la transaction
+    Commit
+  else             //Sinon, il faut décaler cet ancien athlète d'un cran, par appel récursif
+    ModifClassement (Classement, IDEpreuve, temp.IDAthlete, temp.classement + 1)
+  end if
+end
+\end{verbatim}
+\end{itemize}
+
+Soit l'exécution concurrente suivante (les verrous se posent au niveau du n-uplet)~:
+
+\textbf{H:} $w_1[x] r_2[y] r_3[z] w_2[y] r_1[y] w_1[y] r_2[e] w_3[z] r_1[z] w_2[e] c_2 r_3[e] w_1[z] r_1[t] w_3[e] c_3 c_1$\\
+
+
+\begin{enumerate}
+\item (1 points) Identifier pour chaque transaction à quel programme (P1 ou P2) il peut correspondre.
+\begin{correction}
+T1 : programme P2 $\Rightarrow w_1[x] r_1[y] w_1[y] r_1[z] w_1[z] r_1[t] c_1$\\
+T2 : programme P1 $\Rightarrow r_2[y] w_2[y] r_2[e] w_2[e] c_2$\\
+T3 : programme P1 $\Rightarrow r_3[z] w_3[z] r_3[e] w_3[e] c_3$\\
+\end{correction}
+
+\item (1 point) Identifier les conflits et donner le graphe de sérialisation. Cette histoire est-elle sérialisable ?
+\begin{correction}
+Conflits :
+$r_2[y] - w_1[y]$, $w_2[y] - r_1[y]$, $w_2[y] - w_1[y]$, $r_2[e] - w_3[e]$, $w_3[z] - r_1[z]$, $w_2[e] - r_3[e]$, $w_2[e] - w_3[e]$\\
+Il n'y a pas de cycles, il est sérialisable.
+\end{correction}
+
+\item (2 points) Cette histoire est-elle recouvrable? garantie-t'elle l'annulation en cascade~? Est-elle stricte~? Expliquer.
+\begin{correction}
+\begin{itemize}
+  \item H est Recouvrable :
+  \begin{itemize}
+    \item $w_3[z] - r_1[z]$ : $c_1$ après le $c_3$
+    \item $w_2[e] - r_3[e]$ : $c_3$ après le $c_2$
+  \end{itemize}
+  \item H ne garanti pas les annulations en cascade :
+  \begin{itemize}
+    \item $w_3[z] - r_1[z]$ : $c_3$ après la lecture
+    \item $w_2[e] - r_3[e]$ : $c_2$ avant la lecture
+  \end{itemize}
+  \item H n'est pas strict car ne garanti pas l'annulation en cascade.
+\end{itemize}
+\end{correction}
+
+\item (1 point) Un crash du système survient juste après $c_2$. Etant donné que l'opération $w_1[x]$ donnait pour nouveau classement à $x$ la valeur 3. Quel est le classement de $z$ \underline{après} la reprise du système~?
+\begin{correction}
+Le programme P1 décale tous les classements de 1 qui sont égaux au premier. Ainsi, on peut en déduire que $y$ passe de 3 à 4, $z$ de 4 à 5. $w_3[z]$ modifie le record mais pas le classement donc pas d'interférence.\\
+Ainsi, lors du crash seule la transaction 2 est valide, et il faut annuler toutes les modifications de T1 et T3. On peut alors en déduire que nous revenons dans l'état initial au niveau du classement puisque seul T1 modifiait le classement.\\
+Donc, $z$ vaut 4 après la reprise.
+\end{correction} 
+ 
+% \item (2 points) Trouver l'exécution produite par verrouillage à deux phases simple si les verrous d'une transaction sont toujours relâchés après sa validation ou son annulation.
+% \begin{correction}
+% \begin{tabular}{|*{4}{c|}}
+% \hline
+% {\bf H} & {\bf H'} & {\bf verrous} & {\bf attente}\\
+% \hline
+% 
+% \end{tabular}
+% \end{correction}
+ \end{enumerate}

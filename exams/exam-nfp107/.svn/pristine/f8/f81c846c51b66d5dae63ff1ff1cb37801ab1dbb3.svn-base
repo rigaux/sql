@@ -1,0 +1,57 @@
+\documentclass[12pt,english]{report}
+\usepackage[latin1]{inputenc}
+\usepackage[rigidchapters]{titlesec}
+\usepackage{comment,fullpage,epsfig}
+\usepackage{hyperref}
+\usepackage{epsf,comment,times,fancyvrb,amsmath,amsthm,amssymb,latexsym,xspace}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{lastpage}
+\usepackage{verbatim}
+\usepackage{enumitem}
+ 
+\setenumerate[1]{font=\itshape, label*=\thesection.\arabic*}
+
+\titleformat{\chapter}
+{\normalfont\LARGE}
+{\makebox[3pc][l]{\LARGE\thechapter\hfil\rule[-6pt]{0.5pt}{2pc}}}
+{0pt}
+{\LARGE}
+\titlespacing*{\chapter}{0pt}{0pt}{40pt}
+\newcommand{\entete}[2]{\chapter{NFP~107 #1, #2}\setcounter{section}{0}}
+\renewcommand{\contentsname}{Annales NFP 107, CNAM Paris}
+\lstset{language=SQL,showstringspaces=false,columns=fullflexible}
+
+\newenvironment{correction}{~\\\textbf{Correction :\\}}{}
+%\excludecomment{correction}
+
+\begin{document}
+
+\addtocontents{toc}{\Large Ingénierie et Optimisation de Bases de données \\\normalsize}
+
+\tableofcontents
+%\include{2008-09_NFP107}
+%\include{2009-06_NFP107}
+%\include{2009-09_NFP107}
+%\include{2010-06_NFP107}
+%\include{2010-09_NFP107} % Identique au 2011-09
+%\include{2011-06_NFP107}
+%\include{2011-09_NFP107}
+\include{2012-02_NFP107FOD}
+\include{2012-04_NFP107FOD}
+\include{2012-07_NFP107}
+\include{2012-09_NFP107}
+\include{2013-02_NFP107}
+\include{2013-04_NFP107}
+\include{2013-07_NFP107}
+\include{2013-09_NFP107}
+\include{2014-02_NFP107}
+\include{2014-04_NFP107}
+\include{2014-06_NFP107}
+\include{2014-09_NFP107}
+\include{2015-06_NFP107}
+\include{2015-09_NFP107}
+
+
+\end{document}

@@ -1,0 +1,119 @@
+
+\entete{HTT}{10 Septembre 2014}
+
+\section{Alg\`ebre relationnelle et SQL (10 points)}
+Soit la base de données suivante servant pour un site de publication de photos en ligne (type Flickr)~:\\
+\texttt{PHOTO(idPhoto, nomPropriétaire, appareilPrise, résolution, lieuPrise, légende)\\
+PUBLICATION(idPhoto, datePublication, statut)\\
+PROPRIETAIRE(nom, pays, dateInscription, nombrePhotosPubliées)\\}
+
+Le nom des attributs est explicite. Le statut d'une photo désigne le fait qu'elle soit visible par tous les utilisateurs 
+(statut = public) ou par les utilisateurs autorisés par son propriétaire (statut = privé).
+
+
+\begin{enumerate}
+	\item (1 point)
+\end{enumerate}
+ 
+\section{Index et Optimisation (5 points)}
+
+\begin{enumerate}
+  \item (2.5 points) Créer un index B+Tree d'ordre 2 sur les nom de propriétaire de photos (PHOTO. nomProprietaire).
+  Toute valeur en doublon apparaîtra plusieurs fois. Vous montrerez chaque étape d'éclatement de l'arbre.
+\begin{center}
+ Dupont, Lopez, Dupont, Poquelin, Jaquemin, Poquelin, Olivera, Guillard, Achard, Nguyen, Nguyen, Dupont, Echasse, Poquelin, Dupont, Achard, Nguyen
+\end{center}
+Pour plus de simpliciter, vous pourrez remplacer chaque nom par la première lettre de celui-ci.
+\begin{correction}
+D, L, D, P, J, P, O, G, A, N, N, D, E, P, D, N\\
+\includegraphics[width=\textwidth]{Fig/2014-09_btree.png}
+
+\end{correction}
+
+  \item (2.5 points) Pour la requête ci-dessous, dire ce quelle produit comme résultat et donner un plan d'exécution (EXPLAIN \underline{et} arborescent) en utilisant l'index créé précédemment.
+\begin{lstlisting}
+  SELECT lieuPrise, légende
+  FROM Photo Ph, Proprietaire Pr 
+  WHERE Ph.nomProprietaire = Pr.nom
+    AND Pays='France'
+    AND RESOLUTION='4272 x 2848';
+\end{lstlisting}~
+\begin{correction}
+Cette requête donne les lieux de prise et les légendes des photos avec une résolution de  '4272 x 2848' prises par des Français
+\begin{verbatim}
+0  SELECT STATEMENT
+1    NESTED LOOPS
+2*     TABLE ACCESS FULL             Proprietaire
+3*     TABLE ACCESS BY INDEX ROWID   Photo
+4*       INDEX RANGE SCAN            Photo_nomProprietaire
+
+(2) Pays = 'France'
+(3) RESOLUTION='4272 x 2848'
+(4) Ph.nomProprietaire = Pr.nom
+\end{verbatim}
+\end{correction}
+\end{enumerate}	
+
+
+\section{Concurrence (5 points)}
+
+Voici une procédure de chargement d'une photo  pour un propriétaire nommé $n$.
+
+\begin{small}
+\begin{verbatim}
+Procédure charger(Photo photo, String n, Statut s)
+début
+  // Trouvons la date du jour
+  d := dateDuJour()
+  // Cherchons le propriétaire
+  p := select * from Propriétaire where nom = :n
+  // Si on l'a trouvé: mise à jour
+  if (p != null) alors
+    update Propriétaire set nombrePhotosPubliées = :p.nombrePhotosPubliées + 1
+    insert into Photo values (:photo)
+    commit
+  fait
+
+   insert intoPublication values (:photo.id, :d, :s)  
+   commit
+fin
+\end{verbatim}
+\end{small}
+
+\begin{enumerate}
+	\item (1,5 point) Critiquez cette procédure, et notamment l'emplacement des \texttt{commit}. Signalez 
+	deux cas d'anomalie et proposez une correction de la procédure.
+	\item (1 point) On exécute deux fois la procédure avec 
+	\texttt{charger (p1, n, 'public')}  et \texttt{charger (p2, n, 'public')}. On obtient
+	l'exécution concurrente suivante ($u_1$ et $u_2$ désignent les lignes de \texttt{Publication} créées
+	pendant l'exécution):
+	
+	$$H = r_1(n) r_2(n) w_1(n) w_1(p_1) w_2(n) w_2(p_2) w_2(u_2) w_1(u_1) C_1 C_2$$
+	
+    Citer un exemple d'anomalie entrainée par cette exécution.
+    
+    \item (1 pt) Montrer que l'exécution précédente n'est pas sérialisable.
+    
+    \item (1,5 pt) Appliquer l'algorithme de verrouillage à deux phases à $H$.
+\end{enumerate}
+
+
+\begin{correction}
+
+\begin{enumerate}
+  \item Le premier \texttt{commit} est effectué  alors que la transaction n'est pas complète. 
+    \begin{itemize}
+       \item Si plantage après le premier \texttt{commit}: la photo est insérée mais
+           pas la date de publication.
+        \item Si pas de propriétaire: on insère quand même une date de publication et on valide.
+    \end{itemize}
+     Il faut ajouter le second \texttt{insert} dans le corps du test, avant le premier \texttt{commit},
+       et supprimer le second \texttt{commit}.
+     \item Clairement la mise à jour de la seconde transaction écrase la première: le nombre
+        de photos augmente de 1 pour 2 photos insérées.
+        \item Conflits $r_2(n) \to w_1(n)$ et  $w_1(n) \to w_2(n)$, donc non sérialisable.
+        \item Cas typique où on aboutit à un interblocage.  
+\end{enumerate}
+\end{correction}
+
+

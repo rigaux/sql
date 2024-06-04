@@ -1,0 +1,146 @@
+\entete{HTT}{30 Juin 2010}
+
+\section{Algèbre et SQL (10 points)}
+
+Soit le schéma relationnel suivant, utilisé pour la base d'une agence de location :\\
+~\\
+\textbf{Lot} (\underline{Num\_Lot}, Num\_Proprietaire, Adresse, Loyer\_mensuel, Etat)\\
+\textbf{Personne} (\underline{Num\_Personne}, Nom, Prenom, Adresse, Coord\_bancaires)\\
+\textbf{Location} (\underline{Num\_Lot, Num\_Locataire, Date\_arrivee, Date\_depart}, Avis\_locataire, Avis\_agence)\\
+\textbf{Travaux} (\underline{Num\_Lot, Date\_debut, Date\_fin}, Societe)\\
+
+Les lots sont des appartements ou des maisons, les propriétaires et les locataires sont des personnes (Num\_Proprietaire et Num\_Locataire font référence à Num\_Personne), une période de location d'un lot ne peut pas intersecter une période de travaux pour le même lot.\\
+
+\noindent Donner le schéma conceptuel entités/associations correspondant à ce schéma relationnel, en précisant si vous avez employé la notation UML ou MERISE (2 points).\\
+
+\noindent Pour chacune des questions suivantes, donner l'expression algébrique et/ou la requête en SQL (en fonction de ce qui est demandé) permettant d'y répondre~:
+
+\begin{enumerate}
+
+\item \textbf{(Algèbre + SQL)} Quels sont les numéros de lots dont le propriétaire est Jean DURAND~? (1 point)
+
+
+
+\item \textbf{(SQL)} Combien de locataires sont partis entre le 1er Janvier 2009 et le 31 Décembre 2009 (exclusivement)~? (1 point)
+
+
+\item \textbf{(Algèbre + SQL)} Numéro du lot dont le loyer est le plus cher~? (2,5 points)
+
+ 
+
+\item \textbf{(Algèbre + SQL)} Quels sont les numéros de propriétaire qui n'ont eu \underline{aucun} lot en travaux~? (2,5 points)
+
+%\item \textbf{(SQL)} Quel lot a eu le plus de travaux~? Donner également le nombre de travaux qu'il a eu. (2 points)
+%
+%    \begin{correction}
+%    SELECT Num\_Lot, COUNT(*)\\FROM Travaux\\GROUP BY Num\_Lot\\HAVING COUNT(*) = (SELECT MAX(COUNT(*))\\\hspace*{2cm}FROM Travaux\\\hspace*{2cm}GROUP BY Num\_Lot);
+%    \end{correction}
+
+
+\item \textbf{(Algèbre + SQL)} Quels sont les noms des clients qui ont loué \underline{au moins} une fois \underline{chaque} lot~? (3 points)
+
+
+%\item Donner, pour chaque propriétaire, le loyer moyen de ses lots (1 point ; par d'expression algébrique pour cette requête)
+%
+%    \begin{correction}
+%        
+%    \end{correction}
+
+\end{enumerate}
+
+\section{Organisation physique et optimisation  (5 points)}
+
+Un index de type arbre B$^+$ est construit sur l'attribut Nom de la relation Personne. L'ordre d'insertion des enregistrements dans la table Personne correspond à l'ordre suivant des valeurs de l'attribut Nom~: \{Zeitouni, Ferrero, Armand, Dupont, Plouzenec, Kalmann, Constantini, Tang, Souza, Locufier, Ramirez, Ermann, Nouskouri\}.
+
+\begin{enumerate}
+
+\item Construire l'arbre B$^+$ \textbf{d'ordre 2} correspondant à cet ensemble de valeurs pour l'attribut Nom, en respectant l'ordre d'arrivée. Donner les étapes de construction intermédiaires importantes (celles qui produisent un changement de la structure de l'arbre). (1,5 points)
+
+
+\item Donner un plan d'exécution sous forme d'arbre ET Explain d'Oracle pour la requête suivante, en considérant que le seul index disponible est sur l'attribut Nom de la relation Personne. Expliquez. (2 points)\\
+
+\noindent SELECT Nom, Prenom\\
+\noindent FROM Lot, Personne\\
+\noindent WHERE Personne.Num\_Personne = Lot.Num\_Proprietaire\\
+\noindent AND Lot.Loyer\_mensuel > 1000~;
+
+
+
+
+\item Donner le plan d'exécution sous forme d'arbre ET Explain d'Oracle pour cette même requête, en considérant qu'il y a également un index sur l'attribut {\tt Loyer\_mensuel} de la relation Lot et sur la clé primaire {\tt Num\_Personne} de la relation Personne. Expliquez. (1,5 points)
+
+\end{enumerate}
+
+
+
+\section{Concurrence (5 points)}
+
+Soit les deux programmes de locations suivants :
+
+\textbf{Programme P1 :}
+\begin{itemize}
+\item 
+\scriptsize
+\begin{verbatim}
+Location (Num_Lot, date_debut, date_fin, Num_Locataire)
+  var tmp
+begin
+  Start
+  //Lecture des locations du lot entre date_debut et date_fin
+  tmp = Read (Location, Num_Lot, date_debut, date_fin)
+  if (tmp == null)
+    //Lecture des travaux du lot entre date_debut et date_fin
+    tmp = Read (Travaux, Num_Lot, date_debut, date_fin)
+    if (tmp == null)
+      //Ajout de la location
+      Write (Num_Lot, Num_Locataire, date_debut, date_fin)
+      Commit
+    else
+      Abort
+  else
+    Abort
+end
+\end{verbatim}
+\end{itemize}
+
+\textbf{Programme P2 :}
+\begin{itemize}
+\item 
+\scriptsize
+\begin{verbatim}
+Travaux (Num_Lot, date_debut, date_fin)
+  var tmp
+begin
+  Start
+  //Lecture des locations du lot entre date_debut et date_fin
+  tmp = Read (Location, Num_Lot, date_debut, date_fin)
+  if (tmp == null)
+    //Ajout des travaux (il peut y avoir plusieurs travaux sur un même lot)
+    Write (Travaux, Num_Lot, date_debut, date_fin)
+    Commit
+  else
+    Abort
+end
+\end{verbatim}
+\end{itemize}
+
+Soit l'exécution concurrente suivante:
+
+\textbf{H:} $r_1[x] r_2[x] r_1[y] w_2[y] r_3[x] w_1[x] r_3[y] c_1 c_2 a_3$
+
+\begin{enumerate}
+\item (1 points) Identifier pour chaque transaction à quelle programme (P1 ou P2) il peut correspondre.
+
+  
+\item (2 points) Identifier les conflits et donner le graphe de sérialisation. Cette histoire est-elle sérialisable ?
+ 
+\item (2 points) Trouver l'exécution produite par verrouillage à deux phases
+simple si les verrous d'une transaction sont toujours relâchés après sa
+validation ou son annulation. Les opérations bloquées en attente de verrou
+s'exécutent en priorité quand le verrou devient disponible, en respectant
+l'ordre de blocage. En cas d'interblocage, la transaction
+\linebreak \underline{la plus ancienne est annulée et non réinsérée} (la plus
+vieille transaction est annulée au moment où l'interblocage apparaît).
+
+ 
+\end{enumerate}

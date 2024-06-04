@@ -1,0 +1,244 @@
+\entete{HTT}{9 Septembre 2009}
+
+\section{Algèbre et SQL (10 points)}
+
+Soit le schéma de base de données suivant :
+\begin{itemize}
+    \item Film (\underline{NumFilm}, Titre, Id, Cat, Année) ;
+    \item Personne (\underline{Id}, Nom, Prénom, Pays) ;
+    \item Acteur (\underline{NumFilm, Id}) ;
+\end{itemize}
+Les attributs clé de chaque relation sont  soulignés. Les attributs
+de la relation Film sont successivement, un identifiant de film, son
+titre, l'identifiant d'un metteur en scène, la catégorie du film et
+l'année de parution. La relation Personne a pour attributs,
+l'identifiant de la personne, son nom, son prénom usuel et son pays
+d'origine. Enfin la relation Acteur a pour attributs, l'identifiant
+du film et l'identifiant d'un acteur qui joue dans ce film.
+
+\vspace{1cm}
+
+\noindent
+\textbf{Répondre à la question suivante et donner ensuite une expression algèbrique et une requête en SQL pour les phrases suivantes :}\\
+\begin{enumerate}
+\item Est-ce que ce schéma autorise qu'un film soit mis en scène par
+plusieurs personnes? \texttt{(1 point)};
+\begin{correction}
+Non, pour que plusieurs metteurs en scène soient autorisés, la clé
+serait (NumFilm,Id)
+\end{correction}
+
+
+\item Titre des films Gore \texttt{(1 point)}
+\begin{correction}
+    $\Pi_{Titre}(\sigma_{Cat='Gore'}Film)$\\
+    SELECT Titre FROM Film WHERE Cat='Gore' ;
+\end{correction}
+
+
+
+\item Titre des films dont le metteur en scène est un des acteurs du film   \texttt{(2 points)}
+\begin{correction}
+    $\Pi_{Titre}(Film \Join Acteur)$\\
+    SELECT DISTINCT Titre FROM Film, Acteur \\\hspace*{2.5cm}WHERE Film.Id=Acteur.Id AND Film.NumFilm=Acteur.NumFilm;\\
+\end{correction}
+
+\item Titre des films dont le metteur en scène est  acteur d'un film (pas nécessairement dans un film qu'il met en  scène) \texttt{(2 points)}
+\begin{correction}
+    $\Pi_{Titre}(\rho_{NumFilm->NumFilm'}(Film) \Join Acteur)$\\
+    SELECT DISTINCT Titre FROM Film, Acteur R\\\hspace*{2.5cm}WHERE Film.Id=Acteur.Id;\\
+\end{correction}
+
+\item Titre, Année des films où Valeria Bruni-Tedeschi joue avec Yvan Attal \texttt{(2 points)} 
+\begin{correction}
+    $\Pi_{Titre,Annee}(Film \Join (\Pi_{NumFilm}(\Pi_{Id}(\sigma_{Nom='Bruni-Tedeschi' and Prenom='Valeria'}(Personne))  \Join Acteur)
+     \Join (\Pi_{NumFilm}(\Pi_{Id}(\sigma_{Nom='Attal' and Prenom='Yvan'}(Personne))  \Join
+     Acteur));$\\
+
+     SELECT Titre, Annee FROM Film, Personne P1, Personne P2,
+     Acteur A1, Acteur A2\\\hspace*{2.5cm}WHERE P1.Nom='Bruni-Tedeschi' AND
+     P1.Prenom='Valeria' AND P2.Nom='Attal' AND
+     P2.Prenom='Yvan' AND P1.Id=A1.Id AND P2.Id=A2.Id AND
+     A1.NumFilm=A2.NumFilm AND A1.NumFilm=Film.NumFilm;
+\end{correction}
+
+
+
+
+\item[] ~\\\textbf{Donner une requête en SQL pour les phrases suivantes :}\\
+
+\item Titre des films  contenant le mot 'Whatever' \texttt{(0.5 point)}
+\begin{correction}
+    SELECT Titre FROM Film Where titre like '\%Whatever\%';
+\end{correction}
+
+\item Nombre de films mis en scène par Woody Allen en 2008 \texttt{(0,5 point)} 
+\begin{correction}
+    SELECT COUNT(*)\\FROM Film, Personne\\WHERE Film.Id=Personne.Id AND Nom='Allen' AND Prénom='Woody' AND Année=2008;
+\end{correction}
+
+\item Pour chaque catégorie de films, donner le nombre de films où joue Harrison Ford  \texttt{(1 point)} 
+\begin{correction}
+    SELECT Cat, COUNT(*) \\FROM Film, Personne\\WHERE Film.Id= Personne.Id  AND Nom='Ford' AND Prénom='Harrison'\\GROUP BY Cat;
+\end{correction}
+\end{enumerate}
+
+
+
+
+\section{Organisation Physique (5 points)}\label{se:orga}
+
+La table \texttt{Film} contient les $n$-uplets de clés primaires \texttt{NumFilm} suivantes : \{14, 120, 8, 25, 44, 30, 32, 26, 35, 60, 71, 12, 3, 15, 17, 20, 16\}. On construit un index sur cet attribut, de type arbre B.
+
+\begin{enumerate}
+\item Construire l'arbre B d'ordre 2 correspondant à l'insertion des valeurs précédentes, en respectant l'ordre donné. Donner les étapes de construction intermédiaires essentielles. \texttt{(1 point)}
+   	\begin{correction}
+
+   Voir la figure \ref{fi:arbre_b}. Dans l'arbre B, les enregistrements sont stockés à tous les niveaux de l'arbre, alors que l'arbre B+ les stocke uniquement au niveau des feuilles, les n{\oe}uds internes ne contenant que les clés de certains de ces enregistrements.
+
+   \begin{figure}[htbp]
+   \center
+   \begin{tabular}{c}
+   \epsfig{file=Fig/2009-09_btree, width=12cm} \\
+   (a) Arbre B \\
+   \epsfig{file=Fig/2009-09_bptree, width=15cm}  \\
+   (b) Arbre B+
+   \end{tabular}
+   \caption{Arbres B et B+ solutions de la question \ref{se:orga}.1. }
+   \label{fi:arbre_b}
+   \end{figure}
+
+	\end{correction}
+\end{enumerate}
+
+Soit la requête SQL suivante :
+~\\
+
+\hspace*{0.5cm}SELECT \texttt{Titre}, \texttt{Cat}, \texttt{Année} \\
+\hspace*{1cm}FROM \texttt{Film}, \texttt{Personne} \\
+\hspace*{1cm}WHERE \texttt{Film.Id} = \texttt{Personne.Id} AND \texttt{Nom} = 'Audiard' ;
+
+\begin{enumerate}
+\setcounter{enumi}{1}
+\item Donner le plan d'exécution de cette requête sous forme d'arbre ET d'explain Oracle, dans le cas où l'on ne dispose d'aucun index. \texttt{(2 points)}
+\begin{correction}
+
+    La figure \ref{fi:arbre_2_23}(a) montre l'arbre d'exécution à partir d'un tri-fusion.
+
+   \begin{figure}[htbp]
+   \center
+   \begin{tabular}{ccc}
+   \epsfig{file=Fig/2009-09_plan_2_2, height=7cm} & ~~~~~ & \epsfig{file=Fig/2009-09_plan_2_3, height=7cm} \\
+   (a) & ~~~~~ & (b)
+   \end{tabular}
+   \caption{Arbres d'exécution des questions \ref{se:orga}.2 (figure (a)) et \ref{se:orga}.3 (figure (b)).}
+   \label{fi:arbre_2_23}
+   \end{figure}
+
+    L'explain Oracle associé est le suivant :
+
+    0 SELECT STATEMENT \\
+    \hspace*{0.5cm} 1 MERGE JOIN \\
+    \hspace*{1cm}   2 SORT JOIN \\
+    \hspace*{1.5cm} 3 TABLE ACCESS FULL FILM \\
+    \hspace*{1cm}   4 SORT JOIN \\
+    \hspace*{1.5cm} 5 TABLE ACCESS FULL PERSONNE \\
+
+\end{correction}
+
+\item Supposons que l'on dispose d'un index de type arbre B. Sur quel attribut de quelle table pourrait-il être exploité pour accélérer l'exécution de la requête ? Donner le plan d'exécution associé sous forme d'arbre. \texttt{(2 points)}
+\begin{correction}
+   
+    Il est pertinent d'utiliser l'index pour accélérer l'exécution de la jointure portant sur les attributs \texttt{Id} de \texttt{Personne} et de \texttt{Film}. On peut facilement supposer que \texttt{Personne} est la table la plus petite, puisque c'est sur une sélection d'enregistrements de cette table, selon le critère \texttt{Nom = 'Audiard'}, que la jointure sera effectuée. \texttt{Personne} est donc choisie comme table directrice dans l'exécution de la jointure, et c'est sur l'attribut \texttt{Id} de \texttt{Film} qu'est construit l'index. La figure \ref{fi:arbre_2_23}(b) montre le plan d'exécution associé, sous forme d'arbre, l'index choisi étant appelé \texttt{Film\_Id\_Idx}. Notons que, comme le metteur en scène 'Audiard' peut être associé à plusieurs films dans \texttt{Film}, l'interrogation de l'index peut retourner plusieurs réponses, d'où l'attribut {\it 'range'}.
+
+\end{correction}
+\end{enumerate}
+
+\section{Concurrence (5 points)}
+
+\begin{enumerate}
+  \item Indiquez si les exécutions concurrentes suivantes peuvent produire
+des anomalies, et lesquelles.
+
+\begin{itemize}
+  \item $r_1[x]w_1[x]r_2[x] w_2[y] R_1 C_2$
+  \item $r_1[x]w_1[x]r_2[y] w_2[y] R_1 C_2$
+ \item $r_1[x]r_2[x]r_2[y] w_2[y]r_1[z] R_1 C_2$
+  \item $r_1[x]r_2[x]w_2[x] w_1[x] C_1 C_2$
+  \item $r_1[x]r_2[x]w_2[x] r_1[y] C_1 C_2$
+ \item $r_1[x]w_1[x]r_2[x] w_2[x] C_1 C_2$
+\end{itemize}
+
+\begin{correction}
+
+\begin{itemize}
+  \item Lecture sale de $T_2$ sur $T_1$.
+  \item Aucun conflit.
+ \item Aucun conflit.
+  \item Risque de mise à jour perdue.
+  \item Exécution sérialisable.
+ \item Idem.
+\end{itemize}
+\end{correction}
+
+\item Indiquez si les exécutions suivantes sont sérialisables. Justifiez vos
+réponses en donnant les conflits. Donnez une exécution en série équivalente
+   quand c'est possible.
+\begin{itemize}
+  \item $r_1[x]w_1[x]r_2[z]r_1[y]w_1[y] C_1 r_2[x] w_2[x] w_2[z] C_2$
+  \item $r_1[x]w_1[x]w_3[x]r_2[y]r_3[y]w_3[y] C_3 w_1[y] C_1 r_2[x] C_2$
+  \item
+  $r_1[x]r_2[x]w_2[x] C_2 r_3[x]r_4[z]w_1[x]w_3[y]w_3[x]
+  C_3 w_1[y]w_5[x]w_1[z] C_1 w_5[y]r_5[z] C_5$
+\end{itemize}
+
+\begin{correction}
+  \begin{itemize}
+    \item Oui, tous les conflits dans le même sens.
+    \item Conflits cycliques entre $T_2$ et $T_3$.
+  \end{itemize}
+\end{correction}
+
+  \item Si les exécutions précédentes sont soumises à un protocole de
+  verrouillage à deux phases, lesquelles aboutiront à un interblocage
+    (\textit{deadlock}, ou encore \textsc{Etreinte mortelle!})\,?
+    Expliquez.
+
+\end{enumerate}
+
+%\section{Reprise sur panne (4 pts)}
+%
+%Soit le fichier journal suivant (les écritures les plus anciennes sont
+%en haut).
+%\begin{smallverbatim}
+%start(T1)
+%start(T2)
+%start(T3)
+%Insert (T1, O1, --, a1)
+%Delete (T2, O2, r2, --)
+%start (T4)
+%Update(T4, O3, b3, a3)
+%Update(T1, O4, b4, a4)
+%commit(T2)
+%checkpoint
+%start(T5)
+%start(T6)
+%Update(T5, O5, b5, a5)
+%Update(T4, O3, a3, c3)
+%rollback(T3)
+%start(T7)
+%abort(T4)
+%update(T7, O6, b6, a6)
+%update(T6, O7, b7, a7)
+%commit(T7)
+%......................... panne!
+%\end{smallverbatim}
+%
+%\begin{enumerate}
+%  \item Détaillez le processus de reprise sur panne, à chaud, en indiquant
+%les opérations refaites, les opérations défaites, et leur ordre.
+%\item Choisissez une des opérations à défaire, et indiquez pourquoi
+%    il faut la défaire (quel danger est évité\,?).
+%    \item Choisissez une des opérations à refaire, et indiquez pourquoi
+%    il faut la refaire.
+%\end{enumerate}
