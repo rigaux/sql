@@ -180,7 +180,7 @@ select c.idConcert, g.nom
 from Groupe as g, Concert as c, Participation as p1
 where p.idConcert=c.id
 and p. idGroupe=g.id
-and not exists = (select * 
+and not exists (select * 
                   from Participation as p2 
                   where p2.idConcert=c.id
                   and p1. position <= p2.position)
@@ -210,11 +210,9 @@ having count(*) > 1
 \begin{enumerate}
    \item Donnez l'expression algébrique pour la première requête SQL (section précédente)
 
-   \item Expliquez le sens de l'expression algébrique suivante, puis   
-  donnez la requête SQL correspondante.
-  \item 
+   \item Expliquez le sens de l'expression algébrique suivante
        $$\pi_{nom} (Lieu) - \pi_{nomLieu} (Concert)$$
-
+\item Donnez la requête SQL correspondante.
 \end{enumerate}
 
 

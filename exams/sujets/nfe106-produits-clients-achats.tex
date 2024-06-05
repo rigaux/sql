@@ -1,6 +1,6 @@
 \enteteExam{NFE106 -- Administration de bases de données}%
-{Examen14 juin 2024 -- session 2 -- 3h}%
-{Examen en présentiel -- Calculatrices autorisées -- Documents autorisés: 10 pages recto/verso de notes personnelles}%
+{Examen 14 juin 2024 -- session 1 -- 3h}%
+{Examen en présentiel -- Calculatrices autorisées -- Documents autorisés: 5 pages recto/verso de notes personnelles}%
 
 \section{Stockage et indexation (7 pts)}
 
@@ -120,12 +120,16 @@ Plan d'exécution :
 \end{verbatim}
 
 \begin{enumerate}
- \item Que peut-on déduire de ce plan\,: peut-on savoir s'il
+ \item Que peut-on déduire de ce plan\,: 
+  \begin{enumerate}
+     \item Peut-on savoir s'il
     existe un index sur la table Client\,? 
-   Sur la table Produit\,? Sur la table Achat\,? Si vous pensez
+    \item Même question sur la table Produit
+   \item Même question sur la table Achat\,? 
+ \end{enumerate}
+ Si vous pensez
    qu'un index existe, donnez les attributs indexés. 
      Justifiez vos réponses.
-
 \begin{solution}
 Il existe un index sur l'attribut code de la table Produit;
 en revanche pas d'index sur l'id de la table Client, sinon
@@ -135,8 +139,9 @@ l'id du client soit un préfixe (sinon on pourrait parcourir séquentiellement
 Client et accéder aux autres tables par l'index).
 \end{solution}
 
-  \item Quels sont les algorithmes de jointure utilisés? 
-      Expliquer le fonctionnement de ce plan d'exécution.
+  \item  Expliquer le fonctionnement de ce plan d'exécution en indiquant,
+      pour chaque opérateur, les données en entrée et les données
+      en sortie. 
 
 \begin{solution}
 Un algo. de boucles imbriquées indexées sur Achat-Produit, un
@@ -144,6 +149,14 @@ algo de jointure par hachage sur le résultat de cette jointure et la
 table Client.
 \end{solution}
 
+  \item  Ce plan fonctionne-t-il en pipelinage ou nécessite-t-il
+       une matérialisation\,?
+
+\begin{solution}
+Il faut matérialiser les tables de hachage, au mieux en mémoire, au
+pire sur le disque.
+\end{solution}     
+  
   \item Quel(s) index  peut-on ajouter pour obtenir les meilleures
       performances possibles\,? Donnez, sous la forme 
       que vous souhaitez, le plan d'exécution
@@ -151,7 +164,7 @@ table Client.
 
 \begin{solution}
 Solution : on peut ajouter un index sur l'id de client, et/ou sur le
-prix du produit. Dans ce cas le plan est:
+prix du produit. Si on ajoute les deux, le  plan obtenu serait:
 
 \begin{verbatim}
 Plan d'execution
@@ -169,29 +182,26 @@ Plan d'execution
 \end{solution}
 
   \item On fait une jointure entre les tables Produit et Achat.
-   Produit occupe 500 blocs, Achat 10\,000 blocs. Vaut-il mieux 
-    appliquer un algorithme de boucles imbriquées ou de hachage
-    si la mémoire $M$ disponibe est de $600$ blocs\,? 
-    
+   Produit occupe 500 blocs, Achat 10\,000 blocs. 
+    si la mémoire $M$ disponible est de $600$ blocs\,? 
+    Expliquez l'algorithme qui vous semble le plus efficace
     
    \item Même question si la mémoire est
         de 101 blocs? Indiquez dans chaque cas le nombre
     d'entrées/sorties (sans prendre en compte l'écriture du résultat final).
 
-    Pour ces deux questions\,: expliquez le fonctionnement respectif 
-    des boucles imbriquées et de la jointure par hachage.
-    
+     
 \begin{solution}
-$M=600$: on lit Produit en mémoire, et une lecture de Achat suffit,
-dont coût égal à 10\,500 blocs pour les boucles imbriquées.
-Avec le hachage: on hache Produit (coût = 1\,000 blocs)
-et Achat (coût = 20\,000 blocs). On relit les deux. Coût
-total\,: 31\,500 blocs.
+$M=600$: on lit Produit en mémoire, dans une table de hachage,  puis 
+ une lecture de Achat suffit,
+dont le coût est égal à 10\,500 blocs pour les boucles imbriquées.
 
-$M=100$: avec les boucles imbriquées on doit lire 1 fois Produit et
+
+$M=100$: avec les boucles imbriquées on devrait lire 1 fois Produit et
 5 fois Achat, pour un coût de 50\,500 blocs. Sinon on hache les
-deux (coût= 21\,000 blocs) et on les relit une fois (coût total
-31\,500 blocs). 
+deux tables (il faut donc une lecture de chacune, puis 
+une écriture, soit 21\,000 blocs) et on les relit une fois. Le
+coût total  est de 31\,500 blocs. 
 \end{solution}
 \end{enumerate}
 
@@ -202,7 +212,9 @@ Soit l'exécution concurrente suivante :
 
 $$H = r_2[y] w_1[x] r_1[x] r_3[z] w_2[z] w_3[x] c_1 w_3[z] c_3 r_2[x] c_2$$
 
-1. Donner la liste des conflits de $H$. (0,5 point)
+
+\begin{enumerate}
+ \item Donner la liste des conflits de $H$. 
 
 \begin{solution}
 
@@ -215,7 +227,7 @@ Conflits:
 
 \end{solution}
 
-2. Donner le graphe de sérialisabilité de $H$. Que pouvez-vous déduire de ce graphe ? (0,5 point)
+ \item Donner le graphe de sérialisabilité de $H$. Que pouvez-vous déduire de ce graphe ? 
 
 \begin{solution}
 Les arêtes\,: $T_1 \to T_3$ ; $T_1 \to T_2$ ; $T_3 \to T_2$ ; $T_3 \to T_2$  et  $T_2 \to T_3$.
@@ -223,10 +235,10 @@ Les arêtes\,: $T_1 \to T_3$ ; $T_1 \to T_2$ ; $T_3 \to T_2$ ; $T_3 \to T_2$  et
 Il y a un cycle donc l'exécution n'est pas sérialisable.
 \end{solution}
 
-3. Donner l'exécution obtenue 
+\item  Donner l'exécution obtenue 
 par application de l'algorithme de verrouillage à deux phases. 
 Détailler le déroulement de l'algorithme. 
- (2 points)
+
 
 \begin{solution}
 La lecture $w_2[z]$ est bloquée par $r_3[z]$. $T_2$ est mise en attente et $T_3$ termine. $T_2$
@@ -234,6 +246,7 @@ est alors débloquée et termine.
 
 $$H_{finale} = r_2[y] w_1[x] r_1[x] r_3[z] c_1 w_3[x] w_3[z] c_3 w_2[z] r_2[x] c_2$$
 \end{solution}
+\end{enumerate}
 
 
 

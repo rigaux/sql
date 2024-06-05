@@ -1477,8 +1477,8 @@ Donnez les expressions algébriques pour les requêtes suivantes :
 
 	.. admonition:: Correction
 
-		- :math:`\pi_{nom (\sigma_{idProfesseur=idEtudiant \Join_{idProfesseur=id Personne)`
-		- :math:`\pi_{id (Personne) -  \pi_{idEtudiant (\sigma_{langue='IT' (Cours))`
+		- :math:`\pi_{nom} (\sigma_{idProfesseur=idEtudiant} \Join_{idProfesseur=id} Personne)`
+		- :math:`\pi_{id} (Personne) -  \pi_{idEtudiant} (\sigma_{langue='IT'} (Cours))`
 
 
 Valeurs nulles, vues (2 pts)
