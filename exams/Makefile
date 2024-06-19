@@ -20,7 +20,10 @@ all:  exam-blanc-janvier19.pdf exam-s1-fod-19.pdf exam-s2-fod-19.pdf exam-s1-pre
 				sujets/nfp107-cours-distance.pdf \
 				sujets/nfp107-album-photo.pdf \
 				sujets/nfp107-lignes-metro.pdf \
-				sujets/nfp107-creche.pdf
+				sujets/nfp107-creche.pdf \
+				sujets/nfp107-concerts.pdf \
+				sujets/nfe106-automobiles.pdf \
+				sujets/nfe106-produits-clients-achats.pdf
 
 
 %.pdf: %.tex

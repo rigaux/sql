@@ -1,0 +1,166 @@
+\enteteExam{NFE106 -- Administration de bases de données}%
+{Examen 14 juin 2024 -- session 1 -- 3h}%
+{\empty}%
+
+Pour l'ensemble de cet examen, nous utiliserons le schéma relationnel suivant.
+
+\begin{itemize}
+ \item \textbf{Marque} (\underline{Id\_Marque}, Nom, SiegeSocial)\\
+ \item \textbf{Automobile} (\underline{Modèle, série}, id\_marque, annee\_sortie, prix\_base)\\
+ \item \textbf{Option} (\underline{Modèle, série, id\_equipement})\\
+ \item \textbf{Equipement} (\underline{Id\_Equipement}, Nom, Prix, Description)\\
+\end{itemize}
+
+Une voiture est désignée par son modèle (C5, 207, Megane\ldots) et sa série (Break, Sport, BZH\ldots).
+Un modèle a 10 séries différentes en moyenne. Voici la taille des différents attributs :
+\begin{itemize}
+    \item Les identifiants (Id\_...) et les nombres (annee, prix) sont codés sur 4 octets,
+    \item Nom, Modèle et Série sur 50 octets
+    \item SiegeSocial et Description sur 200 octets,
+\end{itemize}
+
+Statistiques :
+\begin{itemize}
+    \item 135 nuplets dans la table {\tt Marque},
+    \item 120 000 nuplets {\tt Automobile},
+    \item 2 600 000 nuplets {\tt Option},
+    \item 8 100 nuplets {\tt Equipement}
+\end{itemize}
+%Ne pas oublier de vérifier le nombe de tables !!!!
+
+Une adresse physique occupe 10 octets, nous disposons de 21 blocs en 
+mémoire centrale, et un bloc fait 8 KO.
+
+\section{Stockage et Indexes (12 points)}
+
+
+\begin{enumerate}
+    \item Présenter sous forme de tableau la taille (en nombre de blocs) prise par chaque table~{\tt (2~points)}
+\begin{solution}
+    La taille d'une bloc utile est de 7372 octets.\\
+    \begin{tabular}{|l|l|l|l|l|}
+    \hline
+    \textbf{Table} & {\bf Taille nuplets}    & {\bf Nb nuplets par bloc} & {\bf Nb blocs}\\
+    \hline
+    \hline
+    Marque      & 260o  & 27    & 5\\
+    Automobile  & 120o  & 60    & 2 000\\
+    Option      & 110o  & 65    & 40 000\\
+    Equipement  & 265o  & 27    & 300\\
+    \hline
+    \end{tabular}
+\end{solution}
+    \item La table {\tt Option} est de loin la table la plus lourde. Identifier d'où provient ce coût et proposer 
+       une évolution du schéma  qui réduirait qui réduirait considérablement le stockage 
+  Donner également les impacts sur la table {\tt Automobile}. {\tt (4~points)}
+\begin{solution}
+    La taille provient de la clé primaire qui est composée de 2 chaines de caractère. Ainsi, en rajoutant un id dans la table {\tt Automobile}, en l'utilisant dans la table {\tt Option} nous n'avons plus que 2 entiers, que nous pouvons stocker avec un PCTFREE de 0\%. Nous obtenons 2735 blocs.\\
+    Concernant la table {\tt Automobile}, nous perdons 64 blocs pour stocker cet identifiant.
+\end{solution}
+
+    \item Réécrivez la requête suivante pour qu'elle soit adaptée au nouveau schéma :
+
+\begin{minted}{sql}
+    SELECT Serie, COUNT(*) 
+    FROM Option 
+    WHERE Modele = '207' 
+    GROUP BY Serie;
+\end{minted}
+    Quel sera l'impact sur l'évaluation ? (une explication est demandée, pas un coût) {\tt (2~points)}
+\begin{solution}
+    \begin{verbatim}
+    SELECT A.Serie, COUNT(*) FROM Automobile A, Option O
+    WHERE A.ID=O.ID AND A.Modele = '207' GROUP BY A.Serie;
+    \end{verbatim}
+    Le modèle étant reporté à un champ de la table {\tt Automobile} et n'étant plus présent dans la table {\tt Option}, 
+    on ne peut plus faire de requête directement sur la table {\tt Option}. Du coup, 
+    c'est une requête qui fera une jointure entre {\tt Automobile} et {\tt Option} 
+    pour récupérer tous les id de voitures '207'. Cette jointure peut être un surcout conséquent.
+\end{solution}
+
+  \item Quel est le nombre maximal d'entrées d'arbre B que l'on peut mettre dans un bloc,
+     avant modification et après modification~{\tt (2~points)}
+    \item En déduire la hauteur minimale  d'un arbre B sur la clé primaire de la table {\tt Option} : 
+      avant modification et après modification~{\tt (4~points)}
+\begin{solution}
+\begin{itemize}
+  \item Avant : clé de 104o + 10o, 71 cases, ordre 35 $\Rightarrow$ hauteur 5
+  \item Après : clé de 8o + 10o, 454 cases, ordre 227 $\Rightarrow$ hauteur 3
+\end{itemize}
+\end{solution}
+\end{enumerate}
+
+\section{Statistiques et Optimisation (8 points)}
+
+\begin{enumerate}
+  \item
+  Pour la requête ci-dessus, donner la cardinalité de l'attribut {\tt id\_marque}
+  et  donner le nombre de blocs à lire en supposant un index sur {\tt id\_marque} {\tt (3~points)}
+
+
+\begin{minted}{sql}
+SELECT COUNT(*) FROM Automobile WHERE id_marque = 5
+\end{minted}
+
+  \item Même question avec la requête 
+  
+\begin{minted}{sql}
+SELECT modele, serie FROM Automobile WHERE id_marque = 5
+\end{minted}
+
+\begin{solution}
+\begin{enumerate}
+  \item Cardinalité : 1/130.
+  \item BTree :  Ordre 291, hauteur 3. Nous récupérons 1 000 ROWIDs, mais sans faire d'accès. Il faut donc compter les ROWIDs, en parcourant les feuilles de l'index. 4 feuilles à parcourir $\Rightarrow$ 3 + (4 - 1) = 6 I/O
+\end{enumerate}
+\end{solution}
+
+  \item Donner, pour le plan d'exécution ci-dessous, la requête SQL correspondante. 
+   Donner également le sens de cette requête. Le modèle de la voiture sera projeté. {\tt (2~points)}
+\begin{verbatim}
+0   SELECT STATEMENT
+1     NESTED LOOPS
+2       NESTED LOOPS
+3         NESTED LOOPS
+4*          TABLE ACCESS FULL            Marque
+5*          TABLE ACCESS BY INDEX ROWIDS Automobile
+6*            INDEX RANGE SCAN           IDX_Id_Marque_Automobile        
+7*        INDEX RANGE SCAN               PK_Option
+8*      TABLE ACCESS BY INDEX ROWIDS     Equipement
+9*        INDEX UNIQUE SCAN              PK_Equipement
+
+(4) Nom = 'Peugeot'
+(5) Série = 'BZH'
+(6) M.Id_Marque = A.Id_Marque
+(7) A.Modele = O.Modele AND A.Serie = O.Serie 
+(8) Nom = 'Dolby 5.11'
+(9) O.Id_equipement = E.id_equipement
+\end{verbatim}
+\begin{solution}
+\begin{verbatim}
+SELECT A.NOM
+FROM Marque M, Automobile A, Option O, Equipement E
+WHERE  M.id_marque = A.id_marque AND
+       A.Modele = O.Modele AND A.Serie = O.Serie AND
+       O.id_equipement = E.id_equipement AND
+       M.Nom = 'Peugeot' AND
+       A.Serie = 'BZH' AND
+       E.Nom = 'Dolby 5.11';
+\end{verbatim}
+Donner le nom des modèles de Peugeot de série 'BZH' qui ont un Dobly 5.11 de série. 
+\end{solution}
+
+    \item Pour les opérateurs des lignes 4 à 6, donner le nombre de nuplets en entrée et en sortie, sachant que : {\tt (3~points)}
+\begin{itemize}
+  \item Les noms de marque et d'équipement sont uniques,
+  \item Les voitures sont uniformément réparties sur les marques
+\end{itemize}
+\begin{solution}
+\begin{itemize}
+  \item 1 tuple Peugeot accède à l'index pour obtenir $\frac{130 000}{130} =  1 000$ automobiles,
+  \item $1000 \times 1\% = 10$ modèles correspondent,
+  \item $\frac{2800000}{130000} = 22$ options par voiture. Donc 220 options pour celles qui nous intéressent,
+  \item On sélectionne un équipement parmi 480 000. Nous devrions obtenir 0, tout au plus 1 modèle.
+\end{itemize}
+\end{solution}
+\end{enumerate}

@@ -1,0 +1,208 @@
+\entete{HTT}{Septembre 2015}
+
+\section{Algèbre relationnelle et SQL (10 points)}
+Voici une partie de la base de données d'un site gérant la réservation de billets pour des
+concerts~:
+\begin{verbatim}
+FORMATION(nom, annéeFormation, nombreMembres, pays)
+SALLE(nomSalle, typeSalle, ville, capacité)
+CONCERT(codeConcert, nomFormation, nomSalle, dateConcert, nbBilletsVendus)
+BILLET(idBillet, codeConcert, prix)
+\end{verbatim}
+Pour une formation sont stockés son nom, l'année où l'artiste/le groupe a débuté, le nombre de membres composant le groupe (1 pour un artiste en solo) et son pays d'origine.
+Pour la salle nous connaissons son nom, son type (stade, arène, petite salle, grande salle, etc), sa ville et son nombre de places. Les concerts sont identifiés par un code, donnés par une formation, se déroulent dans une salle, ont lieu à une date et ont un nombre de billets vendus. Les billets ont un identifiant, un code concert et un prix.
+
+\begin{enumerate}
+
+\item Pour la table CONCERT, identifiez la clé primaire et les clés étrangères (0,5 points)\\
+\begin{correction}
+Clé primaire: codeConcert\\
+Clés étrangères: nomSalle$\rightarrow$SALLE.nomSalle, nomFormation$\rightarrow$FORMATION.nom
+\end{correction}
+
+\item Donnez la commande SQL pour créer la table CONCERT. (0.5 point)\\
+\begin{correction}
+\begin{verbatim}
+CREATE TABLE CONCERT(
+    codeConcert NUMBER(10),
+    nomFormation VARCHAR(50),
+    nomSalle VARCHAR(50)
+    dateConcert DATE,
+    nbBilletsVendus NUMBER(10),
+    CONSTRAINT pk_concert PRIMARY_KEY (codeConcert),
+    CONSTRAINT fk_concert FOREIGN_KEY (nomSalle) REFERENCES SALLE(nomSalle),
+    CONSTRAINT fk_concert FOREIGN_KEY (nomFormation) REFERENCES FORMATION(nom))
+\end{verbatim}
+\end{correction}
+% on peut améliorer les types et ajouter des contraintes mais on ne leur en pas beaucoup parlé, mieux vaut en rester là
+
+\item (Algèbre et SQL) Donnez toutes les salles de Paris qui ont plus de 2000 places. (1 point)\\
+\begin{correction}
+Algèbre: $\pi_{nomSalle}(\sigma_{ville = Paris \wedge capacite \geq 2000}(SALLE)$
+\begin{verbatim}
+SELECT nomSalle
+FROM SALLE
+WHERE ville = 'Paris' AND capacité > 2000;
+\end{verbatim}
+\end{correction}
+
+\item (Algèbre et SQL) Donnez les pays des formations dont au moins un billet coûte plus de 200 euros. (2 points)\\
+\begin{correction}
+Algèbre: $\pi_{pays}((BILLET \Join CONCERT)\Join_{nomFormation=nom} FORMATION)$
+\begin{verbatim}
+SELECT pays
+FROM FORMATION f, CONCERT c, BILLET b
+WHERE b.codeConcert = c.codeConcert AND C.nomFormation = f.nom AND prix > 200;
+\end{verbatim}
+\end{correction}
+
+\item (SQL seulement) Donnez le nom des formations qui ont fait la recette (rentrée d'agent) la plus grande tous concerts confondus en septembre 2015 au Stade de France. (2 points)\\
+\begin{correction}
+\begin{verbatim}
+SELECT nomFormation 
+FROM SALLE s, CONCERT c, BILLET b
+WHERE s.nomSalle = c.nomSalle AND c.codeConcert = b.codeConcert
+      AND dateConcert BETWEEN '01/09/2015' AND '30/09/2015';
+GROUP BY nomFORMATION
+HAVING SUM(nbBilletsVendus*prix) = 
+             (SELECT MAX(SUM(nbBilletsVendus*prix)) 
+              FROM SALLE s, CONCERT c, BILLET b
+              WHERE s.nomSalle = c.nomSalle 
+                    AND c.codeConcert = b.codeConcert;
+                    AND dateConcert BETWEEN '01/09/2015' AND '30/09/2015';
+              GROUP BY nomFORMATION)
+\end{verbatim}
+\end{correction}
+
+\item (Algèbre et SQL) Donnez le nom des formations qui n'ont jamais donné un concert dans une salle plus petite de 10000 places. (2 points)\\
+\begin{correction}
+Algèbre: $\pi_{nom}(FORMATION) - \rho_{nomFormation\rightarrow nom}(\pi_{nomFormation}(\sigma_{capacité < 10000}((CONCERT \Join SALLE)))$
+\begin{verbatim}
+SELECT nom
+FROM FORMATION
+WHERE nom NOT IN 
+       SELECT nomFORMATION
+       FROM CONCERT c, SALLE s
+       WHERE c.nomSalle = s.nomSalle AND capacité < 10000;
+\end{verbatim}
+\end{correction}
+
+\item (Algèbre seulement) Donnez le nom des formations qui ont joué dans toutes les salles. (Attention~: deux salles situées dans des villes différentes peuvent avoir le même nom) (1 point)\\
+\begin{correction}
+$A = \pi_{nomFormation, nomSalle, Ville}(CONCERT \Join SALLE)$ \\
+$B = \pi_{nomSalle, Ville}(SALLE)$\\
+$Resultat = A \div B$
+\end{correction}
+
+\item (Algèbre seulement) Donnez le nom de la formation qui a vendu le plus de billets pour un concert. (1 point)\\
+
+\begin{correction}
+$
+CONCERT' = \rho_{attribut\rightarrow attribut'}(CONCERT)\\
+\pi_{nomFormation}(CONCERT)-\pi_{nomFormation}(CONCERT \Join_{nbBilletsVendus < nbBilletsVendus'} CONCERT')
+$
+\end{correction}
+
+
+\end{enumerate}
+ 
+\section{Index (3 points)}
+
+\begin{enumerate}
+  \item Créer un index en arbre B d'ordre 2 sur le prix des billets. Les valeurs des clés sont données en bas. Montrez chaque étape d'éclatement de l'arbre. (2 points)
+\begin{center}
+prix : 100, 95, 110, 120, 80, 85, 130, 90, 75, 125, 115, 60, 70, 140, 135, 65, 145
+\end{center}
+
+
+\begin{correction}
+\includegraphics[width=15cm]{Fig/Sujet2.pdf}
+
+\end{correction}
+
+  \item Combien de n\oe{}uds faut-il traverser pour faire une lecture par intervalle des valeurs entre 80 et 130 (dans l'arbre créé au point précédent) ? L'utilisation d'un arbre B+ peut améliorer cette valeur ? Justifiez. (1 point)
+
+\begin{correction}
+On traverse l'arbre de gauche a droite en suivant les fléchés rouges, donc on visite 12 n\oe{}uds (parfois un n\oe{}ud est visité plusieurs fois). L'arbre B+ peut améliorer beaucoup cette valeur, car une fois descendu dans les feuilles il suffit de lire à droite dans la liste chaînée les valeurs successives.
+\end{correction}
+\end{enumerate}
+
+\section{Optimisation (4 points)}
+
+Soit la requête suivante~:
+\begin{verbatim}
+SELECT nbBilletsVendus
+FROM SALLE s, CONCERT c
+WHERE s.nomSalle = c.nomSalle AND s.ville='Paris';
+\end{verbatim}
+
+On suppose qu'il y un index sur l'attribut nomSalle dans la table CONCERT.
+
+
+\begin{enumerate}
+  \item Donnez un plan d'exécution (arborescente ou EXPLAIN) produit par l'optimiseur pour la requête. \textbf{Argumentez}  votre réponse. (2 points)
+
+\begin{correction}
+
+L'index CONCERT(nomSalle) permet de faire une recherche sur nomSalle. La clé à chercher vient donc de l'autre table, SALLE, qui doit être parcourue en séquentiel.
+
+\begin{verbatim}
+0 SELECT STATEMENT
+1   NESTED LOOPS
+2     TABLE ACCESS FULL SALLE
+3     TABLE ACCESS BY ROWID CONCERT
+5          INDEX RANGE SCAN CONCERT_NOMSALLE_IDX
+\end{verbatim}
+\end{correction}
+
+
+\item Comment peut-on accélérer encore la requête en ajoutant des index supplémentaires~?  Donnez le plan d'exécution (arborescente ou EXPLAIN). (2 points)
+
+\begin{correction}
+On peut éliminer le parcours séquentiel de la table SALLE, car la requête s'intéresse seulement aux salles situées à Paris. Pour cela on ajoute un index sur SALLE(ville) et le plan EXPLAIN devient~:
+\begin{verbatim}
+0 SELECT STATEMENT
+1   NESTED LOOPS
+3     TABLE ACCESS BY ROWID SALLE
+4          INDEX RANGE SCAN SALLE_VILLE_IDX
+5     TABLE ACCESS BY ROWID CONCERT
+6          INDEX RANGE SCAN CONCERT_NOMSALLE_IDX
+\end{verbatim}
+\end{correction}
+\end{enumerate}
+
+\section{Concurrence (3 points)}
+
+Soit l'histoire d'exécution suivante~:
+
+$H=r_3(z)w_2(x)w_3(z)r_1(x)r_2(y)w_1(x)r_3(y)r_1(x)c_3r_2(z)w_2(x)c_2c_1$
+
+
+\begin{enumerate}
+	\item Donnez la liste des conflits de H (0.5 points)
+
+\begin{correction}
+Les conflits :
+
+en $x$ : $w_2r_1\;\;\; w_2w_1\;\;\; r_1w_2\;\;\; w_1w_2$
+
+en $y$ : pas de conflit
+
+en $z$ : $w_3r_2$
+
+\end{correction}
+
+	\item Donnez le graphe de sérialisation de H. Que pouvez vous déduire à partir de ce graphe ? (0.5 points)
+
+\begin{correction}
+%\includegraphics[width=15cm]{Sujet4.pdf}
+
+Comme il y a des cycles on déduit que que l'exécution n'est pas sérialisable.
+\end{correction}
+
+	\item Donnez l'histoire finale après l'application de l'algorithme de verrouillage à deux phases. Donnez les détails du déroulement de l'algorithme. On suppose que les verrous sont relâchés immédiatement après les \em{commit}.  (2 points)
+
+\begin{correction}
+$H'=r_3(z)w_2(x)w_3(z)r_2(y)r_3(y)c_3r_2(z)w_2(x)c_2r_1(x)w_1(x)r_1(x)c_1$
+\end{correction}
+\end{enumerate}

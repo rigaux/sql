@@ -2102,7 +2102,6 @@ Exercices
                    Lire  S[$posS] dans $mem[2] # On lit les blocs 1 par 1
                    # JoinList est l'algorithme donné en cours
                    JoinList (mem[1], mem[2]) 
-                  done
                   $posS = $posS + 1 # Bloc suivant de S
                 done
                $posR = $posR + 1 # Bloc suivant de R
@@ -2117,13 +2116,12 @@ Exercices
                Lire  R[p$osR..($posR+M-1)] dans $mem[1..M-1] # On lit M-1 blocs de R
                $posS = 1
                while ($posS <= |S|) do
-                   Lire  S[$posS] dans $mem[2] # On lit les blocs 1 par 1
+                   Lire  S[$posS] dans $mem[M] # On lit les blocs 1 par 1
                    # JoinList est l'algorithme donné en cours
-                  JoinList (mem[1], mem[2]) 
-               done
-               $posS = $posS + 1 # Bloc suivant de S
+                  JoinList (mem[1..M-1], mem[M]) 
+                  $posS = $posS + 1 # Bloc suivant de S
               done
-              $posR = $posR + M # On lit les M blocs suivants de R
+              $posR = $posR + M - 1 # On lit les M - 1 blocs suivants de R
              done
 
       - Quelle table faut-il prendre pour la boucle extérieure? La plus petite
@@ -2141,9 +2139,11 @@ Exercices
            - le second est en fait celui illustré
              par la :numref:`nestedloop-improved`. La mémoire
              *m* est utilisée pour réduire le nombre d'itérations sur *R*,
-             avec un coût de :math:`|R| + \lceil \frac{R}{M-1} \rceil  \times |S|`.
+             avec un coût de :math:`|R| + \lceil \frac{|R|}{M-1} \rceil  \times |S|`.
            - Au vu des formules de coût il faut prendre la petite table 
-             comme table directrice.
+             comme table directrice. Si cette table tient en mémoire (fréquent),
+             le coût  se réduite à :math:`|R| + |S|`, soit une unique lecture 
+             séquentielle de chaque table.
 
 
 .. _ex-joincost:

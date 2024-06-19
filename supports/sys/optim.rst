@@ -1281,9 +1281,9 @@ si vous préférez.
     journalistes (``jid``  est le numéro d'identification du journaliste). 
     La table ``Journal`` stocke pour chaque rédaction d'un journal 
     le titre du journal (titre), le nom de la rédaction (rédaction) et l'id
-    de son rédacteur (``rédacteur_id``). Le titre du journal est une clé .
+    de son rédacteur (``id_rédacteur``). .
     On a un arbre B dense sur la table ``Journaliste`` sur l'attribut ``jid``, 
-    nommé ``Idx-Journaliste-jid``.
+    et un index sur la titre du journal.
     
     On  considère la requête suivante:
 
@@ -1299,19 +1299,19 @@ si vous préférez.
     
       - Voici deux expressions algébriques:
       
-         .. math:: \pi_{nom}(\sigma_{titre='Le\,Monde' \land prenom='Jean'}(Journaliste \Join_{jid=redacteur\_id} Journal)) 
+         .. math:: \pi_{nom}(\sigma_{titre='Le\,Monde' \land prenom='Jean'}(Journaliste \Join_{jid=id\_redacteur} Journal)) 
 
         et
         
-        .. math:: \pi_{nom}(\sigma_{prenom='Jean'}(Journaliste) \Join_{jid=redacteur\_id} \sigma_{titre='Le\,Monde'}(Journal))
+        .. math:: \pi_{nom}(\sigma_{prenom='Jean'}(Journaliste) \Join_{jid=id\_redacteur} \sigma_{titre='Le\,Monde'}(Journal))
         
         Les deux expressions retournent-elles le même résultat (sont-elles
         équivalentes)?  Justifiez votre réponse en indiquant les règles
         de réécriture que l'on peut appliquer.
       - Une expression vous semble-t-elle meilleure que 
         l'autre si on les  considère comme des plans d'exécution? 
-      - Donner le plan d'exécution physique basé sur la jointure par
-        boucles imbriquées indexées, sous forme
+      - Donner le plan d'exécution physique qui vous semble le meilleur,
+        utilisant les index autant que possible, sous forme
         arborescente ou sous forme d'une expression EXPLAin, et expliquez en détail ce plan.
 
 
@@ -1326,9 +1326,10 @@ si vous préférez.
           - En principe le second plan est le meilleur car il effectue
             les sélections le plus tôt possible et limite donc la taille
             des tables à joindre.
-          - Par boucles imbriquées indexées, avec parcours  séquentiel de la table 
-            ``Journal``.
-
+          - Par boucles imbriquées indexées, avec recherche par l'index
+            du journal "le monde", puis recherche du journaliste
+            avec l'index et la clé d'accès ``id_rédacteur``.
+ 
 .. _ex-planex3:
 .. admonition:: Exercice `ex-planex3`_: toujours des plans d'exécution
 

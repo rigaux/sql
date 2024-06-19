@@ -737,7 +737,7 @@ Examen juin 2023
 ****************
 
 On prend pour exemple  l'extrait suivant de la base de données qui sert à la gestion d'une grande
- bibliothèque :
+bibliothèque :
 
    - Livre (id, titre, id_auteur, date_publication, catégorie, éditeur)
    - Emprunt (id_personne, id_livre, date_début, date_fin)
@@ -754,7 +754,7 @@ Stockage et indexation (6 pts)
 		 .. admonition:: Correction
 
 				- Clé primaire: id
-				- Clés étrangères: id\_auteur :math:`\rightarrow` AUTEUR(id)
+				- Clés étrangères: id\_auteur :math:`\rightarrow` Personne(id)
 
 	- Donnez la commande SQL pour créer la table Livre. 
 
@@ -772,7 +772,7 @@ Stockage et indexation (6 pts)
 				    categorie varchar(20),
 				    editeur varchar(20),
 				    primary key id,
-				    foreign key id_auteur references  Auteur(id))
+				    foreign key id_auteur references  Personne(id))
 
 	- On  suppose que chaque enregistrement a une taille de 
 	  250 octets et que chaque bloc a un entête de 150 octets. 
@@ -783,7 +783,7 @@ Stockage et indexation (6 pts)
 
 		 .. admonition:: Correction
 
-			Il y a 3 850 octets utiles dans un bloc. On place :math:`3850/250=15` enregistrements par bloc.  
+			Il y a 3 850 octets utiles dans un bloc. On place :math:`\lfloor 3850/250 \rfloor =15` enregistrements par bloc.  
 			Il faut :math:`\lceil \frac{3 000 000}{15} \rceil = 200 000` blocs.
 
 
@@ -840,15 +840,20 @@ On met en place un index sur l'attribut **âge** de cette table.
 			Standard
 
 	- On considère que cet arbre B  est stocké à raison d'un nœud par bloc sur disque. On recherche les noms des personnes dont l'âge est entre 20 et 40 ans (inclus). 
-	  Combien de blocs disque doivent être chargées au minimum pour répondre à cette requête en utilisant l'arbre B ? Justifier. 
+	  Combien de blocs disque doivent être chargés au pire des cas pour répondre à cette requête en utilisant l'arbre B ? Justifier. 
 
 	  .. ifconfig:: annales_2023 in ('public')
 
 		 .. admonition:: Correction
 
-			Il s'agit ici d'une requête par intervalle: on commence par chercher les enregistrements pour lesquels l'âge est égal à 20 (lecture de 5 enregistrements). Il suffit ensuite d'exploiter le chaînage des feuilles pour trouver les autres enregistrements, en parcourant ici encore 5 enregistrements dans l'arbre B). On charge donc 10 
-			blocs d'index. Il faut ensuite récupérer les données pointées par l'index sur disque. Dans le meilleur cas (peu probable mais possible), toutes ces données sont stockées dans un même 
-			bloc. Donc on charge au minimum 11 blocs. 
+			Il s'agit ici d'une requête par intervalle: on commence par chercher les enregistrements pour lesquels 
+			l'âge est égal à 20 (lecture de 3 blocs). Il suffit ensuite 
+			d'exploiter le chaînage des feuilles pour trouver les autres enregistrements, en parcourant 
+			ici encore 1 bloc dans l'arbre B. On charge donc   4
+			blocs d'index. Il faut ensuite récupérer les données 
+			pointées par l'index vers le fichier sur disque. Dans le pire des cas, 
+			il faut lire un bloc pour chaque enregistrement.
+			Donc on charge au pire 9 blocs. 
 
 
 Optimisation (6 points)
@@ -894,7 +899,7 @@ On suppose que seules les clés primaires sont indexées.
 
 		 .. admonition:: Correction
 		 
-		 	On parcourt ``Emprunt``, on utilise l'index sur la table ``Livre`, 
+		 	On parcourt ``Emprunt``, on utilise l'index sur la table ``Livre``, 
 		 	et la sélection se fait au moment de l'accès direct.
 
 	  - Peut-on éviter tout parcours séquentiel en ajoutant un index sur 
@@ -937,14 +942,16 @@ Soit l'exécution concurrente suivante
 	  .. ifconfig:: annales_2023 in ('public')
 	
 		 .. admonition:: Correction
+		 
+		    Voici les conflits
 
-			-[sur x : ] :math:`r_2[x] w_1[x]`
-			-[sur y : ] :math:`r_3[y] w_2[y]`
-			-[sur z : ] :math:`w_1[z] w_3[z]`
+			 - sur x :  :math:`r_2[x] w_1[x]`
+			 - sur y :  :math:`r_3[y] w_2[y]`
+			 - sur z :  :math:`w_1[z] w_3[z]`
 
 
-	  - Donner le graphe de s\'erialisation de :math:`H`. 
-	    Que pouvez-vous déduire de ce graphe? 
+	- Donner le graphe de sérialisation de :math:`H`. 
+	  Que pouvez-vous déduire de ce graphe? 
 
 	  .. ifconfig:: annales_2023 in ('public')
 	  
@@ -953,8 +960,8 @@ Soit l'exécution concurrente suivante
 			:math:`T_2 \rightarrow T_1, T_3 \rightarrow T_2, T_1 \rightarrow T_3`. 
 			Il y a un cycle, dont :math:`H` n'est pas *sérialisable*.
 
-	  - Donner l'exécution finale par application de l'algorithme de verrouillage 
-	    à deux phases.  Donner le détail du déroulement de l'algorithme.
+	- Donner l'exécution finale par application de l'algorithme de verrouillage 
+	  à deux phases.  Donner le détail du déroulement de l'algorithme.
 
 	  .. ifconfig:: annales_2023 in ('public')
 	  
@@ -964,6 +971,5 @@ Soit l'exécution concurrente suivante
 		 	  (:math:`x` a un  verrou partagé avec :math:`T_2`)
 			- :math:`T_2`  est mis en attente au moment où :math:`w_2[y]` est soumis 
 			  (:math:`x` a un  verrou partagé avec :math:`T_3`).
-			- :math:`T_3` finit alors de s'exécuter, :math:`T_2` 
-			   est libérée et termine, puis :math:`T_1`.
+			- :math:`T_3` finit alors de s'exécuter, :math:`T_2` est libérée et termine, puis :math:`T_1`.
 
