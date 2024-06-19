@@ -1,0 +1,175 @@
+\documentclass[10pt]{article}
+\usepackage[T1]{fontenc}
+%\usepackage[utf8]{inputenc}
+%\usepackage[francais]{babel}
+%\usepackage{listingsutf8}
+
+\usepackage[french]{babel}
+%\usepackage[T1]{fontenc}
+\usepackage{comment,fullpage}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{lastpage}
+\usepackage{amsmath}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+%\newenvironment{solution}{\paragraph{Correction}}{}
+\newenvironment{solution}{\vspace{6pt}\noindent\color{red}\textbf{Correction : }}{\vspace{6pt}\ignorespacesafterend}
+
+\includecomment{comment}
+%\excludecomment{solution}
+
+% MATH -----------------------------------------------------------
+\newcommand{\norm}[1]{\left\Vert#1\right\Vert}
+\newcommand{\abs}[1]{\left\vert#1\right\vert}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\Real}{\mathbb R}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\To}{\longrightarrow}
+\newcommand{\BX}{\mathbf{B}(X)}
+\newcommand{\A}{\mathcal{A}}
+% ----------------------------------------------------------------
+
+\begin{document}
+
+\begin{center}
+{\Large NFP 107 -- Systèmes de gestion de bases de données}\\\vspace{1ex}
+{\Large Examen septembre 2017. Durée: 2h30.}\\
+
+\end{center}
+
+\vspace{1ex}
+\hrule
+\vspace{1ex}
+\textbf{Consignes :}\\
+-- Tous les documents sont autorisés.\\
+-- Les téléphones mobiles et autres équipements communicants (exemple: PC, tablette, etc.)  doivent être éteints et rangés dans les sacs pendant toute la durée de l'épreuve.\\
+-- Pensez à reporter votre numéro d'anonymat sur toutes les feuilles.\\
+-- Merci de soigner votre écriture et de ne pas rédiger au crayon papier sur votre copie.\\
+Ce sujet comporte 3 pages d'énoncé.
+
+\vspace{1ex}
+\hrule
+\vspace{1ex}
+
+%\input{./titlepage.tex}
+% \addtocounter{page}{1}
+
+\vspace{1ex}
+
+Le schéma de base de données suivant sera utilisé pour l'ensemble du
+sujet. Il permet de gérer les souscriptions pour un ensemble d'opérateurs de téléphonie mobile.
+
+\begin{verbatim}
+FORFAIT(nomForfait, nomOperateur, prix, options)
+CLIENT(id, nom, prénom, adresse, ville, dateNaissance)
+SOUSCRIPTION(id, idClient, nomForfait, dateDebut, duréeEngagement, active, numéroAttribué)
+RESILIATION(idSouscription, dateResiliation, portabilité, idNouvelleSouscription)
+\end{verbatim}
+
+L'attribut \texttt{duréeEngagement} est un entier positif exprimant le nombre de mois d'engagement (une valeur NULL signifié une souscription sans engagement). 
+L'attribut \texttt{SOUSCRIPTION}.\texttt{active = false} indique que la souscription à été résiliée (si \texttt{active=true} alors la souscription est en cours). Dans le cas ou une résiliation a été faite avec portabilité du numéro (\texttt{portabilité=true}), l'attribut \texttt{RESILIATION}.\texttt{idNouvelleSouscription} est non NULL et indique la nouvelle souscription vers laquelle le numéro a été transféré.
+
+\section{Algèbre relationnelle et SQL (9 points)}
+
+\begin{enumerate}
+
+\item (SQL et algèbre) Noms des clients qui ont souscrit un forfait avec engagement de plus de 24 mois. (1 point)
+
+\begin{solution}\\
+	Algèbre:\\
+	$\pi_{nom, prenom}(CLIENT \underset{id=idClient}{\bowtie} \sigma_{dureeEngagement > 24}(SOUSCRIPTION))$
+	\vspace{10pt}\\
+	SQL:
+	\begin{verbatim}
+	SELECT c.nom, c.prenom
+	FROM CLIENT c, SOUSCRIPTION s
+	WHERE s.idClient = c.id AND s.dureeEngagement > 24;
+	\end{verbatim}
+\end{solution}
+
+\item (SQL et algèbre) Noms des clients de Paris qui ont souscris un forfait SFR après le 01/09/2017. (2 points)
+
+\begin{solution}\\
+	Algèbre:\\
+	$\pi_{nom, prenom}((\sigma_{ville='Paris'}(CLIENT) \underset{id=idClient}{\bowtie} \sigma_{dateDebut > '01/09/2017'}(SOUSCRIPTION))\\ \underset{nomForfait}{\bowtie} \sigma_{nomOperateur='SFR'}FORFAIT)$
+	\vspace{10pt}\\
+	SQL:
+\begin{verbatim}
+SELECT c.nom, c.prenom
+FROM CLIENT c, SOUSCRIPTION s, FORFAIT f
+WHERE s.idClient = c.id AND f.nomForfait = s.nomForfait AND 
+      c.ville = 'Paris' AND f.nomOperateur = 'SFR' AND s.dateDebut > '01/09/2017';
+\end{verbatim}
+\end{solution}
+
+\item (SQL et algèbre) Noms des clients qui n'ont jamais résilié un forfait pendent la durée d'engagement. (2 points)
+
+\begin{solution}\\
+	Algèbre:\\
+	$R1 = \pi_{nom, prenom}(\sigma_{dateResiliation-dateDebut < dureeEngagement}(((CLIENT\;c \underset{c.id=s.idClient}{\bowtie}\\ SOUSCRIPTION\;s)  \underset{s.id=r.idSouscription}{\bowtie} RESILIATION\;r)))$\\
+	$Resultat = \pi_{nom, prenom}(CLIENT) - R1$
+	\vspace{10pt}\\
+	SQL:
+	\begin{verbatim}
+	SELECT nom, prenom FROM CLIENT
+	WHERE (nom, prenom) NOT IN 
+         (SELECT non, prenom
+          FROM CLIENT c, SOUSCRIPTION s, RESILIATION r
+          WHERE s.idClient = c.id AND r.idSouscription = s.id AND 
+                dateResiliation - dateDebut < dureeEngagement);
+	\end{verbatim}
+\end{solution}
+
+\item (SQL seulement) Noms des opérateurs listés par ordre décroissant du nombre de souscriptions. (1 point)
+
+\begin{solution}\\
+	SQL:
+	\begin{verbatim}
+	SELECT nomOperateur
+	FROM FORFAIT f, SOUSCRIPTION s
+	WHERE f.nomForfait = s.nomForfait
+	GROUP BY nomOperateur
+	ORDER BY COUNT(*) DESC;
+	\end{verbatim}
+\end{solution}
+
+\item (SQL seulement) Les noms des opérateurs qui ont le maximum de résiliations (2 points)
+
+\begin{solution}\\
+	SQL:
+	\begin{verbatim}
+	SELECT nomOperateur
+	FROM SOUSCRIPTION s, RESILIATION r, FORFAIT f
+	WHERE s.id = r.idSouscription AND s.nomForfait = f.nomForfait
+	GROUP BY nomOperateur
+	HAVING COUNT(*) = (SELECT MAX(COUNT(*)
+	                   FROM SOUSCRIPTION s, RESILIATION r, FORFAIT f
+	                   WHERE s.id = r.idSouscription AND s.nomForfait = f.nomForfait
+	                   GROUP BY nomOperateur)
+	\end{verbatim}
+\end{solution}
+
+\item (Algèbre seulement) Les noms des client qui ont souscrit au moins un forfait pour chaque opérateur. (1 point)
+
+\begin{solution}\\
+	Algèbre:\\
+	$R1 = \pi_{c.id, c.nom, c.prenom, nomOperateur}(((CLIENT\;c \underset{c.id=s.idClient}{\bowtie}\\ SOUSCRIPTION\;s)  \underset{s.nomForfait=f.nomForfait}{\bowtie} FORFAIT\;f))$\\
+	$Resultat = \pi_{nom, prenom}(R1 \div \pi_{nomOperateur}(FORFAIT))$
+\end{solution}
+
+
+\end{enumerate}
+
+\section{Indexation (3 points)}
+
+\section{Optimisation (4 points)}
+
+\section{Concurrence(4 points)}
+
+\end{document}
+

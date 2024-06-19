@@ -1,0 +1,230 @@
+\entete{HTT}{24 Septembre 2008}
+
+\section{SQL (10 points)}
+
+Soit le schéma de données suivant :\\
+~\\
+\textbf{Livre} (REF\_LIVRE, Titre, Auteur, DatePublication, Edition, Categorie)\\
+\textbf{Auteur} (Nom, DateNaissance, Nationalite)\\
+\textbf{Vendeur} (REF\_VENDEUR, Nom, ChiffreDAffaire)\\
+\textbf{Vente} (REF\_LIVRE, REF\_VENDEUR, Prix)\\
+\\Donner une expression SQL pour les requêtes suivantes :
+
+
+\begin{enumerate}
+
+\item Liste des livres dont le titre contient le mot '\textit{Mondes}' (1 point)
+\begin{correction}
+SELECT *\\
+From Livre\\
+Where TITRE Like '\%Mondes\%'
+\end{correction}
+
+
+\item \texttt{Donner également une expression Algèbrique} : Liste des livres écrits par '\textit{H.G. Wells}' (2 points)
+\begin{correction}
+         SELECT *\\
+         From Livre\\
+         Where Auteur = 'H.G. Wells'\\
+ \\$\sigma_{Auteur='H.G.Wells'}(Livre)$
+\end{correction}
+
+
+\item \texttt{Donner également une expression Algèbrique} : Titres des livres écrits par des auteurs \textit{anglais} (2 points)
+\begin{correction}
+         SELECT Titre\\
+         From Livre L, Auteur A\\
+         Where L.Auteur=A.Nom\\
+                 \hspace*{1cm}AND Nationalite = 'Anglais'\\
+ \\$\pi_{Titre}(Livre \Join_{Auteur=Nom} \sigma_{Nationalite='Anglais'}(Auteur))$
+\end{correction}
+
+
+\item Nombre de Livres publiés par \textit{Hachette} depuis le 2000-01-01 (1 point)
+\begin{correction}
+         SELECT COUNT(*)\\
+         From Livre\\
+         Where Edition = 'Hachette'\\
+                 \hspace*{1cm}AND DatePublication > '2000-01-01'
+\end{correction}
+
+
+\item Prix de '\textit{la Guerre des Mondes}' à la FNAC (1 point)
+\begin{correction}
+         SELECT PRIX\\
+         From Livre L, Vente V, Vendeur Ve\\
+         Where L.Titre = 'La Guerre des Mondes'\\
+             \hspace*{1cm}AND L.REF\_LIVRE = V.REF\_LIVRE\\
+             \hspace*{1cm}AND V.REF\_VENDEUR = Ve.REF\_VENDEUR\\
+             \hspace*{1cm}AND Ve.Nom = 'FNAC'
+\end{correction}
+
+
+\item Pour chaque edition, donnez le nombre de livres publié de H.G. Wells (1 point)
+\begin{correction}
+         SELECT COUNT(*)\\
+         From Livre\\
+         Where Auteur = 'H.G. Wells'\\
+         Group By Edition
+\end{correction}
+
+
+\item Titres des livres de H.G.Wells qui n'ont été publiés \underline{que} par 'Hachette' (2 points)
+\begin{correction}
+         SELECT Titre\\
+         From Livre L1\\
+         Where Auteur = 'H.G.Wells'\\
+             \hspace*{1cm}AND Edition = 'Hachette'\\
+             \hspace*{1cm}AND Not exists (select * From Livre L2\\
+ 				\hspace*{5cm}Where L1.TITRE=L2.TITRE\\
+ 				\hspace*{5cm}AND Auteur = 'H.G.Wells'\\
+ 				\hspace*{5cm}And Edition != 'Hachette')
+\end{correction}
+
+
+\end{enumerate}
+
+\section{Index et optimisation  (5 points)}
+\begin{enumerate}
+\item (2 points) Soit la relation Personnes (Nodordre, Nom, Age) de
+clés Nodordre et Nom.\\
+
+
+1,Amant,40\\
+2,Gros,35\\
+3,Delamousse,30\\
+4,Boisson,50\\
+5,Sebe,28\\
+6,Bouteille,27\\
+7,Lafée,25\\
+8,Croixnou,40\\
+9,Govet,34\\
+10,Vaklav,40\\
+11,Vian,51\\
+12,Pope,29\\
+13,Lamare,50\\
+14,Regal,42\\
+15,Sole,60\\
+
+
+
+Cette relation est  implantée par un fichier dont les pages ont pour
+capacité 3 articles au maximum.
+
+\begin{itemize}
+\item    (1,5 points) Donnez la liste des entrées d'un index non dense
+sur le \underline{nom}.
+\begin{correction}
+Amant,@1 ; Croixnou,@2 ;Gros,@3 ;Pope,@4 ;Sole,@5
+\end{correction}
+\item   (0,5 point) Est-ce que cet index est unique ?
+\begin{correction}
+oui
+\end{correction}
+\end{itemize}
+
+\item  (3 points) Considérons le schéma  suivant:
+
+
+MATCH(numMatch, dateMatch, stade, equipe1, equipe2)\\
+
+EQUIPE(equipe, nomPays, poule, classement)\\
+
+VAINQUEUR(numMatch,EquipeGagnante, score)\\
+
+
+La relation {\em Match} a pour clé {\em numMatch}, la relation {\em
+Equipe} a pour clé {\em equipe} et la relation {\em Vainqueur} a
+pour clé {\em numMatch}. les relations ne sont indexées que sur leur
+clé. Pour chacune des 2 requêtes suivantes donner le plan
+d'exécution (forme arborescente ou utilisation d'Explain) . Apporter
+un soin particulier à l'explication détaillée de chaque plan.
+\begin{enumerate}
+\item    (1 point) Select numMatch, score From VAINQUEUR\\
+                    Where EquipeGagnante = 'France';\\
+\begin{correction}
+ Execution Plan\\
+ ----------------------------------------------------------\\
+    0      SELECT STATEMENT Optimizer=CHOOSE\\
+    1    0   TABLE ACCESS (FULL) OF 'VAINQUEUR'\\
+ 
+    Balayage séquentiel de la table VAINQUEUR: pas de clé sur l'attribut de la clause
+   where.
+\end{correction}
+\item (2 points)
+Select dateMatch, stade From MATCH, VAINQUEUR\\
+                        Where MATCH.numMatch=VAINQUEUR.numMatch\\
+                        And equipeGagnante='Argentine';\\
+
+\begin{correction}
+ 
+ Execution Plan\\
+ ----------------------------------------------------------\\
+    0      SELECT STATEMENT Optimizer=CHOOSE\\
+    1    0   NESTED LOOPS\\
+    2    1     TABLE ACCESS (FULL) OF 'VAINQUEUR'\\
+    3    1     TABLE ACCESS (BY INDEX ROWID) OF 'MATCH'\\
+    4    3       INDEX (UNIQUE SCAN) OF 'IDX-0123-IDX' (UNIQUE)\\
+ 
+   Jointure par boucles imbriquées avec traversée d'index : On parcourt séquentiellement la table VAINQUEUR. Pour chaque nuplet de VAINQUEUR, Si
+   Argentine est l'équipe gagnante alors la valeur de
+   numMatch sert de clé d'accès à l'index unique sur numMatch de MATCH. Traversée de cet index, on obtient un rowid de nuplet de Match. Accès direct à
+   Match par ce rowid.  on projette la date et le stade.
+ 
+\end{correction}
+
+\end{enumerate}
+\end{enumerate}
+
+
+\section{Concurrence (5 points)}
+
+Soit l'exécution concurrente suivante:
+
+\textbf{H:} $r_1[x] r_2[y] r_3[x] w_1[x] r_3[y] w_2[z] c_1 r_3[z] c_2 c_3$
+
+\begin{enumerate}
+\item (1,5 points) Vérifier si l'exécution est sérialisable en construisant son graphe de sérialisation. Cette exécution est-elle stricte?
+\begin{correction}
+Conflits: sur $x$: $r_3[x]-w_1[x]$, sur $y$: aucun, sur $z$: $w_2[z]-r_3[z]$
+
+Le graphe de sérialisation est $T_2 \longrightarrow T_3 \longrightarrow T_1$, qui ne contient pas de cycle, donc l'exécution est sérialisable. Elle n'est pas stricte parce qu'elle n'évite pas les annulations en cascade à cause de la lecture sale $r_3[z]$ à partir de $w_2[z]$.
+\end{correction}
+
+\item (1,5 points) Trouver l'exécution produite par verrouillage à deux phases simple si les verrous d'une transaction sont toujours relâchés après sa validation. Les opérations bloquées en attente de verrou s'exécutent en priorité quand le verrou devient disponible, en respectant l'ordre de blocage.
+\begin{correction}
+$r_1[x]$ s'exécute en prenant le verrou de lecture sur $x$\\
+$r_2[y]$ s'exécute en prenant le verrou de lecture sur $y$\\
+$r_3[x]$ partage le verrou de lecture sur $x$ avec $r_1[x]$ et s'exécute\\
+$w_1[x]$ bloquée par $r_3[x]$, donc $T_1$ bloquée\\
+$r_3[y]$ partage le verrou de lecture sur $y$ avec $r_2[y]$ et s'exécute\\
+$w_2[z]$ s'exécute en prenant le verrou d'écriture sur $z$\\
+$c_1$ bloquée car $T_1$ bloquée\\
+$r_3[z]$ bloquée par $w_2[z]$, donc $T_3$ bloquée\\
+$c_2$ s'exécute et relâche les verrous de $T_2$ $\Rightarrow$ $r_3[z]$ est débloquée et s'exécute\\
+$c_3$ s'exécute et relâche les verrous de $T_3$ $\Rightarrow$ $w_1[x]$ et $c_1$ sont débloquées et s'exécutent\\
+Résultat: $r_1[x] r_2[y] r_3[x] r_3[y] w_2[z] c_2 r_3[z] c_3 w_1[x] c_1$
+\end{correction}
+
+\item (1 point) On considère que $x$, $y$ et $z$ sont des n-uplets des relations de la base de données. Soit les deux commandes SQL suivantes:\\
+\texttt{select Titre from Livre where Categorie='essai'}; \\
+\texttt{update Vente set Prix=Prix-1 where REF\_LIVRE='ESS-21'}; \\
+Trouvez la transaction de \textbf{H} qui provient de l'exécution de la commande \texttt{select}. Indépendamment de cela, quelles transactions de \textbf{H} pourraient provenir de la commande \texttt{update}? Justifiez votre réponse.
+\begin{correction}
+Les trois transactions sont:\\
+$T_1: r_1[x] w_1[x] c_1$\\
+$T_2: r_2[y] w_2[z] c_2$\\
+$T_3: r_3[x] r_3[y] r_3[z] c_3$
+
+La commande \texttt{select} réalise une suite de lectures de nuplets. Seule $T_3$ peut provenir de cette commande, car les autres contiennent des écritures.
+
+La commande \texttt{update} réalise une suite de lectures de nuplet, éventuellement suivies de leur modification. $T_1$ peut provenir de cette commande, car elle lit/écrit le même nuplet. $T_2$ écrit un nuplet différent de celui lu, donc elle n'est pas compatible avec un update. Enfin, $T_3$ peut aussi provenir d'un update où aucun des 3 nuplets lus ne correspond à la condition de mise-à-jour.
+\end{correction}
+
+\item (1 point) On considère maintenant que $x$, $y$ et $z$ sont des nuplets d'une même relation $R$. Soit l'exécution \textbf{H} modifiée ainsi:\\
+\hspace*{1cm}\textbf{H':} $r_1[x] r_2[y] r_3[R] w_1[x] w_2[z] c_1 c_2 c_3$,\\
+où l'on a remplacé les trois lectures de nuplet réalisées par $T_3$ par une seule lecture de la relation $R$. En se basant sur les règles du verrouillage hiérarchique (pas besoin de détailler l'exécution de l'algorithme), pouvez-vous dire si l'ordre de validation des transactions change par rapport au verrouillage simple?
+\begin{correction}
+Les deux premières lectures ne bloquent pas $r_3[R]$, car elles prennent le verrou d'intention de lecture sur $R$, qui n'est pas en conflit avec la lecture de $R$ par $r_3[R]$. Par contre, les écritures suivantes sont bloquées, car elles ont besoin du verrou d'intention d'écriture sur $R$, qui est en conflit avec celui de lecture pris par $r_3[R]$. Donc elles pourront s'exécuter seulement après la fin de $T_3$, ce qui change l'ordre de validation des transactions (dans le verrouillage simple $T_2$ était validée en premier).
+\end{correction}
+\end{enumerate}
