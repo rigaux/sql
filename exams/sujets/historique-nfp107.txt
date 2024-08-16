@@ -24,7 +24,7 @@ Stations ski
 Semestre 1
 ----------
 
-S1: inscriptions en crèche
+S1: inscriptions en crèche (en ligne)
 S2: le virus
 
 Semestre 2
@@ -76,4 +76,7 @@ Semestre 1
 Semestre 2
   
   - S1: les concerts
+  - S2: les cartons
+  
+
   

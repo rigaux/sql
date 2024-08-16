@@ -8,6 +8,7 @@ Voici le schéma
  relationnel, dans lequel les clés primaires sont en gras
 (à vous de trouver les clés étrangères)\,:
 
+
 \begin{itemize}
     \item Festival (\textbf{id}, nom, année)
   \item Groupe (\textbf{id}, nom, annéeFormation, nbMembres, pays)
@@ -19,6 +20,7 @@ Voici le schéma
 Pour un groupe sont stockés son nom, l'année où 
 l'artiste/le groupe a débuté, le nombre de membres 
 composant le groupe (1 pour un artiste en solo) et son pays d'origine.
+
 
 Les concerts sont donnés par un ou plusieurs groupes qui se succèdent sur scène.
 La table \texttt{Participation} indique quel groupe a participé à quel concert et en quelle position.
@@ -98,7 +100,7 @@ create table Concert(
     
     \item Participation vient d'une association plusieurs-plusieurs, 
     tandis que \'Edition est une entité faible (on ne peut 
-    pas avoir d'édition dans festival).
+    pas avoir d'édition sans festival).
 \end{enumerate}
 \end{solution}
 
@@ -183,7 +185,7 @@ and p. idGroupe=g.id
 and not exists (select * 
                   from Participation as p2 
                   where p2.idConcert=c.id
-                  and p1. position <= p2.position)
+                  and p1. position < p2.position)
 \end{minted}
 \end{solution}
 

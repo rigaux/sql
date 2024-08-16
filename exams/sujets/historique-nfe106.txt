@@ -26,3 +26,4 @@ Examen juin 23:
 Examen juin 2024:
 
   S1: (EN LIGNE) produits, clients, achats
+  S2: journal-citations-auteurs
