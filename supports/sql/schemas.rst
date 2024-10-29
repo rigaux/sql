@@ -481,7 +481,7 @@ Quiz
    
     A) :eqt:`I`  C'est un choix arbitraire de la norme.
     #) :eqt:`I`  Cela correspond à une contrainte physique d'écriture sur le disque
-    #) :eqt:`I` Comme la taille est variable, il faut la stocker avec la chaîne, sur 1 octet (d'où :math:`2^{8}-1=255`  possibilités)
+    #) :eqt:`C` Comme la taille est variable, il faut la stocker avec la chaîne, sur 1 octet (d'où :math:`2^{8}-1=255`  possibilités)
 
 .. eqt:: sch1-2
 

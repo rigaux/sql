@@ -99,19 +99,19 @@ Relation T
   - Pour quelle requête le résultat contient-il plus d’un nuplet?  Attention: souvenez-vous que l'opérateur
     de projection élimine les doublons.
 
-      #.  :math:`\pi_{A,C (\sigma_{B=0(R))`
-      #. :math:`\pi_{A,C (\sigma_{D=0(R))`
-      #. :math:`\pi_{A,C (\sigma_{B=0(R) \cup \sigma_{D=0(R))`
-      #.  :math:`\pi_{A,C (\sigma_{A=C(R)`
+      #.  :math:`\pi_{A,C} (\sigma_{B=0}(R))`
+      #. :math:`\pi_{A,C} (\sigma_{D=0}(R))`
+      #. :math:`\pi_{A,C} (\sigma_{B=0}(R) \cup \sigma_{D=0}(R))`
+      #.  :math:`\pi_{A,C} (\sigma_{A=C}(R)`
 
-  - Combien de nuplets retourne la requête :math:`\pi_{A,B,E (S \Join_{A=A \land B=B R)`?
+  - Combien de nuplets retourne la requête :math:`\pi_{A,B,E} (S \Join_{A=A \land B=B} R)`?
 
        #. 2
        #. 3
        #. 4
        #. 5
 
-  - Combien de nuplets retourne la requête :math:`R \Join_{A=A \land B=B (S \cup T)`?
+  - Combien de nuplets retourne la requête :math:`R \Join_{A=A \land B=B} (S \cup T)`?
 
        #. 3
        #. 5
@@ -276,8 +276,8 @@ Algèbre
 
 Relation T
   - La requête renvoie également 3 nuplets
-  - :math:`\pi_{nom, prenom(Personne \underset{id=idSpectateur{\bowtie \sigma_{prix > 500(BILLET))`
-  - :math:`\pi_{id(Personne) - \pi_{idArtiste (Spectacle)`
+  - :math:`\pi_{nom, prenom} (Personne \underset{id=idSpectateur}{\bowtie} \sigma_{prix > 500} (BILLET))`
+  - :math:`\pi_{id} (Personne) - \pi_{idArtiste} (Spectacle)`
 
 
 Transactions
@@ -373,7 +373,7 @@ Algèbre (3 points)
 
 .. math::
 
-      \pi_{idMatch(But \Join_{idMatch=id \sigma_{scoreEquipe1=0 \land scoreEquipe2=0(Match))
+      \pi_{idMatch} (But \Join_{idMatch=id} \sigma_{scoreEquipe1=0 \land scoreEquipe2=0} (Match))
 
 Programmation et transactions (3 points)
 ========================================
@@ -500,21 +500,21 @@ Algèbre
 
 .. math::
 
-     \pi_{nom(\sigma_{age > 30 (Joueur) \underset{id=idJoueur{\bowtie \sigma_{minute = 1(But) )
+     \pi_{nom} (\sigma_{age > 30} (Joueur) \underset{id=idJoueur}{\bowtie} \sigma_{minute = 1}(But) )
 
 Joueurs français:
 
 
 .. math::
 
-     A = \sigma_{pays='France'(Joueur\;j) \underset{j.idEquipe = e.id{\bowtie Equipe\;e)
+     A = \sigma_{pays='France'}(Joueur \underset{j.idEquipe = e.id}{\bowtie} Equipe)
 
 Joueurs français qui ont marqué au moins un but :
 
 
 .. math::
 
-     B = \sigma_{pays='France'(But\;b \underset{b.idJoueur = j.id{\bowtie Joueur\;j) \underset{j.idEquipe = e.id{\bowtie Equipe\;e)
+     B = \sigma_{pays='France'}(But\;b \underset{b.idJoueur = j.id}{\bowtie} Joueur\;j) \underset{j.idEquipe = e.id}{\bowtie} Equipe\;e
 
 Résultat:
 
@@ -680,16 +680,15 @@ Algèbre (3 points)
 
     .. math::
           
-          \pi_{id (Chercheur) - \pi_{idChercheur (R\acute{edige)
-
+          \pi_{id} (Chercheur) - \pi_{idChercheur} (R\acute{e}dige)
    
   .. ifconfig:: correctionlabo in ('public')  
 
 
       .. admonition:: Correction
          
-          - :math:`\pi_{nom(\pi_{id (\sigma_{nom = 'Vertigo' (Equipe)) \underset{id=idEquipe{\bowtie Chercheur )`
-          - :math:`\pi_{titre ( (  (\sigma_{annee \geq 2015 (Article) \underset{ref=refArticle{\bowtie Redige) \underset{idChercheur=id{\bowtie Chercheur ) \underset{idEauipe=id{\bowtie \sigma_{nom = 'ROC' Equipe)`
+          - :math:`\pi_{nom}(\pi_{id} (\sigma_{nom = 'Vertigo'} (Equipe)) \underset{id=idEquipe}{\bowtie} Chercheur )`
+          - :math:`\pi_{titre} ( (  (\sigma_{annee \geq 2015} (Article) \underset{ref=refArticle}{\bowtie} Redige) \underset{idChercheur=id}{\bowtie} Chercheur ) \underset{idEquipe=id}{\bowtie} \sigma_{nom = 'ROC'} Equipe)`
           - L'expression recherche les chercheurs qui n'ont rien publié.
 
             .. code-block:: sql
@@ -922,7 +921,7 @@ une sélection doit s'apppliquer directement à une table.
 
 .. math::
 
-     \sigma_{A=C \land A=D \land E =F \land C > B  (T_1 \times T_2)
+     \sigma_{A=C \land A=D \land E =F \land C > B}  (T_1 \times T_2)
 
 
 .. ifconfig:: correctionoeuvre in ('public')
@@ -931,7 +930,7 @@ une sélection doit s'apppliquer directement à une table.
     
         .. math::
         
-             \sigma_{A=C \land C > B (T_1) \Join_{A=D \sigma_{E = F(T_2)
+             \sigma_{A=C \land C > B} (T_1) \Join_{A=D} \sigma_{E = F}(T_2)
 
 Transactions (2 points)
 =======================
@@ -1185,13 +1184,13 @@ Algèbre relationnelle (3 pts)
     
     .. math:: 
 
-   	    \pi_{nom, prenom(\sigma_{ville='Paris'(Client) \underset{id=idClient{\bowtie (\sigma_{duree > 24(Souscription) \underset{idForfait=id{\bowtie \sigma_{nom='\rm{Audace' (Forfait))
+   	    \pi_{nom, prenom}(\sigma_{ville='Paris'}(Client) \underset{id=idClient}{\bowtie} (\sigma_{duree > 24}(Souscription) \underset{idForfait=id}{\bowtie} \sigma_{nom='\rm{Audace'}} (Forfait))
 
  - Même question pour l'expression suivante
  
    .. math:: 
    
-	  \pi_{c.id, c.nom, c.prenom (Client) - \pi_{c.id, c.nom, c.prenom (Client \underset{c.id=s.idClient{\bowtie \sigma_{duree \geq 48 (Souscription))
+	  \pi_{c.id, c.nom, c.prenom} (Client) - \pi_{c.id, c.nom, c.prenom} (Client \underset{c.id=s.idClient}{\bowtie} \sigma_{duree \geq 48} (Souscription))
 
    .. ifconfig:: soloperateur in ('public')
 

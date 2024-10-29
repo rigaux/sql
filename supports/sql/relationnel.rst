@@ -1250,27 +1250,6 @@ Exercices
            - Non car ACG+ = ACGBEH
            - Oui car CEG+ = CEGHAB
 
-.. _Ex-relationnel-1bis: 
-.. admonition:: Exercice `Ex-relationnel-1bis`_:  clôture transitive
-
-   Soit la relation ``EmpDept (enum, nom, annéeNaiss, adresse, dnum, numDirecteur)`` et les DF  suivantes:
-   
-     - :math:`enum \to nom, annéeNaiss, adresse, dnum`
-     - :math:`dnum \to numDirecteur`
-   
-   Calculer enum+ et dnum+.
-   
-
-    .. ifconfig:: relationnel in ('public')
-
-      .. admonition:: Correction
-
-           - À partir de ``enum`` je connais le nom, l'année, l'adresse et ``dnum``, et à partir de 
-             ``dnum`` je connais ``numDirecteur``. Donc la clôture transitive
-             de ``enum`` est l'ensemble de tous les attributs.
-           - En revanche, à partir de ``dnum`` je connais ``numDirecteur``
-             et je ne peux plus rien inférer d'autre. Donc, ``dnum+`` est {``dnum``, ``numDirecteur``}
-
 .. _Ex-relationnel-2: 
 .. admonition:: Exercice `Ex-relationnel-2`_:  dépendances directes
 
@@ -1291,6 +1270,28 @@ Exercices
              
            - :math:`id\_manuscrit \to nom`: on connaît le nom de l'expert
              indirectement car :math:`id\_manuscrit \to id\_expert` et :math:`id\_expert \to nom`
+
+
+.. _Ex-relationnel-1bis: 
+.. admonition:: Exercice `Ex-relationnel-1bis`_:  clôture transitive
+
+   Soit la relation ``EmpDept (enum, nom, annéeNaiss, adresse, dnum, numDirecteur)`` et les DF  suivantes:
+   
+     - :math:`enum \to nom, annéeNaiss, adresse, dnum`
+     - :math:`dnum \to numDirecteur`
+   
+   Calculer enum+ et dnum+.
+   
+
+    .. ifconfig:: relationnel in ('public')
+
+      .. admonition:: Correction
+
+           - À partir de ``enum`` je connais le nom, l'année, l'adresse et ``dnum``, et à partir de 
+             ``dnum`` je connais ``numDirecteur``. Donc la clôture transitive
+             de ``enum`` est l'ensemble de tous les attributs.
+           - En revanche, à partir de ``dnum`` je connais ``numDirecteur``
+             et je ne peux plus rien inférer d'autre. Donc, ``dnum+`` est {``dnum``, ``numDirecteur``}
 
 .. _Ex-relationnel-3: 
 .. admonition:: Exercice `Ex-relationnel-3`_:  Augmentation et dépendances minimales

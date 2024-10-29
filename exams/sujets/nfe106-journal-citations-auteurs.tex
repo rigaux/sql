@@ -2,7 +2,6 @@
 {Examen 13 septembre 2024 -- session 2 -- 3h}%
 {Examen en présentiel -- Calculatrices autorisées -- Documents autorisés: 5 pages recto/verso de notes personnelles}%
 
-
 Le sch\'ema de base de donn\'ees suivant sera utilis\'e pour l'ensemble du
 sujet. Il permet de gérer une base de données d'une base gérant une archive de publications scientifiques (20 ans de publications).
 
@@ -14,6 +13,7 @@ sujet. Il permet de gérer une base de données d'une base gérant une archive d
 \end{itemize}
 
 \smallskip
+
 
 On suppose que les paramètres de stockage sont les suivants\,:
 \begin{itemize}
@@ -27,7 +27,7 @@ On suppose que les paramètres de stockage sont les suivants\,:
 
 Autres statistiques\,:
 \begin{itemize}
-	\item 2M d'auteurs\,;
+	\item 2M d'auteurs et 4 auteurs par publication en moyenne\,;
 	\item l'acronyme est unique\,;
 	\item dans la table \textsc{Auteur} le triplet (idPub, nomAuteur, prenomAuteur) est unique.
 \end{itemize}
@@ -110,13 +110,14 @@ Auteur&	115	&	62	&	155 000 000	&	2 500 000	\\
 \begin{enumerate}
 	\item {\tt (3~points)} Soit la requête suivante\,:
 \begin{minted}{sql}
-SELECT idJournal FROM Journal WHERE Titre like '%database%' AND Rang = 'A*';
+SELECT idJournal FROM Journal 
+WHERE Titre like '%database%' AND Rang = 'A*';
 \end{minted}
 	Donner le coût d'évaluation (nombre de lectures de blocs au pire des cas)
    pour chacun des scénarios  suivants :
 	\begin{enumerate}
-		\item Il n'existe qu'un arbre  B (non dense) sur le titre
-		\item  Il n'existe qu'un arbre  B (non dense) sur le rang, avec la distribution suivante\,:\\
+		\item Il n'existe qu'un arbre  B (dense) sur le titre
+		\item  Il n'existe qu'un arbre  B (dense) sur le rang, avec la distribution suivante\,:\\
 		\begin{tabular}{|c|c|c|c|c|}
 			\hline
 			A*& A& B& C& Inconnu\\
@@ -124,7 +125,7 @@ SELECT idJournal FROM Journal WHERE Titre like '%database%' AND Rang = 'A*';
 			7,644\%& 15\% & 20\% & 25\% & 32,356\%\\
 			\hline
 		\end{tabular}
-    \item Il existe qu'un arbre  B sur le rang, mais cette fois il est dense.
+    \item Il existe qu'un arbre  B sur le rang, mais cette fois il est non dense.
      Expliquez ce que cela implique, et donnez le nouveau calcul.
 		\item Il existe une table de hachage de taille 5 sur
     l'attribut Rang (1 rang = 1 partition). Donner le coût précis pour cette requête.

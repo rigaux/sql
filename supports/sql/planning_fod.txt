@@ -1,29 +1,48 @@
-Plan d'avancement du cours NFP107
-=================================
+Toutes les visios auront lieu le mercredi à 18h30. Elles seront consacrées aux Quiz et exercices
+25 septembre
+Séance d'introduction et de présentation du cours
 
-11 octobre
-----------
+2 octobre
+Le modèle relationnel (1)
 
-  Modèle relationnel -> 
-  
-15 novembre
------------
+9 octobre
+Le modèle relationnel (2)
 
-   SQL, forme déclarative et algébrique
-   TP SQL
-   
-6 décembre
-----------
- 
-   Conception et schémas
-   
-20 décembre
------------
+16 octobre
+SQL déclaratif (1)
 
-   Procédures et transactions
-   
-Mi janvier
-----------
+23 octobre
+SQL déclaratif (2)
+Rendu du premier devoir
 
-   Etude de cas et révisions
-   
+30 octobre
+SQL algébrique (1)
+
+6 novembre
+SQL algébrique (2)
+
+13 novembre
+Récapitulatif SQL et rendu du second devoir
+
+20 novembre
+Conception (1)
+
+27 novembre
+Conception (2)
+
+4 décembre
+Schémas relationnels
+
+11 décembre
+Procédures et déclencheurs
+Rendu du devoir sur la conception
+
+18 décembre
+Transactions
+
+8 janvier
+Etude de cas
+
+15 janvier
+Révision (examen blanc)
+
