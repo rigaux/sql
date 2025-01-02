@@ -1543,7 +1543,7 @@ Modélisation (8 points)
 =======================
 
   - Etudiez soigneusement le schéma et identifiez toutes les clés étrangères
-    qui font référence à la table ``Personne` (1 pt)
+    qui font référence à la table ``Personne`` (1 pt)
      
      
 	.. ifconfig:: solcreche in ('public')

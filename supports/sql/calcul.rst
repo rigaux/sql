@@ -2020,8 +2020,8 @@ Exercices
 
 			    \rm{OffreEmploi}(\rm{'Hipparque'},\rm{'clown'}) \land \neg \rm{FaitLaffaire} (\rm{'Dupondt'},\rm{'Hipparque'})
 
-		   Le capitaine devrait dire : ``Le cirque Hipparque a besoin de deux clowns,
-		   mais vous ne faites pas l'affaire''. CQFD.
+		   Le capitaine devrait dire : "Le cirque Hipparque a besoin de deux clowns,
+		   mais vous ne faites pas l'affaire". CQFD.
 
 .. _Ex-calcul-4:
 .. admonition:: Exercice `Ex-calcul-4`_: des équivalences
@@ -2180,10 +2180,10 @@ Exercices
         Si elle est vide, on n'obtient rien. Sinon
         on obtient (1) la jointure (2) 100 000 doublons de la jointure.
 
-        Pour bien comprendre: l'évaluateur SQL var chercher tous les
+        Pour bien comprendre: l'évaluateur SQL va chercher tous les
         triplets de variables ``(l, a, s)`` qui satisfont la portée
-        et la sélection. On va donc répeter chaque paire ``(l, a)`` qui satisfait
-        la condition de jointure autant de fois qu'il y a de nuplets dqns
+        et la sélection. On va donc répéter chaque paire ``(l, a)`` qui satisfait
+        la condition de jointure autant de fois qu'il y a de nuplets dans
         la table ``Séjour``. Et pour finir on va produire les nuplets-résultat
         qui vont contenir beaucoup de doublons, ou aucun selon le contenu de la
         table ``Séjour``.
