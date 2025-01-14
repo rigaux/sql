@@ -2075,7 +2075,7 @@ Note: vous pouvez produire des diagrammes assez facilement avec https://www.luci
             - Non, un médecin par consultation
             - Entre Consultation et Médicament, on pourrait créer un type d'entité Prescription
               avec comme attribut le nombre de prises de médicament. 
-            - Il faut unifier les types d'entité Médecin et Pqtient, attribuer une clé unique ``id`` 
+            - Il faut unifier les types d'entité Médecin et Patient, attribuer une clé unique ``id`` 
               et déclarer ``noSS`` et ``matricule`` comme clés secondaires.
 
 .. _Ex-conc-2:
