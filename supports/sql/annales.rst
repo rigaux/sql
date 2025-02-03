@@ -1536,8 +1536,7 @@ On veut implanter une application de réservation de places en crèche. Voici le
   - Crèche (**idCrèche**, nom, ville, capacité)
   - Personne (**idPersonne**, prénom, nom, néeEn, ville, idPère, idMère)
   - Demande (**idDemande**, idEnfant, idCrèche, année)
-  - Inscription (**idEnfant**, année, idCrèche, idPuéricultrice)
-   
+  - Inscription (**idEnfant, année**, idCrèche, idPuéricultrice)
 
 Modélisation (8 points)
 =======================
@@ -1795,11 +1794,11 @@ On implante une procédure d'inscription qui effectue les étapes suivantes :
 	begin
   		demandes_en_cours = (résultat requête 5)
   		for each demande in demandes_en_cours do
-    		places_restantes = (résultat requête 7)
-    		si (places_restantes > 0)
-      			Insérer inscription
+  			places_restantes = (résultat requête 7)
+  			si (places_restantes > 0)
+  				Insérer inscription
   		end for
-	end
+  	end
 
 Questions
 ---------
@@ -1815,10 +1814,10 @@ Questions
 
 	.. admonition:: Correction
 
-		- Non le curseur estimmuable : cf. cours	
+		- Non le curseur est immuable : cf. cours	
 		- Autant d'inscriptions que de demandes, ce qui ne semble pas normal
 		- La base ne permet de représenter qu'une seule inscription
 		  pour une année, donc le programme rejettera les insertions 
 		  dès la seconde tentative.
-    	- Il faut sortir de  la boucle dès la première inscription.
+		- Il faut sortir de  la boucle dès la première inscription.
 

@@ -92,7 +92,7 @@ correctionlabo='public'
 correctionoeuvre='public'
 soloperateur='public'
 solcourslangue='public'
-solcreche='private'
+solcreche='public'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
