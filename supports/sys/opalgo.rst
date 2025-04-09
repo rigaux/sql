@@ -1099,7 +1099,7 @@ l'exemple suivant.
           blocs disponibles). 
         
           On a lu encore une fois le fichier, pour un coût
-          total de :math:`614 + 307 = 521`  Mo. 
+          total de :math:`614 + 307 = 921`  Mo. 
      * Avec une mémoire :math:`M = 1 \text{Mo}`, soit 250 blocs.
 
        * on divise le fichier en :math:`307` 
