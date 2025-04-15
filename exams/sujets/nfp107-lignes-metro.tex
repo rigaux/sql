@@ -2,7 +2,6 @@
 {Examen FOAD session 2}%
 {Documents autorisés\,: 10 pages recto-verso de notes manuscrites ou imprimées}%
 
-
 Essayons de modéliser un système  qui permet d'emprunter 
 un réseau de transport en comptabilisant les passages. Le réseau
 est organisé en \emph{lignes} desservant plusieurs \emph{stations}, chaque station peut être commune
@@ -19,6 +18,7 @@ Un concepteur propose le schéma suivant; les clés primaires sont en gras.
 \item DétailLigne(\textbf{id}, idLigne, idStation, idStationSuivante)
 \item Trajet(\textbf{id}, jour, idAbonné, idStationDépart, idStationArrivée)
 \end{itemize}
+
 
 Les jours sont répresentés simplement sous la forme 'jj/mm/aaaa', par exemple '14/01/2023'.
 
