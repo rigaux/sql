@@ -1821,3 +1821,331 @@ Questions
 		  dès la seconde tentative.
 		- Il faut sortir de  la boucle dès la première inscription.
 
+
+******************************
+Examen session 1, 12 juin 2025
+******************************
+
+
+On met en place un système d'information sur les structures administratives françaises: 
+régions, départements, préfectures.
+Voici le schéma de la base sur laquelle nous allons travailler. 
+Les clés primaires sont en gras, les clés étrangères ne sont pas indiquées.
+
+ 
+- Personne(**idPersonne**, nom, prénom)
+- Région(**codeRégion**,  intitulé, préfecture, idPrésident)
+- Département (**codeDpt**, nom, préfecture, population, codeRégion, idPrésident)
+- Voisins (**codeDpt1**, **codeDpt2**)
+ 
+
+Dans les tables  ``Région`` et   ``Département``,  ``préfecture`` désigne
+la ville siège de la préfecture de région ou de département. Strasbourg
+est à la fois préfecture de la région *Grand Est* et du  département
+du Bas-Rhin. Dans la même région, Colmar est préfecture du département du Haut-Rhin.
+Régions et départements sont présidés par une personne.
+
+Deux départements sont voisins s'ils ont une frontière commune.
+
+
+Compréhension du schéma (6 pts)
+===============================
+
+
+ - Donner les commandes de création de table pour ``Département`` et  
+   ``Voisins``. On supposera que ``Personne`` et  ``Région`` ont déjà été créées.
+
+   .. ifconfig:: soladmin in ('public')
+
+		.. admonition:: Correction
+
+			- Standard. Voici pour la table  Voisins}:
+
+			.. code-block:: sql
+
+				create table Voisins 
+					(idDpt1 int not null, 
+					idDpt2 int not null
+					primary key (idDpt1, idDpt2),
+					foreign key (idDpt1) references Département (idDpt),
+					foreign key (idDpt2) references Département (idDpt)
+					)
+
+ - On ajoute la commande suivante au schéma de la table  Voisins}
+
+	.. code-block:: sql
+
+		check (codeDpt1  < codeDpt2)
+
+   Quelle est à votre avis la motivation de cette contrainte?
+
+   .. ifconfig:: soladmin in ('public')
+
+		.. admonition:: Correction
+
+			Il existe une symétrie dans la notion de voisin: si A
+			est voisin avec B, B est voisin avec A. Pour éviter le doublon
+			de représentation (voisin(A, B) et voisin(B,A)), on décide 
+			de n'autoriser que le premier, d'où la clause  ``check``. 
+
+  - Donner le schéma entité-association correspondant à ce schéma relationnel.
+
+   .. ifconfig:: soladmin in ('public')
+
+		.. admonition:: Correction
+
+			Standard
+
+  - Existe-t-il une association plusieurs-plusieurs dans ce schéma? Si oui 
+    vous paraîtrait-il judicieux de la réifier? Justifiez votre réponse.
+
+   .. ifconfig:: soladmin in ('public')
+
+		.. admonition:: Correction
+
+			``Voisins`` provient d'une association plusieurs-plusieurs.
+			La contrainte sur la clé implique qu'un département ne peut pas
+			être deux fois le voisin d'un autre. C'est une contrainte tout à fait 
+			raisonnable, voire indispensable. La réification est donc inutile.
+
+  - Une même personne peut-elle présider plusieurs départements? 
+    Peut-elle présider un département et une région?
+
+   .. ifconfig:: soladmin in ('public')
+
+		.. admonition:: Correction
+
+			Réponse oui aux deux questions: aucune contrainte de clés
+			n'empêche ces situations.
+			
+  - Notons  ``D`` le département,  ``P`` la personne, 
+    ``ND`` le nom du département et  ``NP`` le nom de la personne. Le schéma 
+    nous donne les dépendances fonctionnelles suivantes:  ``D -> P, ND``
+    et  ``P -> NP``.
+   
+    On ajoute la dépendance  ``P -> D``. Comment l'interpréter
+    et que devient le schéma relationnel?
+
+   .. ifconfig:: soladmin in ('public')
+
+		.. admonition:: Correction
+
+			La dépendandce additionnelle indique qu'une personne ne
+			peut diriger qu'un seul département. L'identifiant d'une
+			personne pourrait donc servir à identifier un département. 
+			Ce ne serait cependant pas un très bon choix car la personne
+			dirigeant un département est amenée à changer régulièrement.
+			En pratique, mieux vont donc déclarer dans le schéma
+			une contrainte d'unicité sur l'idenfifiant ``idPrésident``
+			dans la table ``Département`` (c'est également une clé étrangère).
+
+Dans toute la suite de l'examen, on travaille sur 
+le schéma donné dans l'énoncé, et en supposant que la contrainte
+sur l'ordre des codes de département est respectée dans la table ``Voisins``
+(donc, ``codeDpt1  < codeDpt2``).
+
+Algèbre et vues (4 pts)
+=======================
+
+On définit algébriquement les relations suivantes:
+
+  - :math:`V_1 := Voisins``
+  - :math:`V_2 := \rho_{codeDpt1 \to codeDpt2, codeDpt2 \to codeDpt1} (Voisins)`
+  - :math:`V_3 := V1 \cup V2`
+
+  Répondez aux questions suivantes:
+  
+  - Quel est le résultat de :math:`V_1 \cap V_2`?
+  - Comment caractériseriez-vous le contenu  de :math:`V_3`?
+  - Donnez la commande SQL de création de la vue :math:`V_3`.
+  - Soit le département de code  :math:`d_1`. Quelle 
+    requête algébrique 
+    sur :math:`V_3` donne les codes de *tous* ses voisins (expliquer). 
+
+
+   .. ifconfig:: soladmin in ('public')
+
+		.. admonition:: Correction
+
+			:math:`V_1` est donc un synonyme de la table ``Voisins``,
+			et :math:`V_2` a le même contenu que :math:`V_1` *mais 
+			l'ordre des clés est inversé*. On ne trouve dans
+			:math:`V_2` que les paires de département ``(d1, d2)``
+			tels que ``d1 > d2``. D'où la réponse aux questions:
+			
+			- :math:`V_1 \cap V_2` est vide
+			- :math:`V_3` contient toutes les paires de départements voisins
+			  ``(d1, d2)`` et ``(d2, d1)``. Autrement dit, chaque relation de 
+			  voisinage entre deux départements est représentée dans les deux sens.
+			- On peut donc créer la vue suivante qui pourra nous 
+			  simplifier les requêtes SQL par la suite.
+
+			  .. code-block:: sql
+
+					create view V3 as
+					select * from Voisins 
+						union
+					select codeDpt2 as codeDpt1, codeDpt1 as codeDpt2
+					from Voisins
+			- Avec :math:`V_3`, on n'a plus besoin de se soucier de l'ordre des codes de département.
+			  On peut donc écrire soit:
+
+			  .. math::
+				
+					\pi_{codeDpt2} (\sigma_{codeDpt1=d_1} (\rm{V_3}))
+			  soit
+			  
+			  .. math::
+
+					\pi_{codeDpt1} (\sigma_{codeDpt2=d_1} (\rm{V_3}))
+
+			  qui donneront le même résultat.
+
+SQL (7 pts)
+===========
+
+Exprimez en SQL les requêtes suivantes:
+
+  - Qui préside (prénom, nom) la région contenant le département 'Cantal'?
+  - Quelles villes sont à la fois préfecture de région et d'un 
+    département de plus de 100000 habitants (donner le nom de la ville, du département, et l'intitulé de la région). 
+  - Quels sont les départements voisins du Cantal ? (*Aide*: et si vous utilisiez la vue V3 définie précédemment?)
+  - Quels départements d'une même région sont voisins l'un de l'autre?
+    Donnez l'intitulé de la région et les noms des deux départements.
+    Attention à bien prendre en compte la contrainte sur les clés
+    dans  ``Voisins`` 
+  - Quelles régions n'ont pas de département?
+  - Quelles personnes ne président ni région ni département?
+  - Donner, pour chaque région, le nombre de département et sa population totale (obtenue
+    par cumul de celle des départements)
+  - Dans la requête précédente, que se passe-t-il si une
+    région n'a pas de département? Comment réussir 
+    à afficher le nom de la région avec la valeur 0 pour le nombre
+    de départements dans ce cas?
+
+
+.. ifconfig:: soladmin in ('public')
+
+	.. admonition:: Correction
+
+		.. code-block:: sql
+
+			select prénom, nom
+			from Personne as p, Région as r, Département as d
+			where d.nom='Cantal'
+			and d.codeRégion = r.codeRégion
+			and r.idPrésident = p.idPersonne
+
+		.. code-block:: sql
+
+			select r.préfecture as ville, r.intitulé, d.noms
+			from  Région as r, Département as d
+			where r.préfecture = d.préfecture
+			and d.population > 10000
+
+		Il est plus simple d'utiliser la vue V3.
+		
+		.. code-block:: sql
+			
+			select  d2.nom as voisinCantal
+			from   Département as d1, Département as d2, V3 as v
+			where d1.nom='Cantal'
+			/* On sait que dans V3, on trouve chaque voisinage 
+			   représenté dans les deux sens */
+			and v.codeDpt1=d1.codeDpt
+			and v.codeDpt2=d2.codeDpt
+
+		Sinon, solution SQL complète avec un 'ou' logique. Plus compliqué...
+
+		 .. code-block:: sql
+
+			select d2.nom as voisinCantal
+			from  Département as d1, Département as d2, Voisins as v
+			where d1.nom='Cantal'
+			and ( 
+				/* Cas d'un voisin de code supérieur au Cantal */
+				(d1.codeDpt < d2.codeDpt and v.codeDpt1 = d1.codeDpt1 and v.codeDpt2=d2.codeDpt)
+			    or
+				/* Cas d'un voisin de code inférieur au Cantal */
+				(d1.codeDpt > d2.codeDpt and v.codeDpt1 = d1.codeDpt2 and v.codeDpt2=d1.codeDpt)
+				)
+
+		.. code-block:: sql
+
+			select r.intitulé, d1.nom as nomDpt1, d2.nom as nomDpt2
+			from  Région as r, Département as d1, Département as d2, Voisins as v
+			where r.codeRégion = d1.codeRégion
+			and r.codeRégion = d2.codeRégion
+			/* Pour prendre la relation 'voisins dans le bon sens' */
+			and d1.codeDpt < d2.codeDpt
+			and v.codeDpt1=d1.codeDpt
+			and v.codeDpt2=d2.codeDpt
+
+
+		.. code-block:: sql
+
+			select *
+			from  Région as r
+			where not exists (
+				select* from Département as d
+				where r.codeRégion = d1.codeRégion)
+
+		.. code-block:: sql
+
+			select *
+			from  Personne as p
+			where not exists (
+				select * from Département as d
+				where d.idPrésident = p.idPrésident)
+			and not exists (
+				select * from Région as d
+ 				where r.idPrésident = p.idPrésident)
+
+		.. code-block:: sql
+
+			select r.intitulé, count(d.codeDpt), sum(population) as population
+			from  Région as r, Département as d
+			where r.codeRégion = d1.codeRégion
+			group by r.codeRégion, r.intitulé
+
+		Si on veut prendre en compte les régions sans département, il faut
+		faire une jointure externe
+
+		.. code-block:: sql
+
+			select r.intitulé, count(d.codeDpt), sum(population) as population
+			from  Région as r left join Département as d on r.codeRégion = d1.codeRégion
+			group by r.codeRégion
+
+		Les régions sans département apparaissent dans le résultat de la jointure avec une
+		valeur à  ``null`` pour la population, et le  ``count`` appliqué à  ``null``
+		renvoie  0 (tandis que le  ``sum`` appliqué à  ``null``
+		renvoie  ``null``).
+
+Modèle relationnel (3 pts)
+==========================
+
+Soit les attributs TGVER avec les dépendances fonctionnelles suivantes:
+``TG \to E``; ``R \to G``; ``E \to G``.
+
+
+  - Quelle est la clé?
+  - Quel est le résultat de l'algorithme de normalisation?
+  - Ce résultat est-il en troisième forme normale?
+
+
+.. ifconfig:: soladmin in ('public')
+
+	.. admonition:: Correction
+
+		Tous les attributs qui n'apparaissent pas à droite sont nécessairement
+		dans la clé, donc T, V  et R. On vérifie aisément que TVR est une clé
+		(la seule).
+
+		On a donc les relations (TGE) et (RG), auxquelles il faut ajouter la clé
+		(TVR) (algorithme de normalisation). 
+
+		Le résultat est en troisième forme normale, si l'on admet une petite extension:
+		dans la relation TGE, la DF E -> G n'a pas la clé pour partie gauche. Mais on ne peut 
+		pas décomposer plus sans perdre d'information. C'est un cas (très rare en pratique) où il
+		faut admettre une définition de la 3FN un peu plus compliquée que celle donnée en cours.

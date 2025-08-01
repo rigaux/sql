@@ -1,0 +1,337 @@
+\enteteExam{NFP 107 -- Systèmes de gestion de bases de données - Durée 2h30}%
+{Examen première session 11 juin 2025}%
+{Examen sur table -- Seuls documents autorisés\,: 10 pages maximum de notes.}%
+
+
+On met en place un système d'information sur les structures administratives françaises\,: 
+régions, départements, préfectures.
+Voici le schéma de la base sur laquelle nous allons travailler. 
+Les clés primaires sont en gras, les clés étrangères ne sont pas indiquées.
+
+\begin{itemize}
+\item Personne(\textbf{idPersonne}, nom, prénom)
+\item Région(\textbf{codeRégion},  intitulé, préfecture, idPrésident)
+\item Département (\textbf{codeDpt}, nom, préfecture, population, codeRégion, idPrésident)
+\item Voisins (\textbf{codeDpt1}, \textbf{codeDpt2})
+\end{itemize}
+
+Dans les tables \texttt{Région} et  \texttt{Département}, \texttt{préfecture} désigne
+la ville siège de la préfecture de région ou de département. Strasbourg
+est à la fois préfecture de la région \textit{Grand Est} et du  département
+du Bas-Rhin. Dans la même région, Colmar est préfecture du département du Haut-Rhin.
+Régions et départements sont présidés par une personne.
+
+Deux départements sont voisins s'ils ont une frontière commune.
+
+\section{Compréhension du schéma (6 pts)}
+
+\begin{enumerate}
+ \item Donner les commandes de création de table pour \texttt{Département} et \texttt{Voisins}.
+       On supposera que \texttt{Personne} et \texttt{Région} ont déjà été créées.
+  \item On ajoute la commande suivante au schéma de la table \texttt{Voisins}
+  
+\begin{minted}{sql}
+check (codeDpt1  < codeDpt2)
+\end{minted}
+  
+   Quelle est à votre avis la motivation de cette contrainte\,?
+
+  \item Donner le schéma entité-association 
+        correspondant à ce schéma relationnel.
+        
+   \item Existe-t-il une association plusieurs-plusieurs dans ce schéma\,? Si oui 
+     vous paraîtrait-il judicieux de la réifier\,? Justifiez votre réponse.
+
+  \item Une même personne peut-elle présider plusieurs départements\,? 
+   Peut-elle présider un département et une région\,?
+   \item Notons \texttt{D} le département, \texttt{P} la personne, 
+   \texttt{ND} le nom du département et \texttt{NP} le nom de la personne.
+   Le schéma nout donne les dépendances fonctionnelles
+   suivantes\,: \texttt{D -> P, ND} et \texttt{P -> NP}.
+   
+   On ajoute la dépendance \texttt{P -> D}. Comment l'interpréter
+   et que devient le schéma relationnel\,?
+   
+\end{enumerate}
+
+Dans toute la suite de l'examen, on travaille sur 
+le schéma donné dans l'énoncé, et en supposant que la contrainte
+sur l'ordre des codes de département est respectée dans la table \texttt{Voisins}
+(donc,
+\texttt{codeDpt1  $<$ codeDpt2}).
+
+\begin{solution}
+ \begin{enumerate}
+ 
+      \item Standard. Voici pour la table \texttt{Voisins}:
+     
+\begin{minted}{sql}
+create table Voisins (idDpt1 int not null, 
+    idDpt2 int not null
+     primary key (idDpt1, idDpt2),
+     foreign key (idDpt1) references Département (idDpt),
+         foreign key (idDpt2) references Département (idDpt)
+     )
+\end{minted}
+  
+    \item Il existe une symétrie dans la notion de voisin\,: si A
+    est voisin avec B, B est voisin avec A. Pour éviter le doublon
+   de représentation (voisin(A, B) et voisin(B,A)), on décide 
+   de n'accepter que le premier, d'où la clause \texttt{check} 
+     \item 
+     
+     \item \texttt{Voisins} provient d'une association plusieurs-plusieurs.
+     La contrainte sur la clé implique qu'un département ne peut pas
+     être deux fois le voisin d'un autre. C'est ici tout à fait raisonnable,
+     donc la réification est inutile.
+ \end{enumerate}
+ 
+\end{solution}
+
+
+
+\section{Algèbre et vues (4 pts)}
+
+On définit algébriquement les relations suivantes:
+
+\begin{itemize}
+  \item $V1 := Voisins$
+  \item $V2 := \rho_{codeDpt1 \to codeDpt2, codeDpt2 \to codeDpt1} (Voisins)$
+  \item $V3 := V1 \cup V2$
+\end{itemize}
+
+\begin{enumerate}
+  \item Quel est le résultat de $V1 \cap V2$\,?
+  \item Comment caractériseriez-vous le contenu  de $V3$\,?
+    \item Donnez la commande SQL de création de la vue $V3$.
+    \item Soit le département $d_1$  de code 
+      $c_1$. Quelle requête algébrique sur $V3$ donne les codes de \emph{tous} ses voisins
+      (expliquer). 
+\end{enumerate}
+
+
+\begin{solution}
+
+\begin{enumerate} 
+  \item Le résultat est vide\,!
+
+  \item Dans $V2$ on inverse la relation entre les codes de département. Donc, dans V2,
+     \texttt{codeDpt2  $<$ codeDpt1}). Du coup, dans V3, chaque relation de voisinage
+     entre deux départements est représentée dans les deux sens.
+  
+  \item On peut donc créer la vue suivante qui pourra nous simplifier les requêtes SQL
+     par la suite.
+     
+\begin{minted}{sql}
+create view V3 as
+select *
+from Voisins 
+union
+select codeDpt2 as codeDpt1, codeDpt1 as codeDpt2
+from Voisins
+\end{minted}
+
+   \item Avec V3, on n'a plus besoin de se soucier de l'ordre des codes de département.
+     On peut donc écrire soit\,:
+   
+   $$\pi_{codeDpt2} (\sigma_{codeDpt1=c_1} (\rm{V3}))$$   
+   ou
+   $$\pi_{codeDpt1} (\sigma_{codeDpt2=c_1} (\rm{V3}))$$
+   qui donneront le même résultat.
+
+\end{enumerate}
+
+\end{solution}
+
+
+\section{SQL (7 pts)}
+
+Exprimez en SQL les requêtes suivantes\,:
+
+\begin{enumerate}
+  \item Qui préside (prénom, nom) la région contenant le département 'Cantal'\,?
+  
+  \item Quelles villes sont à la fois préfecture de région et d'un 
+  département de plus de 100\,000 habitants
+  (donner le nom de la ville, du département, et l'intitulé de la région). 
+  
+  \item Quels départements d'une même région sont voisins l'un de l'autre\,?
+     Donnez l'intitulé de la région et les noms des deux départements.
+     Attention à bien prendre en compte la contrainte sur les clés
+     dans \texttt{Voisins}
+     
+% \item Donner les paires de régions ayant une frontière commune
+%   (nom des régions). 
+%   
+%   Aide\,: et si vous utilisiez la vue V3 définie précédemment\,?
+   
+   \item Quelles régions n'ont pas de département\,?
+   
+   \item Quelles personnes ne président ni région ni département\,?
+   
+   \item Donner, pour chaque région, le nombre de département et sa population totale (obtenue
+   par cumul de celle des départements)
+   
+   \item Dans la requête précédente, que se passe-t-il si une
+      région n'a pas de département\,? Comment réussir 
+      à afficher le nom de la région avec la valeur 0 pour le nombre
+      de départements dans ce cas\,?
+\end{enumerate}
+
+
+\begin{solution}
+
+
+\begin{enumerate}
+  \item 
+\begin{minted}{sql}
+select prénom, nom
+from Personne as p, Région as r, Département as d
+where d.nom='Cantal'
+and d.codeRégion = r.codeRégion
+and r.idPrésident = p.idPersonne
+\end{minted}
+
+  \item 
+\begin{minted}{sql}
+select r.préfecture as ville, r.intitulé, d.noms
+from  Région as r, Département as d
+where r.préfecture = d.préfecture
+and d.population > 10000
+\end{minted}
+
+
+  \item 
+\begin{minted}{sql}
+select r.intitulé, d1.nom as nomDpt1, d2.nom as nomDpt2, Voisins as v
+from  Région as r, Département as d1, Département as d2
+where r.codeRégion = d1.codeRégion
+and r.codeRégion = d2.codeRégion
+/* Pour prendre la relation 'voisins dans le bon sens' */
+and d1.codeDpt < d2.codeDpt
+and v.codeDpt1=d1.codeDpt
+and v.codeDpt2=d2.codeDpt
+\end{minted}
+
+\begin{comment}
+\item Solution avec la vue V3.
+\begin{minted}{sql}
+select r.intitulé, d1.nom as nomDpt1, d2.nom as nomDpt2
+from  Région as r1, Région as r2, Département as d1, Département as d2, V3 as v
+where d1.codeRégion = r1.codeRégion
+and d2.codeRégion = r2.codeRégion
+/* On sait que dans V3, on trouve chaque voisinage représenté dans les deux sens */
+and v.codeDpt1=d1.codeDpt
+and v.codeDpt2=d2.codeDpt
+and r1.codeRégion != r2.codeRégion
+\end{minted}
+
+Sinon, solution SQL complète avec un 'ou' logique
+\begin{minted}{sql}
+select r1.intitulé as nomRégion1, r2.intitulé as nomRégion2
+from  Région as r1, Région as r2, Département as d1, 
+          Département as d2, Voisins as v
+where d1.codeRégion = r1.codeRégion
+and d2.codeRégion = r2.codeRégion
+and ( 
+      (d1.codeDpt < d2.codeDpt and v.codeDpt1 = d1.codeDpt1 and v.codeDpt2=d2.codeDpt)
+    or
+      (d1.codeDpt > d2.codeDpt and v.codeDpt1 = d1.codeDpt2 and v.codeDpt2=d1.codeDpt)
+     )
+\end{minted}
+
+Seconde solution avec une union
+
+\begin{minted}{sql}
+select r1.intitulé as nomRégion1, r2.intitulé as nomRégion2
+from  Région as r1, Région as r2, 
+        Département as d1, Département as d2, Voisins as v
+where d1.codeRégion = r1.codeRégion
+and d2.codeRégion = r2.codeRégion
+and d1.codeDpt < d2.codeDpt 
+and v.codeDpt1 = d1.codeDpt1 
+and v.codeDpt2 = d2.codeDpt
+union
+select r1.intitulé as nomRégion1, r2.intitulé as nomRégion2
+from  Région as r1, Région as r2, 
+        Département as d1, Département as d2, Voisins as v
+where d1.codeRégion = r1.codeRégion
+and d2.codeRégion = r2.codeRégion
+and d1.codeDpt > d2.codeDpt 
+and v.codeDpt1 = d2.codeDpt1 
+and v.codeDpt2 = d1.codeDpt
+\end{minted}
+
+\end{comment}
+\item 
+\begin{minted}{sql}
+select *
+from  Région as r
+where not exists (select* from Département as d
+                  where r.codeRégion = d1.codeRégion)
+\end{minted}
+
+\item 
+\begin{minted}{sql}
+select *
+from  Personne as p
+where not exists (select* from Département as d
+                  where d.idPrésident = p.idPrésident)
+and not exists (select* from Région as d
+                  where r.idPrésident = p.idPrésident)
+\end{minted}
+
+\item 
+\begin{minted}{sql}
+select r.intitulé, count(d.codeDpt), ssum(population) as population
+from  Région as r, Département as d
+where r.codeRégion = d1.codeRégion
+group by r.codeRégion
+\end{minted}
+
+
+\item Si on veut prendre en compte les régions sans département, il faut
+faire une jointure externe
+\begin{minted}{sql}
+select r.intitulé, count(d.codeDpt), sum(population) as population
+from  Région as r left join Département as d on r.codeRégion = d1.codeRégion
+group by r.codeRégion
+\end{minted}
+Les régions sans département apparaissent dans le résultat de la jointure avec une
+valeur à \texttt{null} pour la population, et le \texttt{count} appliqué à \texttt{null}
+renvoie \texttt{0} (tandis que le \texttt{sum} appliqué à \texttt{null}
+renvoie \texttt{null}).
+
+\end{enumerate}
+\end{solution}
+
+
+\section{Modèle relationnel ({\bf 3 pts})}
+
+Soit les attributs TGVER avec les dépendances fonctionnelles suivantes\,:
+$TG \to E$; $R \to G$; $E \to G$.
+
+\begin{enumerate}
+  \item Quelle est la clé\,?
+  \item Quel est le résultat de l'algorithme de normalisation\,?
+  \item Ce résultat est-il en troisième forme normale\,?
+\end{enumerate}
+
+
+\begin{solution}
+Tous les attributs qui n'apparaissent pas à droite sont nécessairement
+dans la clé, donc T, V  et R. On vérifie aisément que TVR est une clé
+(la seule).
+
+On a donc les relations (TGE) et (RG), auxquelles il faut ajouter la clé
+(TVR). 
+
+Le résultat est en troisième forme normale, si l'on admet une petite extension\,:
+dans la relation TGE, la DF E -> G n'a pas la clé pour partie gauche. Mais on ne peut 
+pas décomposer plus sans perdre d'information. C'est un cas (très rare en pratique) où il
+faut admettre une définition de lea 3FN un peu plus compliquée que celle donnée en cours.
+
+
+\end{solution}
+\end{document}
+

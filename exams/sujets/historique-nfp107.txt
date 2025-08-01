@@ -81,7 +81,12 @@ Semestre 2
  2025
  ====
  
- Semestre 1: station de ski
+ Semestre 1: 
+    S1: station de ski
+    S2 : métro
+ 
+ Semestre 2: 
+   S1: les structures admin (correction en ligne)
  
  
   

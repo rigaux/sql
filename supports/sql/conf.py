@@ -77,6 +77,7 @@ def setup(app):
     app.add_config_value('soloperateur', '', True)
     app.add_config_value('solcourslangue', '', True)
     app.add_config_value('solcreche', '', True)
+    app.add_config_value('soladmin', '', True)
 
 relationnel='public'
 calcul='public'
@@ -85,14 +86,15 @@ calculTP2='public'
 algebre='public'
 algTP1='public'
 algTP2='public'
-concexos='private'
-schemas='private'
+concexos='public'
+schemas='public'
 transactions='private'
 correctionlabo='public'
 correctionoeuvre='public'
 soloperateur='public'
 solcourslangue='public'
 solcreche='public'
+soladmin='public'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

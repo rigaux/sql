@@ -25,7 +25,9 @@ all:  exam-blanc-janvier19.pdf exam-s1-fod-19.pdf exam-s2-fod-19.pdf exam-s1-pre
 				sujets/nfe106-automobiles.pdf \
 				sujets/nfp107-station-ski.pdf \
 				sujets/nfe106-produits-clients-achats.pdf \
-				sujets/nfe106-journal-citations-auteurs.pdf
+				sujets/nfe106-journal-citations-auteurs.pdf \
+				sujets/nfp107-struct-admin.pdf 
+
 
 
 %.pdf: %.tex

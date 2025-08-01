@@ -1,7 +1,11 @@
 \enteteExam{NFE106 -- Administration de bases de données}%
-{Examen 13 septembre 2024 -- session 2 -- 3h}%
+{Examen 12 juin 2025 -- session 1 -- 3h}%
 {Examen en présentiel -- Calculatrices autorisées -- Documents autorisés: 5 pages recto/verso de notes personnelles}%
 
+\textit{Pour chaque réponse, il est recommandé d'expliquer les hypothèses et de détailler
+suffisamment les calculs.}
+
+\bigskip
 Le sch\'ema de base de donn\'ees suivant sera utilis\'e pour l'ensemble du
 sujet. Il permet de gérer une base de données d'une base gérant une archive de publications scientifiques (20 ans de publications).
 
@@ -13,7 +17,6 @@ sujet. Il permet de gérer une base de données d'une base gérant une archive d
 \end{itemize}
 
 \smallskip
-
 
 On suppose que les paramètres de stockage sont les suivants\,:
 \begin{itemize}
@@ -42,14 +45,14 @@ Les adresses physiques sur disque occupent 10 octets, et un bloc 8\,192 octets.
     blocs) prise par chaque table, en supposant qu'on laisse un espace
     libre de 10\% et qu'il n'y a pas d'entête\,;
 \begin{solution}
-	L'espacece utile dans un bloc est de 7372 octets.\\
+	L'espace utile dans un bloc est de 7372 octets.\\
 	\begin{tabular}{rrrrr}
 \textbf{Table} & {\bf Taille tuples} 	& {\bf Nb tuples par bloc} & \textbf{Nb tuples} & {\bf Nb blocs}\\
 \hline
-Publication&	68	&	105	&	31 500 000	&	300 000	\\
-Journal&	81	&	88	&	26 400	&	300	\\
-Citation&	13	&	553	&	553 000 000	&	1 000 000	\\
-Auteur&	115	&	62	&	155 000 000	&	2 500 000	\\
+Publication&	61 	&	121	&	31 500 000	&	260 330	\\
+Journal&	74	&	100	&	26 400	&	264	\\
+Citation&	8	&	922	&	553 000 000	&	699 783	\\
+Auteur&	108	&	69	&	155 000 000	&	2 246376	\\
 \end{tabular}
 \end{solution}
 
@@ -68,7 +71,7 @@ Auteur&	115	&	62	&	155 000 000	&	2 500 000	\\
 	\item 1
 	\item 1
 	\item 1
-	\item $155 10^6 /(2\times 10^6) = 77.5$
+	\item $155 \times 10^6 /(2\times 10^6) = 77.5$ (soit le nombre moyen de publication par auteur)
 \end{itemize}
 \end{solution}
 
@@ -80,9 +83,9 @@ Auteur&	115	&	62	&	155 000 000	&	2 500 000	\\
 
 \begin{solution}
 \begin{itemize}
-	\item clé : 3+(1+4) + (1+1) + 10
-	\item ordre : 180
-	\item $log_{180}(1,55 \times 10^8) = 4$
+	\item clé : 4+4, et l'adresse occupe  10 octets, soit 18 octets par entrée
+	\item On met 410 entrées par bloc, donc l'ordre est 205
+	\item $\lceil log_{205}(1,55 \times 10^8)\rceil = 4$
 \end{itemize}
 \end{solution}
 
@@ -132,14 +135,18 @@ WHERE Titre like '%database%' AND Rang = 'A*';
 	\end{enumerate}
 	\begin{solution}
 		\begin{enumerate}
-			\item L'arbre  ne sert à rien, il faut un parcours séquentiel\,: 300 I/O
-			\item On peut utiliser l'arbre  sur la rang, mais il est très peu
+			\item L'arbre  ne sert à rien, il faut un parcours séquentiel\,: 264 I/O
+			\item On peut utiliser l'arbre  sur le rang, mais il est très peu
       efficace comme le montre le calcul suivant.
-      Il existe environ $26\, 400*7,644/100$ journaux de rang A*,
-      donc, au pire, à peu près autant de lectures de blocs (2000).
+      Il existe environ $26\, 400*7,644/100 = 2\,018$ journaux de rang A*,
+      donc, au pire, à peu près autant de lectures de blocs, ce qui
+	  dépasse largement la lecture séquentielle.
 
-      \item Si l'arbre est dense, on trouve les 2,000 journaux de rang A*
-         séquentiellement, soit $2000 / 88 \approx 23$ blocs
+      \item Si l'arbre est non dense, c'est que 
+	  le fichier Journal est trié sur le rang.
+	  On trouve alors les 2\,018 journaux de rang A*
+         séquentiellement, soit $\rceil 2\,018 / 74 \lceil = 27$ blocs
+		 (en ignorant le parcours de l'arbre).
 			\item Avec une table de hachage le résultat est à peu
          près le même (au parcours d'arbre près)
          puisque tous les journaux de rang A* sont dans le même fragment.
@@ -159,7 +166,7 @@ WHERE Titre like '%database%' AND Rang = 'A*';
 (2) J.IdJournal = P.IdJournal
 (3) Rang = 'A*'
 (4) Titre like '%Database%'
-(6) Date like '2018-%'
+(6) Date like '2025-%'
 \end{verbatim}
 
 \begin{solution}
@@ -168,7 +175,7 @@ SELECT IdJournal, COUNT(*)
 FROM Journal J, Publication P
 WHERE J.IdJournal = P.IdJournal
    AND J.Rang = 'A*' AND J.titre like '%Database%%'
-   AND P.Date like '2018-%'
+   AND P.Date like '2025-%'
 GROUP BY idjournal
 \end{minted}
 \end{solution}
@@ -200,7 +207,8 @@ $$H: r_1[x] r_2[x] r_1[y] w_2[y] r_3[x] w_1[x] r_3[y] C_1 C_2 C_3$$
    \`a partir de $H$?  (2~points)
 
    \item Quelle transaction pourrait effectuer une lecture avec la clause
-     \texttt{for update} et quel en serait l'effet\,?
+     \texttt{for update} (ce qui pose un verrou exclusif) 
+	 et quel en serait l'effet\,?
 \end{enumerate}
 
 \begin{solution}

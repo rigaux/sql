@@ -7,13 +7,13 @@ Historique des sujets
 
 Examen blanc 20 janvier 2020. 
 
-   Blanc: (EN LIGNE) Fournisseurs, produits et notes de magasines
+   Blanc: (EN LIGNE) Fournisseurs, produits et notes de magazines
    S1: (EN LIGNE) albums, artistes, abonnés
    S2: marques automobiles (pas terrible)
    
 Semestre 2:
    S1: (EN LIGNE) livres, emprunt, personne
-   S2: (EN LIGNE) produits, clients, achats
+   S2:  produits, clients, achats
    
 Examen juin 22: 
   S1: (EN LIGNE) index sur les animaux, concurrence sur Personne / Avis / Question
@@ -21,9 +21,14 @@ Examen juin 22:
   
 Examen juin 23: 
   S1: (EN LIGNE) livres, emprunt, personne 
-  S2: (EN LIGNE) produits, clients, achats
+  S2: produits, clients, achats
   
 Examen juin 2024:
 
-  S1: (EN LIGNE) produits, clients, achats
+  S1: produits, clients, achats
   S2: journal-citations-auteurs
+  
+  Examen juin 2025:
+ 
+  S1: journal-citations-auteurs
+  
