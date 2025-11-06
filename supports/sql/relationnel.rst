@@ -1426,7 +1426,7 @@ Exercices
 .. _Ex-relationnel-8: 
 .. admonition:: Exercice `Ex-relationnel-8`_:  analyse des DF et clés
 
-    Soit une relation ``R(A, B, C, D, E, F, H, I, J)`` et les dépendances fonctionnelles:
+    Soit une relation ``R(A, B, C, D, E, F, G, H, I, J)`` et les dépendances fonctionnelles:
     
       - :math:`A,B \to C`
       - :math:`A  \to D, E`

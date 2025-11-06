@@ -4,7 +4,6 @@
 SQL, langage déclaratif
 #######################
 
-
 Il est courant en informatique de disposer de plusieurs langages pour résoudre un même
 problème. Ces langages ont leur propre syntaxe, mais surtout ils peuvent s'appuyer
 sur des approches de programmation très différentes. Vous avez peut-être rencontré
@@ -1305,7 +1304,6 @@ Quiz
 ====
 
 
-
 .. eqt:: negation1
 
     La quantification apporte un nouveau moyen d'expression. Comment le qualifier?
@@ -1320,12 +1318,45 @@ Quiz
 
     L'utilisation de la quantification existentielle implique que
 
-    A) :eqt:`C` On ne veut pas utiliser la variable liée (celle du bloc imbriqué)
-       pour construire le nuplet résultat
-    #) :eqt:`C` Le résultat de la requête imbriquée ne doit contenir qu'un seul nuplet
+    A) :eqt:`C` La variable liée (celle du bloc imbriqué)
+       ne peut pas être utilisée pour construire le nuplet résultat
+    #) :eqt:`I` Le résultat de la requête imbriquée doit contenir exactement un nuplet
        pour que la clause ``exists`` soit considérée comme vraie
     #) :eqt:`I` Les conditions sur la variable liée sont toujours indépendantes de celles sur les variables libres
 
+
+.. eqt:: piege1
+
+    Interprétons la requête
+
+    .. code-block:: sql
+
+         select * from Logement as l
+         where exists (select * from Activité as a, Logement as l
+                           where a.codeLogement = l.code
+                           anda.activité='Ski')
+
+    Quel est le résultat :
+    
+    A) :eqt:`I` Les logements où on fait du ski
+    #) :eqt:`C` Tous les logements, à condition qu'il en existe au moins un où on fait du ski
+    #) :eqt:`I` Les logements ayant les mêmes activités qu'un logement où on fait du ski
+
+.. eqt:: piege2
+
+    Interprétons la requête
+
+    .. code-block:: sql
+
+         select * from Logement as l
+         where  exists (select * from Activité as a
+                           where a.activité='Ski')
+
+    Quel est le résultat :
+
+    A) :eqt:`I` Les logements où on fait du ski
+    #) :eqt:`C` Tous les logements, à condition il n'en existe au moins où on fait du ski
+    #) :eqt:`I` Les logements ayant les mêmes activités qu'un logement où on fait du ski
 
 .. eqt:: negation3
 
@@ -1347,21 +1378,6 @@ Quiz
 
     A) :eqt:`I` Oui
     #) :eqt:`C` Non
-
-.. eqt:: negation5
-
-    Interprétons la requête
-
-    .. code-block:: sql
-
-         select * from Logement as l
-         where not exists (select * from Activité as a
-                           where a.activité='Ski')
-
-    A) :eqt:`I` Les logements où on fait du ski
-    #) :eqt:`C` Tous les logements, à condition qu'il n'en existe aucun où on fait du ski
-    #) :eqt:`I` Les logements où on ne fait pas de ski
-    #) :eqt:`I` Les logements tels qu'il en existe un autre où on fait du ski
 
 
     Vous pouvez exprimer la requête SQL pour chacune.

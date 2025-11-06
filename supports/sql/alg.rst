@@ -1684,14 +1684,35 @@ Voici le contenu de la table *Propriétaire*.
     À vous de faire le travail: donnez les expressions algébriques équivalentes aux requêtes
     SQL ci-dessous.
 
-    Vous n'avez pas droit aux conjonctions ou disjonctions dans la formule de sélection.
-    Utilisez la composition et l'union.
-
+    Par exemple, voici une requête sous forme déclarative
+    
     .. code-block:: sql
 
         select t.code, t.nom, t.type
         from Logement as t
         where t.lieu = 'Corse'
+
+    L'expression algébrique correspondante est la suivante :
+    
+    .. math::
+        
+           \pi_{code,nom,type}(\sigma_{lieu='Corse'} (Logement))
+
+    Notez qu'on peut inverser la sélection et la projection, à condition
+    de conserver, au moment de la projection, le lieu sur lequel
+    porte la sélection. Ce qui donnerait:
+    
+    .. math::
+        
+           \sigma_{lieu='Corse'} (\pi_{code,nom,type, lieu}(Logement))
+     
+    En général, il est plus simple d'effectuer les sélections
+    d'abord.
+    
+    Vous n'avez pas droit aux conjonctions ou disjonctions dans la formule de sélection.
+    Utilisez la composition et l'union.
+
+    .. code-block:: sql
 
         select t.code, t.nom
         from Logement as t
@@ -1725,15 +1746,11 @@ Voici le contenu de la table *Propriétaire*.
 
         .. admonition:: Correction
 
-            - :math:`\pi_{code,nom,type} (\sigma_{lieu='Corse'} (Logement))`
             - :math:`\pi_{code,nom} (\sigma_{lieu='Alpes'} (\sigma_{type='Hotel'} (Logement))) \cup \pi_{code,nom} (\sigma_{capacite\geq 100} (\sigma_{type='Hotel'} (Logement)))`
             - :math:`\pi_{code,nom} (Logement \Join_{code=codeLogement} \sigma_{codeActivit\acute{e}='Ski'} (Activit\acute{e}))`
             - :math:`\pi_{nom1, nom2} (\rho_{nom \to nom1,type \to type1 } (Logement) \Join_{type1=type2} \rho_{nom \to nom2, type \to type2} (Logement)))`
             - :math:`\pi_{pr\acute{e}nom,nom} ( (Voyageur \Join_{idVoyageur=idVoyageur} S\acute{e}jour) \Join_{code=codeLogement} \sigma_{lieu='Alpes'} (Logement))`
             - :math:`\pi_{nom} (Logement) -  (\pi_{nom} (Logement \Join_{code=codeLogement} \sigma_{codeActivit\acute{e}='Ski'} (Activit\acute{e}))`
-
-
-
 
 .. _Ex-alg-3:
 .. admonition:: Exercice `Ex-alg-3`_: de l'algèbre à SQL algébrique
@@ -1766,7 +1783,7 @@ Voici le contenu de la table *Propriétaire*.
      - :math:`\pi_{nom, nomI,no,surface}(\rho_{id\to idI, nom \to nomI} (Immeuble) \Join_{idI=idImmeuble} (Appart \Join_{id=idAppart} Personne))`
      - :math:`\rho_{id \to idAppart} (\pi_{id} (Appart)) - \pi_{idAppart}(Personne)`
 
-   .. ifconfig:: algTP1 in ('public')
+   .. ifconfig:: algebre in ('public')
 
       .. admonition:: Correction
 
@@ -1859,7 +1876,7 @@ Voici le contenu de la table *Propriétaire*.
    Si vous avez des soucis pour utiliser les lettres grecques, il est possible de les noter en toutes lettres:
    PI, RHO, SIGMA, CROSS, JOIN, UNION, MINUS.
 
-   .. ifconfig:: algTP2 in ('public')
+   .. ifconfig:: algebre in ('public')
 
 
       - Appartements du Koudalou
@@ -2002,7 +2019,7 @@ Voici le contenu de la table *Propriétaire*.
         \sigma_{A=C \land C > D \land E =F} (T_1 \times T_2)
 
 
-   .. ifconfig:: algTP2 in ('public')
+   .. ifconfig:: algebre in ('public')
 
         .. math::
 

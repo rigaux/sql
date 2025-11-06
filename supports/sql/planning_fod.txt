@@ -1,48 +1,35 @@
-Toutes les visios auront lieu le mercredi à 18h30. Elles seront consacrées aux Quiz et exercices
-25 septembre
+Le cours se déroule en mode asyncrhone: vous pouvez suivre les visios, lire le cours, faire les exercices et les quiz quand vous le souhaitez. Il est TRES fortement recommandé de travailler régulièrement en suivant le plan d'avancement proposé.
+Des visios sont planifiées pour répondre aux questions, étudier la solution des exercices et corriger les devoirs.
+
+Visio du 24 septembre
 Séance d'introduction et de présentation du cours
-
-2 octobre
-Le modèle relationnel (1)
-
 9 octobre
-Le modèle relationnel (2)
-
-16 octobre
-SQL déclaratif (1)
-
-23 octobre
-SQL déclaratif (2)
-Rendu du premier devoir
-
-30 octobre
-SQL algébrique (1)
-
-6 novembre
-SQL algébrique (2)
-
-13 novembre
-Récapitulatif SQL et rendu du second devoir
-
-20 novembre
-Conception (1)
-
-27 novembre
-Conception (2)
-
-4 décembre
-Schémas relationnels
-
-11 décembre
-Procédures et déclencheurs
-Rendu du devoir sur la conception
-
-18 décembre
-Transactions
-
-8 janvier
-Etude de cas
-
-15 janvier
-Révision (examen blanc)
-
+Fin du chapitre modèle relationnel
+14 octobre
+Date limite de remise du premier devoir
+15 octobre
+Visio consacrée aux quiz et exercices du chapitre sur le modèle relationnel
+31 octobre
+Fin du chapitre SQL déclaratif
+5 novembre
+Visio consacrée à SQL déclaratif
+14 novembre
+Fin du chapitre "SQL algébrique"
+21 novembre
+Fin du chapitre de récapitulation sur SQL
+25 novembre
+Rendu du second devoir
+26 novembre
+Regroupement visio
+5 décembre
+Fin du chapitre conception
+17 décembre
+Regroupement visio
+20 décembre
+Fin du chapitre schémas relationnels
+9 janvier
+Rendu du troisième devoir
+16 janvier
+Fin du chapitre "Procédures et déclencheurs"
+21 janvier
+Visio de révision
