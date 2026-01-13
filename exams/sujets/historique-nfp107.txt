@@ -8,6 +8,7 @@ Examen 2020: les œuvres et les experts
 Examen 22: les opérateurs téléphoniques
 Examen 23: les cours à distance
 Examen 24: les crèches
+Examen 25: régions administratives
 
 2019
 ====
@@ -88,6 +89,3 @@ Semestre 2
  Semestre 2: 
    S1: les structures admin (correction en ligne)
    S2: les concerts
- 
- 
-  

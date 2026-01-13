@@ -1,6 +1,6 @@
 \enteteExam{NFP 107 -- Systèmes de gestion de bases de données - Durée 2h30}%
-{Examen FOAD session 2}%
-{Documents autorisés\,: 10 pages recto-verso de notes manuscrites ou imprimées}%
+{Examen FOAD session 1 21 janvier 2026}%
+{Documents autorisés\,: 10 pages de notes manuscrites ou imprimées}%
 
 Essayons de modéliser un système  qui permet d'emprunter 
 un réseau de transport en comptabilisant les passages. Le réseau
@@ -69,17 +69,17 @@ Les jours sont répresentés simplement sous la forme 'jj/mm/aaaa', par exemple 
        ne détermine pas la ligne.
   
  \item Pour \texttt{DétailLigne}.
-\begin{verbatim}
-     create table DétailLigne (id integer not null,
-     							idLigne integer not null,
-                               idStation integer not null, 
-                               idStationSuivante integer,
-                               primarykey (id),
-                               foreign key (idLigne) references Ligne(id),
-                               foreign key (idStation) references Station(id),
-                               foreign key (idStationSuivante) references Station(id)
-                              )
-\end{verbatim}     
+\begin{minted}{sql}
+create table DétailLigne (id integer not null,
+                          idLigne integer not null,
+                          idStation integer not null, 
+                          idStationSuivante integer,
+                          primarykey (id),
+                          foreign key (idLigne) references Ligne(id),
+                          foreign key (idStation) references Station(id),
+                           foreign key (idStationSuivante) references Station(id)
+              )
+\end{minted}     
 \item Le numéro de mobile est une clé candidate\,: on ajoute la contrainte \texttt{unique(noMobile)}
  
 \item La tête d'une station est caractérisée par le fait que l'id de la station n'est pas une 
@@ -108,7 +108,7 @@ Sur le schéma donné dans l'énoncé, exprimez en SQL les requêtes suivantes\,
   \item Donnez la liste des trajets de l'abonné Philippe Rigaux, en affichant le jour, le nom
      de la station de départ et le nom de la station d'arrivée
   
-  \item Quels sont les stations où il est possible de passer de la ligne 'Rouge' à la ligne 'Jaune'
+  \item Quelles sont les stations où il est possible de passer de la ligne 'Rouge' à la ligne 'Jaune'
       (ce sont des intitulés)\,?
   
   \item Quelles sont les stations de la ligne 'Rouge' qui ne permettent aucun changement?
@@ -117,7 +117,7 @@ Sur le schéma donné dans l'énoncé, exprimez en SQL les requêtes suivantes\,
 
    \item Quel est le terminus de la ligne 'Rouge'\,?
    
-   \item Donnez, pour chaque ligne, l'intitulé et le nombre de stations
+   \item Donnez, pour chaque ligne, l'intitulé et le nombre de stations.
    \item Donnez les noms des abonnés qui  ont effectué plus de 4 trajets le 14 janvier 2023.
 \end{enumerate}
 
@@ -127,18 +127,18 @@ Sur le schéma donné dans l'énoncé, exprimez en SQL les requêtes suivantes\,
 \begin{enumerate}
 
  \item 
-\begin{verbatim}
+\begin{minted}{sql}
 select t.jour, s1.npom as nomDépart, s2.nom as nomArivée 
 from Trajet as t, Station as s1, Station as s2, Abonné as a
-where a.prénom='Philippe' and a.nom='Rigaux
+where a.prénom='Philippe' and a.nom='Rigaux'
 and a.id = t.idAbonné
 and s1.id = t.idStationDépart
 and s2.id = t.idStationArrivée
-\end{verbatim}     
+\end{minted}     
 
   \item Quels sont les stations où il est possible de passer de la ligne 'Jaune'  à la ligne 'Rouge'
      (ce sont des intitulés)\,?
-\begin{verbatim}
+\begin{minted}{sql}
 select s.nom
 from Station as s, Ligne as l1, Ligne as l2, DétailLigne as d1, DétailLigne as d2
 where s.id = d1.idStation
@@ -147,10 +147,10 @@ and d1.idLigne=l1.id
 and d2.idLigne=l2.id
 and l1.intitulé='Jaune'
 and l2.intitulé='Rouge'
-\end{verbatim}    
+\end{minted}    
 
   \item Quelles sont les stations de la ligne 'Rouge' qui ne permettent aucun changement?
-\begin{verbatim}
+\begin{minted}{sql}
 select s.nom
 from Station as s, Ligne as l1,  DétailLigne as d1
 where not exists (
@@ -161,9 +161,9 @@ where not exists (
 ans s.id = d1.idStation
 and d1.idLigne=l1.id
 and l1.intitulé='Rouge'
-\end{verbatim} 
+\end{minted} 
    \item Quelle est la station de tête de la ligne 'Rouge'\,?
-\begin{verbatim}
+\begin{minted}{sql}
 select s.nom
 from Station as s, Ligne as l1,  DétailLigne as d1
 where s.id not in (
@@ -173,9 +173,9 @@ where s.id not in (
 and s.id = d1.idStation
 and d1.idLigne=l1.id
 and l1.intitulé='Rouge'
-\end{verbatim} 
+\end{minted} 
    \item Quel est le terminus de la ligne 'Rouge'\,?
-\begin{verbatim}
+\begin{minted}{sql}
 select s.nom
 from Station as s, Ligne as l1,  DétailLigne as d1
 where d1.idStationSuivante is null
@@ -183,27 +183,30 @@ and
  s.id = d1.idStation
 and d1.idLigne=l1.id
 and l1.intitulé='Rouge'
-\end{verbatim} 
+\end{minted} 
    \item Donnez, pour chaque ligne, l'intitulé et le nombre de stations
-\begin{verbatim}
+\begin{minted}{sql}
 select l.intitulé, count(*) as nbStations
 from Station as s, Ligne as l1,  DétailLigne as d1
 where s.id = d1.idStation
 and d1.idLigne=l1.id
 group by l.id, l.intitulé
-\end{verbatim} 
+\end{minted} 
    \item Donnez les noms des abonnés qui  ont effectué au moins 4 trajets le 14 janvier 2023.
-\end{enumerate}
-\begin{verbatim}
-select a.nom, count(*) as nbTrajets
-from Abonné as a, Trajet as t
-where a.id = t.idAbonné
-and jour='14/01/2023'
-group by a.id, a.nom
-having count(*) >= 4
-\end{verbatim}
-\end{solution}
 
+\begin{minted}{sql}
+   select a.nom, count(*) as nbTrajets
+   from Abonné as a, Trajet as t
+   where a.id = t.idAbonné
+   and jour='14/01/2023'
+   group by a.id, a.nom
+   having count(*) >= 4
+\end{minted}
+   
+\end{enumerate}
+
+
+\end{solution}
 \subsection*{Algèbre (2 pts)}
 
 Donnez les expressions algébriques pour les requêtes suivantes
@@ -213,15 +216,33 @@ Donnez les expressions algébriques pour les requêtes suivantes
   \item Les abonnés qui n'ont pas voyagé le 14 janvier 2023
 \end{enumerate}
 
-\subsection*{Procédures (3 pts)}
+
+\subsection*{Vues (3 pts)}
+
+La table \texttt{DétailLigne} ne représente la séquence
+des stations que dans un seul sens. 
+Par exemple, \texttt{DétailLigne} contient la
+séquence des stations entre Balard et Créteil,
+mais pas celle des stations entre Créteil et Balard.
+Or, il est bien entendu
+possible de parcourir une ligne dans les deux sens.
 
 \begin{enumerate}
-
-  \item Rappeler quelles sont les trois phases d'utilisation d'un curseur.
-  \item Expliquer ce que signifie l'immuabilité d'un curseur.
-  \item Que représente le 'A' dans les propriétés ACID des transactions, et quelle est sa signification\,?
- 
+  \item Créer une vue \texttt{BiDirection} montrant 
+      la séquence des stations d'une ligne dans les 
+	  deux sens possibles. 
+  \item En déduire la requête qui donne les
+     deux stations immédiatement connexes à la station République,
+	 sur la ligne \texttt{'Ligne 8'} (c'est son intitulé). 
+	
 \end{enumerate}
+
+%\subsection*{Procédures (2 pts)}
+
+%\begin{enumerate}
+%  \item Rappeler quelles sont les trois phases d'utilisation d'un curseur.
+%  \item Expliquer ce que signifie l'immuabilité d'un curseur.
+%\end{enumerate}
 
 \end{document}
 

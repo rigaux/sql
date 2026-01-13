@@ -1333,13 +1333,13 @@ universelle s'exprime par une double négation.
 En pratique, on se ramène toujours à la seconde forme
 pour exprimer des requêtes. Prenons un exemple : quels sont les
 clients dont *tous* les séjours ont eu lieu en Corse? On
-l'exprime également par 'quels sont clients pour
+l'exprime également par "quels sont clients pour
 lesquels *il n'existe pas* de séjour dans un lieu
-qui soit différent de la  Corse. Ce qui donne l'expression suivante :
+qui soit différent de la  Corse". Ce qui donne l'expression suivante :
 
 .. math::
 
-    \pi_{idVoyageur} (\text{Séjour})  - \pi_{idVoyageur}(\sigma_{lieu \not='Corse'}(\text{Séjour}))
+    \pi_{idVoyageur} (\text{Séjour})  - \pi_{idVoyageur}(\sigma_{lieu \not='Corse'}(\text{Logement} \Join_{code=codeLogement}\text{Séjour}))
 
 Pour finir, voici une des requêtes les plus complexes, la
 *division*. L'énoncé (en français) est simple,
@@ -1362,7 +1362,7 @@ logements où ils ne sont pas allés (voir plus haut) :
 
 .. math::
 
-    \pi_{idVoyageur}(\text{Voyageur}) \times \pi_{code}(\text{Logement}))   - \pi_{idVoyageur, idLogement} (\text{Séjour})
+    (\pi_{idVoyageur}(\text{Voyageur}) \times \pi_{code}(\text{Logement}))   - \pi_{idVoyageur, idLogement} (\text{Séjour})
 
 On obtient un ensemble :math:`B`. Il reste à prendre tous les clients,
 sauf ceux qui sont dans :math:`B`.

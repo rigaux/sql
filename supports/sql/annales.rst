@@ -2126,7 +2126,7 @@ Modèle relationnel (3 pts)
 ==========================
 
 Soit les attributs TGVER avec les dépendances fonctionnelles suivantes:
-``TG \to E``; ``R \to G``; ``E \to G``.
+:math:`TG \to E`;  :math:`R \to G`; :math:`E \to G`.
 
 
   - Quelle est la clé?
