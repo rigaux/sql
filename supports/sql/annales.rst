@@ -99,19 +99,19 @@ Relation T
   - Pour quelle requête le résultat contient-il plus d’un nuplet?  Attention: souvenez-vous que l'opérateur
     de projection élimine les doublons.
 
-      #.  :math:`\pi_{A,C} (\sigma_{B=0}(R))`
-      #. :math:`\pi_{A,C} (\sigma_{D=0}(R))`
-      #. :math:`\pi_{A,C} (\sigma_{B=0}(R) \cup \sigma_{D=0}(R))`
-      #.  :math:`\pi_{A,C} (\sigma_{A=C}(R)`
+      #.  :math:`\pi_{A,C (\sigma_{B=0(R))`
+      #. :math:`\pi_{A,C (\sigma_{D=0(R))`
+      #. :math:`\pi_{A,C (\sigma_{B=0(R) \cup \sigma_{D=0(R))`
+      #.  :math:`\pi_{A,C (\sigma_{A=C(R)`
 
-  - Combien de nuplets retourne la requête :math:`\pi_{A,B,E} (S \Join_{A=A \land B=B} R)`?
+  - Combien de nuplets retourne la requête :math:`\pi_{A,B,E (S \Join_{A=A \land B=B R)`?
 
        #. 2
        #. 3
        #. 4
        #. 5
 
-  - Combien de nuplets retourne la requête :math:`R \Join_{A=A \land B=B} (S \cup T)`?
+  - Combien de nuplets retourne la requête :math:`R \Join_{A=A \land B=B (S \cup T)`?
 
        #. 3
        #. 5
@@ -276,8 +276,8 @@ Algèbre
 
 Relation T
   - La requête renvoie également 3 nuplets
-  - :math:`\pi_{nom, prenom} (Personne \underset{id=idSpectateur}{\bowtie} \sigma_{prix > 500} (BILLET))`
-  - :math:`\pi_{id} (Personne) - \pi_{idArtiste} (Spectacle)`
+  - :math:`\pi_{nom, prenom (Personne \underset{id=idSpectateur{\bowtie \sigma_{prix > 500 (BILLET))`
+  - :math:`\pi_{id (Personne) - \pi_{idArtiste (Spectacle)`
 
 
 Transactions
@@ -373,7 +373,7 @@ Algèbre (3 points)
 
 .. math::
 
-      \pi_{idMatch} (But \Join_{idMatch=id} \sigma_{scoreEquipe1=0 \land scoreEquipe2=0} (Match))
+      \pi_{idMatch (But \Join_{idMatch=id \sigma_{scoreEquipe1=0 \land scoreEquipe2=0 (Match))
 
 Programmation et transactions (3 points)
 ========================================
@@ -500,21 +500,21 @@ Algèbre
 
 .. math::
 
-     \pi_{nom} (\sigma_{age > 30} (Joueur) \underset{id=idJoueur}{\bowtie} \sigma_{minute = 1}(But) )
+     \pi_{nom (\sigma_{age > 30 (Joueur) \underset{id=idJoueur{\bowtie \sigma_{minute = 1(But) )
 
 Joueurs français:
 
 
 .. math::
 
-     A = \sigma_{pays='France'}(Joueur \underset{j.idEquipe = e.id}{\bowtie} Equipe)
+     A = \sigma_{pays='France'(Joueur \underset{j.idEquipe = e.id{\bowtie Equipe)
 
 Joueurs français qui ont marqué au moins un but :
 
 
 .. math::
 
-     B = \sigma_{pays='France'}(But\;b \underset{b.idJoueur = j.id}{\bowtie} Joueur\;j) \underset{j.idEquipe = e.id}{\bowtie} Equipe\;e
+     B = \sigma_{pays='France'(But\;b \underset{b.idJoueur = j.id{\bowtie Joueur\;j) \underset{j.idEquipe = e.id{\bowtie Equipe\;e
 
 Résultat:
 
@@ -680,15 +680,15 @@ Algèbre (3 points)
 
     .. math::
           
-          \pi_{id} (Chercheur) - \pi_{idChercheur} (R\acute{e}dige)
+          \pi_{id (Chercheur) - \pi_{idChercheur (R\acute{edige)
    
   .. ifconfig:: correctionlabo in ('public')  
 
 
       .. admonition:: Correction
          
-          - :math:`\pi_{nom}(\pi_{id} (\sigma_{nom = 'Vertigo'} (Equipe)) \underset{id=idEquipe}{\bowtie} Chercheur )`
-          - :math:`\pi_{titre} ( (  (\sigma_{annee \geq 2015} (Article) \underset{ref=refArticle}{\bowtie} Redige) \underset{idChercheur=id}{\bowtie} Chercheur ) \underset{idEquipe=id}{\bowtie} \sigma_{nom = 'ROC'} Equipe)`
+          - :math:`\pi_{nom(\pi_{id (\sigma_{nom = 'Vertigo' (Equipe)) \underset{id=idEquipe{\bowtie Chercheur )`
+          - :math:`\pi_{titre ( (  (\sigma_{annee \geq 2015 (Article) \underset{ref=refArticle{\bowtie Redige) \underset{idChercheur=id{\bowtie Chercheur ) \underset{idEquipe=id{\bowtie \sigma_{nom = 'ROC' Equipe)`
           - L'expression recherche les chercheurs qui n'ont rien publié.
 
             .. code-block:: sql
@@ -921,7 +921,7 @@ une sélection doit s'apppliquer directement à une table.
 
 .. math::
 
-     \sigma_{A=C \land A=D \land E =F \land C > B}  (T_1 \times T_2)
+     \sigma_{A=C \land A=D \land E =F \land C > B  (T_1 \times T_2)
 
 
 .. ifconfig:: correctionoeuvre in ('public')
@@ -930,7 +930,7 @@ une sélection doit s'apppliquer directement à une table.
     
         .. math::
         
-             \sigma_{A=C \land C > B} (T_1) \Join_{A=D} \sigma_{E = F}(T_2)
+             \sigma_{A=C \land C > B (T_1) \Join_{A=D \sigma_{E = F(T_2)
 
 Transactions (2 points)
 =======================
@@ -1184,13 +1184,13 @@ Algèbre relationnelle (3 pts)
     
     .. math:: 
 
-   	    \pi_{nom, prenom}(\sigma_{ville='Paris'}(Client) \underset{id=idClient}{\bowtie} (\sigma_{duree > 24}(Souscription) \underset{idForfait=id}{\bowtie} \sigma_{nom='\rm{Audace'}} (Forfait))
+   	    \pi_{nom, prenom(\sigma_{ville='Paris'(Client) \underset{id=idClient{\bowtie (\sigma_{duree > 24(Souscription) \underset{idForfait=id{\bowtie \sigma_{nom='\rm{Audace' (Forfait))
 
  - Même question pour l'expression suivante
  
    .. math:: 
    
-	  \pi_{c.id, c.nom, c.prenom} (Client) - \pi_{c.id, c.nom, c.prenom} (Client \underset{c.id=s.idClient}{\bowtie} \sigma_{duree \geq 48} (Souscription))
+	  \pi_{c.id, c.nom, c.prenom (Client) - \pi_{c.id, c.nom, c.prenom (Client \underset{c.id=s.idClient{\bowtie \sigma_{duree \geq 48 (Souscription))
 
    .. ifconfig:: soloperateur in ('public')
 
@@ -1476,8 +1476,8 @@ Donnez les expressions algébriques pour les requêtes suivantes :
 
 	.. admonition:: Correction
 
-		- :math:`\pi_{nom} (\sigma_{idProfesseur=idEtudiant} \Join_{idProfesseur=id} Personne)`
-		- :math:`\pi_{id} (Personne) -  \pi_{idEtudiant} (\sigma_{langue='IT'} (Cours))`
+		- :math:`\pi_{nom (\sigma_{idProfesseur=idEtudiant (Cours) \Join_{idProfesseur=id Personne)`
+		- :math:`\pi_{id (Personne) -  \pi_{idEtudiant (\sigma_{langue='IT' (Cours))`
 
 
 Valeurs nulles, vues (2 pts)
@@ -1772,10 +1772,10 @@ Donnez l'expression algébrique pour les requêtes 1 et  5 de la section précé
 	.. admonition:: Correction
 
 		Pour la première on procède en 3 étapes, en définissant d'abord :math:`R_1` et :math:`R_2`
-			- :math:`R_1 := \pi_{nomEnfant,idCreche,nomCreche} ((\rho_{nom \to nomEnfant}(Personne)  \Join_{idPersonne=idEnfant} Inscription)`
-			- :math:`R_2 := \pi_{idCreche,nomCreche} (\sigma_{ville='Paris'}(Cr\grave{e}che))`
-			- :math:`R_1 \Join_{idCreche=idCreche} R_2`
-			- :math:`\pi_{idEnfant,idCreche} (\sigma_{annee=2024}(Demande)) - \pi_{idEnfant,idCreche} (\sigma_{annee=2024} (Cr\acute{e}che))`
+			- :math:`R_1 := \pi_{nomEnfant,idCreche,nomCreche ((\rho_{nom \to nomEnfant(Personne)  \Join_{idPersonne=idEnfant Inscription)`
+			- :math:`R_2 := \pi_{idCreche,nomCreche (\sigma_{ville='Paris'(Cr\grave{eche))`
+			- :math:`R_1 \Join_{idCreche=idCreche R_2`
+			- :math:`\pi_{idEnfant,idCreche (\sigma_{annee=2024(Demande)) - \pi_{idEnfant,idCreche (\sigma_{annee=2024 (Cr\acute{eche))`
 		
 
 Programmation (3 points)
@@ -1859,7 +1859,7 @@ Compréhension du schéma (6 pts)
 
 		.. admonition:: Correction
 
-			- Standard. Voici pour la table  Voisins}:
+			- Standard. Voici pour la table  Voisins:
 
 			.. code-block:: sql
 
@@ -1871,7 +1871,7 @@ Compréhension du schéma (6 pts)
 					foreign key (idDpt2) references Département (idDpt)
 					)
 
- - On ajoute la commande suivante au schéma de la table  Voisins}
+ - On ajoute la commande suivante au schéma de la table  Voisins
 
 	.. code-block:: sql
 
@@ -1930,13 +1930,13 @@ Compréhension du schéma (6 pts)
 
 		.. admonition:: Correction
 
-			La dépendandce additionnelle indique qu'une personne ne
+			La dépendance additionnelle indique qu'une personne ne
 			peut diriger qu'un seul département. L'identifiant d'une
 			personne pourrait donc servir à identifier un département. 
 			Ce ne serait cependant pas un très bon choix car la personne
 			dirigeant un département est amenée à changer régulièrement.
 			En pratique, mieux vont donc déclarer dans le schéma
-			une contrainte d'unicité sur l'idenfifiant ``idPrésident``
+			une contrainte d'unicité sur l'identifiant ``idPrésident``
 			dans la table ``Département`` (c'est également une clé étrangère).
 
 Dans toute la suite de l'examen, on travaille sur 
@@ -1950,7 +1950,7 @@ Algèbre et vues (4 pts)
 On définit algébriquement les relations suivantes:
 
   - :math:`V_1 := Voisins``
-  - :math:`V_2 := \rho_{codeDpt1 \to codeDpt2, codeDpt2 \to codeDpt1} (Voisins)`
+  - :math:`V_2 := \rho_{codeDpt1 \to codeDpt2, codeDpt2 \to codeDpt1 (Voisins)`
   - :math:`V_3 := V1 \cup V2`
 
   Répondez aux questions suivantes:
@@ -1992,12 +1992,12 @@ On définit algébriquement les relations suivantes:
 
 			  .. math::
 				
-					\pi_{codeDpt2} (\sigma_{codeDpt1=d_1} (\rm{V_3}))
+					\pi_{codeDpt2 (\sigma_{codeDpt1=d_1 (\rm{V_3))
 			  soit
 			  
 			  .. math::
 
-					\pi_{codeDpt1} (\sigma_{codeDpt2=d_1} (\rm{V_3}))
+					\pi_{codeDpt1 (\sigma_{codeDpt2=d_1 (\rm{V_3))
 
 			  qui donneront le même résultat.
 
@@ -2067,7 +2067,7 @@ Exprimez en SQL les requêtes suivantes:
 				(d1.codeDpt < d2.codeDpt and v.codeDpt1 = d1.codeDpt1 and v.codeDpt2=d2.codeDpt)
 			    or
 				/* Cas d'un voisin de code inférieur au Cantal */
-				(d1.codeDpt > d2.codeDpt and v.codeDpt1 = d1.codeDpt2 and v.codeDpt2=d1.codeDpt)
+				(d1.codeDpt > d2.codeDpt and v.codeDpt1 = d2.codeDpt and v.codeDpt2=d1.codeDpt)
 				)
 
 		.. code-block:: sql
@@ -2149,3 +2149,244 @@ Soit les attributs TGVER avec les dépendances fonctionnelles suivantes:
 		dans la relation TGE, la DF E -> G n'a pas la clé pour partie gauche. Mais on ne peut 
 		pas décomposer plus sans perdre d'information. C'est un cas (très rare en pratique) où il
 		faut admettre une définition de la 3FN un peu plus compliquée que celle donnée en cours.
+
+		
+******************************
+Examen session 1, janvier 2026
+******************************
+
+Essayons de modéliser un système  qui permet d'emprunter 
+un réseau de transport en comptabilisant les passages. Le réseau
+est organisé en lignes desservant plusieurs stations, 
+chaque station peut être commune
+à plusieurs lignes (ce qui permet des changements). 
+Les abonnés ont une carte
+qu'ils valident à l'entrée dans une station et à la sortie 
+dans une autre, ce qui
+constitue un trajet. 
+
+
+Un concepteur propose le schéma suivant; 
+les clés primaires sont en gras.
+
+
+  - Abonné(**id**, nom, prénom, noMobile)
+  - Ligne (**id**, intitulé)
+  - Station(**id**, nom)
+  - DétailLigne(**id**, idLigne, idStation, idStationSuivante)
+  - Trajet(**id**, jour, idAbonné, idStationDépart, idStationArrivée)
+
+
+Les jours sont répresentés simplement sous la forme 'jj/mm/aaaa', 
+par exemple '14/01/2023'.
+
+Conception du schéma (8 pts)
+============================
+
+
+  - Quelles sont les clés étrangères?
+  - Aurait-on pu choisir comme clé de la table Trajet
+    la paire d'attributs ``(idAbonné, idStationDépart)``? 
+    Donnez vos arguments pour ou contre
+    un tel changement.   
+  - Le schéma permet-il de savoir par quelles lignes est 
+    passé un abonné pendant un trajet?  
+  - Donnez les commandes SQL de création des tables ``Ligne``, ``Station``
+    et ``DétailLigne``. Notez que dans l'esprit du concepteur, 
+    tous les attributs de ``DétailLigne`` 
+    sont  not null.
+  - Indiquez comment exprimer la contrainte suivante:
+    deux abonnés différents ne peuvent pas avoir le même
+    numéro de mobile.
+  - Qu'est ce qui caractérise la tête d'une ligne (sa première station) et son terminus? 
+    Aide: réflechissez aux valeurs (ou absences de valeur) possibles de l'attribut idStationSuivante
+    dans la table ``DétailLigne``.
+  - Quel est d'après vous le schéma entité-association 
+    correspondant à ce schéma relationnel?    
+  - On ajoute des informations relatives aux conducteurs, chaque conducteur étant 
+    affecté chaque jour à une ligne. On identifie les dépendances fonctionnelles suivantes:
+    
+    .. math::
+		
+         matriculeConducteur \to nom, pr\acute{e}nom \\
+         matriculeConducteur, jour \to idLigne
+      
+  - Quelles sont les modifications apportées au schéma relationnel?
+
+.. ifconfig:: solmetro in ('public')
+
+   .. admonition:: Correction
+
+        - L'attribut ``idAbonné``, ``idLigne`` et  les trois attributs ``idStation``
+        - Non, cela reviendrait à imposer qu'un abonné parte d'une station une seule fois, et ce n'est 
+          vraiment pas raisonnable...
+        - Non, on connaît les stations de départ et d'arrivée pour un trajet, mais la station
+          ne détermine pas la ligne.
+        - Pour ``DétailLigne``.
+        
+          .. code-block:: sql
+
+              create table DétailLigne (id integer not null,
+                               idLigne integer not null,
+                               idStation integer not null, 
+                               idStationSuivante integer not null,
+                               primarykey (id),
+                               foreign key (idLigne) references Ligne(id),
+                               foreign key (idStation) references Station(id),
+                               foreign key (idStationSuivante) references Station(id)
+               )
+     
+        - Le numéro de mobile est une clé candidate: on ajoute la contrainte ``unique(noMobile)`` 
+        - La tête d'une station est caractérisée par le fait que l'id de la station n'est pas une 
+          des ``idStationSuivante`` pour la même ligne; le terminus est une station dans DétailLigne
+          est la valeur de ``idStationSuivante``  qui n'est
+          pas ``idStation`` pour la même ligne.
+
+        - La figure :numref:`fig-reseau` montre le schéma E/A.
+  
+           .. _fig-reseau:
+           .. figure:: ../figures/exam-26-reseau.png
+             :width: 80%
+             :align: center
+   
+             Le schéma E/A après rétro-conception
+
+       - On ajoute une table ``Conducteur`` et une table 
+         ``Affectation(matricule,jour,idLigne)``
+         dont la clé est la paire ``(matricule,jour)``  
+
+SQL (6 pts)
+===========
+
+Sur le schéma donné dans l'énoncé, exprimez en SQL les requêtes suivantes:
+
+  - Donnez la liste des trajets de l'abonné Philippe Rigaux, en affichant le jour, le nom
+    de la station de départ et le nom de la station d'arrivée
+  - Quelles sont les stations où il est possible de passer de la ligne 'Rouge' à la ligne 'Jaune'
+    (ce sont des intitulés)?
+  - Quelles sont les stations de la ligne 'Rouge' qui ne permettent aucun changement?
+  - Quelle est la station de tête de la ligne 'Rouge'?
+  - Donnez, pour chaque ligne, l'intitulé et le nombre de stations.
+  - Donnez les noms des abonnés qui  ont effectué plus de 4 trajets le 21 janvier 2026.
+
+    .. ifconfig:: solmetro in ('public')
+
+       .. admonition:: Correction
+
+          .. code-block:: sql
+
+             select t.jour, s1.npom as nomDépart, s2.nom as nomArivée 
+             from Trajet as t, Station as s1, Station as s2, Abonné as a
+             where a.prénom='Philippe' and a.nom='Rigaux'
+             and a.id = t.idAbonné
+             and s1.id = t.idStationDépart
+             and s2.id = t.idStationArrivée
+
+            select s.nom
+            from Station as s, Ligne as l1, Ligne as l2, DétailLigne as d1, DétailLigne as d2
+            where s.id = d1.idStation
+            and s.id= d2.idStation
+            and d1.idLigne=l1.id
+            and d2.idLigne=l2.id
+            and l1.intitulé='Jaune'
+            and l2.intitulé='Rouge'
+
+            select s.nom
+            from Station as s, Ligne as l1,  DétailLigne as d1
+            where not exists (
+                 select * 
+                 from DétailLigne as d2
+                 where d2.idStation = s.id
+                 and d2.idLigne != l1.idLigne)
+             and s.id = d1.idStation
+            and d1.idLigne=l1.id
+            and l1.intitulé='Rouge'
+            
+            select s.nom
+            from Station as s, Ligne as l1,  DétailLigne as d1
+            where s.id not in (
+                  select d2.idStationSuivante
+                  from DétailLigne as d2
+                  where d2.idLigne = l1.id)
+            and s.id = d1.idStation
+            and d1.idLigne=l1.id
+            and l1.intitulé='Rouge'
+
+            select l.intitulé, count(*) as nbStations
+            from Station as s, Ligne as l1,  DétailLigne as d1
+            where s.id = d1.idStation
+            and d1.idLigne=l1.id
+            group by l.id, l.intitulé
+
+            select a.nom, count(*) as nbTrajets
+            from Abonné as a, Trajet as t
+            where a.id = t.idAbonné
+            and jour='21/01/2026'
+            group by a.id, a.nom
+            having count(*) >= 4
+
+Algèbre (2 pts)
+===============
+
+Donnez les expressions algébriques pour les requêtes suivantes
+
+
+  - Les stations qui ne sont sur aucune ligne 
+  - Les abonnés qui n'ont pas voyagé le 21 janvier 2026
+
+     .. ifconfig:: solmetro in ('public')
+       
+       .. admonition:: Correction
+
+      #.  :math:`\pi_{idStation} (Station) - \pi{idStation} (DetailLigne)`
+      #.  :math:`\pi_{pr\acute{e}nom, nom} (Abonn\acute{e} \Join_{id=id} (\pi_{id} (Abonn\acute{e}) - \pi{idAbonn\acute{e}} (\sigma_{jour='21/01/2026'}(Trajet)))`
+ 
+Vues (4 pts)
+============
+
+La table ``DétailLigne`` ne représente la séquence
+des stations que dans un seul sens. 
+Par exemple, ``DétailLigne`` contient la
+séquence des stations entre Balard et Créteil,
+mais pas celle des stations entre Créteil et Balard.
+Or, il est bien entendu
+possible de parcourir une ligne dans les deux sens.
+
+
+  - Créer une vue ``BiDirection`` montrant 
+    la séquence des stations d'une ligne dans les 
+    deux sens possibles. 
+  - En déduire la requête qui donne les
+    deux stations immédiatement connexes à la station République,
+	sur la ligne 'Ligne 8' (c'est son intitulé). 
+	
+
+     .. ifconfig:: solmetro in ('public')
+       
+       .. admonition:: Correction
+          
+          La vue est l'union des séquences de stations
+          dans ``DétailLigne`` et des séquences inversées.
+
+          .. code-block:: sql
+
+              create view  BiDirection as 
+                select * from DetailLigne
+                   union
+                select id, idLigne, idStation as idStationSuivante, 
+                     idStationSuivante as idStation
+                from DetailLigne
+     
+          On interroge directement la vue sans avoir à se soucier
+          du sens de parcours.
+
+          .. code-block:: sql
+
+               select s2.nom
+               from Ligne as l, BiDirection as b, 
+                    Station as s, Station as s2
+               where b.idLigne = l.id
+               and  s.id = b.idStation
+               and  s2.id = b.idStationSuivante
+               and   l.intitulé = 'Ligne 8'
+               and s.nom = 'République'

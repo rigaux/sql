@@ -78,6 +78,7 @@ def setup(app):
     app.add_config_value('solcourslangue', '', True)
     app.add_config_value('solcreche', '', True)
     app.add_config_value('soladmin', '', True)
+    app.add_config_value('solmetro', '', True)
 
 relationnel='public'
 calcul='public'
@@ -95,7 +96,7 @@ soloperateur='public'
 solcourslangue='public'
 solcreche='public'
 soladmin='public'
-
+solmetro='public'
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

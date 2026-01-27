@@ -1,5 +1,5 @@
 \enteteExam{NFP 107 -- Systèmes de gestion de bases de données - Durée 2h30}%
-{Examen FOAD session 1 21 janvier 2026}%
+{Examen FOAD session 1 -- 21 janvier 2026}%
 {Documents autorisés\,: 10 pages de notes manuscrites ou imprimées}%
 
 Essayons de modéliser un système  qui permet d'emprunter 
@@ -35,13 +35,14 @@ Les jours sont répresentés simplement sous la forme 'jj/mm/aaaa', par exemple 
   \item Le schéma permet-il de savoir par quelles lignes est passé un abonné pendant un trajet\,?
   
  \item Donnez les commandes SQL de création des tables \texttt{Ligne}, \texttt{Station}
- et \texttt{DétailLigne}. Notez que dans l'esprit du concepteur, l'attribut \texttt{idStationSuivante}
-  peut être à  \texttt{null}.
+ et \texttt{DétailLigne}. Notez que dans l'esprit du concepteur, 
+ tous les attributs de \texttt{DétailLigne} 
+ sont  \texttt{not null}.
   
   \item Indiquez comment exprimer la contrainte suivante\,:
          deux abonnés différents ne peuvent pas avoir le même
              numéro de mobile.
-             
+            
   \item Qu'est ce qui caractérise la tête d'une ligne (sa première station) et son terminus\,? 
       Aide\,: réflechissez aux valeurs (ou absences de valeur) possibles de l'attribut \texttt{idStationSuivante}
       dans la table \texttt{DétailLigne}.
@@ -73,7 +74,7 @@ Les jours sont répresentés simplement sous la forme 'jj/mm/aaaa', par exemple 
 create table DétailLigne (id integer not null,
                           idLigne integer not null,
                           idStation integer not null, 
-                          idStationSuivante integer,
+                          idStationSuivante integer not null,
                           primarykey (id),
                           foreign key (idLigne) references Ligne(id),
                           foreign key (idStation) references Station(id),
@@ -83,8 +84,9 @@ create table DétailLigne (id integer not null,
 \item Le numéro de mobile est une clé candidate\,: on ajoute la contrainte \texttt{unique(noMobile)}
  
 \item La tête d'une station est caractérisée par le fait que l'id de la station n'est pas une 
-   des \texttt{idStationSuivante} pour la même ligne\,; le terminus est une station dans \texttt{détailLigne}
-   pour laquelle \texttt{idStationSuivante}  est à \texttt{null}
+   des \texttt{idStationSuivante} pour la même ligne\,; le terminus est une station dans \texttt{DétailLigne}
+   est la valeur de \texttt{idStationSuivante}  qui n'est
+   pas \texttt{idStation} pour la même ligne.
 
  \item La figure~\ref{reseau} montre le schéma E/A.
    \begin{figure}[htb]  
@@ -100,7 +102,7 @@ create table DétailLigne (id integer not null,
 \end{solution}
 
 
-\subsection*{SQL (7 pts)}
+\subsection*{SQL (6 pts)}
 
 Sur le schéma donné dans l'énoncé, exprimez en SQL les requêtes suivantes\,:
 
@@ -115,7 +117,7 @@ Sur le schéma donné dans l'énoncé, exprimez en SQL les requêtes suivantes\,
  
    \item Quelle est la station de tête de la ligne 'Rouge'\,?
 
-   \item Quel est le terminus de la ligne 'Rouge'\,?
+%   \item Quel est le terminus de la ligne 'Rouge'\,?
    
    \item Donnez, pour chaque ligne, l'intitulé et le nombre de stations.
    \item Donnez les noms des abonnés qui  ont effectué plus de 4 trajets le 14 janvier 2023.
@@ -174,16 +176,6 @@ and s.id = d1.idStation
 and d1.idLigne=l1.id
 and l1.intitulé='Rouge'
 \end{minted} 
-   \item Quel est le terminus de la ligne 'Rouge'\,?
-\begin{minted}{sql}
-select s.nom
-from Station as s, Ligne as l1,  DétailLigne as d1
-where d1.idStationSuivante is null
-and
- s.id = d1.idStation
-and d1.idLigne=l1.id
-and l1.intitulé='Rouge'
-\end{minted} 
    \item Donnez, pour chaque ligne, l'intitulé et le nombre de stations
 \begin{minted}{sql}
 select l.intitulé, count(*) as nbStations
@@ -217,7 +209,7 @@ Donnez les expressions algébriques pour les requêtes suivantes
 \end{enumerate}
 
 
-\subsection*{Vues (3 pts)}
+\subsection*{Vues (4 pts)}
 
 La table \texttt{DétailLigne} ne représente la séquence
 des stations que dans un seul sens. 
@@ -236,6 +228,38 @@ possible de parcourir une ligne dans les deux sens.
 	 sur la ligne \texttt{'Ligne 8'} (c'est son intitulé). 
 	
 \end{enumerate}
+
+\begin{solution}
+\begin{enumerate}
+ \item La vue est l'union des séquences de stations
+     dans \texttt{DétailLigne} et des séquences inversées.
+\begin{minted}{sql}
+create view  BiDirection as 
+  select * from DetailLigne
+    union
+  select id, idLigne, idStation as idStationSuivante, 
+       idStationSuivante as idStation
+  from DetailLigne
+\end{minted}     
+
+ \item On interroge directement la vue sans avoir à se soucier
+ du sens de parcours.
+ 
+
+ \begin{minted}{sql}
+    select s2.nom
+    from Ligne as l, BiDirection as b, 
+            Station as s, Station as s2
+    where b.idLigne = l.id
+    and  s.id = b.idStation
+    and  s2.id = b.idStationSuivante
+    and   l.intitulé = 'Ligne 8'
+    and s.nom = 'République'
+ \end{minted}
+
+  \end{enumerate}
+\end{solution}
+
 
 %\subsection*{Procédures (2 pts)}
 
