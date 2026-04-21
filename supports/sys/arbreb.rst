@@ -1359,7 +1359,7 @@ Exercices
 .. _ex-construction:
 .. admonition:: Exercice `ex-construction`_: construction d'un arbre B
 
-    Soit la liste des départements suivants, à lire de gauche à droite et de bas en haut.
+    Soit la liste des départements suivants, à lire de gauche à droite et de haut  en bas.
     
     .. code-block:: text
 
@@ -1425,7 +1425,7 @@ Exercices
       - Si on suppose qu'une lecture coûte 10 ms, quel est le coût moyen d'une recherche
         d'un enregistrement par clé unique, avec index et sans index dans le pire des cas?
 
-  .. ifconfig:: index in ('public')
+  .. ifconfig:: devoir1 in ('public')
 
       .. admonition:: Correction
       
@@ -1517,7 +1517,7 @@ Exercices
     on constate qu'il a deux niveaux. Quel est l'ordre maximal compatible avec cette constatation?
     Et l'ordre minimal?
 
-  .. ifconfig:: index in ('public')
+  .. ifconfig:: devoir1 in ('public')
 
       .. admonition:: Correction
  
@@ -1671,7 +1671,7 @@ Exercices
         delete from R where idR like 'Z%'
 
 
-  .. ifconfig:: index in ('public')
+  .. ifconfig:: devoir1 in ('public')
 
       .. admonition:: Correction
 

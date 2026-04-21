@@ -66,6 +66,7 @@ def setup(app):
     app.add_config_value('stock', '', True)
     app.add_config_value('index', '', True)
     app.add_config_value('hachage', '', True)
+    app.add_config_value('devoir1', '', True)
     app.add_config_value('opalgo', '', True)
     app.add_config_value('transactions', '', True)
     app.add_config_value('optim', '', True)
@@ -77,9 +78,10 @@ def setup(app):
     app.add_config_value('annales_2023', '', True)
 
 latex = 'private'
-stock='private'
-index='private'
-hachage='private'
+stock='public'
+index='public'
+hachage='public'
+devoir1='private'
 opalgo='private'
 optim='private'
 transactions='private'

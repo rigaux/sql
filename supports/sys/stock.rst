@@ -1880,7 +1880,7 @@ Exercices
        
    Vous pouvez prendre les valeurs du :numref:`tbl-memoires` pour les calculs.
     
-   .. ifconfig:: stock in ('public')
+   .. ifconfig:: devoir1 in ('public')
 
       .. admonition:: Correction
       
@@ -2059,7 +2059,7 @@ Exercices
                        
    Prenez l'hypothèse que la stratégie de remplacement est de type LRU.
    
-   .. ifconfig:: stock in ('public')
+   .. ifconfig:: devoir1 in ('public')
 
       .. admonition:: Correction
       
