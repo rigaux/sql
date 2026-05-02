@@ -123,8 +123,8 @@ S1: Transactions
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: la notion de transaction <http://sys.bdpedia.fr/files/sltransactions.pdf>`_
-    * `Fichier de commandes pour tester les transactions sous MySQL <http://sys.bdpedia.fr/files/commandes-transactions.sql>`_    
+    * `Diapositives: la notion de transaction <./files/sltransactions.pdf>`_
+    * `Fichier de commandes pour tester les transactions sous MySQL <./files/commandes-transactions.sql>`_    
     * `Vidéo sur la notion de transaction <https://mediaserver.lecnam.net/videos/transactions/>`_ 
     
 Une *transaction* est une séquence d'opérations de lecture ou de mise
@@ -685,7 +685,7 @@ S2: Pratique des transactions
 
     * `Lien vers l'application de travaux pratiques en ligne  <http://deptfod.cnam.fr/bd/tp/transactions/>`_
     * `Vidéo expliquant le fonctionnement de l'application "transactions",  <https://mediaserver.lecnam.net/videos/demonstration-de-lapplication-transactions/>`_ 
-    * `Fichier de commandes pour tester les transactions sous un SGBD (MySQL, Oracle) <http://sys.bdpedia.fr/files/commandes-transactions.sql>`_    
+    * `Fichier de commandes pour tester les transactions sous un SGBD (MySQL, Oracle) <./files/commandes-transactions.sql>`_    
 
 Pour cette session, nous vous proposons une mise en pratique consistant à constater directement les notions de base
 des transactions en interagissant avec un système relationnel. Vous avez deux possibilités: effectuer chez vous
@@ -1177,7 +1177,7 @@ S3: effets indésirables des transactions concurrentes
  
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: anomalies transactionnelles <http://sys.bdpedia.fr/files/sltransanomalies.pdf>`_
+    * `Diapositives: anomalies transactionnelles <./files/sltransanomalies.pdf>`_
     * `Vidéo sur les anomalies transactionnelles <https://mediaserver.lecnam.net/videos/anomalies-transactionnelles/>`_ 
 
 Pour illustrer les problèmes potentiels en cas
@@ -1719,7 +1719,7 @@ S4: choisir un niveau d'isolation
 
 .. admonition::  Supports complémentaires:
 
-   * `Diapositives: niveaux d'isolation <http://sys.bdpedia.fr/files/slisolation.pdf>`_
+   * `Diapositives: niveaux d'isolation <./files/slisolation.pdf>`_
    * `Vidéo sur les niveaux d'isolation <https://mediaserver.lecnam.net/videos/les-niveaux-disolation/>`_ 
      
 Du point du programmeur d'application, l'objectif du contrôle de concurrence
