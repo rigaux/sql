@@ -29,7 +29,7 @@ S1: Expression des besoins, conception
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: conception <http://sql.bdpedia.fr/files/slcas-conception.pdf>`_
+    * `Diapositives: conception <./files/slcas-conception.pdf>`_
     * `Vidéo sur la conception <https://mediaserver.lecnam.net/videos/messagerie-conception/>`_ 
 
 
@@ -217,7 +217,7 @@ S2: schéma de la base
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: schéma de la base <http://sql.bdpedia.fr/files/slcas-schema.pdf>`_
+    * `Diapositives: schéma de la base <./files/slcas-schema.pdf>`_
     * `Vidéo sur le schéma de la base <https://mediaserver.lecnam.net/videos/messagerie-schema/>`_ 
 
 
@@ -421,7 +421,7 @@ S3: requêtes
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: requêtes <http://sql.bdpedia.fr/files/slcas-requetes.pdf>`_
+    * `Diapositives: requêtes <./files/slcas-requetes.pdf>`_
     * `Vidéo sur les requêtes <https://mediaserver.lecnam.net/videos/messagerie-les-requetes/>`_ 
 
 
@@ -691,10 +691,10 @@ S4: Programmation (Python)
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: programmation (Python)  <http://sql.bdpedia.fr/files/slcas-python.pdf>`_
+    * `Diapositives: programmation (Python)  <./files/slcas-python.pdf>`_
     * `Vidéo sur la programmation Python <https://mediaserver.lecnam.net/videos/messagerie-programmation/>`_ 
-    * `Un programme Python de lecture des données <http://sql.bdpedia.fr/files/requete_curseur.py>`_ 
-    * `Une transaction Python  <http://sql.bdpedia.fr/files/envoi_messages.py>`_ 
+    * `Un programme Python de lecture des données <./files/requete_curseur.py>`_ 
+    * `Une transaction Python  <./files/envoi_messages.py>`_ 
 
 Voici maintenant quelques exemples de programmes accédant à notre base de données. 
 Nous reprenons notre hypothèse d'une base nommée 
@@ -927,7 +927,7 @@ S5: aspects transactionnels
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: transactions  <http://sql.bdpedia.fr/files/slcas-transaction.pdf>`_
+    * `Diapositives: transactions  <./files/slcas-transaction.pdf>`_
     * `Vidéo sur les transactions <https://mediaserver.lecnam.net/videos/messagerie-les-transactions/>`_ 
 
 
@@ -1141,7 +1141,7 @@ S6: *mapping* objet-relationnel
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: Mapping objet-relationnel  <http://sql.bdpedia.fr/files/slcas-orm.pdf>`_
+    * `Diapositives: Mapping objet-relationnel  <./files/slcas-orm.pdf>`_
     * `Vidéo sur le mapping objet-relationnel  <https://mediaserver.lecnam.net/videos/mapping-objet-relationnel/>`_ 
 
 
@@ -1399,7 +1399,7 @@ comprend un composant ORM sur lequel nous allons bien sûr nous concentrer.
 
 .. admonition::  Supports complémentaires:
 
-    * `Le code de l'application Django <http://sql.bdpedia.fr/files/monappli.zip>`_
+    * `Le code de l'application Django <./files/monappli.zip>`_
 
 Préliminaires
 =============

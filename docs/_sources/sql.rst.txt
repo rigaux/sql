@@ -29,7 +29,7 @@ S1: le bloc ``select-from-where``
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: le bloc `select-from-where <http://sql.bdpedia.fr/files/slblocsql.pdf>`_
+    * `Diapositives: le bloc `select-from-where <./files/slblocsql.pdf>`_
     * `Vidéo sur le bloc `select-from-where <https://mediaserver.lecnam.net/videos/le-bloc-select-from-where/>`_ 
 
 Dans cette session, nous étudions les compléments à la forme de base d'une requête SQL, 
@@ -1453,7 +1453,7 @@ S3: Agrégats
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: agrégats <http://sql.bdpedia.fr/files/slagregats.pdf>`_
+    * `Diapositives: agrégats <./files/slagregats.pdf>`_
     * `Vidéo sur les agrégats <https://mediaserver.lecnam.net/videos/agregats/>`_ 
 
 

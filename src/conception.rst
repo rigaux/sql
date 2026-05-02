@@ -35,7 +35,7 @@ S1: La normalisation
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: la normalisation <http://sql.bdpedia.fr/files/slnorm.pdf>`_
+    * `Diapositives: la normalisation <./files/slnorm.pdf>`_
     * `Vidéo sur la normalisation <https://mediaserver.lecnam.net/videos/la-normalisation/>`_ 
 
 Etant donné un schéma et ses dépendances fonctionnelles, nous savons
@@ -450,7 +450,7 @@ S2: Le modèle Entité-Association
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: le modèle entité / association <http://sql.bdpedia.fr/files/slea.pdf>`_
+    * `Diapositives: le modèle entité / association <./files/slea.pdf>`_
     * `Vidéo sur le modèle entité / association <https://mediaserver.lecnam.net/videos/le-modele-entiteassociation/>`_ 
 
 
@@ -1119,7 +1119,7 @@ S3: Concepts avancés
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: concepts avancés de modélisation <http://sql.bdpedia.fr/files/slea-avance.pdf>`_
+    * `Diapositives: concepts avancés de modélisation <./files/slea-avance.pdf>`_
     * `Vidéo sur les concepts avancés de modélisation / association <https://mediaserver.lecnam.net/videos/ea-avance/>`_ 
 
 Cette session présente quelques extensions courantes aux principes de base du modèle
@@ -1421,7 +1421,7 @@ S4: Du schéma E/A au schéma relationnel
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: de la modélisation EA au schéma relationnel <http://sql.bdpedia.fr/files/slpassage.pdf>`_
+    * `Diapositives: de la modélisation EA au schéma relationnel <./files/slpassage.pdf>`_
     * `Vidéo sur le passage de la modélisation EA au schéma relationnel / association <https://mediaserver.lecnam.net/videos/regles-de-passage-et-normalisation/>`_ 
 
 
@@ -1920,7 +1920,7 @@ S5: Un peu de rétro-ingénierie
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: rétroingénierie <http://sql.bdpedia.fr/files/slretroing.pdf>`_
+    * `Diapositives: rétroingénierie <./files/slretroing.pdf>`_
     * `Vidéo sur la rétro ingénierie <https://mediaserver.lecnam.net/videos/retroingenierie/>`_ 
 
 

@@ -6,10 +6,10 @@ sous le titre de "Modèles et langages",
 la première partie d'un cours complet consacré aux bases de données relationnelles.
 
   - La version en ligne du présent support est accessible
-    à http://sql.bdpedia.fr, la version imprimable (PDF) est disponible à
-    http://sql.bdpedia.fr/files/cbd-sql.pdf, et la version pour liseuse / tablette
+    à ., la version imprimable (PDF) est disponible à
+    ./files/cbd-sql.pdf, et la version pour liseuse / tablette
     est disponible à
-    http://sql.bdpedia.fr/files/cbd-sql.epub (format EPUB).
+    ./files/cbd-sql.epub (format EPUB).
   - La seconde partie, intitulée "Aspects système", est accessible
     à http://sys.bdpedia.fr (HTML), http://sys.bdpedia.fr/files/cbd-sys.pdf (PDF)
     ou http://sys.bdpedia.fr/files/cbd-sys.epub (EPUB).
@@ -120,7 +120,7 @@ S1: notions de base
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: notions de base <http://sql.bdpedia.fr/files/slintro-sql.pdf>`_
+    * `Diapositives: notions de base <./files/slintro-sql.pdf>`_
     * `Vidéo sur les notions de base <https://mediaserver.lecnam.net/videos/introduction-modeles-et-langages/>`_
 
 Entrons directement dans le vif du sujet avec un premier tour d'horizon

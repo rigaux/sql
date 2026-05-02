@@ -33,7 +33,7 @@ S1: Création d'un schéma SQL
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: spécification d'un schéma relationnel <http://sql.bdpedia.fr/files/slddl.pdf>`_
+    * `Diapositives: spécification d'un schéma relationnel <./files/slddl.pdf>`_
     * `Vidéo sur la spécification d'un schéma relationnel / association <https://mediaserver.lecnam.net/videos/schema-relationnel/>`_ 
 
 
@@ -749,7 +749,7 @@ S3: Les vues
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: les vues <http://sql.bdpedia.fr/files/slvues.pdf>`_
+    * `Diapositives: les vues <./files/slvues.pdf>`_
     * `Vidéo sur les vues <https://mediaserver.lecnam.net/videos/les-vues/>`_ 
 
 Une requête SQL produit toujours une table. Cela suggère la possibilité

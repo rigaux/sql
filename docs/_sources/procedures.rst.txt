@@ -55,7 +55,7 @@ S1. Procédures stockées
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: PL/SQL <http://sql.bdpedia.fr/files/slplsql.pdf>`_
+    * `Diapositives: PL/SQL <./files/slplsql.pdf>`_
     * `Vidéo sur PL/SQL <https://mediaserver.lecnam.net/videos/principe-de-programmation-et-plsql/>`_ 
 
 
@@ -919,7 +919,7 @@ S2. Les curseurs
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: les curseurs <http://sql.bdpedia.fr/files/slcurseurs.pdf>`_
+    * `Diapositives: les curseurs <./files/slcurseurs.pdf>`_
     * `Vidéo sur les curseurs <https://mediaserver.lecnam.net/videos/les-curseurs/>`_ 
 
 
@@ -1379,7 +1379,7 @@ S3. Les déclencheurs
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: les déclencheurs <http://sql.bdpedia.fr/files/sltriggers.pdf>`_
+    * `Diapositives: les déclencheurs <./files/sltriggers.pdf>`_
     * `Vidéo sur les déclencheurs <https://mediaserver.lecnam.net/videos/les-triggers//>`_ 
 
 Le mécanisme de *triggers* (que l'on peut traduire par "déclencheur" ou "réflexe") 
@@ -1604,10 +1604,10 @@ Atelier: JDBC (optionnel)
 
 .. admonition::  Supports complémentaires:
 
-    * `Le driver MySQL <http://sql.bdpedia.fr/files/mysql-connector-java-5.1.15-bin.jar>`_ Vous pouvez récupérer
+    * `Le driver MySQL <./files/mysql-connector-java-5.1.15-bin.jar>`_ Vous pouvez récupérer
       une version plus récentes sur le site d'Oracle ou de MySQL. Pour les *drivers* des autres SGBD, à vous de trouver,
       ils sont tous en accès libre.
-    * `Le programme de lecture des voyageurs <http://sql.bdpedia.fr/files/ListeVoyageurs.java>`_ 
+    * `Le programme de lecture des voyageurs <./files/ListeVoyageurs.java>`_ 
 
 
 JDBC (acronyme qui signifie probablement "Java Database

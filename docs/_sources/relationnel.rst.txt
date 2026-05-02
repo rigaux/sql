@@ -36,7 +36,7 @@ S1: relations et nuplets
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: modèle relationnel <http://sql.bdpedia.fr/files/slmodrel.pdf>`_
+    * `Diapositives: modèle relationnel <./files/slmodrel.pdf>`_
     * `Vidéo sur le modèle relationnel <https://par.moodle.lecnam.net/mod/ubicast/view.php?id=624892/>`_ 
 
 
@@ -299,7 +299,7 @@ S2: clés, dépendances et normalisation
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: clés/dépendances <http://sql.bdpedia.fr/files/slcles.pdf>`_
+    * `Diapositives: clés/dépendances <./files/slcles.pdf>`_
     * `Vidéo sur les clés/dépendances  <https://mediaserver.lecnam.net/videos/cle-et-3fn/>`_ 
 
 
@@ -909,13 +909,13 @@ S3: deux exemples de schémas normalisés
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: deux schémas normalisés <http://sql.bdpedia.fr/files/slexemples.pdf>`_
+    * `Diapositives: deux schémas normalisés <./files/slexemples.pdf>`_
     * `Vidéo sur les schémas normalisés <https://mediaserver.lecnam.net/videos/exemple-de-deux-bases-normalisees/>`_ 
-    * `Schéma de la base des voyageurs <http://sql.bdpedia.fr/files/SchemaVoyageurs.sql>`_ et 
-      `base des voyageurs <http://sql.bdpedia.fr/files/BaseVoyageurs.sql>`_ (si vous souhaitez les installer dans
+    * `Schéma de la base des voyageurs <./files/SchemaVoyageurs.sql>`_ et 
+      `base des voyageurs <./files/BaseVoyageurs.sql>`_ (si vous souhaitez les installer dans
       votre environnement).
-    * `Schéma de la base des films <http://sql.bdpedia.fr/files/SchemaFilms.sql>`_ et 
-      `base des films <http://sql.bdpedia.fr/files/BaseFilms.sql>`_ (si vous souhaitez les installer dans
+    * `Schéma de la base des films <./files/SchemaFilms.sql>`_ et 
+      `base des films <./files/BaseFilms.sql>`_ (si vous souhaitez les installer dans
       votre environnement).
 
 Dans l'ensemble du cours nous allons utiliser quelques bases de données, petites, simples,

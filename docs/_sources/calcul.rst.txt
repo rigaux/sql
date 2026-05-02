@@ -543,7 +543,7 @@ S2: SQL conjonctif
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: SQL conjonctif <http://sql.bdpedia.fr/files/slsqlconjonctif.pdf>`_
+    * `Diapositives: SQL conjonctif <./files/slsqlconjonctif.pdf>`_
     * `Vidéo sur la première partie de SQL <https://mediaserver.lecnam.net/videos/sql-conjonctif/>`_
 
 
@@ -1081,7 +1081,7 @@ S3: Quantificateurs et négation
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: SQL: quantificateurs et négation <http://sql.bdpedia.fr/files/slnegation.pdf>`_
+    * `Diapositives: SQL: quantificateurs et négation <./files/slnegation.pdf>`_
     * `Vidéo sur les quantificateurs et la négation dans SQL <https://mediaserver.lecnam.net/videos/quantificateurs-et-negation/>`_
 
 
@@ -1398,7 +1398,7 @@ S4: Conception d'une requête SQL
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: SQL: construction d'une requête <http://sql.bdpedia.fr/files/slconstrsql.pdf>`_
+    * `Diapositives: SQL: construction d'une requête <./files/slconstrsql.pdf>`_
     * `Vidéo sur la construction d'une requête SQL  <https://mediaserver.lecnam.net/videos/construction-dune-requete-sql/>`_
 
 

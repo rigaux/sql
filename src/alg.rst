@@ -43,7 +43,7 @@ S1: Les opérateurs de l'algèbre
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: les opérateurs de l'algèbre <http://sql.bdpedia.fr/files/slalgops.pdf>`_
+    * `Diapositives: les opérateurs de l'algèbre <./files/slalgops.pdf>`_
     * `Vidéo sur les opérateurs de l'algèbre <https://mediaserver.lecnam.net/videos/operateurs-de-lalgebre/>`_
 
 
@@ -598,7 +598,7 @@ S2: la jointure
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: la jointure algébrique <http://sql.bdpedia.fr/files/sljointure.pdf>`_
+    * `Diapositives: la jointure algébrique <./files/sljointure.pdf>`_
     * `Vidéo sur la jointure algébrique <https://mediaserver.lecnam.net/videos/la-jointure-algebrique/>`_
 
 
@@ -1014,7 +1014,7 @@ S3: Expressions algébriques
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: expressions algébriques <http://sql.bdpedia.fr/files/slexpressions.pdf>`_
+    * `Diapositives: expressions algébriques <./files/slexpressions.pdf>`_
     * `Vidéo sur les expressions algébriques <https://mediaserver.lecnam.net/videos/expressions-algebriques/>`_
 
 Cette section est consacrée à l'expression
@@ -1560,8 +1560,8 @@ d'un syndic de gestion d'immeuble. Voici son schéma
    - Propriétaire (**idPersonne , idAppart**, quotePart)
 
 Ce schéma et cette base sont fournis respectivement dans les scripts
-`SchemaImmeuble.sql <http://sql.bdpedia.fr/files/SchemaImmeubles.sql>`_  et
-`BaseImmeuble.sql <http://sql.bdpedia.fr/files/BaseImmeubles.sql>`_. Vous pouvez les installer
+`SchemaImmeuble.sql <./files/SchemaImmeubles.sql>`_  et
+`BaseImmeuble.sql <./files/BaseImmeubles.sql>`_. Vous pouvez les installer
 localement si vous le souhaitez. La base est également disponible
 *via* notre interface
 en ligne si vous
