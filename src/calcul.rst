@@ -80,7 +80,7 @@ S1: Un peu de logique
 
 .. admonition::  Supports complémentaires:
 
-    * `Diapositives: notions de logique <http://sql.bdpedia.fr/files/slnotionslogique.pdf>`_
+    * `Diapositives: notions de logique <./files/slnotionslogique.pdf>`_
     * `Vidéo sur les notions de logique <https://mediaserver.lecnam.net/videos/notions-de-logique/>`_
 
 La logique est l'art de raisonner, autrement dit de construire des argumentations rigoureuses
