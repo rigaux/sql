@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>Annales des examens &#8212; Documentation Cours de bases de données Septembre 2025</title>
+    <title>Annales des examens &#8212; Documentation Cours de bases de données Septembre 2026</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/agogo.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -226,14 +226,14 @@ affichez le nom, le nombre de billets et le prix total.</p></li>
 de projection élimine les doublons.</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p><span class="math notranslate nohighlight">\(\pi_{A,C (\sigma_{B=0(R))\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{A,C (\sigma_{D=0(R))\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{A,C (\sigma_{B=0(R) \cup \sigma_{D=0(R))\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{A,C (\sigma_{A=C(R)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_{A,C} (\sigma_{B=0}(R))\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_{A,C} (\sigma_{D=0}(R))\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_{A,C} (\sigma_{B=0}(R) \cup \sigma_{D=0}(R))\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_{A,C} (\sigma_{A=C}(R)\)</span></p></li>
 </ol>
 </div></blockquote>
 </li>
-<li><p>Combien de nuplets retourne la requête <span class="math notranslate nohighlight">\(\pi_{A,B,E (S \Join_{A=A \land B=B R)\)</span>?</p>
+<li><p>Combien de nuplets retourne la requête <span class="math notranslate nohighlight">\(\pi_{A,B,E} (S \Join_{A=A \land B=B} R)\)</span>?</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>2</p></li>
@@ -243,7 +243,7 @@ de projection élimine les doublons.</p>
 </ol>
 </div></blockquote>
 </li>
-<li><p>Combien de nuplets retourne la requête <span class="math notranslate nohighlight">\(R \Join_{A=A \land B=B (S \cup T)\)</span>?</p>
+<li><p>Combien de nuplets retourne la requête <span class="math notranslate nohighlight">\(R \Join_{A=A \land B=B} (S \cup T)\)</span>?</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>3</p></li>
@@ -428,8 +428,8 @@ la clause <code class="docutils literal notranslate"><span class="pre">unique</s
 <dl class="simple">
 <dt>Relation T</dt><dd><ul class="simple">
 <li><p>La requête renvoie également 3 nuplets</p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{nom, prenom (Personne \underset{id=idSpectateur{\bowtie \sigma_{prix &gt; 500 (BILLET))\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{id (Personne) - \pi_{idArtiste (Spectacle)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_{nom, prenom} (Personne \underset{id=idSpectateur}{\bowtie} \sigma_{prix &gt; 500} (BILLET))\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_{id} (Personne) - \pi_{idArtiste} (Spectacle)\)</span></p></li>
 </ul>
 </dd>
 </dl>
@@ -519,7 +519,7 @@ construire la requête qui correspond aux deux cas.</p></li>
 </ul>
 </div></blockquote>
 <div class="math notranslate nohighlight">
-\[\pi_{idMatch (But \Join_{idMatch=id \sigma_{scoreEquipe1=0 \land scoreEquipe2=0 (Match))\]</div>
+\[\pi_{idMatch} (But \Join_{idMatch=id} \sigma_{scoreEquipe1=0 \land scoreEquipe2=0} (Match))\]</div>
 </section>
 <section id="programmation-et-transactions-3-points">
 <h3>Programmation et transactions (3 points)<a class="headerlink" href="#programmation-et-transactions-3-points" title="Lien permanent vers ce titre">¶</a></h3>
@@ -648,13 +648,13 @@ partout.</p></li>
 <section id="id3">
 <h4>Algèbre<a class="headerlink" href="#id3" title="Lien permanent vers ce titre">¶</a></h4>
 <div class="math notranslate nohighlight">
-\[\pi_{nom (\sigma_{age &gt; 30 (Joueur) \underset{id=idJoueur{\bowtie \sigma_{minute = 1(But) )\]</div>
+\[\pi_{nom} (\sigma_{age &gt; 30} (Joueur) \underset{id=idJoueur}{\bowtie} \sigma_{minute = 1}(But) )\]</div>
 <p>Joueurs français:</p>
 <div class="math notranslate nohighlight">
-\[A = \sigma_{pays='France'(Joueur \underset{j.idEquipe = e.id{\bowtie Equipe)\]</div>
+\[A = \sigma_{pays='France'}(Joueur \underset{j.idEquipe = e.id}{\bowtie} Equipe)\]</div>
 <p>Joueurs français qui ont marqué au moins un but :</p>
 <div class="math notranslate nohighlight">
-\[B = \sigma_{pays='France'(But\;b \underset{b.idJoueur = j.id{\bowtie Joueur\;j) \underset{j.idEquipe = e.id{\bowtie Equipe\;e\]</div>
+\[B = \sigma_{pays='France'}(But\;b \underset{b.idJoueur = j.id}{\bowtie} Joueur\;j) \underset{j.idEquipe = e.id}{\bowtie} Equipe\;e\]</div>
 <p>Résultat:</p>
 <div class="math notranslate nohighlight">
 \[Resultat := A - B\]</div>
@@ -694,7 +694,7 @@ relationnel suivant, dans lequel les clés primaires sont en gras
 <section id="id4">
 <h3>Conception (6 points)<a class="headerlink" href="#id4" title="Lien permanent vers ce titre">¶</a></h3>
 <blockquote>
-<div><ul>
+<div><ul class="simple">
 <li><p>Ce schéma relationnel représente-t-il correctement le modèle conceptuel de la <a class="reference internal" href="#examen-pres1-2019"><span class="std std-numref">Fig. 74</span></a>?
 Vérifiez les clés primaires et étrangères et proposez éventuellement des corrections.</p></li>
 <li><p>On veut ajouter la position d’un chercheur dans l’ordre des auteurs pour un article. Où
@@ -703,26 +703,7 @@ placer cette information, dans le modèle entité association et dans le modèle
 appartenant à des équipes différentes (justifiez)?</p></li>
 <li><p>Un chercheur peut-il diriger une équipe à laquelle il n’est pas rattaché (justifiez)?</p></li>
 <li><p>Donnez les commandes <code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">table</span></code>  pour les tables <code class="docutils literal notranslate"><span class="pre">Chercheur</span></code>, <code class="docutils literal notranslate"><span class="pre">Article</span></code> et <code class="docutils literal notranslate"><span class="pre">Rédige</span></code>
-(en tenant compte des corrections éventuelles de la question 1).</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul>
-<li><p>La clé de <code class="docutils literal notranslate"><span class="pre">Rédige</span></code> doit comprendre <code class="docutils literal notranslate"><span class="pre">réfArticle</span></code> en plus de <code class="docutils literal notranslate"><span class="pre">idAuteur</span></code></p></li>
-<li><p>On ajoute la position dans l’association <code class="docutils literal notranslate"><span class="pre">Rédige</span></code> (et dans la table correspondante).</p></li>
-<li><p>Oui, pas de restriction dans le schéma</p></li>
-<li><p>Oui, pas de restriction dans le schéma</p></li>
-<li><p>Standard. Exemple pour la relation <code class="docutils literal notranslate"><span class="pre">Rédige</span></code>:</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">table</span> <span class="n">Redige</span> <span class="p">(</span><span class="n">idAuteur</span>    <span class="nb">int</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-       <span class="n">réfArticle</span>  <span class="nb">varchar</span> <span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-       <span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="n">idAuteur</span><span class="p">,</span> <span class="n">réfArticle</span><span class="p">),</span>
-       <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idAuteur</span><span class="p">)</span> <span class="k">references</span> <span class="n">Chercheur</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
-       <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">réfArticle</span><span class="p">)</span> <span class="k">references</span> <span class="n">Article</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
-</pre></div>
-</div>
-</li>
-</ul>
-</div>
-</li>
+(en tenant compte des corrections éventuelles de la question 1).</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -730,70 +711,14 @@ appartenant à des équipes différentes (justifiez)?</p></li>
 <h3>SQL (8 points)<a class="headerlink" href="#id5" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Exprimez les requêtes suivantes en SQL.</p>
 <blockquote>
-<div><ul>
+<div><ul class="simple">
 <li><p>Noms des chercheurs de l’équipe nommée <code class="docutils literal notranslate"><span class="pre">Vertigo</span></code></p></li>
 <li><p>Titre des articles parus depuis 2015 dont l’un au moins des auteurs appartient à l’équipe <code class="docutils literal notranslate"><span class="pre">ROC</span></code></p></li>
 <li><p>Quels articles n’ont pas d’auteur?</p></li>
 <li><p>Titre des articles parus depuis 2015 dont tous les auteurs appartiennent à l’équipe <code class="docutils literal notranslate"><span class="pre">ROC</span></code> (aide:
 la quantification universelle se remplace par la quantification existentielle et la négation)</p></li>
 <li><p>Nom des chercheurs qui dirigent une équipe à laquelle ils n’appartiennent pas</p></li>
-<li><p>Nom des chercheurs qui dirigent plus d’une équipe.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">c</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomChercheur</span>
-<span class="k">from</span> <span class="n">Chercheur</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">Equipe</span> <span class="k">as</span> <span class="n">e</span>
-<span class="k">where</span>  <span class="n">e</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Vertigo&#39;</span> <span class="k">and</span> <span class="k">c</span><span class="p">.</span><span class="n">idEquipe</span><span class="o">=</span><span class="n">e</span><span class="p">.</span><span class="n">id</span>
-</pre></div>
-</div>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">distinct</span> <span class="n">titre</span>
-<span class="k">from</span> <span class="n">article</span> <span class="k">as</span> <span class="n">a</span><span class="p">,</span> <span class="n">chercheur</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">equipe</span> <span class="k">as</span> <span class="n">e</span><span class="p">,</span> <span class="n">redige</span> <span class="k">as</span> <span class="n">r</span>
-<span class="k">where</span> <span class="n">a</span><span class="p">.</span><span class="k">ref</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="n">efarticle</span>
-<span class="k">and</span> <span class="n">r</span><span class="p">.</span><span class="n">idchercheur</span><span class="o">=</span><span class="k">c</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span> <span class="k">c</span><span class="p">.</span><span class="n">idequipe</span><span class="o">=</span><span class="n">e</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span> <span class="n">a</span><span class="p">.</span><span class="n">annee</span> <span class="o">&gt;=</span> <span class="mi">2015</span>
-<span class="k">and</span> <span class="n">e</span><span class="p">.</span><span class="n">nom</span> <span class="o">=</span> <span class="s1">&#39;ROC &#39;</span>
-</pre></div>
-</div>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span> <span class="k">select</span> <span class="n">a</span><span class="p">.</span><span class="n">titre</span>
- <span class="k">from</span> <span class="n">Article</span> <span class="k">as</span> <span class="n">a</span>
- <span class="k">where</span>  <span class="k">no</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="s1">&#39;x&#39;</span>
-                   <span class="k">from</span> <span class="n">Rédige</span> <span class="k">where</span> <span class="n">réfArticle</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">réf</span><span class="p">)</span>
-
-<span class="k">select</span> <span class="n">a</span><span class="p">.</span><span class="n">titre</span>
- <span class="k">from</span> <span class="n">Article</span> <span class="k">as</span> <span class="n">a</span>
- <span class="k">where</span>   <span class="n">a</span><span class="p">.</span><span class="n">réf</span> <span class="k">not</span> <span class="k">in</span> <span class="p">(</span><span class="k">select</span> <span class="n">réfArticle</span>
-                   <span class="k">from</span> <span class="n">Rédige</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">titre</span>
-<span class="k">from</span> <span class="n">article</span> <span class="k">as</span> <span class="n">a</span>
-<span class="k">where</span> <span class="n">a</span><span class="p">.</span><span class="n">annee</span> <span class="o">&gt;=</span> <span class="mi">2015</span>
-<span class="k">and</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="s1">&#39;&#39;</span> <span class="k">from</span> <span class="n">Redige</span> <span class="k">as</span> <span class="n">r</span><span class="p">,</span> <span class="n">Chercheur</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">Equipe</span> <span class="k">as</span> <span class="n">e</span>
-                <span class="k">where</span> <span class="n">r</span><span class="p">.</span><span class="n">refArticle</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="k">ref</span> <span class="k">and</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">r</span><span class="p">.</span><span class="n">idAuteur</span>
-                <span class="k">and</span> <span class="n">e</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="k">c</span><span class="p">.</span><span class="n">idEquipe</span> <span class="k">and</span> <span class="k">not</span> <span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">nom</span> <span class="o">=</span> <span class="s1">&#39;ROC&#39;</span><span class="p">))</span>
-</pre></div>
-</div>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">c</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomChercheur</span>
-<span class="k">from</span> <span class="n">Chercheur</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">Equipe</span> <span class="k">as</span> <span class="n">e</span>
-<span class="k">where</span>  <span class="n">e</span><span class="p">.</span><span class="n">idDirecteur</span> <span class="o">=</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span> <span class="n">e</span><span class="p">.</span><span class="n">id</span> <span class="o">&lt;&gt;</span> <span class="k">c</span><span class="p">.</span><span class="n">idequipe</span>
-</pre></div>
-</div>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span> <span class="k">as</span> <span class="n">idChercheur</span><span class="p">,</span> <span class="k">c</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomChercheur</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">nbEquipes</span>
- <span class="k">from</span> <span class="n">chercheur</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">equipe</span> <span class="k">as</span> <span class="n">e</span>
- <span class="k">where</span> <span class="n">e</span><span class="p">.</span><span class="n">idDirecteur</span><span class="o">=</span><span class="k">c</span><span class="p">.</span><span class="n">id</span>
- <span class="k">group</span> <span class="k">by</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="k">c</span><span class="p">.</span><span class="n">nom</span>
- <span class="k">having</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">&gt;</span><span class="mi">1</span>
-
-
-<span class="k">select</span> <span class="n">e</span><span class="p">.</span><span class="n">idDirecteur</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">nbEquipes</span>
- <span class="k">from</span> <span class="n">Equipe</span> <span class="k">as</span> <span class="n">e</span>
- <span class="k">group</span> <span class="k">by</span> <span class="n">e</span><span class="p">.</span><span class="n">idDirecteur</span>
- <span class="k">having</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">&gt;</span><span class="mi">1</span>
-</pre></div>
-</div>
-</div>
-</li>
+<li><p>Nom des chercheurs qui dirigent plus d’une équipe.</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -804,23 +729,9 @@ la quantification universelle se remplace par la quantification existentielle et
 <li><p>Donnez l’expression algébrique pour les deux premières requêtes SQL (section précédente)</p></li>
 <li><p>Donnez la requête SQL correspondant à l’expression algébrique suivante et expliquez-en le sens.</p>
 <div class="math notranslate nohighlight">
-\[\pi_{id (Chercheur) - \pi_{idChercheur (R\acute{edige)\]</div>
+\[\pi_{id} (Chercheur) - \pi_{idChercheur} (R\acute{e}dige)\]</div>
 </li>
 </ul>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\pi_{nom(\pi_{id (\sigma_{nom = 'Vertigo' (Equipe)) \underset{id=idEquipe{\bowtie Chercheur )\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{titre ( (  (\sigma_{annee \geq 2015 (Article) \underset{ref=refArticle{\bowtie Redige) \underset{idChercheur=id{\bowtie Chercheur ) \underset{idEquipe=id{\bowtie \sigma_{nom = 'ROC' Equipe)\)</span></p></li>
-<li><p>L’expression recherche les chercheurs qui n’ont rien publié.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">id</span>
-<span class="k">from</span> <span class="n">Chercheur</span>
-<span class="k">where</span> <span class="n">id</span> <span class="k">not</span> <span class="k">in</span> <span class="p">(</span><span class="k">select</span> <span class="n">idChercheur</span> <span class="k">from</span> <span class="n">Rédige</span><span class="p">)</span>
-</pre></div>
-</div>
-</li>
-</ul>
-</div>
 </div></blockquote>
 </section>
 <section id="valeurs-nulles-2-pts">
@@ -865,15 +776,6 @@ blanches indiquent des valeurs inconnues.</p>
     <span class="k">and</span> <span class="n">titre</span> <span class="k">like</span> <span class="o">`%`</span>
 </pre></div>
 </div>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p>AR243</p></li>
-<li><p>AR20</p></li>
-<li><p>AR243, AR254, AR20</p></li>
-<li><p>AR254</p></li>
-</ul>
-</div>
 </section>
 <section id="transactions-1-pt">
 <h3>Transactions (1 pt)<a class="headerlink" href="#transactions-1-pt" title="Lien permanent vers ce titre">¶</a></h3>
@@ -888,10 +790,6 @@ en isolation complète.</p>
 <li><p>Si  <span class="math notranslate nohighlight">\(T_1\)</span>  et <span class="math notranslate nohighlight">\(T_2\)</span> veulent modifier le même nuplet, cela déclenche un interblocage (<code class="docutils literal notranslate"><span class="pre">deadlock</span></code>).</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Seule la première affirmation est vraie</p>
-</div>
 </section>
 </section>
 <section id="examen-session-2-presentiel-septembre-2020">
@@ -928,50 +826,6 @@ propriétaire et auteur d’une
 même  œuvre? Argumentez votre réponse. (1 point)</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ol class="arabic simple">
-<li><p>Dépendances entre clés primaires et clés étrangères :</p></li>
-</ol>
-<blockquote>
-<div><ul class="simple">
-<li><p>Dans <code class="docutils literal notranslate"><span class="pre">Oeuvre</span></code>: <span class="math notranslate nohighlight">\(idOeuvre \to idAuteur\)</span> et <span class="math notranslate nohighlight">\(idOeuvre \to idProprietaire\)</span></p></li>
-<li><p>Dans <code class="docutils literal notranslate"><span class="pre">Expertise</span></code>: <span class="math notranslate nohighlight">\(idExpertise \to idOeuvre\)</span> et <span class="math notranslate nohighlight">\(idExpertise \to idExpert\)</span></p></li>
-</ul>
-</div></blockquote>
-<ol class="arabic">
-<li><p>Chaque DF correspond à une association plusieurs à 1 (cf l’algorithme de normalisation).
-On a donc ce type d’association entre Oeuvre et Personne, avec la sémantique « Auteur »,
-entre Oeuvre et Personne une seconde fois mais avec la sémantique « Propriétaire »,
-entre Expertise et Oeuvre et entre Expertise et Personne.</p></li>
-<li><p>Le schéma EA se déduit immédiatement de ce qui précède. Il n’y a pas d’association
-plusieurs à plusieurs.</p></li>
-<li><div class="highlight-sql notranslate"><div class="highlight"><pre><span></span>  <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">Personne</span> <span class="p">(</span>
-     <span class="n">idPersonne</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
-   <span class="n">nom</span> <span class="nb">VARCHAR</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
-    <span class="n">prénom</span> <span class="nb">VARCHAR</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
-    <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">idPersonne</span><span class="p">)</span>
-    <span class="p">);</span>
-
-<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">Oeuvre</span> <span class="p">(</span>
-    <span class="n">idOeuvre</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
-    <span class="n">nom</span> <span class="nb">VARCHAR</span><span class="p">,</span>
-    <span class="n">idAuteur</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
-    <span class="n">idPropriétaire</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
-    <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">idOeuvre</span><span class="p">),</span>
-    <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">idAuteur</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">Personne</span> <span class="p">(</span><span class="n">idPersonne</span><span class="p">)</span>
-    <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">idPropriétaire</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">Personne</span> <span class="p">(</span><span class="n">idPersonne</span><span class="p">)</span>
-    <span class="p">);</span>
-</pre></div>
-</div>
-</li>
-<li><p>On a donc la nouvelle dépendance <span class="math notranslate nohighlight">\((idExpert, idOeuvre) \to valeur\)</span>.
-Du coup la table Expertise
-n’est plus en 3FN. Un changement possible est que <code class="docutils literal notranslate"><span class="pre">(idExpert,</span> <span class="pre">idOeuvre)</span></code> devienne la clé
-de Expertise.</p></li>
-<li><p>Oui, rien n’empêche  idAuteur et idPropriétaire d’être égaux dans la table Oeuvre</p></li>
-</ol>
-</div>
 </section>
 <section id="sql-7-points">
 <h3>SQL (7 points)<a class="headerlink" href="#sql-7-points" title="Lien permanent vers ce titre">¶</a></h3>
@@ -987,48 +841,6 @@ de la même œuvre).</p></li>
 <li><p>Donnez le nombre d’expertises pour les œuvres dont la valeur maximale estimée est de 10 000 Euros</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span>    <span class="k">select</span> <span class="n">p1</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomAuteur</span><span class="p">,</span> <span class="n">p2</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomPropriétaire</span>
-    <span class="k">from</span> <span class="n">Oeuvre</span> <span class="k">as</span> <span class="n">o</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p1</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p2</span>
-   <span class="k">where</span> <span class="n">idOeuvre</span><span class="o">=</span><span class="s1">&#39;fg65&#39;</span>
-   <span class="k">and</span> <span class="n">p</span><span class="p">.</span><span class="n">idAuteur</span><span class="o">=</span><span class="n">p1</span><span class="p">.</span><span class="n">idPersonne</span>
-   <span class="k">and</span> <span class="n">p</span><span class="p">.</span><span class="n">idPropriétaire</span> <span class="o">=</span> <span class="n">p2</span><span class="p">.</span><span class="n">idPersonne</span><span class="p">;</span>
-
-<span class="k">select</span> <span class="n">p1</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomAuteur</span><span class="p">,</span> <span class="n">p2</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomPropriétaire</span>
-<span class="k">from</span> <span class="n">Oeuvre</span> <span class="k">as</span> <span class="n">o</span><span class="p">,</span> <span class="n">Expertise</span> <span class="k">as</span> <span class="n">e</span>
-<span class="k">where</span> <span class="n">o</span><span class="p">.</span><span class="n">idOeuvre</span><span class="o">=</span><span class="n">e</span><span class="p">.</span><span class="n">idOeuvre</span>
-<span class="k">and</span> <span class="n">o</span><span class="p">.</span><span class="n">idPropriétaire</span> <span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">idPersonne</span>
-
-<span class="k">select</span>  <span class="n">p</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">prénom</span>
-<span class="k">from</span> <span class="n">Oeuvre</span> <span class="k">as</span> <span class="n">o</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span>
-<span class="k">where</span> <span class="n">p</span><span class="p">.</span><span class="n">idPropriétaire</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">idPersonne</span>
-<span class="k">and</span> <span class="n">p</span><span class="p">.</span><span class="n">idPersonne</span> <span class="k">not</span> <span class="k">in</span> <span class="p">(</span><span class="k">select</span> <span class="n">idExpert</span> <span class="k">from</span> <span class="n">Expertise</span><span class="p">)</span>
-
-<span class="k">select</span>  <span class="n">o</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomOeuvre</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomPersonne</span>
-<span class="k">from</span> <span class="n">Oeuvre</span> <span class="k">as</span> <span class="n">o</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span>
-<span class="k">where</span> <span class="n">o</span><span class="p">.</span><span class="n">idPropriétaire</span> <span class="o">!=</span> <span class="n">p</span><span class="p">.</span><span class="n">idPersonne</span>
-<span class="k">and</span>   <span class="n">o</span><span class="p">.</span><span class="n">idAuteur</span> <span class="o">!=</span> <span class="n">p</span><span class="p">.</span><span class="n">idPersonne</span>
-
-<span class="k">select</span>  <span class="k">distinct</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span>
-<span class="k">from</span>  <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span> <span class="n">Oeuvre</span> <span class="k">as</span> <span class="n">o1</span><span class="p">,</span> <span class="n">Oeuvre</span> <span class="k">as</span> <span class="n">o2</span><span class="p">,</span> <span class="n">Expertise</span> <span class="k">as</span> <span class="n">e</span>
-<span class="k">where</span> <span class="n">o1</span><span class="p">.</span><span class="n">idPropriétaire</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">idPersonne</span>
-<span class="k">and</span>    <span class="n">o2</span><span class="p">.</span><span class="n">idAuteur</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">idPersonne</span>
-<span class="k">and</span>   <span class="n">e</span><span class="p">.</span><span class="n">idExpert</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">idPersonne</span>
-
-<span class="k">select</span>  <span class="n">o</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">avg</span><span class="p">(</span><span class="n">valeur</span><span class="p">)</span>
-<span class="k">from</span>  <span class="n">Oeuvre</span> <span class="k">as</span> <span class="n">o</span><span class="p">,</span> <span class="n">Expertise</span> <span class="k">as</span> <span class="n">e</span>
-<span class="k">where</span> <span class="n">o</span><span class="p">.</span><span class="n">idOeuvre</span> <span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">idOeuvre</span>
-<span class="k">group</span> <span class="k">by</span> <span class="n">o</span><span class="p">.</span><span class="n">idOeuvre</span><span class="p">,</span> <span class="n">o</span><span class="p">.</span><span class="n">nom</span>
-
-<span class="k">select</span>  <span class="n">o</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
-<span class="k">from</span>  <span class="n">Oeuvre</span> <span class="k">as</span> <span class="n">o</span><span class="p">,</span> <span class="n">Expertise</span> <span class="k">as</span> <span class="n">e</span>
-<span class="k">where</span> <span class="n">o</span><span class="p">.</span><span class="n">idOeuvre</span> <span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">idOeuvre</span>
-<span class="k">group</span> <span class="k">by</span> <span class="n">o</span><span class="p">.</span><span class="n">idOeuvre</span><span class="p">,</span> <span class="n">o</span><span class="p">.</span><span class="n">nom</span>
-<span class="k">having</span> <span class="k">max</span><span class="p">(</span><span class="n">valeur</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">10000</span>
-</pre></div>
-</div>
-</div>
 </section>
 <section id="un-peu-de-logique-3-points">
 <h3>Un peu de logique (3 points)<a class="headerlink" href="#un-peu-de-logique-3-points" title="Lien permanent vers ce titre">¶</a></h3>
@@ -1042,15 +854,6 @@ respectivement, <span class="math notranslate nohighlight">\(x\)</span> est aute
 (utiliser uniquement les connecteurs de SQL: and, or et not).</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(Auteur(x) \lor Prop(x) \land \neg (Auteur(x) \land Prop(x))\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\neg Auteur(x) \land \neg Prop(x)\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(L'implication :math:\)</span> est équivalente à <span class="math notranslate nohighlight">\(\neg p \lor q\)</span>.
-Donc en SQL on écrirait cette formule : <span class="math notranslate nohighlight">\(not(Auteur(x)) \lor Prop(x)\)</span></p></li>
-</ul>
-</div>
 </section>
 <section id="algebre-2-points">
 <h3>Algèbre (2 points)<a class="headerlink" href="#algebre-2-points" title="Lien permanent vers ce titre">¶</a></h3>
@@ -1060,12 +863,7 @@ Donc en SQL on écrirait cette formule : <span class="math notranslate nohighlig
 pas le  produit cartésien, et
 une sélection doit s’apppliquer directement à une table.</p>
 <div class="math notranslate nohighlight">
-\[\sigma_{A=C \land A=D \land E =F \land C &gt; B  (T_1 \times T_2)\]</div>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="math notranslate nohighlight">
-\[\sigma_{A=C \land C &gt; B (T_1) \Join_{A=D \sigma_{E = F(T_2)\]</div>
-</div>
+\[\sigma_{A=C \land A=D \land E =F \land C &gt; B}  (T_1 \times T_2)\]</div>
 </section>
 <section id="transactions-2-points">
 <h3>Transactions (2 points)<a class="headerlink" href="#transactions-2-points" title="Lien permanent vers ce titre">¶</a></h3>
@@ -1090,12 +888,6 @@ Voici une procédure qui échange les valeurs de 2 nuplets.</p>
 <p>On est en mode <code class="docutils literal notranslate"><span class="pre">Autocommit</span></code>: un <code class="docutils literal notranslate"><span class="pre">commit</span></code> a lieu après chaque requête SQL. Expliquez
 dans quel scénario l’exécution concurrente de deux procédures d’échange peut aboutir
 à ce que deux nuplets aient la même valeur.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>La première procédure s’exécute jusqu’à la fin du premier UPDATE. Un <code class="docutils literal notranslate"><span class="pre">commit</span></code> automatique
-a lieu: les deux nuplets sont alors égaux. Si la seconde procédure commence alors, elle trouvera
-une base avec deux nuplets égaux, ce qui ne devrait jamais arriver avec nos hypothèses en mode sérialisable.</p>
-</div>
 </section>
 </section>
 <section id="examen-session-1-foad-janvier-2022">
@@ -1119,7 +911,7 @@ les clés étrangères ne sont pas indiquées.</p>
 <p>La <a class="reference internal" href="#forfait-telephone"><span class="std std-numref">Fig. 75</span></a> montre une modélisation initiale de la
 base par un schéma entité association.</p>
 <figure class="align-center" id="id15">
-<span id="forfait-telephone"></span><a class="reference internal image-reference" href="_images/forfait_telephone.png"><img alt="_images/forfait_telephone.png" src="_images/forfait_telephone.png" style="width: 80%;" /></a>
+<span id="forfait-telephone"></span><a class="reference internal image-reference" href="../../figures/forfait_telephone.png"><img alt="../../figures/forfait_telephone.png" src="../../figures/forfait_telephone.png" style="width: 80%;" /></a>
 <figcaption>
 <p><span class="caption-number">Fig. 75 </span><span class="caption-text">Modélisation initiale de la base</span><a class="headerlink" href="#id15" title="Lien permanent vers cette image">¶</a></p>
 </figcaption>
@@ -1139,156 +931,30 @@ par rapport au schéma initial ? (1 pt)</p></li>
 <li><p>Donnez les commandes <code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">table</span></code> pour le schéma final (2 pts)</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<figure class="align-center" id="id16">
-<span id="forfait-telephone-final"></span><a class="reference internal image-reference" href="../figures/forfait_telephone_final.png"><img alt="../figures/forfait_telephone_final.png" src="../figures/forfait_telephone_final.png" style="width: 80%;" /></a>
-<figcaption>
-<p><span class="caption-number">Fig. 76 </span><span class="caption-text">Modélisation finale de la base</span><a class="headerlink" href="#id16" title="Lien permanent vers cette image">¶</a></p>
-</figcaption>
-</figure>
-<ul>
-<li><p>Chaque entité définit une DF de la clé vers les attributs, et chaque association plusieurs-un
-définit une DF entre les clées. Donc : <span class="math notranslate nohighlight">\(idOpérateur \to nom\)</span> ;
-<span class="math notranslate nohighlight">\(idForfait \to nom, prix, idOpérateur\)</span> ;
-<span class="math notranslate nohighlight">\(idClient \to  nom, prénom, ville, numéro, durée, idForfait\)</span></p></li>
-<li><p>Schéma relationnel :</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Opérateur (<strong>id</strong>, nom)</p></li>
-<li><p>Forfait (<strong>id</strong>, nom, <em>idOpérateur</em>, prix)</p></li>
-<li><p>Client(<strong>id</strong>, nom, prénom, ville, durée, numéro, <em>idForfait</em>)</p></li>
-</ul>
-</div></blockquote>
-</li>
-<li><p>Dans le schéma initial, un client peut prendre un seul forfait, d’où
-la DF <span class="math notranslate nohighlight">\(idClient \to idForfait\)</span>. Dans le schéma final un client peut prendre
-plusieurs forfaits (mais pas plusieurs fois le même), avec donc plusieurs numéros.</p></li>
-<li><p>Voir <a class="reference internal" href="#forfait-telephone-final"><span class="std std-numref">Fig. 76</span></a>. Une nouvelle  clé est définie par
-l’association plusieurs-plusieurs, avec la DF <span class="math notranslate nohighlight">\(idClient, idForfait \to durée, numéro\)</span></p></li>
-<li><p>En réifiant l’association  plusieurs-plusieurs, on attribuerait un identifiant propre
-à la souscription, et un même client pourrait prendre plusieurs fois le même forfait,
-ce qui n’est pas possible dans le schéma final. Dans une « vraie » base, ce serait sans
-doute souhaitable.</p></li>
-<li><p>Classique. La table <a href="#id7"><span class="problematic" id="id8">``</span></a>Souscription` est typique d’une association plusieurs-plusieurs.</p></li>
-</ul>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">table</span> <span class="n">Souscription</span>
-  <span class="p">(</span><span class="n">idClient</span> <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-    <span class="n">idForfait</span> <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-    <span class="n">durée</span> <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-    <span class="n">numéro</span> <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-     <span class="k">primary</span> <span class="k">key</span><span class="p">(</span><span class="n">idClient</span><span class="p">,</span> <span class="n">idForfait</span><span class="p">),</span>
-     <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idClient</span><span class="p">)</span> <span class="k">references</span> <span class="n">Client</span> <span class="p">(</span><span class="n">id</span><span class="p">),</span>
-     <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idForfait</span><span class="p">)</span> <span class="k">references</span> <span class="n">Forfait</span> <span class="p">(</span><span class="n">id</span><span class="p">));</span>
-</pre></div>
-</div>
-</div>
 </section>
 <section id="id9">
 <h3>SQL (7 points)<a class="headerlink" href="#id9" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Exprimez en SQL les requêtes suivantes <strong>sur le schéma final,
 donné dans l’énoncé de l’examen.</strong></p>
 <blockquote>
-<div><ul>
-<li><p>Nom et prénom des clients qui ont souscrit un forfait avec engagement de plus de 24 mois.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">c</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">c</span><span class="p">.</span><span class="n">prenom</span>
-<span class="k">from</span> <span class="n">Client</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">Souscription</span> <span class="k">as</span> <span class="n">s</span>
-<span class="k">where</span> <span class="n">s</span><span class="p">.</span><span class="n">idClient</span> <span class="o">=</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span> <span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">duree</span> <span class="o">&gt;</span> <span class="mi">24</span><span class="p">;</span>
-</pre></div>
-</div>
-</div>
-</li>
+<div><ul class="simple">
+<li><p>Nom et prénom des clients qui ont souscrit un forfait avec engagement de plus de 24 mois.</p></li>
 <li><p>Existe-t-il deux clients qui auraient le même numéro de téléphone pour le même forfait ?
 Donnez leurs noms et prénoms (des .clients)</p></li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">c1</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nom1</span><span class="p">,</span> <span class="n">c1</span><span class="p">.</span><span class="n">prenom</span> <span class="k">as</span> <span class="n">prénom1</span><span class="p">,</span>  <span class="n">c2</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nom2</span> <span class="p">,</span> <span class="n">c2</span><span class="p">.</span><span class="n">prenom</span> <span class="k">as</span> <span class="n">prénom2</span>
-<span class="k">from</span> <span class="n">Client</span> <span class="k">as</span> <span class="n">c1</span><span class="p">,</span> <span class="n">Souscription</span> <span class="k">as</span> <span class="n">s1</span><span class="p">,</span>
-      <span class="n">Client</span> <span class="k">as</span> <span class="n">c2</span><span class="p">,</span> <span class="n">Souscription</span> <span class="k">as</span> <span class="n">s2</span>
-<span class="k">where</span> <span class="n">c1</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">s1</span><span class="p">.</span><span class="n">idClient</span><span class="p">,</span>
-<span class="k">and</span> <span class="n">c2</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">s2</span><span class="p">.</span><span class="n">idClient</span>
-<span class="k">and</span> <span class="n">s1</span><span class="p">.</span><span class="n">idForfait</span> <span class="o">=</span> <span class="n">s2</span><span class="p">.</span><span class="n">idForfait</span>
-<span class="k">and</span> <span class="n">c1</span><span class="p">.</span><span class="n">numéro</span> <span class="o">=</span> <span class="n">c2</span><span class="p">.</span><span class="n">numéro</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 <ul class="simple">
 <li><p>Noms des clients qui ont un forfait nommé
 <code class="docutils literal notranslate"><span class="pre">Audace</span></code> et un autre nommé <code class="docutils literal notranslate"><span class="pre">Privilège</span></code>.</p></li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">nom</span><span class="p">,</span> <span class="k">c</span><span class="p">.</span><span class="n">prenom</span>
-<span class="k">from</span> <span class="n">Client</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">Souscription</span> <span class="k">as</span> <span class="n">s1</span><span class="p">,</span> <span class="n">Souscription</span> <span class="k">as</span> <span class="n">s2</span><span class="p">,</span>
-       <span class="n">Forfait</span> <span class="k">as</span> <span class="n">f1</span><span class="p">,</span> <span class="n">Forfait</span> <span class="k">as</span> <span class="n">f2</span>
-<span class="k">where</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">s1</span><span class="p">.</span><span class="n">idClient</span><span class="p">,</span>
-<span class="k">and</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">s2</span><span class="p">.</span><span class="n">idClient</span>
-<span class="k">and</span> <span class="n">s1</span><span class="p">.</span><span class="n">idForfait</span> <span class="o">=</span> <span class="n">f1</span><span class="p">.</span><span class="n">idForfait</span>
-<span class="k">and</span> <span class="n">s2</span><span class="p">.</span><span class="n">idForfait</span> <span class="o">=</span> <span class="n">f2</span><span class="p">.</span><span class="n">idForfait</span>
-<span class="k">and</span> <span class="n">f1</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Audace&#39;</span> <span class="k">and</span> <span class="n">f2</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Privilège&#39;</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
-<ul>
-<li><p>Quels clients n’ont pas souscrit de forfait ?</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">c</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">c</span><span class="p">.</span><span class="n">prenom</span>
-<span class="k">from</span> <span class="n">Client</span> <span class="k">as</span> <span class="k">c</span>
-<span class="k">where</span> <span class="k">not</span> <span class="k">exists</span>
-    <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Souscription</span> <span class="k">as</span> <span class="n">s</span>
-         <span class="k">where</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">idClient</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</li>
-<li><p>Quels opérateurs n’ont pas de client à Lyon ?</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">o</span><span class="p">.</span><span class="n">nom</span>
-<span class="k">from</span> <span class="n">Opérateur</span> <span class="k">as</span> <span class="n">o</span>
-<span class="k">where</span> <span class="k">not</span> <span class="k">exists</span>
-    <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Forfait</span> <span class="k">as</span> <span class="n">f</span><span class="p">,</span> <span class="n">Souscription</span> <span class="k">as</span> <span class="n">s</span><span class="p">,</span> <span class="n">Client</span> <span class="k">as</span> <span class="k">c</span>
-         <span class="k">where</span> <span class="n">o</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">f</span><span class="p">.</span><span class="n">idOpérateur</span>
-         <span class="k">and</span>   <span class="n">f</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">s</span><span class="p">.</span><span class="n">idForfait</span>
-         <span class="k">and</span>   <span class="n">s</span><span class="p">.</span><span class="n">idClient</span><span class="o">=</span><span class="k">c</span><span class="p">.</span><span class="n">id</span>
-         <span class="k">and</span>  <span class="k">c</span><span class="p">.</span><span class="n">ville</span><span class="o">=</span><span class="s1">&#39;Lyon&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</li>
-<li><p>Donnez le nombre de souscriptions pour chaque forfait de l’opérateur <code class="docutils literal notranslate"><span class="pre">Violet</span></code>.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">f</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">nbSouscriptions</span>
-<span class="k">from</span> <span class="n">Opérateur</span> <span class="k">as</span> <span class="n">o</span><span class="p">,</span> <span class="n">Forfait</span> <span class="k">as</span> <span class="n">f</span><span class="p">,</span> <span class="n">Souscription</span> <span class="k">as</span> <span class="n">s</span>
-<span class="k">where</span> <span class="n">o</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">f</span><span class="p">.</span><span class="n">idOpérateur</span>
-<span class="k">and</span>   <span class="n">f</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">s</span><span class="p">.</span><span class="n">idForfait</span>
-<span class="k">and</span>   <span class="n">o</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Violet&#39;</span>
-<span class="k">group</span> <span class="k">by</span> <span class="n">f</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">f</span><span class="p">.</span><span class="n">nom</span>
-</pre></div>
-</div>
-</div>
-</li>
-<li><p>Quels clients ont deux souscriptions  ou plus ? Donnez le nombre de souscriptions.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">c</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">c</span><span class="p">.</span><span class="n">prénom</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">nbSouscriptions</span>
-<span class="k">from</span> <span class="n">Client</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">Souscription</span> <span class="k">as</span> <span class="n">s</span>
-<span class="k">where</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">s</span><span class="p">.</span><span class="n">idClient</span>
-<span class="k">group</span> <span class="k">by</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="k">c</span><span class="p">.</span><span class="n">nom</span>
-<span class="k">having</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
-</pre></div>
-</div>
-</div>
-</li>
+<div></div></blockquote>
+<ul class="simple">
+<li><p>Quels clients n’ont pas souscrit de forfait ?</p></li>
+<li><p>Quels opérateurs n’ont pas de client à Lyon ?</p></li>
+<li><p>Donnez le nombre de souscriptions pour chaque forfait de l’opérateur <code class="docutils literal notranslate"><span class="pre">Violet</span></code>.</p></li>
+<li><p>Quels clients ont deux souscriptions  ou plus ? Donnez le nombre de souscriptions.</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -1299,15 +965,11 @@ Donnez leurs noms et prénoms (des .clients)</p></li>
 <li><p>Expliquez ce que fait la requête algébrique suivante, et donnez une expression
 SQL équivalente</p>
 <div class="math notranslate nohighlight">
-\[\pi_{nom, prenom(\sigma_{ville='Paris'(Client) \underset{id=idClient{\bowtie (\sigma_{duree &gt; 24(Souscription) \underset{idForfait=id{\bowtie \sigma_{nom='\rm{Audace' (Forfait))\]</div>
+\[\pi_{nom, prenom}(\sigma_{ville='Paris'}(Client) \underset{id=idClient}{\bowtie} (\sigma_{duree &gt; 24}(Souscription) \underset{idForfait=id}{\bowtie} \sigma_{nom='\rm{Audace'}} (Forfait))\]</div>
 </li>
 <li><p>Même question pour l’expression suivante</p>
 <div class="math notranslate nohighlight">
-\[\pi_{c.id, c.nom, c.prenom (Client) - \pi_{c.id, c.nom, c.prenom (Client \underset{c.id=s.idClient{\bowtie \sigma_{duree \geq 48 (Souscription))\]</div>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Les clients qui n’ont pas de souscription supérieure à 48 mois.</p>
-</div>
+\[\pi_{c.id, c.nom, c.prenom} (Client) - \pi_{c.id, c.nom, c.prenom} (Client \underset{c.id=s.idClient}{\bowtie} \sigma_{duree \geq 48} (Souscription))\]</div>
 </li>
 <li><p>Voici une expression SQL « algébrique »</p>
 <div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">c</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">c</span><span class="p">.</span><span class="n">prénom</span>
@@ -1317,16 +979,6 @@ SQL équivalente</p>
 </pre></div>
 </div>
 <p>Donnez une expression SQL « déclarative » équivalente, et sans requête imbriquée.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">c</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">c</span><span class="p">.</span><span class="n">prénom</span>
-<span class="k">from</span> <span class="n">Client</span> <span class="k">as</span><span class="p">,</span> <span class="n">Souscription</span> <span class="k">as</span> <span class="n">s</span><span class="p">,</span> <span class="n">Forfait</span> <span class="k">as</span> <span class="n">f</span>
-<span class="k">where</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">s</span><span class="p">.</span><span class="n">idClient</span>
-<span class="k">and</span> <span class="n">f</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span> <span class="s1">&#39;Audace&#39;</span>
-<span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">idForfait</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="n">id</span>
-</pre></div>
-</div>
-</div>
 </li>
 </ul>
 </div></blockquote>
@@ -1340,11 +992,6 @@ SQL équivalente</p>
     <span class="k">on</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">idClient</span>
 <span class="k">where</span> <span class="n">ville</span><span class="o">=</span> <span class="s1">&#39;Nantes&#39;</span>
 </pre></div>
-</div>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>On obtient tous les clients de Nantes, et leurs forfaits. Si un client n’a aucun forfait, une ligne
-est produite quand même, avec le nom du forfait à <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p>
 </div>
 </section>
 </section>
@@ -1442,15 +1089,6 @@ dont voici un extrait du contenu sous forme de tableau.</p>
 <li><p><span class="math notranslate nohighlight">\(etudiant, langue \to professeur\)</span></p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(professeur \to langue\)</span> : non, car on voit que Lydia enseigne l’anglais et l’allemand</p></li>
-<li><p><span class="math notranslate nohighlight">\(professeur, date \to etudiant\)</span> : oui, pas de contre-exemple dans le tableau (mais on en trouverait sans doute en continuant à accumuler les exemples)</p></li>
-<li><p><span class="math notranslate nohighlight">\(etudiant \to professeur\)</span>, non, Philippe suit des cours avec Luca et Lydia</p></li>
-<li><p><span class="math notranslate nohighlight">\(etudiant, langue \to professeur\)</span> : oui, pour une langue donnée, chaque étudiant n’a qu’un seul professeur</p></li>
-</ul>
-</div>
 </div></blockquote>
 <ul>
 <li><p>Finalement, après avoir étudié beaucoup plus d’exemples, on
@@ -1466,17 +1104,7 @@ détermine les dépendances fonctionnelles suivantes:
 </li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p>Quelle est la clé de la relation ? C’est le triplet  <span class="math notranslate nohighlight">\((idProf, idEtudiant, date)\)</span></p></li>
-<li><p>Quelle est la décomposition en 3FN ? On applique la
-normalisation et on trouve 3 relations : Professeur (id, nom),
-Etudiant (id, nom) et Cours(idProf, idEtudiant, date, langue).
-Il est clair qu’il est préférable de fusionner les tables Professeur et Etudiant.</p></li>
-</ul>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </li>
 </ul>
 </div></blockquote>
@@ -1501,79 +1129,29 @@ indiquez ce que serait le schéma sans réification.</p></li>
 </li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><dl class="simple">
-<dt>Clés étrangères<span class="classifier">codeLangueNatale, codeLangue, idProfesseur et idEtudiant dans Cours.</span></dt><dd><ul>
-<li><p>Standard</p></li>
-<li><p>Standard</p></li>
-<li><p>Réification : la relation Cours peut être interprétée comme venant d’une relation ternaire (Prof, Etudiant, Date), ce qui
-donnerait une clé avec trois attributs sans réification (voir les DF ci-dessus).
-Après réification, on a simplifié la clé, mais il faut prendre
-garde à ce qu’un professeur ne donne pas deux cours au même moment (avec une clause <code class="docutils literal notranslate"><span class="pre">unique</span></code>).</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </div></blockquote>
 </section>
 <section id="sql-7-pts">
 <h3>SQL (7 pts)<a class="headerlink" href="#sql-7-pts" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Sur le schéma donné précédemment, exprimez en SQL les requêtes suivantes :</p>
 <blockquote>
-<div><ul>
+<div><ul class="simple">
 <li><p>Liste des cours de l’étudiant Philippe (on suppose qu’il n’y en a qu’un),
-en indiquant le nom du professeur et la date.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prof</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomProfesseur</span><span class="p">,</span>
-<span class="k">from</span> <span class="n">Cours</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">prof</span>
-<span class="k">where</span> <span class="k">c</span><span class="p">.</span><span class="n">idEtudiant</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span>   <span class="k">c</span><span class="p">.</span><span class="n">idProfesseur</span> <span class="o">=</span> <span class="n">prof</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span>    <span class="n">p</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Philippe&#39;</span>
-</pre></div>
-</div>
-</div>
-</li>
+en indiquant le nom du professeur et la date.</p></li>
 </ul>
 <blockquote>
 <div><ul class="simple">
 <li><p>Les personnes qui sont professeur <em>et</em> étudiant</p></li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Il faut trouver un cours où la personne est étudiante, un autre
-où la personne est professeure. Le distinct est utile.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">distinct</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span>
-<span class="k">from</span> <span class="n">Cours</span> <span class="k">as</span> <span class="n">c1</span><span class="p">,</span> <span class="n">Cours</span> <span class="k">as</span> <span class="n">c2</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span>
-<span class="k">where</span> <span class="n">c1</span><span class="p">.</span><span class="n">idEtudiant</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span>   <span class="n">c2</span><span class="p">.</span><span class="n">idProfesseur</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">id</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 <ul class="simple">
 <li><p>Les professeurs qui donnent des cours dans une autre langue
 que leur langue natale</p></li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Il faut trouver (au moins) un cours d’une langue
-qui  n’est pas celle du professeur.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">distinct</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span>
-<span class="k">from</span> <span class="n">Cours</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span>
-<span class="k">where</span> <span class="k">c</span><span class="p">.</span><span class="n">codeLangue</span> <span class="o">!=</span> <span class="n">p</span><span class="p">.</span><span class="n">codeLangueNatale</span>
-<span class="k">and</span>   <span class="k">c</span><span class="p">.</span><span class="n">idProfesseur</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">id</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Les professeurs qui ne donnent jamais cours dans une autre langue</dt><dd><p>que leur langue natale</p>
@@ -1582,55 +1160,17 @@ qui  n’est pas celle du professeur.</p>
 </li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Ici, il faut que l’ensemble des cours dans une autre langue que
-la langue natale du professeur soit vide.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span>  <span class="n">p</span><span class="p">.</span><span class="n">nom</span>
-<span class="k">from</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span>
-<span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="o">*</span>
-<span class="k">from</span> <span class="n">Langue</span> <span class="k">as</span> <span class="n">l</span><span class="p">,</span> <span class="n">Cours</span> <span class="k">as</span> <span class="k">c</span>
-<span class="k">where</span>   <span class="k">c</span><span class="p">.</span><span class="n">idProfesseur</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span> <span class="k">c</span><span class="p">.</span><span class="n">codeLangue</span> <span class="o">!=</span> <span class="n">p</span><span class="p">.</span><span class="n">codeLangueNatale</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 <ul class="simple">
 <li><p>Les personnes et les langues qu’elles n’apprennent pas</p></li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>On combine toutes les personnes et toutes les langues,
-on ne garde que les paires pour lesquelles il n’existe pas de cours</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="n">l</span><span class="p">.</span><span class="n">intitulé</span>
-<span class="k">from</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span> <span class="n">Langue</span> <span class="k">as</span> <span class="n">l</span>
-<span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span><span class="o">*</span>
-<span class="k">from</span> <span class="n">Cours</span> <span class="k">as</span> <span class="k">c</span>
-<span class="k">and</span>   <span class="k">c</span><span class="p">.</span><span class="n">idEtudiant</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span> <span class="k">c</span><span class="p">.</span><span class="n">codeLangue</span> <span class="o">=</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 <ul class="simple">
 <li><p>Donner, pour chaque personne, le nombre de langues qu’elle apprend</p></li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Petite astuce: il faut compter le nombre de langues distinctes
-(n’était pas pénalisé)</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="k">distinct</span> <span class="n">langue</span><span class="p">.</span><span class="n">intitulé</span><span class="p">)</span> <span class="k">as</span> <span class="n">langue</span>
-<span class="k">from</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span> <span class="n">Cours</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">Langue</span> <span class="k">as</span> <span class="n">l</span>
-<span class="k">where</span> <span class="k">c</span><span class="p">.</span><span class="n">idEtudiant</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span> <span class="k">c</span><span class="p">.</span><span class="n">codeLangue</span> <span class="o">=</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span>
-<span class="k">group</span> <span class="k">by</span> <span class="n">p</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Donner les langues pour lesquelles on trouve au moins</dt><dd><p>trois personnes dont c’est la langue natale.</p>
@@ -1639,17 +1179,7 @@ on ne garde que les paires pour lesquelles il n’existe pas de cours</p>
 </li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">l</span><span class="p">.</span><span class="n">intitulé</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">nbPersonnes</span>
-<span class="k">from</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span> <span class="n">Langue</span> <span class="k">as</span> <span class="n">l</span>
-<span class="k">where</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">codeLangueNatale</span>
-<span class="k">group</span> <span class="k">by</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span>
-<span class="k">having</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>  <span class="o">&gt;=</span> <span class="mi">3</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </div></blockquote>
 </div></blockquote>
 </section>
@@ -1663,13 +1193,6 @@ on ne garde que les paires pour lesquelles il n’existe pas de cours</p>
 qui n’étudient pas l’italien (langue dont le code est <code class="docutils literal notranslate"><span class="pre">it</span></code>)</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\pi_{nom (\sigma_{idProfesseur=idEtudiant (Cours) \Join_{idProfesseur=id Personne)\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{id (Personne) -  \pi_{idEtudiant (\sigma_{langue='IT' (Cours))\)</span></p></li>
-</ul>
-</div>
 </section>
 <section id="valeurs-nulles-vues-2-pts">
 <h3>Valeurs nulles, vues (2 pts)<a class="headerlink" href="#valeurs-nulles-vues-2-pts" title="Lien permanent vers ce titre">¶</a></h3>
@@ -1682,38 +1205,10 @@ si aucune langue n’est apprise.</p></li>
 qui n’apprennent aucune langue ?</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul>
-<li><p>Il faut une jointure externe</p>
-<blockquote>
-<div><div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">view</span> <span class="n">Inscription</span> <span class="k">as</span>
-<span class="k">select</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">c</span><span class="p">.</span><span class="n">codeLangue</span>
-<span class="k">from</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span> <span class="k">outer</span> <span class="k">join</span> <span class="n">Cours</span> <span class="k">as</span> <span class="k">c</span>
-<span class="k">where</span> <span class="k">c</span><span class="p">.</span><span class="n">idEtudiant</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">id</span>
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-<li><p>On peut interroger très simplement la vue</p>
-<blockquote>
-<div><div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
-<span class="k">from</span> <span class="n">Inscription</span> <span class="k">as</span> <span class="n">i</span>
-<span class="k">where</span> <span class="n">i</span><span class="p">.</span><span class="n">codeLangue</span> <span class="k">is</span> <span class="k">null</span>
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-</ul>
-</div>
 </section>
 <section id="procedures-2-pts">
 <h3>Procédures (2 pts)<a class="headerlink" href="#procedures-2-pts" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Expliquez ce que signifie l’immuabilité d’un curseur.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Voir le cours.</p>
-</div>
 </section>
 </section>
 <section id="examen-session-1-27-janvier-2024">
@@ -1734,84 +1229,27 @@ qui n’apprennent aucune langue ?</p></li>
 <li><p>Etudiez soigneusement le schéma et identifiez toutes les clés étrangères
 qui font référence à la table <code class="docutils literal notranslate"><span class="pre">Personne</span></code> (1 pt)</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Il y en a beaucoup : idPère, idMère, idEnfant et idPuericultrice.</p>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </li>
 <li><p>Donnez les commandes SQL de création des tables suivantes :
 Crèche, Personne et Inscription. Note : on peut ne pas connaître
 le père ou la mère d’un enfant. (2 pts)</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Voir ci-dessous.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">table</span> <span class="n">Personne</span>
-   <span class="p">(</span><span class="n">idPersonne</span> <span class="nb">int</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-    <span class="n">prénom</span> <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-    <span class="n">nom</span> <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-    <span class="n">néeEn</span> <span class="nb">int</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-    <span class="n">ville</span> <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-    <span class="n">idPère</span> <span class="nb">int</span> <span class="p">,</span>
-    <span class="n">idMère</span> <span class="nb">int</span> <span class="p">,</span>
-<span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="n">idPersonne</span><span class="p">),</span>
-<span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idPère</span><span class="p">)</span> <span class="n">reference</span> <span class="n">Personne</span><span class="p">(</span><span class="n">idPersonne</span><span class="p">),</span>
-<span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idMère</span><span class="p">)</span> <span class="n">reference</span> <span class="n">Personne</span><span class="p">(</span><span class="n">idPersonne</span><span class="p">)</span>
-<span class="p">)</span>
-
-<span class="k">create</span> <span class="k">table</span> <span class="n">Inscription</span>
-   <span class="p">(</span><span class="n">idEnfant</span> <span class="nb">int</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-    <span class="n">année</span> <span class="nb">int</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-    <span class="n">idCrèche</span> <span class="nb">int</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-    <span class="n">idPuericultrice</span> <span class="nb">int</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-    <span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="n">idEnfant</span><span class="p">,</span> <span class="n">année</span><span class="p">),</span>
-    <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idEnfant</span><span class="p">)</span> <span class="n">reference</span> <span class="n">Personne</span><span class="p">(</span><span class="n">idPersonne</span><span class="p">),</span>
-    <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idCrèche</span><span class="p">)</span> <span class="n">reference</span> <span class="n">Crèche</span><span class="p">(</span><span class="n">idCrèche</span><span class="p">),</span>
-    <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idPuericultrice</span><span class="p">)</span> <span class="n">reference</span> <span class="n">Personne</span><span class="p">(</span><span class="n">idPersonne</span><span class="p">)</span>
-   <span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </li>
 <li><p>Voyez-vous une table résultant d’une réification ? Une table résultant d’une entité faible ?
 Lesquelles ? (1 pt)</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>La table <code class="docutils literal notranslate"><span class="pre">Inscription</span></code> provient d’une entité faible : on voit que son
-identifiant comprend l’identifiant d’un enfant, auquel elle est donc
-indissolublement liée.
-La table <code class="docutils literal notranslate"><span class="pre">Demande</span></code> résulte d’une réification.</p>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </li>
 <li><p>Donnez le schéma Entité/association correspondant à ce schéma relationnel (2 pts)</p></li>
 <li><p>Un enfant peut-il être inscrit à plusieurs crèches la même année ; un enfant peut-il demander
 à s’inscrire dans plusieurs crèches la même année ? (1 pt)</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Non, pas d’inscription d’un enfant la même année car la clé est constituée
-de ces deux attributs. En revanche on peut <em>demander</em> une inscription dans plusieurs crèches pour une même année.</p>
-</div>
-</div></blockquote>
-<ul>
+<div></div></blockquote>
+<ul class="simple">
 <li><p>Si on ajoutait la dépendance fonctionnelle <span class="math notranslate nohighlight">\(idPuéricultrice \to idCrèche\)</span>,
-comment faudrait-il modifier le schéma pour qu’il reste en 3FN ? (1 pt)</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Il faut d’abord réaliser que <code class="docutils literal notranslate"><span class="pre">idPuéricultrice</span></code>
-est un alias pour <code class="docutils literal notranslate"><span class="pre">idPersonne</span></code>.
-Il faut donc représenter la nouvelle dépendance fonctionnelle dans le schéma
-en ajoutant la clé étrangère <code class="docutils literal notranslate"><span class="pre">idCrèche</span></code> dans la table</p>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">Personne</span></code> (elle peut être à <code class="docutils literal notranslate"><span class="pre">null</span></code> pour toutes les
-personnes qui ne sont pas puéricultrices).</p>
-<p>On peut alors retirer <code class="docutils literal notranslate"><span class="pre">idCrèche</span></code> de la table <code class="docutils literal notranslate"><span class="pre">Inscription</span></code> puisque
-la crèche est déterminée par la puéricultrice.</p>
-</li>
+comment faudrait-il modifier le schéma pour qu’il reste en 3FN ? (1 pt)</p></li>
 </ul>
 </li>
 </ul>
@@ -1825,102 +1263,34 @@ la crèche est déterminée par la puéricultrice.</p>
 <li><p>Quels sont les enfants inscrits dans une crèche à Paris (donnez le nom de l’enfant
 et le nom de la crèche) ?</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="s1">&#39;nomEnfant&#39;</span><span class="p">,</span> <span class="k">c</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="s1">&#39;nomCrèche&#39;</span>
-<span class="k">from</span> <span class="n">Crèche</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">Inscription</span> <span class="k">as</span> <span class="n">i</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span>
-<span class="k">where</span> <span class="k">c</span><span class="p">.</span><span class="n">idCrèche</span> <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">idCrèche</span>
-<span class="k">and</span> <span class="n">i</span><span class="p">.</span><span class="n">idEnfant</span><span class="o">=</span><span class="n">p</span><span class="p">.</span><span class="n">idPersonne</span>
-<span class="k">and</span> <span class="k">c</span><span class="p">.</span><span class="n">ville</span><span class="o">=</span><span class="s1">&#39;Paris&#39;</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </li>
 <li><p>Quels sont les enfants demandant une crèche dans la ville où ils habitent
 (donner le nom, prénom et la ville) ?</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">p</span><span class="p">.</span><span class="n">prénom</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">ville</span>
-<span class="k">from</span> <span class="n">Crèche</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">Demande</span> <span class="k">as</span> <span class="n">d</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span>
-<span class="k">where</span> <span class="k">c</span><span class="p">.</span><span class="n">idCrèche</span> <span class="o">=</span> <span class="n">d</span><span class="p">.</span><span class="n">idCrèche</span>
-<span class="k">and</span> <span class="n">d</span><span class="p">.</span><span class="n">idEnfant</span><span class="o">=</span><span class="n">p</span><span class="p">.</span><span class="n">idPersonne</span>
-<span class="k">and</span> <span class="k">c</span><span class="p">.</span><span class="n">ville</span><span class="o">=</span><span class="n">p</span><span class="p">.</span><span class="n">ville</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </li>
 <li><p>Pour chaque enfant donnez le prénom de l’enfant, le nom de son père, de sa mère
 et de sa puéricultrice.</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span> <span class="k">select</span> <span class="n">enfant</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="s1">&#39;nomEnfant&#39;</span><span class="p">,</span> <span class="n">père</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="s1">&#39;nomPère&#39;</span><span class="p">,</span>
-<span class="n">mère</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="s1">&#39;nomMère&#39;</span><span class="p">,</span> <span class="n">puericultrice</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="s1">&#39;nomPuericultrice&#39;</span>
- <span class="k">from</span> <span class="n">Inscription</span> <span class="k">as</span> <span class="n">i</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">enfant</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">père</span><span class="p">,</span>
- <span class="n">Personne</span> <span class="k">as</span> <span class="n">mère</span><span class="p">,</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">puericultrice</span>
- <span class="k">where</span> <span class="n">i</span><span class="p">.</span><span class="n">idEnfant</span> <span class="o">=</span> <span class="n">enfant</span><span class="p">.</span><span class="n">idPersonne</span>
- <span class="k">and</span>   <span class="n">enfant</span><span class="p">.</span><span class="n">idPère</span> <span class="o">=</span> <span class="n">père</span><span class="p">.</span><span class="n">idPersonne</span>
- <span class="k">and</span>   <span class="n">enfant</span><span class="p">.</span><span class="n">idMère</span> <span class="o">=</span> <span class="n">mère</span><span class="p">.</span><span class="n">idPersonne</span>
- <span class="k">and</span> <span class="n">i</span><span class="p">.</span><span class="n">idPuericultrice</span> <span class="o">=</span> <span class="n">puericultrice</span><span class="p">.</span><span class="n">idPersonne</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </li>
 <li><p>Je veux donner la liste de tous les enfants nés en 2022, avec le nom
 de leur puericultrice s’ils sont inscrits à une crèche, et <code class="docutils literal notranslate"><span class="pre">null</span></code>
 sinon. Donnez la requête SQL.</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Il faut penser dans ce cas à effectuer une jointure externe.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">e</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="s1">&#39;nomEnfant&#39;</span><span class="p">,</span>  <span class="n">p</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="s1">&#39;nomPuericultrice&#39;</span>
-<span class="k">from</span>  <span class="n">Personne</span> <span class="k">as</span> <span class="n">e</span> <span class="k">left</span> <span class="k">outer</span> <span class="k">join</span>
-<span class="p">(</span><span class="n">Inscription</span> <span class="k">as</span> <span class="n">i</span> <span class="k">join</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span> <span class="k">on</span> <span class="n">i</span><span class="p">.</span><span class="n">idPuericultrice</span><span class="o">=</span><span class="n">p</span><span class="p">.</span><span class="n">idPersonne</span><span class="p">)</span>
-<span class="k">on</span>  <span class="n">i</span><span class="p">.</span><span class="n">idEnfant</span> <span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">idPersonne</span>
-<span class="k">where</span> <span class="n">néeEn</span><span class="o">=</span><span class="mi">2022</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </li>
 <li><p>Indiquez les demandes en cours pour l’année 2024 : celles pour lesquelles il existe une
 demande de l’enfant à une crèche, mais pas d’inscription. Donnez simplement
 l’identifiant de l’enfant et l’identifiant de la crèche.</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">d</span><span class="p">.</span><span class="n">idEnfant</span><span class="p">,</span> <span class="n">d</span><span class="p">.</span><span class="n">idCrèche</span>
-<span class="k">from</span>  <span class="n">Demande</span> <span class="k">as</span> <span class="n">d</span>
-<span class="k">where</span> <span class="n">année</span> <span class="o">=</span> <span class="mi">2024</span>
-<span class="k">and</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Inscription</span> <span class="k">as</span> <span class="n">i</span>
-                <span class="k">where</span> <span class="n">d</span><span class="p">.</span><span class="n">idEnfant</span> <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">idEnfant</span>
-                <span class="k">and</span> <span class="n">d</span><span class="p">.</span><span class="n">idCrèche</span> <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">idCrèche</span>
-                <span class="k">and</span> <span class="n">année</span> <span class="o">=</span> <span class="mi">2024</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </li>
 <li><p>Donnez la liste des enfants nés en 2022 et les crèches de leur ville
 qu’ils n’ont pas demandées (nom de l’enfant, nom de la crèche).</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="s1">&#39;nomEnfant&#39;</span><span class="p">,</span> <span class="k">c</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="s1">&#39;nomCrèche&#39;</span>
-<span class="k">from</span>  <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span> <span class="n">Crèche</span> <span class="k">as</span> <span class="k">c</span>
-<span class="k">where</span> <span class="n">p</span><span class="p">.</span><span class="n">néeEn</span><span class="o">=</span><span class="mi">2022</span>
-<span class="k">and</span> <span class="n">p</span><span class="p">.</span><span class="n">ville</span> <span class="o">=</span> <span class="k">c</span><span class="p">.</span><span class="n">ville</span>
-<span class="k">and</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Demande</span> <span class="k">as</span> <span class="n">d</span>
-                <span class="k">where</span> <span class="n">d</span><span class="p">.</span><span class="n">idEnfant</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">idPersonne</span>
-                <span class="k">and</span> <span class="n">d</span><span class="p">.</span><span class="n">idCrèche</span> <span class="o">=</span> <span class="k">c</span><span class="p">.</span><span class="n">idCrèche</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </li>
 <li><p>Quelles sont les crèches n’ayant pas rempli toutes leurs places
 en 2024 (autrement dit  le nombre d’inscriptions est inférieur à la capacité)?</p>
@@ -1928,17 +1298,6 @@ en 2024 (autrement dit  le nombre d’inscriptions est inférieur à la capacit�
 <div><p>Aide : faites une première requête affichant le nombre d’inscriptions
 et  la capacité. Puis ajoutez la clause indiquant que le premier doit
 être inférieur au second.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">c</span><span class="p">.</span><span class="o">*</span>
-<span class="k">from</span>  <span class="n">Crèche</span> <span class="k">as</span> <span class="k">c</span><span class="p">,</span> <span class="n">Inscription</span> <span class="k">as</span> <span class="n">i</span>
-<span class="k">where</span> <span class="k">c</span><span class="p">.</span><span class="n">idCrèche</span> <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">idCrèche</span>
-<span class="k">and</span> <span class="n">année</span> <span class="o">=</span> <span class="mi">2024</span>
-<span class="k">group</span> <span class="k">by</span> <span class="k">c</span><span class="p">.</span><span class="n">idCrèche</span>
-<span class="k">having</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">&lt;</span> <span class="k">c</span><span class="p">.</span><span class="n">capacité</span>
-</pre></div>
-</div>
-</div>
 </div></blockquote>
 </li>
 </ul>
@@ -1947,18 +1306,6 @@ et  la capacité. Puis ajoutez la clause indiquant que le premier doit
 <section id="id10">
 <h3>Algèbre (2 points)<a class="headerlink" href="#id10" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Donnez l’expression algébrique pour les requêtes 1 et  5 de la section précédente.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<dl class="simple">
-<dt>Pour la première on procède en 3 étapes, en définissant d’abord <span class="math notranslate nohighlight">\(R_1\)</span> et <span class="math notranslate nohighlight">\(R_2\)</span></dt><dd><ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(R_1 := \pi_{nomEnfant,idCreche,nomCreche ((\rho_{nom \to nomEnfant(Personne)  \Join_{idPersonne=idEnfant Inscription)\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(R_2 := \pi_{idCreche,nomCreche (\sigma_{ville='Paris'(Cr\grave{eche))\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(R_1 \Join_{idCreche=idCreche R_2\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{idEnfant,idCreche (\sigma_{annee=2024(Demande)) - \pi_{idEnfant,idCreche (\sigma_{annee=2024 (Cr\acute{eche))\)</span></p></li>
-</ul>
-</dd>
-</dl>
-</div>
 </section>
 <section id="programmation-3-points">
 <h3>Programmation (3 points)<a class="headerlink" href="#programmation-3-points" title="Lien permanent vers ce titre">¶</a></h3>
@@ -1993,17 +1340,6 @@ un problème, et lequel ?</p></li>
 <li><p>Que proposez-vous pour résoudre ce problème éventuel ?</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p>Non le curseur est immuable : cf. cours</p></li>
-<li><p>Autant d’inscriptions que de demandes, ce qui ne semble pas normal</p></li>
-<li><p>La base ne permet de représenter qu’une seule inscription
-pour une année, donc le programme rejettera les insertions
-dès la seconde tentative.</p></li>
-<li><p>Il faut sortir de  la boucle dès la première inscription.</p></li>
-</ul>
-</div>
 </section>
 </section>
 </section>
@@ -2030,37 +1366,14 @@ Régions et départements sont présidés par une personne.</p>
 <blockquote>
 <div><ul>
 <li><p>Donner les commandes de création de table pour <code class="docutils literal notranslate"><span class="pre">Département</span></code> et
-<code class="docutils literal notranslate"><span class="pre">Voisins</span></code>. On supposera que <code class="docutils literal notranslate"><span class="pre">Personne</span></code> et  <code class="docutils literal notranslate"><span class="pre">Région</span></code> ont déjà été créées.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p>Standard. Voici pour la table  Voisins:</p></li>
-</ul>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">table</span> <span class="n">Voisins</span>
-        <span class="p">(</span><span class="n">idDpt1</span> <span class="nb">int</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-        <span class="n">idDpt2</span> <span class="nb">int</span> <span class="k">not</span> <span class="k">null</span>
-        <span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="n">idDpt1</span><span class="p">,</span> <span class="n">idDpt2</span><span class="p">),</span>
-        <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idDpt1</span><span class="p">)</span> <span class="k">references</span> <span class="n">Département</span> <span class="p">(</span><span class="n">idDpt</span><span class="p">),</span>
-        <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idDpt2</span><span class="p">)</span> <span class="k">references</span> <span class="n">Département</span> <span class="p">(</span><span class="n">idDpt</span><span class="p">)</span>
-        <span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</li>
-<li><p>On ajoute la commande suivante au schéma de la table  Voisins</p>
+<code class="docutils literal notranslate"><span class="pre">Voisins</span></code>. On supposera que <code class="docutils literal notranslate"><span class="pre">Personne</span></code> et  <code class="docutils literal notranslate"><span class="pre">Région</span></code> ont déjà été créées.</p></li>
+<li><p>On ajoute la commande suivante au schéma de la table  Voisins}</p>
 <blockquote>
 <div><div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">check</span> <span class="p">(</span><span class="n">codeDpt1</span>  <span class="o">&lt;</span> <span class="n">codeDpt2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div></blockquote>
 <p>Quelle est à votre avis la motivation de cette contrainte?</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Il existe une symétrie dans la notion de voisin: si A
-est voisin avec B, B est voisin avec A. Pour éviter le doublon
-de représentation (voisin(A, B) et voisin(B,A)), on décide
-de n’autoriser que le premier, d’où la clause  <code class="docutils literal notranslate"><span class="pre">check</span></code>.</p>
-</div>
 </li>
 </ul>
 <blockquote>
@@ -2068,35 +1381,19 @@ de n’autoriser que le premier, d’où la clause  <code class="docutils litera
 <li><p>Donner le schéma entité-association correspondant à ce schéma relationnel.</p></li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Standard</p>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 <ul class="simple">
 <li><p>Existe-t-il une association plusieurs-plusieurs dans ce schéma? Si oui
 vous paraîtrait-il judicieux de la réifier? Justifiez votre réponse.</p></li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p><code class="docutils literal notranslate"><span class="pre">Voisins</span></code> provient d’une association plusieurs-plusieurs.
-La contrainte sur la clé implique qu’un département ne peut pas
-être deux fois le voisin d’un autre. C’est une contrainte tout à fait
-raisonnable, voire indispensable. La réification est donc inutile.</p>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 <ul class="simple">
 <li><p>Une même personne peut-elle présider plusieurs départements?
 Peut-elle présider un département et une région?</p></li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Réponse oui aux deux questions: aucune contrainte de clés
-n’empêche ces situations.</p>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 <ul>
 <li><p>Notons  <code class="docutils literal notranslate"><span class="pre">D</span></code> le département,  <code class="docutils literal notranslate"><span class="pre">P</span></code> la personne,
 <code class="docutils literal notranslate"><span class="pre">ND</span></code> le nom du département et  <code class="docutils literal notranslate"><span class="pre">NP</span></code> le nom de la personne. Le schéma
@@ -2107,18 +1404,7 @@ et que devient le schéma relationnel?</p>
 </li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>La dépendance additionnelle indique qu’une personne ne
-peut diriger qu’un seul département. L’identifiant d’une
-personne pourrait donc servir à identifier un département.
-Ce ne serait cependant pas un très bon choix car la personne
-dirigeant un département est amenée à changer régulièrement.
-En pratique, mieux vont donc déclarer dans le schéma
-une contrainte d’unicité sur l’identifiant <code class="docutils literal notranslate"><span class="pre">idPrésident</span></code>
-dans la table <code class="docutils literal notranslate"><span class="pre">Département</span></code> (c’est également une clé étrangère).</p>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </div></blockquote>
 </div></blockquote>
 <p>Dans toute la suite de l’examen, on travaille sur
@@ -2132,7 +1418,7 @@ sur l’ordre des codes de département est respectée dans la table <code class
 <blockquote>
 <div><ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(V_1 := Voisins\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(V_2 := \rho_{codeDpt1 \to codeDpt2, codeDpt2 \to codeDpt1 (Voisins)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(V_2 := \rho_{codeDpt1 \to codeDpt2, codeDpt2 \to codeDpt1} (Voisins)\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(V_3 := V1 \cup V2\)</span></p></li>
 </ul>
 <p>Répondez aux questions suivantes:</p>
@@ -2145,40 +1431,7 @@ requête algébrique
 sur <span class="math notranslate nohighlight">\(V_3\)</span> donne les codes de <em>tous</em> ses voisins (expliquer).</p></li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p><span class="math notranslate nohighlight">\(V_1\)</span> est donc un synonyme de la table <code class="docutils literal notranslate"><span class="pre">Voisins</span></code>,
-et <span class="math notranslate nohighlight">\(V_2\)</span> a le même contenu que <span class="math notranslate nohighlight">\(V_1\)</span> <em>mais
-l’ordre des clés est inversé</em>. On ne trouve dans
-<span class="math notranslate nohighlight">\(V_2\)</span> que les paires de département <code class="docutils literal notranslate"><span class="pre">(d1,</span> <span class="pre">d2)</span></code>
-tels que <code class="docutils literal notranslate"><span class="pre">d1</span> <span class="pre">&gt;</span> <span class="pre">d2</span></code>. D’où la réponse aux questions:</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(V_1 \cap V_2\)</span> est vide</p></li>
-<li><p><span class="math notranslate nohighlight">\(V_3\)</span> contient toutes les paires de départements voisins
-<code class="docutils literal notranslate"><span class="pre">(d1,</span> <span class="pre">d2)</span></code> et <code class="docutils literal notranslate"><span class="pre">(d2,</span> <span class="pre">d1)</span></code>. Autrement dit, chaque relation de
-voisinage entre deux départements est représentée dans les deux sens.</p></li>
-<li><p>On peut donc créer la vue suivante qui pourra nous
-simplifier les requêtes SQL par la suite.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">view</span> <span class="n">V3</span> <span class="k">as</span>
-<span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Voisins</span>
-        <span class="k">union</span>
-<span class="k">select</span> <span class="n">codeDpt2</span> <span class="k">as</span> <span class="n">codeDpt1</span><span class="p">,</span> <span class="n">codeDpt1</span> <span class="k">as</span> <span class="n">codeDpt2</span>
-<span class="k">from</span> <span class="n">Voisins</span>
-</pre></div>
-</div>
-</li>
-<li><p>Avec <span class="math notranslate nohighlight">\(V_3\)</span>, on n’a plus besoin de se soucier de l’ordre des codes de département.
-On peut donc écrire soit:</p>
-<div class="math notranslate nohighlight">
-\[\pi_{codeDpt2 (\sigma_{codeDpt1=d_1 (\rm{V_3))\]</div>
-<p>soit</p>
-<div class="math notranslate nohighlight">
-\[\pi_{codeDpt1 (\sigma_{codeDpt2=d_1 (\rm{V_3))\]</div>
-<p>qui donneront le même résultat.</p>
-</li>
-</ul>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </div></blockquote>
 </section>
 <section id="id11">
@@ -2204,91 +1457,6 @@ région n’a pas de département? Comment réussir
 de départements dans ce cas?</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">prénom</span><span class="p">,</span> <span class="n">nom</span>
-<span class="k">from</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span> <span class="n">Région</span> <span class="k">as</span> <span class="n">r</span><span class="p">,</span> <span class="n">Département</span> <span class="k">as</span> <span class="n">d</span>
-<span class="k">where</span> <span class="n">d</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Cantal&#39;</span>
-<span class="k">and</span> <span class="n">d</span><span class="p">.</span><span class="n">codeRégion</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="n">codeRégion</span>
-<span class="k">and</span> <span class="n">r</span><span class="p">.</span><span class="n">idPrésident</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">idPersonne</span>
-</pre></div>
-</div>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">r</span><span class="p">.</span><span class="n">préfecture</span> <span class="k">as</span> <span class="n">ville</span><span class="p">,</span> <span class="n">r</span><span class="p">.</span><span class="n">intitulé</span><span class="p">,</span> <span class="n">d</span><span class="p">.</span><span class="n">noms</span>
-<span class="k">from</span>  <span class="n">Région</span> <span class="k">as</span> <span class="n">r</span><span class="p">,</span> <span class="n">Département</span> <span class="k">as</span> <span class="n">d</span>
-<span class="k">where</span> <span class="n">r</span><span class="p">.</span><span class="n">préfecture</span> <span class="o">=</span> <span class="n">d</span><span class="p">.</span><span class="n">préfecture</span>
-<span class="k">and</span> <span class="n">d</span><span class="p">.</span><span class="n">population</span> <span class="o">&gt;</span> <span class="mi">10000</span>
-</pre></div>
-</div>
-<p>Il est plus simple d’utiliser la vue V3.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span>  <span class="n">d2</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">voisinCantal</span>
-<span class="k">from</span>   <span class="n">Département</span> <span class="k">as</span> <span class="n">d1</span><span class="p">,</span> <span class="n">Département</span> <span class="k">as</span> <span class="n">d2</span><span class="p">,</span> <span class="n">V3</span> <span class="k">as</span> <span class="n">v</span>
-<span class="k">where</span> <span class="n">d1</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Cantal&#39;</span>
-<span class="cm">/* On sait que dans V3, on trouve chaque voisinage</span>
-<span class="cm">   représenté dans les deux sens */</span>
-<span class="k">and</span> <span class="n">v</span><span class="p">.</span><span class="n">codeDpt1</span><span class="o">=</span><span class="n">d1</span><span class="p">.</span><span class="n">codeDpt</span>
-<span class="k">and</span> <span class="n">v</span><span class="p">.</span><span class="n">codeDpt2</span><span class="o">=</span><span class="n">d2</span><span class="p">.</span><span class="n">codeDpt</span>
-</pre></div>
-</div>
-<p>Sinon, solution SQL complète avec un “ou” logique. Plus compliqué…</p>
-<blockquote>
-<div><div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">d2</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">voisinCantal</span>
-<span class="k">from</span>  <span class="n">Département</span> <span class="k">as</span> <span class="n">d1</span><span class="p">,</span> <span class="n">Département</span> <span class="k">as</span> <span class="n">d2</span><span class="p">,</span> <span class="n">Voisins</span> <span class="k">as</span> <span class="n">v</span>
-<span class="k">where</span> <span class="n">d1</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Cantal&#39;</span>
-<span class="k">and</span> <span class="p">(</span>
-        <span class="cm">/* Cas d&#39;un voisin de code supérieur au Cantal */</span>
-        <span class="p">(</span><span class="n">d1</span><span class="p">.</span><span class="n">codeDpt</span> <span class="o">&lt;</span> <span class="n">d2</span><span class="p">.</span><span class="n">codeDpt</span> <span class="k">and</span> <span class="n">v</span><span class="p">.</span><span class="n">codeDpt1</span> <span class="o">=</span> <span class="n">d1</span><span class="p">.</span><span class="n">codeDpt1</span> <span class="k">and</span> <span class="n">v</span><span class="p">.</span><span class="n">codeDpt2</span><span class="o">=</span><span class="n">d2</span><span class="p">.</span><span class="n">codeDpt</span><span class="p">)</span>
-    <span class="k">or</span>
-        <span class="cm">/* Cas d&#39;un voisin de code inférieur au Cantal */</span>
-        <span class="p">(</span><span class="n">d1</span><span class="p">.</span><span class="n">codeDpt</span> <span class="o">&gt;</span> <span class="n">d2</span><span class="p">.</span><span class="n">codeDpt</span> <span class="k">and</span> <span class="n">v</span><span class="p">.</span><span class="n">codeDpt1</span> <span class="o">=</span> <span class="n">d2</span><span class="p">.</span><span class="n">codeDpt</span> <span class="k">and</span> <span class="n">v</span><span class="p">.</span><span class="n">codeDpt2</span><span class="o">=</span><span class="n">d1</span><span class="p">.</span><span class="n">codeDpt</span><span class="p">)</span>
-        <span class="p">)</span>
-</pre></div>
-</div>
-</div></blockquote>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">r</span><span class="p">.</span><span class="n">intitulé</span><span class="p">,</span> <span class="n">d1</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomDpt1</span><span class="p">,</span> <span class="n">d2</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomDpt2</span>
-<span class="k">from</span>  <span class="n">Région</span> <span class="k">as</span> <span class="n">r</span><span class="p">,</span> <span class="n">Département</span> <span class="k">as</span> <span class="n">d1</span><span class="p">,</span> <span class="n">Département</span> <span class="k">as</span> <span class="n">d2</span><span class="p">,</span> <span class="n">Voisins</span> <span class="k">as</span> <span class="n">v</span>
-<span class="k">where</span> <span class="n">r</span><span class="p">.</span><span class="n">codeRégion</span> <span class="o">=</span> <span class="n">d1</span><span class="p">.</span><span class="n">codeRégion</span>
-<span class="k">and</span> <span class="n">r</span><span class="p">.</span><span class="n">codeRégion</span> <span class="o">=</span> <span class="n">d2</span><span class="p">.</span><span class="n">codeRégion</span>
-<span class="cm">/* Pour prendre la relation &#39;voisins dans le bon sens&#39; */</span>
-<span class="k">and</span> <span class="n">d1</span><span class="p">.</span><span class="n">codeDpt</span> <span class="o">&lt;</span> <span class="n">d2</span><span class="p">.</span><span class="n">codeDpt</span>
-<span class="k">and</span> <span class="n">v</span><span class="p">.</span><span class="n">codeDpt1</span><span class="o">=</span><span class="n">d1</span><span class="p">.</span><span class="n">codeDpt</span>
-<span class="k">and</span> <span class="n">v</span><span class="p">.</span><span class="n">codeDpt2</span><span class="o">=</span><span class="n">d2</span><span class="p">.</span><span class="n">codeDpt</span>
-</pre></div>
-</div>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
-<span class="k">from</span>  <span class="n">Région</span> <span class="k">as</span> <span class="n">r</span>
-<span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span>
-        <span class="k">select</span><span class="o">*</span> <span class="k">from</span> <span class="n">Département</span> <span class="k">as</span> <span class="n">d</span>
-        <span class="k">where</span> <span class="n">r</span><span class="p">.</span><span class="n">codeRégion</span> <span class="o">=</span> <span class="n">d1</span><span class="p">.</span><span class="n">codeRégion</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
-<span class="k">from</span>  <span class="n">Personne</span> <span class="k">as</span> <span class="n">p</span>
-<span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span>
-        <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Département</span> <span class="k">as</span> <span class="n">d</span>
-        <span class="k">where</span> <span class="n">d</span><span class="p">.</span><span class="n">idPrésident</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">idPrésident</span><span class="p">)</span>
-<span class="k">and</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span>
-        <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Région</span> <span class="k">as</span> <span class="n">d</span>
-        <span class="k">where</span> <span class="n">r</span><span class="p">.</span><span class="n">idPrésident</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">idPrésident</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">r</span><span class="p">.</span><span class="n">intitulé</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">codeDpt</span><span class="p">),</span> <span class="k">sum</span><span class="p">(</span><span class="n">population</span><span class="p">)</span> <span class="k">as</span> <span class="n">population</span>
-<span class="k">from</span>  <span class="n">Région</span> <span class="k">as</span> <span class="n">r</span><span class="p">,</span> <span class="n">Département</span> <span class="k">as</span> <span class="n">d</span>
-<span class="k">where</span> <span class="n">r</span><span class="p">.</span><span class="n">codeRégion</span> <span class="o">=</span> <span class="n">d1</span><span class="p">.</span><span class="n">codeRégion</span>
-<span class="k">group</span> <span class="k">by</span> <span class="n">r</span><span class="p">.</span><span class="n">codeRégion</span><span class="p">,</span> <span class="n">r</span><span class="p">.</span><span class="n">intitulé</span>
-</pre></div>
-</div>
-<p>Si on veut prendre en compte les régions sans département, il faut
-faire une jointure externe</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">r</span><span class="p">.</span><span class="n">intitulé</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">codeDpt</span><span class="p">),</span> <span class="k">sum</span><span class="p">(</span><span class="n">population</span><span class="p">)</span> <span class="k">as</span> <span class="n">population</span>
-<span class="k">from</span>  <span class="n">Région</span> <span class="k">as</span> <span class="n">r</span> <span class="k">left</span> <span class="k">join</span> <span class="n">Département</span> <span class="k">as</span> <span class="n">d</span> <span class="k">on</span> <span class="n">r</span><span class="p">.</span><span class="n">codeRégion</span> <span class="o">=</span> <span class="n">d1</span><span class="p">.</span><span class="n">codeRégion</span>
-<span class="k">group</span> <span class="k">by</span> <span class="n">r</span><span class="p">.</span><span class="n">codeRégion</span>
-</pre></div>
-</div>
-<p>Les régions sans département apparaissent dans le résultat de la jointure avec une
-valeur à  <code class="docutils literal notranslate"><span class="pre">null</span></code> pour la population, et le  <code class="docutils literal notranslate"><span class="pre">count</span></code> appliqué à  <code class="docutils literal notranslate"><span class="pre">null</span></code>
-renvoie  0 (tandis que le  <code class="docutils literal notranslate"><span class="pre">sum</span></code> appliqué à  <code class="docutils literal notranslate"><span class="pre">null</span></code>
-renvoie  <code class="docutils literal notranslate"><span class="pre">null</span></code>).</p>
-</div>
 </section>
 <section id="modele-relationnel-3-pts">
 <h3>Modèle relationnel (3 pts)<a class="headerlink" href="#modele-relationnel-3-pts" title="Lien permanent vers ce titre">¶</a></h3>
@@ -2301,18 +1469,6 @@ renvoie  <code class="docutils literal notranslate"><span class="pre">null</span
 <li><p>Ce résultat est-il en troisième forme normale?</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Tous les attributs qui n’apparaissent pas à droite sont nécessairement
-dans la clé, donc T, V  et R. On vérifie aisément que TVR est une clé
-(la seule).</p>
-<p>On a donc les relations (TGE) et (RG), auxquelles il faut ajouter la clé
-(TVR) (algorithme de normalisation).</p>
-<p>Le résultat est en troisième forme normale, si l’on admet une petite extension:
-dans la relation TGE, la DF E -&gt; G n’a pas la clé pour partie gauche. Mais on ne peut
-pas décomposer plus sans perdre d’information. C’est un cas (très rare en pratique) où il
-faut admettre une définition de la 3FN un peu plus compliquée que celle donnée en cours.</p>
-</div>
 </section>
 </section>
 <section id="examen-session-1-janvier-2026">
@@ -2371,57 +1527,12 @@ matriculeConducteur, jour \to idLigne\end{split}\]</div>
 <li><p>Quelles sont les modifications apportées au schéma relationnel?</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<blockquote>
-<div><ul>
-<li><p>L’attribut <code class="docutils literal notranslate"><span class="pre">idAbonné</span></code>, <code class="docutils literal notranslate"><span class="pre">idLigne</span></code> et  les trois attributs <code class="docutils literal notranslate"><span class="pre">idStation</span></code></p></li>
-<li><p>Non, cela reviendrait à imposer qu’un abonné parte d’une station une seule fois, et ce n’est
-vraiment pas raisonnable…</p></li>
-<li><p>Non, on connaît les stations de départ et d’arrivée pour un trajet, mais la station
-ne détermine pas la ligne.</p></li>
-<li><p>Pour <code class="docutils literal notranslate"><span class="pre">DétailLigne</span></code>.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">table</span> <span class="n">DétailLigne</span> <span class="p">(</span><span class="n">id</span> <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                 <span class="n">idLigne</span> <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                 <span class="n">idStation</span> <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                 <span class="n">idStationSuivante</span> <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                 <span class="n">primarykey</span> <span class="p">(</span><span class="n">id</span><span class="p">),</span>
-                 <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idLigne</span><span class="p">)</span> <span class="k">references</span> <span class="n">Ligne</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
-                 <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idStation</span><span class="p">)</span> <span class="k">references</span> <span class="n">Station</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
-                 <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idStationSuivante</span><span class="p">)</span> <span class="k">references</span> <span class="n">Station</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
- <span class="p">)</span>
-</pre></div>
-</div>
-</li>
-<li><p>Le numéro de mobile est une clé candidate: on ajoute la contrainte <code class="docutils literal notranslate"><span class="pre">unique(noMobile)</span></code></p></li>
-<li><p>La tête d’une station est caractérisée par le fait que l’id de la station n’est pas une
-des <code class="docutils literal notranslate"><span class="pre">idStationSuivante</span></code> pour la même ligne; le terminus est une station dans DétailLigne
-est la valeur de <code class="docutils literal notranslate"><span class="pre">idStationSuivante</span></code>  qui n’est
-pas <code class="docutils literal notranslate"><span class="pre">idStation</span></code> pour la même ligne.</p></li>
-<li><p>La figure <a class="reference internal" href="#fig-reseau"><span class="std std-numref">Fig. 77</span></a> montre le schéma E/A.</p>
-<blockquote>
-<div><figure class="align-center" id="id17">
-<span id="fig-reseau"></span><a class="reference internal image-reference" href="_images/exam-26-reseau.png"><img alt="_images/exam-26-reseau.png" src="_images/exam-26-reseau.png" style="width: 80%;" /></a>
-<figcaption>
-<p><span class="caption-number">Fig. 77 </span><span class="caption-text">Le schéma E/A après rétro-conception</span><a class="headerlink" href="#id17" title="Lien permanent vers cette image">¶</a></p>
-</figcaption>
-</figure>
-</div></blockquote>
-</li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>On ajoute une table <code class="docutils literal notranslate"><span class="pre">Conducteur</span></code> et une table
-<code class="docutils literal notranslate"><span class="pre">Affectation(matricule,jour,idLigne)</span></code>
-dont la clé est la paire <code class="docutils literal notranslate"><span class="pre">(matricule,jour)</span></code></p></li>
-</ul>
-</div>
 </section>
 <section id="sql-6-pts">
 <h3>SQL (6 pts)<a class="headerlink" href="#sql-6-pts" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Sur le schéma donné dans l’énoncé, exprimez en SQL les requêtes suivantes:</p>
 <blockquote>
-<div><ul>
+<div><ul class="simple">
 <li><p>Donnez la liste des trajets de l’abonné Philippe Rigaux, en affichant le jour, le nom
 de la station de départ et le nom de la station d’arrivée</p></li>
 <li><p>Quelles sont les stations où il est possible de passer de la ligne “Rouge” à la ligne “Jaune”
@@ -2429,62 +1540,7 @@ de la station de départ et le nom de la station d’arrivée</p></li>
 <li><p>Quelles sont les stations de la ligne “Rouge” qui ne permettent aucun changement?</p></li>
 <li><p>Quelle est la station de tête de la ligne “Rouge”?</p></li>
 <li><p>Donnez, pour chaque ligne, l’intitulé et le nombre de stations.</p></li>
-<li><p>Donnez les noms des abonnés qui  ont effectué plus de 4 trajets le 21 janvier 2026.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span> <span class="k">select</span> <span class="n">t</span><span class="p">.</span><span class="n">jour</span><span class="p">,</span> <span class="n">s1</span><span class="p">.</span><span class="n">npom</span> <span class="k">as</span> <span class="n">nomDépart</span><span class="p">,</span> <span class="n">s2</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomArivée</span>
- <span class="k">from</span> <span class="n">Trajet</span> <span class="k">as</span> <span class="n">t</span><span class="p">,</span> <span class="n">Station</span> <span class="k">as</span> <span class="n">s1</span><span class="p">,</span> <span class="n">Station</span> <span class="k">as</span> <span class="n">s2</span><span class="p">,</span> <span class="n">Abonné</span> <span class="k">as</span> <span class="n">a</span>
- <span class="k">where</span> <span class="n">a</span><span class="p">.</span><span class="n">prénom</span><span class="o">=</span><span class="s1">&#39;Philippe&#39;</span> <span class="k">and</span> <span class="n">a</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Rigaux&#39;</span>
- <span class="k">and</span> <span class="n">a</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">idAbonné</span>
- <span class="k">and</span> <span class="n">s1</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">idStationDépart</span>
- <span class="k">and</span> <span class="n">s2</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">idStationArrivée</span>
-
-<span class="k">select</span> <span class="n">s</span><span class="p">.</span><span class="n">nom</span>
-<span class="k">from</span> <span class="n">Station</span> <span class="k">as</span> <span class="n">s</span><span class="p">,</span> <span class="n">Ligne</span> <span class="k">as</span> <span class="n">l1</span><span class="p">,</span> <span class="n">Ligne</span> <span class="k">as</span> <span class="n">l2</span><span class="p">,</span> <span class="n">DétailLigne</span> <span class="k">as</span> <span class="n">d1</span><span class="p">,</span> <span class="n">DétailLigne</span> <span class="k">as</span> <span class="n">d2</span>
-<span class="k">where</span> <span class="n">s</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">d1</span><span class="p">.</span><span class="n">idStation</span>
-<span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="o">=</span> <span class="n">d2</span><span class="p">.</span><span class="n">idStation</span>
-<span class="k">and</span> <span class="n">d1</span><span class="p">.</span><span class="n">idLigne</span><span class="o">=</span><span class="n">l1</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span> <span class="n">d2</span><span class="p">.</span><span class="n">idLigne</span><span class="o">=</span><span class="n">l2</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span> <span class="n">l1</span><span class="p">.</span><span class="n">intitulé</span><span class="o">=</span><span class="s1">&#39;Jaune&#39;</span>
-<span class="k">and</span> <span class="n">l2</span><span class="p">.</span><span class="n">intitulé</span><span class="o">=</span><span class="s1">&#39;Rouge&#39;</span>
-
-<span class="k">select</span> <span class="n">s</span><span class="p">.</span><span class="n">nom</span>
-<span class="k">from</span> <span class="n">Station</span> <span class="k">as</span> <span class="n">s</span><span class="p">,</span> <span class="n">Ligne</span> <span class="k">as</span> <span class="n">l1</span><span class="p">,</span>  <span class="n">DétailLigne</span> <span class="k">as</span> <span class="n">d1</span>
-<span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span>
-     <span class="k">select</span> <span class="o">*</span>
-     <span class="k">from</span> <span class="n">DétailLigne</span> <span class="k">as</span> <span class="n">d2</span>
-     <span class="k">where</span> <span class="n">d2</span><span class="p">.</span><span class="n">idStation</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">id</span>
-     <span class="k">and</span> <span class="n">d2</span><span class="p">.</span><span class="n">idLigne</span> <span class="o">!=</span> <span class="n">l1</span><span class="p">.</span><span class="n">idLigne</span><span class="p">)</span>
- <span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">d1</span><span class="p">.</span><span class="n">idStation</span>
-<span class="k">and</span> <span class="n">d1</span><span class="p">.</span><span class="n">idLigne</span><span class="o">=</span><span class="n">l1</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span> <span class="n">l1</span><span class="p">.</span><span class="n">intitulé</span><span class="o">=</span><span class="s1">&#39;Rouge&#39;</span>
-
-<span class="k">select</span> <span class="n">s</span><span class="p">.</span><span class="n">nom</span>
-<span class="k">from</span> <span class="n">Station</span> <span class="k">as</span> <span class="n">s</span><span class="p">,</span> <span class="n">Ligne</span> <span class="k">as</span> <span class="n">l1</span><span class="p">,</span>  <span class="n">DétailLigne</span> <span class="k">as</span> <span class="n">d1</span>
-<span class="k">where</span> <span class="n">s</span><span class="p">.</span><span class="n">id</span> <span class="k">not</span> <span class="k">in</span> <span class="p">(</span>
-      <span class="k">select</span> <span class="n">d2</span><span class="p">.</span><span class="n">idStationSuivante</span>
-      <span class="k">from</span> <span class="n">DétailLigne</span> <span class="k">as</span> <span class="n">d2</span>
-      <span class="k">where</span> <span class="n">d2</span><span class="p">.</span><span class="n">idLigne</span> <span class="o">=</span> <span class="n">l1</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
-<span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">d1</span><span class="p">.</span><span class="n">idStation</span>
-<span class="k">and</span> <span class="n">d1</span><span class="p">.</span><span class="n">idLigne</span><span class="o">=</span><span class="n">l1</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span> <span class="n">l1</span><span class="p">.</span><span class="n">intitulé</span><span class="o">=</span><span class="s1">&#39;Rouge&#39;</span>
-
-<span class="k">select</span> <span class="n">l</span><span class="p">.</span><span class="n">intitulé</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">nbStations</span>
-<span class="k">from</span> <span class="n">Station</span> <span class="k">as</span> <span class="n">s</span><span class="p">,</span> <span class="n">Ligne</span> <span class="k">as</span> <span class="n">l1</span><span class="p">,</span>  <span class="n">DétailLigne</span> <span class="k">as</span> <span class="n">d1</span>
-<span class="k">where</span> <span class="n">s</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">d1</span><span class="p">.</span><span class="n">idStation</span>
-<span class="k">and</span> <span class="n">d1</span><span class="p">.</span><span class="n">idLigne</span><span class="o">=</span><span class="n">l1</span><span class="p">.</span><span class="n">id</span>
-<span class="k">group</span> <span class="k">by</span> <span class="n">l</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">l</span><span class="p">.</span><span class="n">intitulé</span>
-
-<span class="k">select</span> <span class="n">a</span><span class="p">.</span><span class="n">nom</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">nbTrajets</span>
-<span class="k">from</span> <span class="n">Abonné</span> <span class="k">as</span> <span class="n">a</span><span class="p">,</span> <span class="n">Trajet</span> <span class="k">as</span> <span class="n">t</span>
-<span class="k">where</span> <span class="n">a</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">idAbonné</span>
-<span class="k">and</span> <span class="n">jour</span><span class="o">=</span><span class="s1">&#39;21/01/2026&#39;</span>
-<span class="k">group</span> <span class="k">by</span> <span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">nom</span>
-<span class="k">having</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span>
-</pre></div>
-</div>
-</div>
-</li>
+<li><p>Donnez les noms des abonnés qui  ont effectué plus de 4 trajets le 21 janvier 2026.</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -2496,13 +1552,7 @@ de la station de départ et le nom de la station d’arrivée</p></li>
 <li><p>Les stations qui ne sont sur aucune ligne</p></li>
 <li><p>Les abonnés qui n’ont pas voyagé le 21 janvier 2026</p>
 <blockquote>
-<div><blockquote>
 <div></div></blockquote>
-<ol class="arabic simple">
-<li><p><span class="math notranslate nohighlight">\(\pi_{idStation} (Station) - \pi{idStation} (DetailLigne)\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{pr\acute{e}nom, nom} (Abonn\acute{e} \Join_{id=id} (\pi_{id} (Abonn\acute{e}) - \pi{idAbonn\acute{e}} (\sigma_{jour='21/01/2026'}(Trajet)))\)</span></p></li>
-</ol>
-</div></blockquote>
 </li>
 </ul>
 </div></blockquote>
@@ -2527,31 +1577,6 @@ deux stations immédiatement connexes à la station République,</p>
 <div><blockquote>
 <div><p>sur la ligne “Ligne 8” (c’est son intitulé).</p>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>La vue est l’union des séquences de stations
-dans <code class="docutils literal notranslate"><span class="pre">DétailLigne</span></code> et des séquences inversées.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">view</span>  <span class="n">BiDirection</span> <span class="k">as</span>
-  <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">DetailLigne</span>
-     <span class="k">union</span>
-  <span class="k">select</span> <span class="n">id</span><span class="p">,</span> <span class="n">idLigne</span><span class="p">,</span> <span class="n">idStation</span> <span class="k">as</span> <span class="n">idStationSuivante</span><span class="p">,</span>
-       <span class="n">idStationSuivante</span> <span class="k">as</span> <span class="n">idStation</span>
-  <span class="k">from</span> <span class="n">DetailLigne</span>
-</pre></div>
-</div>
-<p>On interroge directement la vue sans avoir à se soucier
-du sens de parcours.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">s2</span><span class="p">.</span><span class="n">nom</span>
-<span class="k">from</span> <span class="n">Ligne</span> <span class="k">as</span> <span class="n">l</span><span class="p">,</span> <span class="n">BiDirection</span> <span class="k">as</span> <span class="n">b</span><span class="p">,</span>
-     <span class="n">Station</span> <span class="k">as</span> <span class="n">s</span><span class="p">,</span> <span class="n">Station</span> <span class="k">as</span> <span class="n">s2</span>
-<span class="k">where</span> <span class="n">b</span><span class="p">.</span><span class="n">idLigne</span> <span class="o">=</span> <span class="n">l</span><span class="p">.</span><span class="n">id</span>
-<span class="k">and</span>  <span class="n">s</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">idStation</span>
-<span class="k">and</span>  <span class="n">s2</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">idStationSuivante</span>
-<span class="k">and</span>   <span class="n">l</span><span class="p">.</span><span class="n">intitulé</span> <span class="o">=</span> <span class="s1">&#39;Ligne 8&#39;</span>
-<span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">nom</span> <span class="o">=</span> <span class="s1">&#39;République&#39;</span>
-</pre></div>
-</div>
-</div>
 </div></blockquote>
 </li>
 </ul>
@@ -2685,7 +1710,7 @@ du sens de parcours.</p>
         <a href="index.html">Annales des examens</a><br/>
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2002-2025, Philippe Rigaux.
+        &#169; Copyright 2002-2026, Philippe Rigaux.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.1.
     </div>
         </div>

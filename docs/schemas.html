@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>Schémas relationnel &#8212; Documentation Cours de bases de données Septembre 2025</title>
+    <title>Schémas relationnel &#8212; Documentation Cours de bases de données Septembre 2026</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/agogo.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -1127,57 +1127,6 @@ ayant donné lieu a la prescription de 3 prises de Trucmyl par le Dr Folamour
 le nom du patient, le libellé du médicament et le nombre de prises</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Voici les commandes SQL. Note: le point-virgule est un séparateur de commandes, à utiliser
-quand on soumet plusieurs commandes à un système.</p>
-<blockquote>
-<div><div class="highlight-sql notranslate"><div class="highlight"><pre><span></span> <span class="k">create</span> <span class="k">table</span> <span class="n">Médecin</span> <span class="p">(</span><span class="n">matricule</span> <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                       <span class="n">nom</span> <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                       <span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="n">matricule</span><span class="p">)</span>
-                       <span class="p">);</span>
- <span class="k">create</span> <span class="k">table</span> <span class="n">Patient</span> <span class="p">(</span><span class="n">noSS</span> <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                       <span class="n">nom</span> <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                       <span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="n">noSS</span><span class="p">)</span>
-                       <span class="p">);</span>
- <span class="k">create</span> <span class="k">table</span> <span class="n">Médicament</span> <span class="p">(</span><span class="n">code</span> <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                       <span class="n">libellé</span> <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                       <span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="n">code</span><span class="p">)</span>
-                       <span class="p">);</span>
- <span class="k">create</span> <span class="k">table</span> <span class="n">Consultation</span> <span class="p">(</span><span class="k">no</span> <span class="nb">integer</span>  <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                       <span class="n">matricule</span> <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                       <span class="n">noSS</span>  <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                       <span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="k">no</span><span class="p">),</span>
-                       <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">matricule</span><span class="p">)</span> <span class="k">references</span> <span class="n">Médecin</span><span class="p">(</span><span class="n">matricule</span><span class="p">),</span>
-                       <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">noSS</span><span class="p">)</span> <span class="k">references</span> <span class="n">Patient</span><span class="p">(</span><span class="n">noSS</span><span class="p">)</span>
-                       <span class="p">);</span>
-<span class="k">create</span> <span class="k">table</span> <span class="n">Prescription</span> <span class="p">(</span><span class="n">codeMédicament</span> <span class="nb">varchar</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                       <span class="n">noConsultation</span> <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                       <span class="n">nbPrises</span> <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-                       <span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="n">codeMédicament</span><span class="p">,</span> <span class="n">noConsultation</span><span class="p">),</span>
-                       <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">codeMédicament</span><span class="p">)</span> <span class="k">references</span> <span class="n">Médicament</span><span class="p">(</span><span class="n">code</span><span class="p">),</span>
-                       <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">noConsultation</span><span class="p">)</span> <span class="k">references</span> <span class="n">Consultation</span><span class="p">(</span><span class="k">no</span><span class="p">)</span>
-                       <span class="p">);</span>
-
- <span class="k">insert</span> <span class="k">into</span> <span class="n">Médecin</span> <span class="p">(</span><span class="n">matricule</span><span class="p">,</span> <span class="n">nom</span><span class="p">)</span> <span class="k">values</span> <span class="p">(</span><span class="s1">&#39;xx&#39;</span><span class="p">,</span> <span class="s1">&#39;Folamour&#39;</span><span class="p">);</span>
- <span class="k">insert</span> <span class="k">into</span> <span class="n">Patient</span> <span class="p">(</span><span class="n">noSS</span><span class="p">,</span> <span class="n">nom</span><span class="p">)</span> <span class="k">values</span> <span class="p">(</span><span class="s1">&#39;1983778&#39;</span><span class="p">,</span> <span class="s1">&#39;Maboul&#39;</span><span class="p">);</span>
- <span class="k">insert</span> <span class="k">into</span> <span class="n">Médicament</span> <span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">libellé</span><span class="p">)</span> <span class="k">values</span> <span class="p">(</span><span class="s1">&#39;tm&#39;</span><span class="p">,</span> <span class="s1">&#39;Trucmyl&#39;</span><span class="p">);</span>
- <span class="k">insert</span> <span class="k">into</span> <span class="n">Consultation</span> <span class="p">(</span><span class="k">no</span><span class="p">,</span> <span class="n">matricule</span><span class="p">,</span> <span class="n">noSS</span><span class="p">)</span> <span class="k">values</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;xx&#39;</span><span class="p">,</span> <span class="s1">&#39;1983778&#39;</span><span class="p">);</span>
- <span class="k">insert</span> <span class="k">into</span> <span class="n">Prescription</span> <span class="p">(</span><span class="n">codeMédicament</span><span class="p">,</span> <span class="n">noConsultation</span><span class="p">,</span> <span class="n">nbPrises</span><span class="p">)</span> <span class="k">values</span> <span class="p">(</span><span class="s1">&#39;tm&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
-
- <span class="k">create</span> <span class="k">view</span> <span class="n">DrFolamour</span> <span class="k">as</span>
-  <span class="k">select</span> <span class="n">p</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomPatient</span><span class="p">,</span> <span class="n">m</span><span class="p">.</span><span class="n">libellé</span> <span class="k">as</span> <span class="n">médicament</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">nbPrises</span> <span class="k">as</span> <span class="n">nbPrises</span>
-  <span class="k">from</span> <span class="n">Médecin</span> <span class="k">as</span> <span class="n">doc</span><span class="p">,</span> <span class="n">Patient</span> <span class="k">as</span> <span class="n">pat</span><span class="p">,</span> <span class="n">Médicament</span> <span class="k">as</span> <span class="n">medoc</span><span class="p">,</span>
-            <span class="n">Consultation</span> <span class="k">as</span> <span class="n">cons</span><span class="p">,</span> <span class="n">Prescription</span> <span class="k">as</span> <span class="n">pres</span>
-  <span class="k">where</span> <span class="n">doc</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Folamour&#39;</span>
-  <span class="k">and</span>   <span class="n">cons</span><span class="p">.</span><span class="n">matricule</span> <span class="o">=</span> <span class="n">doc</span><span class="p">.</span><span class="n">matricule</span>
-  <span class="k">and</span>   <span class="n">pat</span><span class="p">.</span><span class="n">noSS</span> <span class="o">=</span> <span class="n">cons</span><span class="p">.</span><span class="n">noSS</span>
-  <span class="k">and</span>   <span class="n">cons</span><span class="p">.</span><span class="k">no</span> <span class="o">=</span> <span class="n">pres</span><span class="p">.</span><span class="n">noConsultation</span>
-  <span class="k">and</span>   <span class="n">pres</span><span class="p">.</span><span class="n">codeMédicament</span> <span class="o">=</span> <span class="n">medoc</span><span class="p">.</span><span class="n">code</span>
-</pre></div>
-</div>
-</div></blockquote>
-</div>
 </div>
 <div class="admonition-exercice-ex-schema-2-pour-pratiquer admonition" id="ex-schema-2">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-schema-2">Ex-schema-2</a>: pour pratiquer</p>
@@ -1289,50 +1238,7 @@ le contenu de la table avant décomposition (ci-dessous).</p></li>
 </table>
 <p>À vous de jouer !</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Voici la création des tables</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">create</span> <span class="k">table</span> <span class="n">Gardien</span> <span class="p">(</span><span class="n">id</span>  <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-      <span class="n">prénom</span>          <span class="nb">varchar</span> <span class="p">(</span><span class="mi">10</span><span class="p">),</span>
-      <span class="n">salaire</span>         <span class="nb">number</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-      <span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="n">id</span><span class="p">));</span>
-
-<span class="k">create</span> <span class="k">table</span> <span class="n">Emplacement</span> <span class="p">(</span><span class="n">code</span>  <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-      <span class="n">surface</span>         <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-      <span class="n">idGardien</span>     <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-      <span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="n">code</span><span class="p">),</span>
-      <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">idGardien</span><span class="p">)</span> <span class="k">references</span> <span class="n">Gardien</span><span class="p">);</span>
-
-<span class="k">create</span> <span class="k">table</span> <span class="n">Espèce</span> <span class="p">(</span><span class="n">espèce</span>     <span class="nb">varchar</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-      <span class="n">classe</span>          <span class="nb">varchar</span> <span class="p">(</span><span class="mi">10</span><span class="p">),</span>
-      <span class="n">origine</span>         <span class="nb">varchar</span> <span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-      <span class="k">primary</span> <span class="k">key</span> <span class="p">(</span><span class="n">espèce</span><span class="p">));</span>
-
-<span class="k">create</span> <span class="k">table</span> <span class="n">Animal</span> <span class="p">(</span><span class="n">code</span>  <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-         <span class="n">nom</span>     <span class="nb">varchar</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-         <span class="n">annéeNaissance</span> <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-      <span class="n">espèce</span>          <span class="nb">varchar</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
-      <span class="n">codeEmplacement</span>    <span class="nb">integer</span> <span class="k">not</span> <span class="k">null</span> <span class="p">,</span>
-    <span class="k">primary</span> <span class="k">key</span>  <span class="p">(</span><span class="n">code</span><span class="p">),</span>
-    <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">espèce</span><span class="p">)</span> <span class="k">references</span> <span class="n">Espèce</span><span class="p">(</span><span class="n">espèce</span><span class="p">),</span>
-    <span class="k">foreign</span> <span class="k">key</span> <span class="p">(</span><span class="n">codeEmplacement</span><span class="p">)</span> <span class="k">references</span> <span class="n">Emplacement</span><span class="p">(</span><span class="n">code</span><span class="p">),</span>
-    <span class="k">unique</span> <span class="p">(</span><span class="n">nom</span><span class="p">,</span> <span class="n">espèce</span><span class="p">));</span>
-</pre></div>
-</div>
-<p>La requête SQL la plus difficile:</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">e</span><span class="p">.</span><span class="n">code</span> <span class="k">as</span> <span class="n">codeEmplacement</span><span class="p">,</span> <span class="n">e</span><span class="p">.</span><span class="n">surface</span> <span class="k">as</span> <span class="n">surface</span><span class="p">,</span> <span class="k">g</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomGardien</span>
-<span class="k">from</span>   <span class="n">Animal</span> <span class="k">as</span> <span class="n">a1</span><span class="p">,</span> <span class="n">Animal</span> <span class="k">as</span> <span class="n">a2</span><span class="p">,</span> <span class="n">Emplacement</span> <span class="k">as</span> <span class="n">e</span><span class="p">,</span>
-      <span class="n">Espece</span> <span class="k">as</span> <span class="n">es1</span><span class="p">,</span> <span class="n">Espece</span> <span class="k">as</span> <span class="n">es2</span><span class="p">,</span> <span class="n">Gardien</span> <span class="k">as</span> <span class="k">g</span>
-<span class="k">where</span>     <span class="n">a1</span><span class="p">.</span><span class="n">codeEmplacement</span> <span class="o">=</span> <span class="n">a2</span><span class="p">.</span><span class="n">codeEmplacement</span>
-<span class="k">and</span>       <span class="n">a1</span><span class="p">.</span><span class="n">espèce</span> <span class="o">=</span> <span class="n">es1</span><span class="p">.</span><span class="n">espèce</span>
-<span class="k">and</span>       <span class="n">a2</span><span class="p">.</span><span class="n">espèce</span> <span class="o">=</span> <span class="n">es2</span><span class="p">.</span><span class="n">espèce</span>
-<span class="k">and</span>       <span class="k">not</span> <span class="p">(</span><span class="n">es1</span><span class="p">.</span><span class="n">classe</span> <span class="o">=</span> <span class="n">es2</span><span class="p">.</span><span class="n">classe</span><span class="p">)</span>
-<span class="k">and</span>       <span class="n">e</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">a1</span><span class="p">.</span><span class="n">codeEmplacement</span>
-<span class="k">and</span>       <span class="n">e</span><span class="p">.</span><span class="n">idGardien</span> <span class="o">=</span> <span class="k">g</span><span class="p">.</span><span class="n">id</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </section>
 </section>
 
@@ -1417,7 +1323,7 @@ le contenu de la table avant décomposition (ci-dessous).</p></li>
         <a href="index.html">Schémas relationnel</a><br/>
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2002-2025, Philippe Rigaux.
+        &#169; Copyright 2002-2026, Philippe Rigaux.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.1.
     </div>
         </div>

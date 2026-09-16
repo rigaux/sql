@@ -5,6 +5,7 @@ Annales des examens
 ###################
 
 
+
 **************************
 Examen blanc, janvier 2019
 **************************
@@ -99,19 +100,19 @@ Relation T
   - Pour quelle requête le résultat contient-il plus d’un nuplet?  Attention: souvenez-vous que l'opérateur
     de projection élimine les doublons.
 
-      #.  :math:`\pi_{A,C (\sigma_{B=0(R))`
-      #. :math:`\pi_{A,C (\sigma_{D=0(R))`
-      #. :math:`\pi_{A,C (\sigma_{B=0(R) \cup \sigma_{D=0(R))`
-      #.  :math:`\pi_{A,C (\sigma_{A=C(R)`
+      #.  :math:`\pi_{A,C} (\sigma_{B=0}(R))`
+      #. :math:`\pi_{A,C} (\sigma_{D=0}(R))`
+      #. :math:`\pi_{A,C} (\sigma_{B=0}(R) \cup \sigma_{D=0}(R))`
+      #.  :math:`\pi_{A,C} (\sigma_{A=C}(R)`
 
-  - Combien de nuplets retourne la requête :math:`\pi_{A,B,E (S \Join_{A=A \land B=B R)`?
+  - Combien de nuplets retourne la requête :math:`\pi_{A,B,E} (S \Join_{A=A \land B=B} R)`?
 
        #. 2
        #. 3
        #. 4
        #. 5
 
-  - Combien de nuplets retourne la requête :math:`R \Join_{A=A \land B=B (S \cup T)`?
+  - Combien de nuplets retourne la requête :math:`R \Join_{A=A \land B=B} (S \cup T)`?
 
        #. 3
        #. 5
@@ -276,8 +277,8 @@ Algèbre
 
 Relation T
   - La requête renvoie également 3 nuplets
-  - :math:`\pi_{nom, prenom (Personne \underset{id=idSpectateur{\bowtie \sigma_{prix > 500 (BILLET))`
-  - :math:`\pi_{id (Personne) - \pi_{idArtiste (Spectacle)`
+  - :math:`\pi_{nom, prenom} (Personne \underset{id=idSpectateur}{\bowtie} \sigma_{prix > 500} (BILLET))`
+  - :math:`\pi_{id} (Personne) - \pi_{idArtiste} (Spectacle)`
 
 
 Transactions
@@ -373,7 +374,7 @@ Algèbre (3 points)
 
 .. math::
 
-      \pi_{idMatch (But \Join_{idMatch=id \sigma_{scoreEquipe1=0 \land scoreEquipe2=0 (Match))
+      \pi_{idMatch} (But \Join_{idMatch=id} \sigma_{scoreEquipe1=0 \land scoreEquipe2=0} (Match))
 
 Programmation et transactions (3 points)
 ========================================
@@ -500,21 +501,21 @@ Algèbre
 
 .. math::
 
-     \pi_{nom (\sigma_{age > 30 (Joueur) \underset{id=idJoueur{\bowtie \sigma_{minute = 1(But) )
+     \pi_{nom} (\sigma_{age > 30} (Joueur) \underset{id=idJoueur}{\bowtie} \sigma_{minute = 1}(But) )
 
 Joueurs français:
 
 
 .. math::
 
-     A = \sigma_{pays='France'(Joueur \underset{j.idEquipe = e.id{\bowtie Equipe)
+     A = \sigma_{pays='France'}(Joueur \underset{j.idEquipe = e.id}{\bowtie} Equipe)
 
 Joueurs français qui ont marqué au moins un but :
 
 
 .. math::
 
-     B = \sigma_{pays='France'(But\;b \underset{b.idJoueur = j.id{\bowtie Joueur\;j) \underset{j.idEquipe = e.id{\bowtie Equipe\;e
+     B = \sigma_{pays='France'}(But\;b \underset{b.idJoueur = j.id}{\bowtie} Joueur\;j) \underset{j.idEquipe = e.id}{\bowtie} Equipe\;e
 
 Résultat:
 
@@ -680,15 +681,15 @@ Algèbre (3 points)
 
     .. math::
           
-          \pi_{id (Chercheur) - \pi_{idChercheur (R\acute{edige)
+          \pi_{id} (Chercheur) - \pi_{idChercheur} (R\acute{e}dige)
    
   .. ifconfig:: correctionlabo in ('public')  
 
 
       .. admonition:: Correction
          
-          - :math:`\pi_{nom(\pi_{id (\sigma_{nom = 'Vertigo' (Equipe)) \underset{id=idEquipe{\bowtie Chercheur )`
-          - :math:`\pi_{titre ( (  (\sigma_{annee \geq 2015 (Article) \underset{ref=refArticle{\bowtie Redige) \underset{idChercheur=id{\bowtie Chercheur ) \underset{idEquipe=id{\bowtie \sigma_{nom = 'ROC' Equipe)`
+          - :math:`\pi_{nom}(\pi_{id} (\sigma_{nom = 'Vertigo'} (Equipe)) \underset{id=idEquipe}{\bowtie} Chercheur )`
+          - :math:`\pi_{titre} ( (  (\sigma_{annee \geq 2015} (Article) \underset{ref=refArticle}{\bowtie} Redige) \underset{idChercheur=id}{\bowtie} Chercheur ) \underset{idEquipe=id}{\bowtie} \sigma_{nom = 'ROC'} Equipe)`
           - L'expression recherche les chercheurs qui n'ont rien publié.
 
             .. code-block:: sql
@@ -921,7 +922,7 @@ une sélection doit s'apppliquer directement à une table.
 
 .. math::
 
-     \sigma_{A=C \land A=D \land E =F \land C > B  (T_1 \times T_2)
+     \sigma_{A=C \land A=D \land E =F \land C > B}  (T_1 \times T_2)
 
 
 .. ifconfig:: correctionoeuvre in ('public')
@@ -930,7 +931,7 @@ une sélection doit s'apppliquer directement à une table.
     
         .. math::
         
-             \sigma_{A=C \land C > B (T_1) \Join_{A=D \sigma_{E = F(T_2)
+             \sigma_{A=C \land C > B} (T_1) \Join_{A=D} \sigma_{E = F}(T_2)
 
 Transactions (2 points)
 =======================
@@ -995,7 +996,7 @@ base par un schéma entité association.
 
 
 .. _forfait_telephone:
-.. figure:: ../figures/forfait_telephone.png
+.. figure:: ../../figures/forfait_telephone.png
       :width: 80%
       :align: center
    
@@ -1022,7 +1023,7 @@ Questions:
 
 
 		.. _forfait_telephone_final:
-		.. figure:: ../figures/forfait_telephone_final.png
+		.. figure:: ../../figures/forfait_telephone_final.png
 			:width: 80%
 			:align: center
 		
@@ -1184,13 +1185,13 @@ Algèbre relationnelle (3 pts)
     
     .. math:: 
 
-   	    \pi_{nom, prenom(\sigma_{ville='Paris'(Client) \underset{id=idClient{\bowtie (\sigma_{duree > 24(Souscription) \underset{idForfait=id{\bowtie \sigma_{nom='\rm{Audace' (Forfait))
+   	    \pi_{nom, prenom}(\sigma_{ville='Paris'}(Client) \underset{id=idClient}{\bowtie} (\sigma_{duree > 24}(Souscription) \underset{idForfait=id}{\bowtie} \sigma_{nom='\rm{Audace'}} (Forfait))
 
  - Même question pour l'expression suivante
  
    .. math:: 
    
-	  \pi_{c.id, c.nom, c.prenom (Client) - \pi_{c.id, c.nom, c.prenom (Client \underset{c.id=s.idClient{\bowtie \sigma_{duree \geq 48 (Souscription))
+	  \pi_{c.id, c.nom, c.prenom} (Client) - \pi_{c.id, c.nom, c.prenom} (Client \underset{c.id=s.idClient}{\bowtie} \sigma_{duree \geq 48} (Souscription))
 
    .. ifconfig:: soloperateur in ('public')
 
@@ -1476,8 +1477,8 @@ Donnez les expressions algébriques pour les requêtes suivantes :
 
 	.. admonition:: Correction
 
-		- :math:`\pi_{nom (\sigma_{idProfesseur=idEtudiant (Cours) \Join_{idProfesseur=id Personne)`
-		- :math:`\pi_{id (Personne) -  \pi_{idEtudiant (\sigma_{langue='IT' (Cours))`
+		- :math:`\pi_{nom} (\sigma_{idProfesseur=idEtudiant} \Join_{idProfesseur=id} Personne)`
+		- :math:`\pi_{id} (Personne) -  \pi_{idEtudiant} (\sigma_{langue='IT'} (Cours))`
 
 
 Valeurs nulles, vues (2 pts)
@@ -1772,10 +1773,10 @@ Donnez l'expression algébrique pour les requêtes 1 et  5 de la section précé
 	.. admonition:: Correction
 
 		Pour la première on procède en 3 étapes, en définissant d'abord :math:`R_1` et :math:`R_2`
-			- :math:`R_1 := \pi_{nomEnfant,idCreche,nomCreche ((\rho_{nom \to nomEnfant(Personne)  \Join_{idPersonne=idEnfant Inscription)`
-			- :math:`R_2 := \pi_{idCreche,nomCreche (\sigma_{ville='Paris'(Cr\grave{eche))`
-			- :math:`R_1 \Join_{idCreche=idCreche R_2`
-			- :math:`\pi_{idEnfant,idCreche (\sigma_{annee=2024(Demande)) - \pi_{idEnfant,idCreche (\sigma_{annee=2024 (Cr\acute{eche))`
+			- :math:`R_1 := \pi_{nomEnfant,idCreche,nomCreche} ((\rho_{nom \to nomEnfant}(Personne)  \Join_{idPersonne=idEnfant} Inscription)`
+			- :math:`R_2 := \pi_{idCreche,nomCreche} (\sigma_{ville='Paris'}(Cr\grave{e}che))`
+			- :math:`R_1 \Join_{idCreche=idCreche} R_2`
+			- :math:`\pi_{idEnfant,idCreche} (\sigma_{annee=2024}(Demande)) - \pi_{idEnfant,idCreche} (\sigma_{annee=2024} (Cr\acute{e}che))`
 		
 
 Programmation (3 points)
@@ -1859,7 +1860,7 @@ Compréhension du schéma (6 pts)
 
 		.. admonition:: Correction
 
-			- Standard. Voici pour la table  Voisins:
+			- Standard. Voici pour la table  Voisins}:
 
 			.. code-block:: sql
 
@@ -1871,7 +1872,7 @@ Compréhension du schéma (6 pts)
 					foreign key (idDpt2) references Département (idDpt)
 					)
 
- - On ajoute la commande suivante au schéma de la table  Voisins
+ - On ajoute la commande suivante au schéma de la table  Voisins}
 
 	.. code-block:: sql
 
@@ -1930,13 +1931,13 @@ Compréhension du schéma (6 pts)
 
 		.. admonition:: Correction
 
-			La dépendance additionnelle indique qu'une personne ne
+			La dépendandce additionnelle indique qu'une personne ne
 			peut diriger qu'un seul département. L'identifiant d'une
 			personne pourrait donc servir à identifier un département. 
 			Ce ne serait cependant pas un très bon choix car la personne
 			dirigeant un département est amenée à changer régulièrement.
 			En pratique, mieux vont donc déclarer dans le schéma
-			une contrainte d'unicité sur l'identifiant ``idPrésident``
+			une contrainte d'unicité sur l'idenfifiant ``idPrésident``
 			dans la table ``Département`` (c'est également une clé étrangère).
 
 Dans toute la suite de l'examen, on travaille sur 
@@ -1950,7 +1951,7 @@ Algèbre et vues (4 pts)
 On définit algébriquement les relations suivantes:
 
   - :math:`V_1 := Voisins``
-  - :math:`V_2 := \rho_{codeDpt1 \to codeDpt2, codeDpt2 \to codeDpt1 (Voisins)`
+  - :math:`V_2 := \rho_{codeDpt1 \to codeDpt2, codeDpt2 \to codeDpt1} (Voisins)`
   - :math:`V_3 := V1 \cup V2`
 
   Répondez aux questions suivantes:
@@ -1992,12 +1993,12 @@ On définit algébriquement les relations suivantes:
 
 			  .. math::
 				
-					\pi_{codeDpt2 (\sigma_{codeDpt1=d_1 (\rm{V_3))
+					\pi_{codeDpt2} (\sigma_{codeDpt1=d_1} (\rm{V_3}))
 			  soit
 			  
 			  .. math::
 
-					\pi_{codeDpt1 (\sigma_{codeDpt2=d_1 (\rm{V_3))
+					\pi_{codeDpt1} (\sigma_{codeDpt2=d_1} (\rm{V_3}))
 
 			  qui donneront le même résultat.
 
@@ -2067,7 +2068,7 @@ Exprimez en SQL les requêtes suivantes:
 				(d1.codeDpt < d2.codeDpt and v.codeDpt1 = d1.codeDpt1 and v.codeDpt2=d2.codeDpt)
 			    or
 				/* Cas d'un voisin de code inférieur au Cantal */
-				(d1.codeDpt > d2.codeDpt and v.codeDpt1 = d2.codeDpt and v.codeDpt2=d1.codeDpt)
+				(d1.codeDpt > d2.codeDpt and v.codeDpt1 = d1.codeDpt2 and v.codeDpt2=d1.codeDpt)
 				)
 
 		.. code-block:: sql
@@ -2150,7 +2151,6 @@ Soit les attributs TGVER avec les dépendances fonctionnelles suivantes:
 		pas décomposer plus sans perdre d'information. C'est un cas (très rare en pratique) où il
 		faut admettre une définition de la 3FN un peu plus compliquée que celle donnée en cours.
 
-		
 ******************************
 Examen session 1, janvier 2026
 ******************************

@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>SQL, langage algébrique &#8212; Documentation Cours de bases de données Septembre 2025</title>
+    <title>SQL, langage algébrique &#8212; Documentation Cours de bases de données Septembre 2026</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/agogo.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -2231,19 +2231,6 @@ inutile dans la requête:</p>
 <li><p>En déduire la propriété cherchée</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Prenons deux nuplets de <span class="math notranslate nohighlight">\(R \times S\)</span>, <span class="math notranslate nohighlight">\(u\)</span> et  <span class="math notranslate nohighlight">\(v\)</span> et montrons qu’on ne
-peut pas avoir  <span class="math notranslate nohighlight">\(u.idR = v.idR\)</span> <strong>et</strong>  <span class="math notranslate nohighlight">\(u.idS = v.idS\)</span>. Par construction, <span class="math notranslate nohighlight">\(u\)</span>
-provient de l’association de deux nuplets <span class="math notranslate nohighlight">\((r, s)\)</span> et <span class="math notranslate nohighlight">\(v\)</span>
-provient de l’association de deux nuplets <span class="math notranslate nohighlight">\((r', s')\)</span>, avec <span class="math notranslate nohighlight">\(r != r'\)</span>
-<strong>ou</strong>  <span class="math notranslate nohighlight">\(s != s'\)</span>.</p>
-<p>Prenons le premier cas (<span class="math notranslate nohighlight">\(r != r'\)</span>). Alors <span class="math notranslate nohighlight">\(r.idR != r'.idR\)</span>
-puisque <span class="math notranslate nohighlight">\(idR\)</span> est la clé primaire, et on ne peut pas avoir
-<span class="math notranslate nohighlight">\(u.idR = v.idR\)</span> <strong>et</strong>  <span class="math notranslate nohighlight">\(u.idS = v.idS\)</span>. Même raisonnement pour le second cas,</p>
-<p>On en déduit que tous les nuplets de <span class="math notranslate nohighlight">\(R \times S\)</span> diffèrent deux à deux sur
-de la paire <span class="math notranslate nohighlight">\((idR, idS)\)</span> et qu’il ne peut pas y avoir de doublons.</p>
-</div>
 </div>
 <div class="admonition-exercice-ex-alg-2-du-sql-declaratif-a-l-expression-algebrique admonition" id="ex-alg-2">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-alg-2">Ex-alg-2</a>: du SQL déclaratif à l’expression algébrique</p>
@@ -2298,16 +2285,6 @@ Utilisez la composition et l’union.</p>
           <span class="k">and</span> <span class="n">a</span><span class="p">.</span><span class="n">codeActivité</span> <span class="o">=</span> <span class="s1">&#39;Ski&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\pi_{code,nom} (\sigma_{lieu='Alpes'} (\sigma_{type='Hotel'} (Logement))) \cup \pi_{code,nom} (\sigma_{capacite\geq 100} (\sigma_{type='Hotel'} (Logement)))\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{code,nom} (Logement \Join_{code=codeLogement} \sigma_{codeActivit\acute{e}='Ski'} (Activit\acute{e}))\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{nom1, nom2} (\rho_{nom \to nom1,type \to type1 } (Logement) \Join_{type1=type2} \rho_{nom \to nom2, type \to type2} (Logement)))\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{pr\acute{e}nom,nom} ( (Voyageur \Join_{idVoyageur=idVoyageur} S\acute{e}jour) \Join_{code=codeLogement} \sigma_{lieu='Alpes'} (Logement))\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\pi_{nom} (Logement) -  (\pi_{nom} (Logement \Join_{code=codeLogement} \sigma_{codeActivit\acute{e}='Ski'} (Activit\acute{e}))\)</span></p></li>
-</ul>
-</div>
 </div>
 <div class="admonition-exercice-ex-alg-3-de-l-algebre-a-sql-algebrique admonition" id="ex-alg-3">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-alg-3">Ex-alg-3</a>: de l’algèbre à SQL algébrique</p>
@@ -2342,33 +2319,6 @@ ne présente donc pas d’ambiguité.</p>
 <li><p><span class="math notranslate nohighlight">\(\rho_{id \to idAppart} (\pi_{id} (Appart)) - \pi_{idAppart}(Personne)\)</span></p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span>  <span class="n">nom</span><span class="p">,</span> <span class="n">profession</span> <span class="k">from</span> <span class="n">Personne</span>
-
-<span class="k">select</span> <span class="n">id</span><span class="p">,</span> <span class="n">idImmeuble</span> <span class="k">from</span> <span class="n">Appart</span> <span class="k">where</span> <span class="n">surface</span> <span class="o">&gt;</span> <span class="mi">150</span>
-<span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Appart</span> <span class="k">where</span> <span class="n">niveau</span> <span class="o">=</span> <span class="k">no</span>
-
-<span class="k">select</span> <span class="n">nom</span><span class="p">,</span> <span class="k">no</span><span class="p">,</span> <span class="n">surface</span>
-<span class="k">from</span> <span class="n">Immeuble</span> <span class="k">join</span> <span class="n">Appart</span>  <span class="k">on</span> <span class="p">(</span><span class="n">Immeuble</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">idImmeuble</span><span class="p">)</span>
-
-<span class="k">select</span> <span class="n">nom</span><span class="p">,</span> <span class="k">no</span><span class="p">,</span> <span class="n">surface</span>
-<span class="k">from</span> <span class="n">Personne</span> <span class="k">join</span> <span class="n">Appart</span>  <span class="k">on</span> <span class="p">(</span><span class="n">idAppart</span><span class="o">=</span><span class="n">Appart</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
-
-<span class="k">select</span> <span class="n">nom</span><span class="p">,</span> <span class="n">P1</span><span class="p">.</span><span class="n">idAppart</span> <span class="k">from</span> <span class="n">Propriétaire</span> <span class="k">as</span> <span class="n">P1</span> <span class="k">join</span> <span class="n">Personne</span> <span class="k">as</span> <span class="n">P2</span>
-    <span class="k">on</span> <span class="p">(</span><span class="n">idPersonne</span><span class="o">=</span><span class="n">id</span> <span class="k">and</span> <span class="n">P1</span><span class="p">.</span><span class="n">idAppart</span> <span class="o">=</span> <span class="n">P2</span><span class="p">.</span><span class="n">idAppart</span><span class="p">)</span>
-
-<span class="k">select</span> <span class="n">nom</span><span class="p">,</span> <span class="n">nomI</span><span class="p">,</span> <span class="k">no</span><span class="p">,</span> <span class="n">surface</span>
-<span class="k">from</span> <span class="p">(</span><span class="k">select</span> <span class="n">id</span> <span class="k">as</span> <span class="n">idI</span><span class="p">,</span> <span class="n">nom</span> <span class="k">as</span> <span class="n">nomI</span> <span class="k">from</span> <span class="n">Immeuble</span><span class="p">)</span> <span class="k">as</span> <span class="n">Imm</span>
-        <span class="k">join</span> <span class="p">(</span><span class="n">Personne</span> <span class="k">join</span> <span class="n">Appart</span>  <span class="k">on</span> <span class="p">(</span><span class="n">idAppart</span><span class="o">=</span><span class="n">Appart</span><span class="p">.</span><span class="n">id</span><span class="p">))</span>
-     <span class="k">on</span> <span class="p">(</span><span class="n">idI</span><span class="o">=</span><span class="n">idImmeuble</span><span class="p">)</span>
-
-<span class="k">select</span> <span class="n">id</span> <span class="k">as</span> <span class="n">id</span> <span class="n">Appart</span> <span class="k">from</span> <span class="n">Appart</span>
-<span class="k">except</span>
-<span class="k">select</span> <span class="n">idAppart</span> <span class="k">from</span> <span class="n">Personne</span>
-</pre></div>
-</div>
-</div>
 </div>
 <div class="admonition-exercice-ex-alg-4-expressions-algebriques admonition" id="ex-alg-4">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-alg-4">Ex-alg-4</a>: expressions algébriques</p>
@@ -2418,153 +2368,6 @@ appartement de même superficie.</p></li>
 </ul>
 <p>Si vous avez des soucis pour utiliser les lettres grecques, il est possible de les noter en toutes lettres:
 PI, RHO, SIGMA, CROSS, JOIN, UNION, MINUS.</p>
-<ul>
-<li><p>Appartements du Koudalou</p>
-<div class="math notranslate nohighlight">
-\[A := \pi_{idAppart} (Appart \Join_{idImmeuble=id} \sigma_{nom='Koudalou'}(Immeuble))\]</div>
-</li>
-<li><p>Occupants de ces appartements</p>
-<blockquote>
-<div><div class="math notranslate nohighlight">
-\[\pi_{nom} (Personne \Join_{idAppart=idAppart} A)\]</div>
-</div></blockquote>
-</li>
-<li><p>Profession des occupants d’un appartement de plus de 100 m2, On décompose:</p>
-<blockquote>
-<div><ul>
-<li><p>Appartements de plus de 100 m2</p>
-<div class="math notranslate nohighlight">
-\[A := \pi_{idAppart} (\sigma_{capacit\acute{e}&gt;=100}(Appart))\]</div>
-</li>
-<li><p>Profession des occupants</p>
-<div class="math notranslate nohighlight">
-\[\pi_{profession} (Personne \Join_{idAppart=idAppart} A)\]</div>
-</li>
-</ul>
-</div></blockquote>
-</li>
-<li><p>Nom des immeubles ayant un appartement de plus de 150 m2. Toujours en décomposant</p>
-<blockquote>
-<div><ul>
-<li><p>Appartements de plus de 150 m2</p>
-<div class="math notranslate nohighlight">
-\[A := \pi_{idAppart} (\sigma_{capacit\acute{e}=&gt;150}(Appart))\]</div>
-</li>
-<li><p>Nom de l’immeuble</p>
-<div class="math notranslate nohighlight">
-\[\pi_{nom} (Immeuble \Join_{id=idImmeuble} A)\]</div>
-</li>
-</ul>
-</div></blockquote>
-</li>
-<li><p>Propriétaires de l’appartement de Atchoum.</p>
-<ul>
-<li><p>Atchoum et son appartement</p>
-<div class="math notranslate nohighlight">
-\[A := \pi_{nomProp, idAppart}(\sigma_{nom='Atchoum'}(Personne))\]</div>
-</li>
-<li><p>Propriétaires de cet appartement</p>
-<div class="math notranslate nohighlight">
-\[B := \pi_{idPersonne} (A \Join_{idAppart=idAppart} Propri\acute{e}taire)\]</div>
-</li>
-<li><p>Noms des propriétaires</p>
-<div class="math notranslate nohighlight">
-\[\pi_{nom} (B \Join_{idPersonne=id} Personne)\]</div>
-</li>
-</ul>
-</li>
-<li><p>Dans quels immeubles habite un acteur</p>
-<ul>
-<li><p>Les appartements des acteurs</p>
-<div class="math notranslate nohighlight">
-\[A := \pi_{idImmeuble} (\sigma_{profession='Acteur'}(Personne) \Join_{idAppart=id} Appart)\]</div>
-</li>
-<li><p>Les immeubles de ces appartements</p>
-<div class="math notranslate nohighlight">
-\[\pi_{nom} (Immeuble\Join_{id=idImmeuble} A)\]</div>
-</li>
-</ul>
-</li>
-<li><p>Qui est, au moins partiellement, propriétaire de l’appartement qu’il occupe?</p>
-<ul>
-<li><p>Les appartements et leurs occupants</p>
-<div class="math notranslate nohighlight">
-\[A := \pi_{idAppart, idPersonne, nom} (\rho_{id \to idPersonne} (Personne))\]</div>
-</li>
-<li><p>Les appartements et leurs propriétaires</p>
-<div class="math notranslate nohighlight">
-\[B := \pi_{idAppart, idPersonne} (Propri\acute{e}taire)\]</div>
-</li>
-<li><p>Ceux qui sont à la fois occupants et propriétaires</p>
-<div class="math notranslate nohighlight">
-\[\pi_{nom} (A \Join_{idAppart =idAppart \land idPersonne=idPersonne} B)\]</div>
-</li>
-</ul>
-</li>
-<li><p>Qui occupe un appartement possédé par Prof</p>
-<ul>
-<li><p>Les appartements et leurs occupants: on reprend la A ci-dessus.</p></li>
-<li><p>Les appartements possédés par Prof</p>
-<div class="math notranslate nohighlight">
-\[B := \pi_{idAppart} (Propri\acute{e}taire \Join_{idPersonne=id} \sigma_{nom='Prof'} (Personne))\]</div>
-</li>
-<li><p>Final:</p>
-<div class="math notranslate nohighlight">
-\[\pi_{nom} (A \Join_{idAppart=idAppart} B)\]</div>
-</li>
-</ul>
-</li>
-<li><p>Qui n’est pas propriétaire?</p>
-<ul>
-<li><p>Toutes les personnes</p>
-<div class="math notranslate nohighlight">
-\[A := \pi_{idPersonne, nom} (\rho_{id \to idPersonne} (Personne))\]</div>
-</li>
-<li><p>Tous les propriétaires</p>
-<div class="math notranslate nohighlight">
-\[B := \pi_{idPersonne, nom} (Propri\acute{e}taire \Join_{idPersonne=id} Personne)\]</div>
-</li>
-<li><p>Toutes les personnes sauf les propriétaires</p>
-<div class="math notranslate nohighlight">
-\[A - B\]</div>
-</li>
-</ul>
-</li>
-<li><p>Paires de personnes habitant, dans le même immeuble, un    appartement de même superficie.</p>
-<ul>
-<li><p>Les appartements de même superficie dans le même immeuble:</p>
-<div class="math notranslate nohighlight">
-\[A := \pi_{id1, id2} (\rho_{id \to id1} (Appart) \Join_{idImmeuble=idImmeuble \land surface = surface \land id1 \not= id2} \rho_{id \to id2} (Appart))\]</div>
-<p>Note: on demande que les id d’appartements soient différents pour éviter d’associer un appartement
-avec lui-même.</p>
-</li>
-<li><p>Les occupants de ces appartements</p>
-<div class="math notranslate nohighlight">
-\[\pi_{nom1, nom2}  (\rho_{nom \to nom1}  (Personne) \Join_{idAppart=id1} A \Join_{id2 =idAppart}  \rho_{nom \to nom2}  (Personne))\]</div>
-</li>
-</ul>
-</li>
-<li><p>Dans quels immeubles ne trouve-t-on aucun musicien?</p>
-<ul>
-<li><p>Les immeubles avec un musicien</p>
-<div class="math notranslate nohighlight">
-\[A := \pi_{nom} (\pi_{nom, idAppart} (Immeuble \Join_{id=idImmeuble} Appart) \Join_{idAppart=idAppart} (\pi_{idAppart} (\sigma_{profession='musicien'} (Personne))))\]</div>
-</li>
-<li><p>Les immeubles sauf les précédents</p>
-<div class="math notranslate nohighlight">
-\[\pi_{nom} (Immeuble) - A\]</div>
-</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<div><ul>
-<li><p>Qui possède un appartement sans l’occuper?  On prend propriétaires moins les occupants:</p>
-<div class="math notranslate nohighlight">
-\[\pi_{idPersonne, idAppart} (Propri\acute{e}taire) - \rho_{id\to idPersonne} (\pi_{id, idAppart} (Personne)))\]</div>
-</li>
-</ul>
-</div></blockquote>
 </div>
 <div class="admonition-exercice-ex-alg-5-reecriture-d-expressions-algebriques-equivalentes admonition" id="ex-alg-5">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-alg-5">Ex-alg-5</a>: réécriture d’expressions algébriques équivalentes</p>
@@ -2575,8 +2378,6 @@ où les sélections s’appliquent directement aux tables.</p>
 <div class="math notranslate nohighlight">
 \[\sigma_{A=C \land C &gt; D \land E =F} (T_1 \times T_2)\]</div>
 </div></blockquote>
-<div class="math notranslate nohighlight">
-\[\sigma_{A=C} (T_1)  \Join_{C &gt; D}  \sigma_{A=C} (T_2)\]</div>
 </div>
 </section>
 </section>
@@ -2667,7 +2468,7 @@ où les sélections s’appliquent directement aux tables.</p>
         <a href="index.html">SQL, langage algébrique</a><br/>
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2002-2025, Philippe Rigaux.
+        &#169; Copyright 2002-2026, Philippe Rigaux.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.1.
     </div>
         </div>

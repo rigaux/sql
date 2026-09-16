@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>Conception d’une base de données &#8212; Documentation Cours de bases de données Septembre 2025</title>
+    <title>Conception d’une base de données &#8212; Documentation Cours de bases de données Septembre 2026</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/agogo.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -2210,23 +2210,6 @@ vraissemblance).</p>
 le schéma avec cette hypothèse?</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Réponses:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Bien sûr, 0..* pour l’association Assiste</p></li>
-<li><p>Non (un patient par consultation).</p></li>
-<li><p>Oui.</p></li>
-<li><p>Oui, pas de rapport direct entre un médecin et une consultation, donc pas de contrainte.</p></li>
-<li><p>Non, un médecin par consultation</p></li>
-<li><p>Entre Consultation et Médicament, on pourrait créer un type d’entité Prescription
-avec comme attribut le nombre de prises de médicament.</p></li>
-<li><p>Il faut unifier les types d’entité Médecin et Patient, attribuer une clé unique <code class="docutils literal notranslate"><span class="pre">id</span></code>
-et déclarer <code class="docutils literal notranslate"><span class="pre">noSS</span></code> et <code class="docutils literal notranslate"><span class="pre">matricule</span></code> comme clés secondaires.</p></li>
-</ul>
-</div></blockquote>
-</div>
 </div>
 <div class="admonition-exercice-ex-conc-2-un-quotidien admonition" id="ex-conc-2">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-conc-2">Ex-conc-2</a>: un quotidien</p>
@@ -2247,21 +2230,6 @@ système d’information (très simplifié) d’un quotidien.</p>
 <li><p>Un journaliste peut-il travailler pour deux journaux en même temps?</p></li>
 <li><p>Voyez-vous une entité faible? Comment justifieriez-vous ce choix?</p></li>
 </ul>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Réponses:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Non, pas d’après le modèle</p></li>
-<li><p>Non, pas d’après le modèle</p></li>
-<li><p>Oui, pas de lien direct, donc pas de contrainte</p></li>
-<li><p>Oui, par transitivité d’Article vers Numéro puis de Numéro vers Journal</p></li>
-<li><p>Oui, aucune contrainte sur la période de collaboration (qui n’est d’ailleurs pas représentée)</p></li>
-<li><p>Le numéro d’un journal est une entité faible, ce qui semble censé: un numéro
-est indissociable du journal qui le publie.</p></li>
-</ul>
-</div></blockquote>
-</div>
 </div>
 <div class="admonition-exercice-ex-conc-3-cardinalites admonition" id="ex-conc-3">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-conc-3">Ex-conc-3</a>: cardinalités</p>
@@ -2290,29 +2258,6 @@ nouveau modèle, sans oublier les cardinalités.</p></li>
 plusieurs auteurs.</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>La <a class="reference internal" href="#media-sol"><span class="std std-numref">Fig. 43</span></a> montre la première étape avec les cardinalités
-et l’instrument. Ma solution présente ce qui semble le plus vraisonnable.
-Vous avez trouvé autre chose? Si c’est défendable, personne
-ne peut dire que vous avez tort, à condition que vous sachiez défendre et expliquer vos choix.</p>
-<figure class="align-center" id="id28">
-<span id="media-sol"></span><a class="reference internal image-reference" href="_images/mediatheque-solution.png"><img alt="_images/mediatheque-solution.png" src="_images/mediatheque-solution.png" style="width: 90%;" /></a>
-<figcaption>
-<p><span class="caption-number">Fig. 43 </span><span class="caption-text">Première étape de la solution</span><a class="headerlink" href="#id28" title="Lien permanent vers cette image">¶</a></p>
-</figcaption>
-</figure>
-<p>La <a class="reference internal" href="#media-sol2"><span class="std std-numref">Fig. 44</span></a> donne la solution complète. La nouvelle entité Contribution
-est liée à un interprète et une plage, ce qui préserve la signification initiale de
-l’association. On a généralisé l’entité Interprète en Personne, ce qui présente
-de multiples avantages. Une personne peut être interprète, mais aussi auteur ou produtcteur.</p>
-<figure class="align-center" id="id29">
-<span id="media-sol2"></span><a class="reference internal image-reference" href="_images/mediatheque-sol2.png"><img alt="_images/mediatheque-sol2.png" src="_images/mediatheque-sol2.png" style="width: 90%;" /></a>
-<figcaption>
-<p><span class="caption-number">Fig. 44 </span><span class="caption-text">Première étape de la solution</span><a class="headerlink" href="#id29" title="Lien permanent vers cette image">¶</a></p>
-</figcaption>
-</figure>
-</div>
 </div>
 <div class="admonition-exercice-ex-conc-4-normalisation admonition" id="ex-conc-4">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-conc-4">Ex-conc-4</a>: normalisation</p>
@@ -2322,75 +2267,16 @@ de multiples avantages. Une personne peut être interprète, mais aussi auteur o
 <li><p>En déduire le schéma des relations, en mettant en valeur clés primaires et clés
 étrangères</p></li>
 </ul>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Pas besoin d’être malin ici, il faut juste être soigneux (d’ailleurs
-un ordinateur saurait le faire).</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(codeMédicament \to libellé\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(matricule \to nom\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(noSS \to nom\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(noConsultation \to date\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(noConsultation \to matricule\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(noConsultation \to noSS\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(codeMédicament, noConsultation \to nbPrises\)</span></p></li>
-</ul>
-</div></blockquote>
-<p>On applique donc l’algorithme:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Médecin (<strong>matricule</strong>, nom)</p></li>
-<li><p>Patient (<strong>noSS</strong>, nom)</p></li>
-<li><p>Médicament (<strong>codeMédicament</strong>, libellé)</p></li>
-<li><p>Consultation (<strong>no</strong>, <em>matricule</em>, <em>noSS</em>, date)</p></li>
-<li><p>Prescription(<strong>codeMédicament, noConsultation</strong>, nbPrises)</p></li>
-</ul>
-</div></blockquote>
-</div>
 </div>
 <div class="admonition-exercice-ex-conc-5-schema-relationnel admonition" id="ex-conc-5">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-conc-5">Ex-conc-5</a>: schéma relationnel</p>
 <p>Donner le schéma relationnel pour le modèle de la médiathèque (partez du modèle
 initial, celui de la <a class="reference internal" href="#media"><span class="std std-numref">Fig. 42</span></a> ou, mieux, de votre modèle final.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Attention à l’entité faible, avec son identifiant composé.</p>
-<ul class="simple">
-<li><p>Personne (<strong>id</strong>, prénom, nom)</p></li>
-<li><p>Disque (<strong>id</strong>, titre, année, <em>idProducteur</em>)</p></li>
-<li><p>Oeuvre (<strong>id</strong>, titre, année)</p></li>
-<li><p>Plage (<strong>idDisque</strong>, <strong>no</strong>, durée, <em>idOeuvre</em>, dateEnregistrement)</p></li>
-<li><p>Contribution (<strong>id</strong>, <em>idPersonne</em>, instrument, <em>idDisque, noPlage</em>)</p></li>
-<li><p>AuteurOeuvre (<strong>idPersonne, idOeuvre</strong>)</p></li>
-</ul>
-</div>
 </div>
 <div class="admonition-exercice-ex-conc-6-retroconception admonition" id="ex-conc-6">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-conc-6">Ex-conc-6</a>: rétroconception</p>
 <p>Vous connaissez maintenant par cœur le schéma de la base des voyageurs. Saurez-vous
 trouver, par inversion de l’algorithme de normalisation, le schéma E/A dont il est issu?</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Au départ, Séjour était probablement une association plusieurs-plusieurs. Notez
-que Activité est une entité faible, ce qui peut se déduire de la structure de son
-identifiant, constitué en partie de l’identifiant d’une autre entité.</p>
-<figure class="align-center" id="id30">
-<span id="schema-voyageurs-mieux"></span><a class="reference internal image-reference" href="_images/association-sejour.png"><img alt="_images/association-sejour.png" src="_images/association-sejour.png" style="width: 60%;" /></a>
-<figcaption>
-<p><span class="caption-number">Fig. 45 </span><span class="caption-text">Le schéma de la base Voyageur, montrant le Séjour comme une association</span><a class="headerlink" href="#id30" title="Lien permanent vers cette image">¶</a></p>
-</figcaption>
-</figure>
-<p>Puis le concepteur s’est sans doute rendu compte qu’un même voyageur ne pouvait
-visiter un même logement qu’une seule fois, et a décidé de réifier l’association
-Séjour, ce qui lève cette contrainte.</p>
-<figure class="align-center" id="id31">
-<span id="association-sejour-reifiee"></span><a class="reference internal image-reference" href="_images/schema-voyageurs-mieux.png"><img alt="_images/schema-voyageurs-mieux.png" src="_images/schema-voyageurs-mieux.png" style="width: 80%;" /></a>
-<figcaption>
-<p><span class="caption-number">Fig. 46 </span><span class="caption-text">Réification de l’association Séjour</span><a class="headerlink" href="#id31" title="Lien permanent vers cette image">¶</a></p>
-</figcaption>
-</figure>
-</div>
 </div>
 </section>
 <section id="atelier-etude-du-cas-zoo-le-schema-normalise">
@@ -2418,36 +2304,7 @@ automatiquement le schéma de la base.</p>
 </li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<blockquote>
-<div><p>Voici les relations issues de la normalisation</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Animal (<strong>idAnimal</strong>, nom, année_naissance, <em>espèce</em>, <em>codeEmplacement</em>)</p></li>
-<li><p>Emplacement (<strong>codeEmplacement</strong>, surface, <em>prénomGardien</em>)</p></li>
-<li><p>Gardien (<strong>prénom</strong>, salaire)</p></li>
-<li><p>Espèce (<strong>espèce</strong>, origine, classe)</p></li>
-</ul>
-</div></blockquote>
-<p>Les clés primaires sont en gras. Il faudrait améliorer certaines choses, notamment
-en identifiant les gaerdiens autrement que par leur prénom… Les clés étrangères
-sont en italiques.</p>
-<p>Les DF nous disent que la paire (nom, espèce) est une clé candidate
-pour la relation Animal. On la définit comme clé secondaire, la clé
-primaire étant le code de l’animal.</p>
-<p>Le schéma de la base est donné par la <a class="reference internal" href="#schema-zoo"><span class="std std-numref">Fig. 48</span></a>. Vous noterez
-qu’on ne représente pas dans le schéma les clés étrangères puisque
-qu’elle sont remplacées par les associations.</p>
-</div></blockquote>
-<figure class="align-center" id="id33">
-<span id="schema-zoo"></span><a class="reference internal image-reference" href="_images/schema-zoo.png"><img alt="_images/schema-zoo.png" src="_images/schema-zoo.png" style="width: 90%;" /></a>
-<figcaption>
-<p><span class="caption-number">Fig. 48 </span><span class="caption-text">Modéle de la base Zoo</span><a class="headerlink" href="#id33" title="Lien permanent vers cette image">¶</a></p>
-</figcaption>
-</figure>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </div></blockquote>
 </section>
 <section id="atelier-collectif-concevons-le-systeme-d-information-d-un-hopital">
@@ -2561,7 +2418,7 @@ correspondant aux besoins.</p>
         <a href="index.html">Conception d’une base de données</a><br/>
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2002-2025, Philippe Rigaux.
+        &#169; Copyright 2002-2026, Philippe Rigaux.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.1.
     </div>
         </div>

@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>SQL, langage déclaratif &#8212; Documentation Cours de bases de données Septembre 2025</title>
+    <title>SQL, langage déclaratif &#8212; Documentation Cours de bases de données Septembre 2026</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/agogo.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -1922,45 +1922,13 @@ Utilisez les règles d’équivalence pour obtenir la FNC des formules suivantes
 </ul>
 </div></blockquote>
 <p>Réécrivez cette expression en FNC.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<blockquote>
-<div><p>On effectue successivement les réécritures suivantes</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Forme initiale: <span class="math notranslate nohighlight">\(((a \land b) \lor (q \land r)) \lor z\)</span></p></li>
-<li><p>On applique la distribution à la première partie de la formule: <span class="math notranslate nohighlight">\((a \lor (q \land r)) \land  (b \lor (q \land r))  \lor z\)</span></p></li>
-<li><p>On continue: la première partie de la formule est alors en FNC: <span class="math notranslate nohighlight">\(((a \lor q) \land (a \lor r) \land  (b \lor q) \land (b \lor r))  \lor z\)</span></p></li>
-<li><p>On finalise en distribuant la disjonction avec <span class="math notranslate nohighlight">\(z\)</span>: <span class="math notranslate nohighlight">\((a \lor q \lor z) \land (a \lor r \lor z) \land  (b \lor q \lor z) \land (b \lor r \lor z)\)</span></p></li>
-</ul>
-</div></blockquote>
-</div></blockquote>
-<p>Et voilà. Pour prendre une image: on « pousse » les disjonctions à l’intérieur des parenthèses,
-et on en sort les conjonctions. Ou, si on a en tête l’arbre syntaxique
-défini par les parenthèses: on pousse les disjonctions vers
-le bas, les conjonctions vers le haut.</p>
-<p>En ce qui concerne</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>(pays = “France”) ou (pays=”Espagne” et année &gt; 2010)</p></li>
-</ul>
-</div></blockquote>
-<p>La réécriture est donc</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>(pays = “France” ou pays=”Espagne”) et (pays = “France” ou année &gt; 2010)</p></li>
-</ul>
-</div></blockquote>
-</div>
 </div></blockquote>
 </div>
 <div class="admonition-exercice-ex-calcul-2-le-ou-exclusif admonition" id="ex-calcul-2">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-calcul-2">Ex-calcul-2</a>: le ou exclusif</p>
 <p>Quelle formule propositionnelle exprime le <em>ou</em> exclusif entre <span class="math notranslate nohighlight">\(p\)</span> et <span class="math notranslate nohighlight">\(q\)</span> ?</p>
 <blockquote>
-<div><p>La formule est <span class="math notranslate nohighlight">\((p \land \neg q) \lor (\neg p \land q)\)</span>. On exclut
-donc le cas où les deux propositions sont fausses: <span class="math notranslate nohighlight">\(\neg p \land \neg q\)</span>.</p>
-</div></blockquote>
+<div></div></blockquote>
 </div>
 <div class="admonition-exercice-ex-calcul-3-un-peu-de-raisonnement admonition" id="ex-calcul-3">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-calcul-3">Ex-calcul-3</a>: un peu de raisonnement</p>
@@ -2001,96 +1969,6 @@ Prenons par exemple l’affirmation « Si le logement est un gîte, il a moins 
 Quelle est la requête  qui cherche tous les faits vérifiant cette affirmation? Et donc
 comment vérifier si cette affirmation est toujours vraie?</p></li>
 </ul>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>C’est donc la table de vérité de <span class="math notranslate nohighlight">\(\neg p  \lor q\)</span>.</p>
-<table class="colwidths-given docutils align-default" id="id15">
-<caption><span class="caption-number">Tableau 2 </span><span class="caption-text">Valeurs de vérité pour l’implication</span><a class="headerlink" href="#id15" title="Lien permanent vers ce tableau">¶</a></caption>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p><span class="math notranslate nohighlight">\(p\)</span></p></th>
-<th class="head"><p><span class="math notranslate nohighlight">\(q\)</span></p></th>
-<th class="head"><p><span class="math notranslate nohighlight">\(p  \to q\)</span> (<span class="math notranslate nohighlight">\(\neg p  \lor q\)</span>)</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>V</p></td>
-<td><p>V</p></td>
-<td><p>V</p></td>
-</tr>
-<tr class="row-odd"><td><p>V</p></td>
-<td><p>F</p></td>
-<td><p>F</p></td>
-</tr>
-<tr class="row-even"><td><p>F</p></td>
-<td><p>V</p></td>
-<td><p>V</p></td>
-</tr>
-<tr class="row-odd"><td><p>F</p></td>
-<td><p>F</p></td>
-<td><p>V</p></td>
-</tr>
-</tbody>
-</table>
-<p>On note que l’implication est vraie quand les deux propositions sont fausses. Cela
-peut sembler contre-intuitif. Cela correspond à une définition simple: si p
-est vraie alors q <em>doit</em> être vraie. Dans tout les autres cas (notamment quand
-p est faux) on considère qu’il n’y a pas de problème.</p>
-<p>La seconde possibilité consiste à effectuer un raisonnement dit « symbolique »
-au lieu d’énumérer tous les cas (ce qui n’est ni très élégant, ni très efficace).
-Ce type de raisonnement s’appuie sur des équivalences, par
-exemple le fait que <span class="math notranslate nohighlight">\(p  \to q\)</span>  est équivalent à <span class="math notranslate nohighlight">\(\neg p  \lor q\)</span>.
-En appliquant ces équivalences, on transforme symboliquement (c’est-à-dire en restant
-au niveau de la syntaxe, sans se poser de question sur les cas), une formule en une autre.</p>
-<p>Ici, on a donc <span class="math notranslate nohighlight">\(p  \to q \equiv \neg p  \lor q\)</span> (NB: <span class="math notranslate nohighlight">\(\equiv\)</span> dénote l’équivalence
-logique). On a de même <span class="math notranslate nohighlight">\(\neg q  \to \neg p \equiv \neg (\neg q) \lor \neg p \equiv \neg p \lor q\)</span>.
-CQFD.</p>
-<p>Autre démonstration: posons <span class="math notranslate nohighlight">\(P = \neg p\)</span> et <span class="math notranslate nohighlight">\(Q = \neg q\)</span>. La formule s’écrit alors <span class="math notranslate nohighlight">\(P \lor \neg Q\)</span>,
-autrement dit <span class="math notranslate nohighlight">\(\neg Q \lor P\)</span>, autrement dit <span class="math notranslate nohighlight">\(Q \to P\)</span>. CQFD.</p>
-<p>Dire: “si X s’appelle Barnabé alors X est un scarabée”  est équivalent à dire
-“si X  n’est pas un scarabée, alors il ne s’appelle pas Barnabé”</p>
-<p>Confondre <span class="math notranslate nohighlight">\(p \to q\)</span> et <span class="math notranslate nohighlight">\(\neg p \to  \neg q\)</span> est une erreur assez courante.
-Il suffit de prendre la troisième ligne de la table de vérité ci-dessus, q
-est vrai et p est faux. Alors <span class="math notranslate nohighlight">\(p \to q\)</span> est vrai mais <span class="math notranslate nohighlight">\(\neg p \to  \neg q\)</span>
-est faux. Cette ligne nous dit en fait qu’il existe des cas où q est vrai
-sans que p le soit, et ça ne remet pas en cause l’implication.</p>
-<p>Dire: “si X s’appelle Barnabé alors X est un scarabée”  ne signifie pas
-que tous les scarabées s’appellent Barnabé.</p>
-<p>Pour Carmen et Don José: la seconde et la quatrième formulations
-sont équivalentes à la formule initiale. On appelle <span class="math notranslate nohighlight">\(P\)</span> la proposition « Carmen
-aime Don José » et <span class="math notranslate nohighlight">\(Q\)</span> la proposition « Don José prend garde à lui ». On sait
-donc que <span class="math notranslate nohighlight">\(P \to Q\)</span>, par hypothèse.</p>
-<p>Une fois la situation modélisée, il suffit d’appliquer les règles.</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>la première affirmation revient à dire <span class="math notranslate nohighlight">\(\neg P \to \neg Q\)</span>, pas équivalent à l’hypothèse</p></li>
-<li><p>la seconde se modélise par <span class="math notranslate nohighlight">\(\neg Q \to \neg P\)</span>, équivalent à l’hypothèse</p></li>
-<li><p>la troisième est  <span class="math notranslate nohighlight">\(P \lor Q\)</span>, pas équivalent</p></li>
-<li><p>la troisième est  <span class="math notranslate nohighlight">\(\neg P \lor Q\)</span>,  équivalent</p></li>
-</ul>
-</div></blockquote>
-<p>La requête qui cherche tous les faits vérifiant cette implication.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
-<span class="k">from</span> <span class="n">Logement</span>
-<span class="k">where</span> <span class="k">not</span><span class="p">(</span><span class="k">type</span><span class="o">=</span><span class="s1">&#39;Gîte&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="n">capacité</span> <span class="o">&lt;</span> <span class="mi">5</span>
-</pre></div>
-</div>
-<p>Attention, c’est différent de ne chercher que les gîtes de moins de cinq places:
-si le logement n’est pas un gîte, l’implication est vraie indépendamment de la capacité.</p>
-<p>Trouver des faits vérifiant une propriété ne signifie pas qu’elle est <em>toujours</em> vraie.
-Il faut pour cela qu’il n’existe pas de cas où ele est fausse. On peut donc
-produire la requête qui effectue la négation de la précédente.</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
-<span class="k">from</span> <span class="n">Logement</span>
-<span class="k">where</span> <span class="k">type</span><span class="o">=</span><span class="s1">&#39;Gîte&#39;</span> <span class="k">and</span> <span class="n">capacité</span> <span class="o">&gt;=</span> <span class="mi">5</span>
-</pre></div>
-</div>
-<p>Le résultat est vide si l’affirmation est vraie.</p>
-</div>
 </div></blockquote>
 </div>
 <div class="admonition-exercice-ex-calcul-3bis-aidons-les-dupondt-a-bien-raisonner admonition" id="ex-calcul-3bis">
@@ -2142,55 +2020,6 @@ Haddock propose une reformulation (figure ci-dessous).</p>
 à dire que les Dupondt <em>ne sont pas</em> des clowns?</p>
 <p>Quelle serait la bonne formulation d’une phrase qui indiquerait
 explicitement que le capitaine ne considère pas les Dupondt comme des clowns?</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Correction</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(p \to q\)</span> est équivalent à <span class="math notranslate nohighlight">\(\neg p \lor q\)</span>. Donc <span class="math notranslate nohighlight">\(r\)</span> est équivalent à</p></li>
-</ul>
-<blockquote>
-<div><div class="math notranslate nohighlight">
-\[r \equiv \neg \rm{OffreEmploi} (o,c) \lor \neg \rm{Competence} (p,c) \lor \rm{FaitLaffaire} (p,o)\]</div>
-</div></blockquote>
-<ul class="simple">
-<li><p>Le capitaine énonce la conjonction de deux faits:</p></li>
-</ul>
-<blockquote>
-<div><div class="math notranslate nohighlight">
-\[\rm{OffreEmploi} (\rm{'Hipparque'}, \rm{'clown'}) \land \rm{FaitLaffaire} (\rm{'Dupondt'}, \rm{'Hipparque'})\]</div>
-<p>Si <span class="math notranslate nohighlight">\(\rm{FaitLaffaire} (\rm{'Dupondt'}, \rm{'Hipparque'})\)</span> est vrai,
-alors <span class="math notranslate nohighlight">\(\neg \rm{Competence} (p,c)\)</span> peut être vrai ou
-faux sans remettre en question la vérité de la règle <span class="math notranslate nohighlight">\(r\)</span>.  Rien dans notre
-modèle logique ne permet donc d’en déduire
-que les Dupondt sont des clowns ! Il faudrait pour cela que notre règle
-<span class="math notranslate nohighlight">\(r\)</span> soit une <em>équivalence</em>, pas une <em>implication</em>.</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>Cette fois le capitaine énonce les faits</p></li>
-</ul>
-<blockquote>
-<div><div class="math notranslate nohighlight">
-\[\neg \rm{OffreEmploi} (\rm{'Hipparque'}, \rm{'clown'}) \land \neg \rm{FaitLaffaire} (\rm{'Dupondt'}, \rm{'Hipparque'})\]</div>
-<p>Ici encore, <span class="math notranslate nohighlight">\(\neg \rm{Competence} (p,c)\)</span> peut être vrai ou
-faux sans remettre en question la vérité de la règle <span class="math notranslate nohighlight">\(r\)</span>. Les Dupondt pourraient
-être des clowns !</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>Regardons notre règle formulée sans implication. Pour
-que <span class="math notranslate nohighlight">\(\neg \rm{Competence} (\rm{'Dupondt'},\rm{'clown'}))\)</span> soit vrai sans ambiguité
-(donc les Dupondt ne sont pas des clowns),
-il faut que <span class="math notranslate nohighlight">\(\neg \rm{OffreEmploi}(\rm{'Hipparque'},\rm{'clown'})\)</span> soit faux et
-<span class="math notranslate nohighlight">\(\rm{FaitLaffaire} (\rm{'Dupondt'},\rm{'Hipparque'})\)</span> soit faux également.</p></li>
-</ul>
-<blockquote>
-<div><div class="math notranslate nohighlight">
-\[\rm{OffreEmploi}(\rm{'Hipparque'},\rm{'clown'}) \land \neg \rm{FaitLaffaire} (\rm{'Dupondt'},\rm{'Hipparque'})\]</div>
-<p>Le capitaine devrait dire : « Le cirque Hipparque a besoin de deux clowns,
-mais vous ne faites pas l’affaire ». CQFD.</p>
-</div></blockquote>
-</div></blockquote>
-</div>
 </div>
 <div class="admonition-exercice-ex-calcul-4-des-equivalences admonition" id="ex-calcul-4">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-calcul-4">Ex-calcul-4</a>: des équivalences</p>
@@ -2241,16 +2070,6 @@ respectivement, <span class="math notranslate nohighlight">\(x\)</span> est aute
 <li><p>Comment exprimer l’énoncé suivant sans implication : « Si <span class="math notranslate nohighlight">\(x\)</span> est auteur, alors <span class="math notranslate nohighlight">\(x\)</span> n’est pas propriétaire »
 (idem; utiliser uniquement les connecteurs de SQL: and, or et not).</p></li>
 </ul>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Première question: c’est un ou exlusif, déjà vu plus haut. Donc la
-formule est <span class="math notranslate nohighlight">\((Auteur (o,x) \land \neg Prop (o,x)) \lor  (\neg Auteur (o,x) \land Prop (o,x)\)</span></p>
-<p>Deuxième question: En français: <span class="math notranslate nohighlight">\(x\)</span>  n’est ni auteur, ni propriétaire. Formellement:
-<span class="math notranslate nohighlight">\(\neg Auteur (o,x) \land \neg Prop (o,x)\)</span></p>
-<p>Troisième question: on  a une implication <span class="math notranslate nohighlight">\(Auteur (o,x) \to \neg Prop (o,x)\)</span>,
-équivalente donc à  <span class="math notranslate nohighlight">\(\neg Auteur (o,x) \lor \neg Prop (o,x)\)</span>. La traduction
-en SQL est directe avec les connecteurs not et or.</p>
-</div>
 </div>
 <div class="admonition-exercice-ex-calcul-5-la-quantification-universelle admonition" id="ex-calcul-5">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-calcul-5">Ex-calcul-5</a>: la quantification universelle</p>
@@ -2267,22 +2086,6 @@ dans ce logement</p></li>
 </ul>
 </div></blockquote>
 <p>Donnez la requête SQL correspondant à la bonne formulation</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>C’est la troisième formulation qui est la bonne. Quant à la requête SQL,
-elle prend les logements tels <em>qu’il n’existe pas</em> de voyageur tel <em>qu’il
-n’existe pas</em> de séjour de ce voyageur dans ce logement. Action:</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="k">distinct</span> <span class="n">l</span><span class="p">.</span><span class="n">nom</span>
- <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span>
- <span class="k">where</span>  <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="s1">&#39;&#39;</span>
-           <span class="k">from</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v</span>
-           <span class="k">where</span> <span class="k">not</span> <span class="k">exists</span>  <span class="p">(</span><span class="k">select</span> <span class="s1">&#39;&#39;</span>
-                           <span class="k">from</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s</span>
-                           <span class="k">where</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">codeLogement</span>
-                           <span class="k">and</span>   <span class="n">v</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">idVoyageur</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
 </div></blockquote>
 </div>
 <div class="admonition-exercice-ex-calcul-6-encore-des-dependances-fonctionnelles admonition" id="ex-calcul-6">
@@ -2298,25 +2101,6 @@ et la dépendance fonctionnelle <span class="math notranslate nohighlight">\(A \
 qui donne les cas où <span class="math notranslate nohighlight">\(A \to B\)</span> n’est pas vérifée: le résultat devrait être vide!).</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Avec l’implication: pour toute paire de nuplets <span class="math notranslate nohighlight">\(t_1, t_2\)</span>, la formule
-suivante doit être vérifiée.</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(t_1.A=t_2.A \to t_1.B=t_2.B\)</span></p></li>
-<li><p>En réécrivant l’implication, on obtient: <span class="math notranslate nohighlight">\(t_1.A \not= t_2.A \lor t_1.B = t_2.B\)</span> (en clair:
-cette formule est vraie si les valeurs de A sont distinctes ou si les valeurs de B sont égales).</p></li>
-<li><p>La formule qui exprime que la DF est  violée  est la négation de la précédente, soit
-<span class="math notranslate nohighlight">\(t_1.A = t_2.A \land t_1.B \not= t_2.B\)</span>. Ce qui donne en SQL:</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">r1</span><span class="p">.</span><span class="n">A</span><span class="p">,</span> <span class="n">r2</span><span class="p">.</span><span class="n">A</span>
-<span class="k">from</span> <span class="n">r</span> <span class="k">as</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r</span> <span class="k">as</span> <span class="n">r2</span>
-<span class="k">where</span> <span class="n">r1</span><span class="p">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">r2</span><span class="p">.</span><span class="n">A</span> <span class="k">and</span> <span class="n">r1</span><span class="p">.</span><span class="n">B</span> <span class="o">&lt;&gt;</span> <span class="n">r2</span><span class="p">.</span><span class="n">B</span>
-</pre></div>
-</div>
-<p>Un résultat vide indique que la DF est toujours respectée.</p>
-</li>
-</ul>
-</div>
 </div>
 <div class="admonition-exercice-ex-calcul-7-interpretons-sql admonition" id="ex-calcul-7">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-calcul-7">Ex-calcul-7</a>: interprétons SQL</p>
@@ -2335,25 +2119,6 @@ logements avec leurs activités, légèrement modifiée.</p>
 <li><p>la table <code class="docutils literal notranslate"><span class="pre">Séjour</span></code> est vide.</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Si elle est vide, on n’obtient rien. Sinon
-on obtient (1) la jointure (2) 100 000 doublons de la jointure.</p>
-<p>Pour bien comprendre: l’évaluateur SQL va chercher tous les
-triplets de variables <code class="docutils literal notranslate"><span class="pre">(l,</span> <span class="pre">a,</span> <span class="pre">s)</span></code> qui satisfont la portée
-et la sélection. On va donc répéter chaque paire <code class="docutils literal notranslate"><span class="pre">(l,</span> <span class="pre">a)</span></code> qui satisfait
-la condition de jointure autant de fois qu’il y a de nuplets dans
-la table <code class="docutils literal notranslate"><span class="pre">Séjour</span></code>. Et pour finir on va produire les nuplets-résultat
-qui vont contenir beaucoup de doublons, ou aucun selon le contenu de la
-table <code class="docutils literal notranslate"><span class="pre">Séjour</span></code>.</p>
-<p>Cet exercice doit se comprendre comme une illustration de la nécessité
-d’interpréter une requête SQL dans un cadre rigoureux, qui s’appuie
-sur la définition que je résume une nouvelle fois: le <code class="docutils literal notranslate"><span class="pre">from</span></code> définit
-toutes les combinaisons de nuplets à considérer, le <code class="docutils literal notranslate"><span class="pre">where</span></code> restreint
-ces combinaisons de nuplets à celles satisfaisant des conditions exprimées
-par une formule, le <code class="docutils literal notranslate"><span class="pre">select</span></code> construit le résultat à partir des
-combinaisons qui passent le test.</p>
-</div>
 </div>
 <div class="admonition-exercice-ex-calcul-8-interpretons-sql-suite admonition" id="ex-calcul-8">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-calcul-8">Ex-calcul-8</a>: interprétons SQL, suite</p>
@@ -2375,16 +2140,6 @@ pourquoi.</p>
 <li><p>Faut-il ajouter un <code class="docutils literal notranslate"><span class="pre">distinct</span></code>?</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p>Non cette requête exprime l’intersection des trois tables</p></li>
-<li><p>Il faut remplacer le <code class="docutils literal notranslate"><span class="pre">and``par</span> <span class="pre">``or</span></code></p></li>
-<li><p>Oui il faut un <code class="docutils literal notranslate"><span class="pre">distinct</span></code>, sinon chaque nuplet dans <span class="math notranslate nohighlight">\(R \cap S\)</span>
-est dupliqué autant de fois qu’il y a de nuplets dans <code class="docutils literal notranslate"><span class="pre">T</span></code>,
-et réciproquement.</p></li>
-</ul>
-</div>
 </div>
 <div class="admonition-exercice-ex-calcul-9-construisons-des-requetes-sql admonition" id="ex-calcul-9">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-calcul-9">Ex-calcul-9</a>: construisons des requêtes SQL.</p>
@@ -2392,53 +2147,6 @@ et réciproquement.</p></li>
 <a class="reference internal" href="#construiresqlquiz1"><span class="std std-numref">Fig. 13</span></a>, <a class="reference internal" href="#construiresqlquiz2"><span class="std std-numref">Fig. 14</span></a> et <a class="reference internal" href="#construiresqlquiz3"><span class="std std-numref">Fig. 15</span></a>.
 À chaque fois, la première clause  est <code class="docutils literal notranslate"><span class="pre">select</span> <span class="pre">*</span></code>: vous devez compléter avec le
 <code class="docutils literal notranslate"><span class="pre">from</span></code>   et le <code class="docutils literal notranslate"><span class="pre">where</span></code>.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span>
-<span class="k">from</span> <span class="n">Film</span> <span class="k">as</span> <span class="n">f</span><span class="p">,</span> <span class="n">Rôle</span> <span class="k">as</span> <span class="n">r</span><span class="p">,</span> <span class="n">Artiste</span> <span class="k">as</span> <span class="n">a</span>
-<span class="k">where</span> <span class="n">f</span><span class="p">.</span><span class="n">idFilm</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="n">idFilm</span>
-<span class="k">and</span> <span class="n">r</span><span class="p">.</span><span class="n">idActeur</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">idArtiste</span>
-<span class="k">and</span> <span class="n">f</span><span class="p">.</span><span class="n">année</span> <span class="o">=</span> <span class="mi">1994</span>
-<span class="k">and</span> <span class="n">a</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Tarantino&#39;</span>
-
-<span class="k">select</span> <span class="o">*</span>
-<span class="k">from</span> <span class="n">Film</span> <span class="k">as</span> <span class="n">f1</span><span class="p">,</span> <span class="n">Film</span> <span class="k">as</span> <span class="n">f2</span><span class="p">,</span> <span class="n">Rôle</span> <span class="k">as</span> <span class="n">r1</span><span class="p">,</span>
-    <span class="n">Rôle</span> <span class="k">as</span> <span class="n">r2</span><span class="p">,</span> <span class="n">Artiste</span> <span class="k">as</span> <span class="n">a1</span><span class="p">,</span> <span class="n">Artiste</span> <span class="k">as</span> <span class="n">a2</span>
-<span class="k">where</span> <span class="n">f1</span><span class="p">.</span><span class="n">idFilm</span> <span class="o">=</span> <span class="n">r1</span><span class="p">.</span><span class="n">idFilm</span>
-<span class="k">and</span>   <span class="n">f2</span><span class="p">.</span><span class="n">idFilm</span> <span class="o">=</span> <span class="n">r2</span><span class="p">.</span><span class="n">idFilm</span>
-<span class="k">and</span>   <span class="n">f1</span><span class="p">.</span><span class="n">idRéalisateur</span> <span class="o">=</span> <span class="n">a2</span><span class="p">.</span><span class="n">idArtiste</span>
-<span class="k">and</span>   <span class="n">f2</span><span class="p">.</span><span class="n">idRéalisateur</span> <span class="o">=</span> <span class="n">a2</span><span class="p">.</span><span class="n">idArtiste</span>
-<span class="k">and</span> <span class="n">r1</span><span class="p">.</span><span class="n">idActeur</span> <span class="o">=</span> <span class="n">a1</span><span class="p">.</span><span class="n">idArtiste</span>
-<span class="k">and</span> <span class="n">r2</span><span class="p">.</span><span class="n">idActeur</span> <span class="o">=</span> <span class="n">a1</span><span class="p">.</span><span class="n">idArtiste</span>
-<span class="k">and</span> <span class="n">f1</span><span class="p">.</span><span class="n">année</span> <span class="o">=</span> <span class="mi">1994</span>
-<span class="k">and</span> <span class="n">f2</span><span class="p">.</span><span class="n">année</span> <span class="o">=</span> <span class="mi">1992</span>
-<span class="k">and</span> <span class="n">a2</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Tarantino&#39;</span>
-
-<span class="k">select</span> <span class="o">*</span>
-<span class="k">from</span> <span class="n">Film</span> <span class="k">as</span> <span class="n">f1</span><span class="p">,</span> <span class="n">Film</span> <span class="k">as</span> <span class="n">f2</span><span class="p">,</span> <span class="n">Rôle</span> <span class="k">as</span> <span class="n">r1</span><span class="p">,</span>
-    <span class="n">Rôle</span> <span class="k">as</span> <span class="n">r2</span><span class="p">,</span> <span class="n">Artiste</span> <span class="k">as</span> <span class="n">a1</span><span class="p">,</span> <span class="n">Artiste</span> <span class="k">as</span> <span class="n">a2</span><span class="p">,</span> <span class="n">Artiste</span> <span class="k">as</span> <span class="n">a3</span>
-<span class="k">where</span> <span class="n">f1</span><span class="p">.</span><span class="n">idFilm</span> <span class="o">=</span> <span class="n">r1</span><span class="p">.</span><span class="n">idFilm</span>
-<span class="k">and</span>   <span class="n">f2</span><span class="p">.</span><span class="n">idFilm</span> <span class="o">=</span> <span class="n">r2</span><span class="p">.</span><span class="n">idFilm</span>
-<span class="k">and</span> <span class="n">r1</span><span class="p">.</span><span class="n">idActeur</span> <span class="o">=</span> <span class="n">a1</span><span class="p">.</span><span class="n">idArtiste</span>
-<span class="k">and</span> <span class="n">r2</span><span class="p">.</span><span class="n">idActeur</span> <span class="o">=</span> <span class="n">a1</span><span class="p">.</span><span class="n">idArtiste</span>
-<span class="k">and</span> <span class="n">f1</span><span class="p">.</span><span class="n">idRéalisateur</span> <span class="o">=</span> <span class="n">a2</span><span class="p">.</span><span class="n">idArtiste</span>
-<span class="k">and</span> <span class="n">f2</span><span class="p">.</span><span class="n">idRéalisateur</span> <span class="o">=</span> <span class="n">a3</span><span class="p">.</span><span class="n">idArtiste</span>
-<span class="k">and</span> <span class="n">a2</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Tarantino&#39;</span>
-<span class="k">and</span> <span class="n">a3</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Coppola&#39;</span>
-
-
-<span class="k">select</span> <span class="n">a1</span><span class="p">.</span><span class="o">*</span>
-<span class="k">from</span> <span class="n">Film</span> <span class="k">as</span> <span class="n">f1</span><span class="p">,</span> <span class="n">Rôle</span> <span class="k">as</span> <span class="n">r1</span><span class="p">,</span>
-    <span class="n">Rôle</span> <span class="k">as</span> <span class="n">r2</span><span class="p">,</span> <span class="n">Artiste</span> <span class="k">as</span> <span class="n">a1</span><span class="p">,</span> <span class="n">Artiste</span> <span class="k">as</span> <span class="n">a2</span>
-<span class="k">where</span> <span class="n">f1</span><span class="p">.</span><span class="n">idFilm</span> <span class="o">=</span> <span class="n">r1</span><span class="p">.</span><span class="n">idFilm</span>
-<span class="k">and</span>   <span class="n">f1</span><span class="p">.</span><span class="n">idFilm</span> <span class="o">=</span> <span class="n">r2</span><span class="p">.</span><span class="n">idFilm</span>
-<span class="k">and</span> <span class="n">r1</span><span class="p">.</span><span class="n">idActeur</span> <span class="o">=</span> <span class="n">a2</span><span class="p">.</span><span class="n">idArtiste</span>
-<span class="k">and</span> <span class="n">r2</span><span class="p">.</span><span class="n">idActeur</span> <span class="o">=</span> <span class="n">a2</span><span class="p">.</span><span class="n">idArtiste</span>
-<span class="k">and</span> <span class="n">f1</span><span class="p">.</span><span class="n">idRéalisateur</span> <span class="o">=</span> <span class="n">a1</span><span class="p">.</span><span class="n">idArtiste</span>
-<span class="k">and</span> <span class="n">a2</span><span class="p">.</span><span class="n">nom</span><span class="o">=</span><span class="s1">&#39;Travolta&#39;</span>
-</pre></div>
-</div>
-</div>
 </div>
 </section>
 <section id="atelier-requetes-sql-sur-la-base-voyageurs">
@@ -2466,63 +2174,7 @@ scripts), vous devez exprimer les requêtes suivantes:</p>
 à utiliser la forme déclarative, même si vous connaissez d’autres options que nous étudierons
 dans le prochain chapitre).</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Pour chaque requête ou presque, d’autres syntaxes sont possibles. Le
-“as” par exemple est souvent optionnel (mais il ne gêne pas).</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span>  <span class="k">select</span> <span class="n">ville</span> <span class="k">from</span> <span class="n">Voyageur</span>
-
-  <span class="k">select</span> <span class="n">nom</span> <span class="k">from</span> <span class="n">Logement</span> <span class="k">where</span> <span class="n">lieu</span> <span class="o">=</span> <span class="s1">&#39;Bretagne&#39;</span>
-
-  <span class="k">select</span> <span class="n">nom</span> <span class="k">from</span> <span class="n">Logement</span> <span class="k">where</span> <span class="n">capacité</span> <span class="o">&lt;</span> <span class="mi">20</span>
-
-  <span class="k">select</span> <span class="n">description</span> <span class="k">from</span> <span class="n">Activité</span> <span class="k">where</span> <span class="n">codeActivité</span> <span class="o">=</span> <span class="s1">&#39;Plongée&#39;</span>
-
-  <span class="k">select</span> <span class="n">nom</span> <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span><span class="p">,</span> <span class="n">Activité</span> <span class="k">as</span> <span class="n">a</span>
-  <span class="k">where</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">codeLogement</span>
-  <span class="k">and</span> <span class="n">a</span><span class="p">.</span><span class="n">codeActivité</span> <span class="o">=</span> <span class="s1">&#39;Piscine&#39;</span>
-
-  <span class="k">select</span> <span class="n">v</span><span class="p">.</span><span class="n">prénom</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="n">nom</span>
-  <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span><span class="p">,</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s</span><span class="p">,</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v</span>
-  <span class="k">where</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">codeLogement</span>
-  <span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v</span><span class="p">.</span><span class="n">idVoyageur</span>
-  <span class="k">and</span> <span class="n">lieu</span><span class="o">=</span><span class="s1">&#39;Corse&#39;</span>
-
-  <span class="k">select</span> <span class="n">v</span><span class="p">.</span><span class="n">prénom</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="n">nom</span>
-  <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span><span class="p">,</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s</span><span class="p">,</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v</span>
-  <span class="k">where</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">codeLogement</span>
-  <span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v</span><span class="p">.</span><span class="n">idVoyageur</span>
-  <span class="k">and</span> <span class="n">lieu</span> <span class="o">!=</span> <span class="s1">&#39;Corse&#39;</span>
-
-  <span class="k">select</span> <span class="n">l</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomLogement</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="n">nom</span>
-  <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span><span class="p">,</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s</span><span class="p">,</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v</span>
-  <span class="k">where</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">codeLogement</span>
-  <span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v</span><span class="p">.</span><span class="n">idVoyageur</span>
-  <span class="k">and</span> <span class="n">région</span><span class="o">=</span><span class="s1">&#39;Auvergne&#39;</span>
-
-  <span class="k">select</span> <span class="n">l</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomLogement</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="n">nom</span>
-  <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span><span class="p">,</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v</span>
-  <span class="k">where</span> <span class="n">région</span><span class="o">=</span><span class="n">lieu</span>
-
-<span class="k">select</span> <span class="k">distinct</span> <span class="n">l</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomLogement</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">voyageur</span>
-  <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span><span class="p">,</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s1</span><span class="p">,</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v</span><span class="p">,</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s2</span>
-  <span class="k">where</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">s1</span><span class="p">.</span><span class="n">codeLogement</span>
-  <span class="k">and</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">s2</span><span class="p">.</span><span class="n">codeLogement</span>
-  <span class="k">and</span> <span class="n">s1</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v</span><span class="p">.</span><span class="n">idVoyageur</span>
-  <span class="k">and</span> <span class="n">s2</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v</span><span class="p">.</span><span class="n">idVoyageur</span>
-  <span class="k">and</span> <span class="n">s1</span><span class="p">.</span><span class="n">idSéjour</span> <span class="o">!=</span> <span class="n">s2</span><span class="p">.</span><span class="n">idSéjour</span>
-
-  <span class="k">select</span> <span class="k">distinct</span> <span class="n">l</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomLogement</span><span class="p">,</span> <span class="n">v1</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">voyageur1</span><span class="p">,</span> <span class="n">v2</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">voyageur2</span>
-  <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span><span class="p">,</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s1</span><span class="p">,</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v1</span><span class="p">,</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s2</span><span class="p">,</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v2</span>
-  <span class="k">where</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">s1</span><span class="p">.</span><span class="n">codeLogement</span>
-  <span class="k">and</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">s2</span><span class="p">.</span><span class="n">codeLogement</span>
-  <span class="k">and</span> <span class="n">s1</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v1</span><span class="p">.</span><span class="n">idVoyageur</span>
-  <span class="k">and</span> <span class="n">s2</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v2</span><span class="p">.</span><span class="n">idVoyageur</span>
-  <span class="k">and</span> <span class="n">s1</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">!=</span> <span class="n">s2</span><span class="p">.</span><span class="n">idVoyageur</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 <p>Pour les requêtes suivantes, en revanche, vous avez droit à l’imbrication (il serait difficile de faire
 autrement).</p>
 <blockquote>
@@ -2540,71 +2192,7 @@ autrement).</p>
 <p>Vous pouvez finalement reprendre quelques-unes de requêtes précédentes et les exprimer avec
 l’imbrication.</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span>   <span class="k">select</span> <span class="n">v</span><span class="p">.</span><span class="n">prénom</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="n">nom</span>
-   <span class="k">from</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v</span>
-   <span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="s1">&#39;&#39;</span>
-       <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span><span class="p">,</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s</span>
-       <span class="k">where</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">codeLogement</span>
-       <span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v</span><span class="p">.</span><span class="n">idVoyageur</span>
-       <span class="k">and</span> <span class="n">lieu</span><span class="o">=</span><span class="s1">&#39;Corse&#39;</span><span class="p">)</span>
-
-   <span class="k">select</span> <span class="n">v</span><span class="p">.</span><span class="n">prénom</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="n">nom</span>
-   <span class="k">from</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v</span>
-   <span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="s1">&#39;&#39;</span>
-       <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span><span class="p">,</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s</span>
-       <span class="k">where</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">codeLogement</span>
-       <span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v</span><span class="p">.</span><span class="n">idVoyageur</span>
-       <span class="k">and</span> <span class="n">lieu</span> <span class="o">!=</span> <span class="s1">&#39;Corse&#39;</span><span class="p">)</span>
-
-    <span class="k">select</span> <span class="n">l</span><span class="p">.</span><span class="n">nom</span>
-   <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span>
-   <span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="s1">&#39;&#39;</span>
-       <span class="k">from</span> <span class="n">Activité</span> <span class="k">as</span> <span class="n">a</span>
-       <span class="k">where</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">codeLogement</span>
-       <span class="k">and</span> <span class="n">a</span><span class="p">.</span><span class="n">codeActivité</span><span class="o">=</span><span class="s1">&#39;Piscine&#39;</span><span class="p">)</span>
-
-   <span class="k">select</span> <span class="n">v</span><span class="p">.</span><span class="n">prénom</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="n">nom</span>
-   <span class="k">from</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v</span>
-   <span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="s1">&#39;&#39;</span>
-         <span class="k">from</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s</span>
-         <span class="k">where</span>  <span class="n">s</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v</span><span class="p">.</span><span class="n">idVoyageur</span><span class="p">)</span>
-
-  <span class="k">select</span> <span class="n">l</span><span class="p">.</span><span class="n">nom</span>
-   <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span>
-   <span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="s1">&#39;&#39;</span>
-         <span class="k">from</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s</span>
-         <span class="k">where</span>  <span class="n">l</span><span class="p">.</span><span class="n">code</span> <span class="o">=</span><span class="n">s</span><span class="p">.</span><span class="n">codeLogement</span><span class="p">)</span>
-
-  <span class="k">select</span> <span class="n">v</span><span class="p">.</span><span class="n">prénom</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="n">nom</span>
-   <span class="k">from</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v</span>
-   <span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="s1">&#39;&#39;</span>
-         <span class="k">from</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s</span><span class="p">,</span> <span class="n">Activité</span> <span class="k">as</span> <span class="n">a</span>
-         <span class="k">where</span>  <span class="n">s</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v</span><span class="p">.</span><span class="n">idVoyageur</span>
-         <span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">codeLogement</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">codeLogement</span>
-         <span class="k">and</span> <span class="n">a</span><span class="p">.</span><span class="n">codeActivité</span><span class="o">=</span><span class="s1">&#39;Plongée&#39;</span><span class="p">)</span>
-
-<span class="k">select</span> <span class="n">v</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomVoyageur</span><span class="p">,</span> <span class="n">l</span><span class="p">.</span><span class="n">nom</span> <span class="k">as</span> <span class="n">nomLogement</span>
-   <span class="k">from</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v</span><span class="p">,</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span>
-   <span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="s1">&#39;&#39;</span>
-         <span class="k">from</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s</span>
-         <span class="k">where</span> <span class="n">s</span><span class="p">.</span><span class="n">codeLogement</span> <span class="o">=</span> <span class="n">l</span><span class="p">.</span><span class="n">code</span>
-         <span class="k">and</span>  <span class="n">s</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v</span><span class="p">.</span><span class="n">idVoyageur</span><span class="p">)</span>
-
- <span class="k">select</span> <span class="n">l</span><span class="p">.</span><span class="n">nom</span>
- <span class="k">from</span> <span class="n">Logement</span> <span class="k">as</span> <span class="n">l</span>
- <span class="k">where</span> <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span><span class="k">select</span> <span class="o">*</span>
-         <span class="k">from</span> <span class="n">Voyageur</span> <span class="k">as</span> <span class="n">v</span>
-         <span class="k">where</span>  <span class="k">not</span> <span class="k">exists</span> <span class="p">(</span>
-           <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Séjour</span> <span class="k">as</span> <span class="n">s</span>
-           <span class="k">where</span> <span class="n">s</span><span class="p">.</span><span class="n">idVoyageur</span> <span class="o">=</span><span class="n">v</span><span class="p">.</span><span class="n">idVoyageur</span>
-           <span class="k">and</span> <span class="n">s</span><span class="p">.</span><span class="n">codeLogement</span><span class="o">=</span><span class="n">l</span><span class="p">.</span><span class="n">code</span>
-         <span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </section>
 <section id="atelier-requetes-sur-la-base-des-films">
 <h2>Atelier: requêtes sur la base des films<a class="headerlink" href="#atelier-requetes-sur-la-base-des-films" title="Lien permanent vers ce titre">¶</a></h2>
@@ -2725,7 +2313,7 @@ solution trop rapidement.</p>
         <a href="index.html">SQL, langage déclaratif</a><br/>
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2002-2025, Philippe Rigaux.
+        &#169; Copyright 2002-2026, Philippe Rigaux.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.1.
     </div>
         </div>

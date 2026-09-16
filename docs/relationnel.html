@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>Le modèle relationnel &#8212; Documentation Cours de bases de données Septembre 2025</title>
+    <title>Le modèle relationnel &#8212; Documentation Cours de bases de données Septembre 2026</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/agogo.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -1664,14 +1664,6 @@ donc (ACD)+ = ACDBEF.</p>
 </li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p>Non car BFG+ = BFGEH</p></li>
-<li><p>Non car ACG+ = ACGBEH</p></li>
-<li><p>Oui car CEG+ = CEGHAB</p></li>
-</ul>
-</div>
 </div></blockquote>
 </div>
 <div class="admonition-exercice-ex-relationnel-2-dependances-directes admonition" id="ex-relationnel-2">
@@ -1685,17 +1677,6 @@ donc (ACD)+ = ACDBEF.</p>
 vue en cours.</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(A \to E\)</span>  est indirecte. On peut
-la supprimer, et l’information de dépendance
-est quand même préservée
-grâce à  <span class="math notranslate nohighlight">\(A \to B\)</span>  et <span class="math notranslate nohighlight">\(B \to E\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(id\_manuscrit \to nom\)</span>: on connaît le nom de l’expert
-indirectement car <span class="math notranslate nohighlight">\(id\_manuscrit \to id\_expert\)</span> et <span class="math notranslate nohighlight">\(id\_expert \to nom\)</span></p></li>
-</ul>
-</div>
 </div></blockquote>
 </div>
 <div class="admonition-exercice-ex-relationnel-1bis-cloture-transitive admonition" id="ex-relationnel-1bis">
@@ -1709,17 +1690,7 @@ indirectement car <span class="math notranslate nohighlight">\(id\_manuscrit \to
 </div></blockquote>
 <p>Calculer enum+ et dnum+.</p>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p>À partir de <code class="docutils literal notranslate"><span class="pre">enum</span></code> je connais le nom, l’année, l’adresse et <code class="docutils literal notranslate"><span class="pre">dnum</span></code>, et à partir de
-<code class="docutils literal notranslate"><span class="pre">dnum</span></code> je connais <code class="docutils literal notranslate"><span class="pre">numDirecteur</span></code>. Donc la clôture transitive
-de <code class="docutils literal notranslate"><span class="pre">enum</span></code> est l’ensemble de tous les attributs.</p></li>
-<li><p>En revanche, à partir de <code class="docutils literal notranslate"><span class="pre">dnum</span></code> je connais <code class="docutils literal notranslate"><span class="pre">numDirecteur</span></code>
-et je ne peux plus rien inférer d’autre. Donc, <code class="docutils literal notranslate"><span class="pre">dnum+</span></code> est {<code class="docutils literal notranslate"><span class="pre">dnum</span></code>, <code class="docutils literal notranslate"><span class="pre">numDirecteur</span></code>}</p></li>
-</ul>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </div>
 <div class="admonition-exercice-ex-relationnel-3-augmentation-et-dependances-minimales admonition" id="ex-relationnel-3">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-relationnel-3">Ex-relationnel-3</a>:  Augmentation et dépendances minimales</p>
@@ -1732,14 +1703,6 @@ est <em>minimale</em> si elle ne peut pas être obtenue par augmentation.</p>
 <li><p>Enumérez toutes les dépendances possibles obtenus par augmentation.</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(A, B \to C, D\)</span>, <span class="math notranslate nohighlight">\(A, C \to B, D\)</span>,
-<span class="math notranslate nohighlight">\(A, D \to B, C\)</span>, <span class="math notranslate nohighlight">\(A, B, C \to D\)</span>, <span class="math notranslate nohighlight">\(A, B, D \to C\)</span>,
-<span class="math notranslate nohighlight">\(A, C, D \to B\)</span>.</p></li>
-</ul>
-</div>
 </div></blockquote>
 </div>
 <div class="admonition-exercice-ex-relationnel-4-reflexion-et-cles admonition" id="ex-relationnel-4">
@@ -1747,12 +1710,6 @@ est <em>minimale</em> si elle ne peut pas être obtenue par augmentation.</p>
 <p>Autre axiome d’Armstrong: la réflexion.</p>
 <p>En l’absence de toute
 dépendance fonctionnelle non triviale, quelle est la clé d’une relation?</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Pour toute relation R(A1, … An) la DF <span class="math notranslate nohighlight">\(A1, ... An \to A1, ... An\)</span>
-est vraie par réflexion. Elle est minimale puisque c’est la seule,
-et donc l’ensemble des attributs est la clé dans ce cas.</p>
-</div>
 </div>
 <div class="admonition-exercice-ex-relationnel-5-calcul-de-cle admonition" id="ex-relationnel-5">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-relationnel-5">Ex-relationnel-5</a>:  calcul de clé</p>
@@ -1790,29 +1747,6 @@ donc c’est  une clé. C’est la seule car elle est minimale.</p></li>
 </ul>
 </div></blockquote>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul>
-<li><p>(A, D) doivent faire partie de la clé puisqu’ils n’apparaissent pas à droite
-d’une DF. On constate que c’est une clé  donc c’est la seule.</p></li>
-<li><p>(A, B, E) est la clé</p></li>
-<li><p>(A, B, D) est la clé</p></li>
-<li><p>A et D font partie de la clé, mais (A,D) n’est pas une clé. On augmente
-donc pour étudier successivement ABD, ACD et ADE.</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>(A, B, D) est une clé car AB permet d’obtenir C, et CD permet d’obtenir E</p></li>
-<li><p>(A, C, D) est aussi une clé car CD donne E et DE donne B.</p></li>
-<li><p>(A, D, E) est une clé car DE donne B et AB donne C.</p></li>
-</ul>
-</div></blockquote>
-</li>
-</ul>
-<blockquote>
-<div><p>Inutile d’aller plus loin car toute augmentation serait un sur-ensemble
-strict d’une clé connue, et ne pourrait donc pas être une clé.</p>
-</div></blockquote>
-</div>
 </div>
 <div class="admonition-exercice-ex-relationnel-6-argumenter-sur-la-troisieme-forme-normale admonition" id="ex-relationnel-6">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-relationnel-6">Ex-relationnel-6</a>:  argumenter sur la troisième forme normale</p>
@@ -1820,10 +1754,6 @@ strict d’une clé connue, et ne pourrait donc pas être une clé.</p>
 <div><p>Soit la relation R(ABCD) et les DF <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">-&gt;</span> <span class="pre">B</span></code>  ; <code class="docutils literal notranslate"><span class="pre">C-&gt;</span> <span class="pre">D</span></code> et <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">-&gt;</span> <span class="pre">D</span></code></p>
 <p>Donnez l’argument qui montre que cette relation n’est pas en troisième forme normale</p>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>La clé est AC, mais dans la dépendance fonctionnelle <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">-&gt;</span> <span class="pre">D</span></code>, B n’est pas une clé.</p>
-</div>
 </div>
 <div class="admonition-exercice-ex-relationnel-7-logements-et-activites admonition" id="ex-relationnel-7">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-relationnel-7">Ex-relationnel-7</a>:  logements et activités</p>
@@ -1907,13 +1837,6 @@ strict d’une clé connue, et ne pourrait donc pas être une clé.</p>
 </ul>
 </div></blockquote>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p>La clé est la paire <code class="docutils literal notranslate"><span class="pre">(code,</span> <span class="pre">codeActivité)</span></code></p></li>
-<li><p>Elle n’est pas en 3FN à cause de la première DF: <code class="docutils literal notranslate"><span class="pre">code</span></code> n’est pas une clé</p></li>
-</ul>
-</div>
 </div>
 <div class="admonition-exercice-ex-relationnel-8-analyse-des-df-et-cles admonition" id="ex-relationnel-8">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-relationnel-8">Ex-relationnel-8</a>:  analyse des DF et clés</p>
@@ -1930,8 +1853,6 @@ strict d’une clé connue, et ne pourrait donc pas être une clé.</p>
 </div></blockquote>
 <p>Questions: quelle est la clé, et cette relation est-elle en 3FN.</p>
 </div></blockquote>
-<p>(AB) est  la clé. La relation n’est évidemment pas en 3FN car dans la dépendance
-<span class="math notranslate nohighlight">\(F \to G\)</span>, F n’est pas une clé. C’est vrai aussi d’autre DF, mais il suffit d’en trouver une.</p>
 </div>
 <div class="admonition-exercice-ex-relationnel-9-sejours admonition" id="ex-relationnel-9">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-relationnel-9">Ex-relationnel-9</a>:  séjours</p>
@@ -2002,13 +1923,6 @@ strict d’une clé connue, et ne pourrait donc pas être une clé.</p>
 </div></blockquote>
 <p>Questions: quelle est la clé, et cette relation est-elle en 3FN.</p>
 </div></blockquote>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p>La clé est la paire <code class="docutils literal notranslate"><span class="pre">(idVoyageur,</span> <span class="pre">code)</span></code></p></li>
-<li><p>Elle n’est pas en 3FN à cause des deux  premières DF</p></li>
-</ul>
-</div>
 </div>
 <div class="admonition-exercice-ex-relationnel-10-analyse-des-df-et-cles admonition" id="ex-relationnel-10">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-relationnel-10">Ex-relationnel-10</a>:  analyse des DF et clés</p>
@@ -2029,43 +1943,10 @@ et du prix unitaire. On sait par ailleurs que</p>
 </ul>
 </div></blockquote>
 <p>Donner toutes les DF et trouver la clé</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(idProduit \to nomProduit, prixUnit, tauxTva\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(nb, prixUnit \to  mtHT\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(idClient \to nomClient\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(mtHT, tauxTva \to mtTVA\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(mtHT, mtTVA \to mtTTC\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(idProduit, idClient, date \to nb\)</span></p></li>
-</ul>
-</div>
-<p>On pourrait aussi énoncer les DF <span class="math notranslate nohighlight">\(mtTTC, mtTVA \to mtHT\)</span>
-et <span class="math notranslate nohighlight">\(mtTTC, mtHT \to mtTVA\)</span> et même <span class="math notranslate nohighlight">\(mtHT, mtTVA \to tauxTva\)</span>.
-Ces montants résultent d’un calcul et introduisent donc de la
-redondance d’information.</p>
-<p>La clé est (idProduit, idClient, date)</p>
-<p>Elle n’est bien sûr pas en 3FN, il suffit de donner un exemple de
-DF dont la partie gauche n’est pas la clé, par exemple <span class="math notranslate nohighlight">\(idClient \to nomClient\)</span></p>
 </div>
 <div class="admonition-exercice-ex-relationnel-11-relations-binaires admonition" id="ex-relationnel-11">
 <p class="admonition-title">Exercice <a class="reference internal" href="#ex-relationnel-11">Ex-relationnel-11</a>:  relations binaires</p>
 <p>Démontrer que toute relation binaire est en troisième forme normale.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Soit <code class="docutils literal notranslate"><span class="pre">R(A,B)</span></code>. Alors:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Soit il n’existe pas de DF, la clé est (AB) et <code class="docutils literal notranslate"><span class="pre">R</span></code> est en 3FN</p></li>
-<li><p>Soit il existe une seule DF <span class="math notranslate nohighlight">\(A \to B\)</span>, A est la clé</p></li>
-<li><p>Soit il existe deux  DF <span class="math notranslate nohighlight">\(A \to B\)</span> et <span class="math notranslate nohighlight">\(B \to A\)</span>,
-la relation a deux clés.</p></li>
-</ul>
-<p>Raisonnement plus global: toute dépendance <span class="math notranslate nohighlight">\(X \to Y\)</span> définit
-X comme clé puisqu’il n’y a pas d’autre attribut. La condition de la 3FN
-est donc toujours satisfaite.</p>
-</div></blockquote>
-</div>
 </div>
 </section>
 <section id="atelier-une-etude-de-cas">
@@ -2121,20 +2002,7 @@ est son gardien?</p></li>
 <li><p>Deux gardiens peuvent-ils avoir le même salaire?</p></li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p>Oui</p></li>
-<li><p>Non</p></li>
-<li><p>Oui</p></li>
-<li><p>Oui, par transitivité.</p></li>
-<li><p>Oui, par transitivité.</p></li>
-<li><p>Oui, il n’y a pas de dépendance gardien <span class="math notranslate nohighlight">\(\to\)</span> emplacement.</p></li>
-<li><p>Non, à cause de la dépendance emplacement <span class="math notranslate nohighlight">\(\to\)</span> gardien.</p></li>
-<li><p>Bien sûr</p></li>
-</ul>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </div></blockquote>
 </section>
 <section id="recherche-d-anomalies">
@@ -2214,31 +2082,12 @@ on pourrait y trouver le contenu de la table ci-dessous
 </table>
 <p>Maintenant:</p>
 <blockquote>
-<div><ul>
+<div><ul class="simple">
 <li><p>Citer (au moins)  5 anomalies qui rendent cette
 table incompatible avec les dépendances
 fonctionnelles données précédemment.</p></li>
 <li><p>Citer (au moins) 2 redondances qui pourraient être
-évitées.</p>
-<div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<p>Question 1:</p>
-<ul class="simple">
-<li><p>Marcel a deux salaires différents;</p></li>
-<li><p>l’emplacement A a deux gardiens;</p></li>
-<li><p>deux animaux ont le numéro 20;</p></li>
-<li><p>le renard a deux origines et 2 classes;</p></li>
-<li><p>il y a deux renards nommés  Goupil.</p></li>
-</ul>
-<p>Question 2:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>La girafe est un poison qui vient d’Afrique</p></li>
-<li><p>Jules gagne 12 000 Frs</p></li>
-</ul>
-</div></blockquote>
-</div>
-</li>
+évitées.</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -2251,16 +2100,7 @@ fonctionnelles données précédemment.</p></li>
 <li><p>Montrer que la table n’est pas en troisième forme normale.</p></li>
 </ul>
 <blockquote>
-<div><div class="admonition-correction admonition">
-<p class="admonition-title">Correction</p>
-<ul class="simple">
-<li><p>Il est clair que ce sont des clés.</p></li>
-<li><p>Ce sont les seules qui permettent de déduire <code class="docutils literal notranslate"><span class="pre">nom</span></code>,
-donc elles appartiennent à toute clé.</p></li>
-<li><p>Trivial: prendre n’importe quelle DF, par exemple <span class="math notranslate nohighlight">\(esp\grave ece \to origine\)</span>.</p></li>
-</ul>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </div></blockquote>
 </section>
 </section>
@@ -2355,7 +2195,7 @@ donc elles appartiennent à toute clé.</p></li>
         <a href="index.html">Le modèle relationnel</a><br/>
           
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2002-2025, Philippe Rigaux.
+        &#169; Copyright 2002-2026, Philippe Rigaux.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.1.
     </div>
         </div>
