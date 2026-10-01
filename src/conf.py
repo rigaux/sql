@@ -48,7 +48,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
-#    'spx_ext.eqt',
+    'spx_ext.eqt',
 #    'Sphinx_ext.questions',
 #    'Sphinx_ext.iframe'
 ]

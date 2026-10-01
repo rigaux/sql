@@ -1004,7 +1004,7 @@ pas une base pour de vrai).
     8   , 20    , ca    , 21    , 22
 
 ``Séjour`` contient deux clés étrangères: l'une référençant le logement, l'autre le voyageur. 
-On peut que la valeur de ``idVoyageur``  (ou ``codeLogement``)  dans cette relation est *toujours*
+On peut constater que la valeur de ``idVoyageur``  (ou ``codeLogement``)  dans cette relation est *toujours*
 la valeur de l'une des clés primaire de ``Voyageur`` (respectivement  ``Logement``). Si 
 ce n'est pas clair, 
 vus pouvez revoir la définition des clés étrangères et méditer dessus le temps qu'il faudra.
