@@ -80,7 +80,7 @@ def setup(app):
     app.add_config_value('soladmin', '', True)
     app.add_config_value('solmetro', '', True)
 
-relationnel='private'
+relationnel='public'
 calcul='private'
 calculTP1='private'
 calculTP2='private'
